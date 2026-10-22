@@ -52,7 +52,7 @@ class EngagementServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new EngagementPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new EngagementPlugin()) instanceof Panel);
     }
 
     public function boot(): void

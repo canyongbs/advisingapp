@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('audits', function (Blueprint $table) {
+        Schema::table('audits', function (Blueprint $table): void {
             $table->string('change_agent_name')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('audits', function (Blueprint $table) {
+        Schema::table('audits', function (Blueprint $table): void {
             $table->dropColumn('change_agent_name');
         });
     }

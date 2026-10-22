@@ -50,7 +50,7 @@ class ResourceHubServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()) instanceof Panel);
     }
 
     public function boot(): void

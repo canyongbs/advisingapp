@@ -42,6 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -85,10 +86,10 @@ class MostRecentTasksTable extends BaseWidget
         return $table
             ->query(function () use ($startDate, $endDate, $groupId): Builder {
                 return Task::query()
-                    ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($groupId) {
+                    ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($groupId): void {
                         $query->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId));
                     })
-                    ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
+                    ->when($startDate instanceof Carbon && $endDate instanceof Carbon, function (Builder $query) use ($startDate, $endDate): Builder {
                         return $query->whereBetween('created_at', [$startDate, $endDate]);
                     })
                     ->orderBy('created_at', 'desc')
@@ -115,7 +116,7 @@ class MostRecentTasksTable extends BaseWidget
 
                         return $concern->{$concern::displayNameKey()} ?? 'N/A';
                     })
-                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->url(fn (Task $record): ?string => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,

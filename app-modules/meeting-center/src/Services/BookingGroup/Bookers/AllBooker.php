@@ -152,7 +152,7 @@ class AllBooker extends BookingGroupBooker
             $startsAt->month,
         );
 
-        return collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt) {
+        return collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt): bool {
             $blockStart = Carbon::parse($block['start']);
             $blockEnd = Carbon::parse($block['end']);
 

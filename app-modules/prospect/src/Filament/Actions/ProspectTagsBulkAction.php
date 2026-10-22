@@ -56,7 +56,7 @@ class ProspectTagsBulkAction
             ->modalHeading('Bulk assign prospect tags')
             ->label('Manage Tags')
             ->modalDescription(
-                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('prospect', $records->count()) . ' to apply tags.'
+                fn (Collection $records): string => "You have selected {$records->count()} " . Str::plural('prospect', $records->count()) . ' to apply tags.'
             )
             ->form([
                 Select::make('tag_ids')
@@ -76,8 +76,8 @@ class ProspectTagsBulkAction
                     ->default(false)
                     ->hintIconTooltip('If checked, all prior tags assignments will be removed.'),
             ])
-            ->action(function (array $data, Collection $records) {
-                $records->each(function ($record) use ($data) {
+            ->action(function (array $data, Collection $records): void {
+                $records->each(function ($record) use ($data): void {
                     throw_unless($record instanceof Prospect, new Exception('Record must be of type prospect.'));
 
                     if (! empty($data['tag_ids'])) {

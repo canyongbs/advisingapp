@@ -74,11 +74,11 @@ $postSesNotification = function (array $snsData): void {
     ])->postJson(route('landlord.api.inbound.webhook.awsses'), $snsData)->assertOk();
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     withoutMiddleware(VerifyAwsSnsRequest::class);
 });
 
-it('correctly handles the incoming SES event', function (string $event, EmailMessageEventType $eventType) {
+it('correctly handles the incoming SES event', function (string $event, EmailMessageEventType $eventType): void {
     /** @var Tenant $tenant */
     $tenant = Tenant::query()->first();
 
@@ -94,7 +94,7 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
     data_set($messageContent, 'mail.tags.tenant_id.0', $tenant->getKey());
     $snsData['Message'] = json_encode($messageContent);
 
-    $tenant->execute(function () use ($emailMessage) {
+    $tenant->execute(function () use ($emailMessage): void {
         expect($emailMessage->events()->count())->toBe(0);
     });
 
@@ -117,7 +117,7 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
 
     $response->assertOk();
 
-    $tenant->execute(function () use ($emailMessage, $eventType) {
+    $tenant->execute(function () use ($emailMessage, $eventType): void {
         // The email message should have the apppriate email message event created based on the event
         $emailMessage->refresh();
 
@@ -170,7 +170,7 @@ it('correctly handles the incoming SES event', function (string $event, EmailMes
     ],
 ]);
 
-it('records the SES send time for events that have no timestamp of their own', function (string $event) use ($sesNotificationFor, $postSesNotification) {
+it('records the SES send time for events that have no timestamp of their own', function (string $event) use ($sesNotificationFor, $postSesNotification): void {
     $tenant = Tenant::query()->firstOrFail();
 
     $emailMessage = $tenant->execute(fn () => EmailMessage::factory()->create());
@@ -179,7 +179,7 @@ it('records the SES send time for events that have no timestamp of their own', f
 
     $postSesNotification($snsData);
 
-    $tenant->execute(function () use ($emailMessage, $snsData) {
+    $tenant->execute(function () use ($emailMessage, $snsData): void {
         expect($emailMessage->events()->sole()->occurred_at->toDateTimeString())
             ->toBe(Carbon::parse(data_get(json_decode($snsData['Message'], true), 'mail.timestamp'))->toDateTimeString());
     });
@@ -189,7 +189,7 @@ it('records the SES send time for events that have no timestamp of their own', f
     'RenderingFailure',
 ]);
 
-it('records repeated deliveries of the same SNS message once', function () use ($sesNotificationFor, $postSesNotification) {
+it('records repeated deliveries of the same SNS message once', function () use ($sesNotificationFor, $postSesNotification): void {
     $tenant = Tenant::query()->firstOrFail();
 
     $emailMessage = $tenant->execute(fn () => EmailMessage::factory()->create());
@@ -199,15 +199,15 @@ it('records repeated deliveries of the same SNS message once', function () use (
     $postSesNotification($snsData);
     $postSesNotification($snsData);
 
-    $tenant->execute(function () use ($emailMessage) {
+    $tenant->execute(function () use ($emailMessage): void {
         expect($emailMessage->events()->sole()->sns_message_id)->toBe('sns-message');
     });
 });
 
-it('records a repeated delivery once when it reaches the listener', function () use ($sesNotificationFor) {
+it('records a repeated delivery once when it reaches the listener', function () use ($sesNotificationFor): void {
     $tenant = Tenant::query()->firstOrFail();
 
-    $tenant->execute(function () use ($tenant, $sesNotificationFor) {
+    $tenant->execute(function () use ($tenant, $sesNotificationFor): void {
         $emailMessage = EmailMessage::factory()->create();
 
         $data = SesEventData::createFromSnsEnvelope($sesNotificationFor($tenant, $emailMessage, 'Bounce'));
@@ -219,7 +219,7 @@ it('records a repeated delivery once when it reaches the listener', function () 
     });
 });
 
-it('records the event without its SNS message id while deduplication is inactive', function () use ($postSesNotification, $sesNotificationFor) {
+it('records the event without its SNS message id while deduplication is inactive', function () use ($postSesNotification, $sesNotificationFor): void {
     $tenant = Tenant::query()->firstOrFail();
 
     $emailMessage = $tenant->execute(function () {
@@ -230,7 +230,7 @@ it('records the event without its SNS message id while deduplication is inactive
 
     $postSesNotification($sesNotificationFor($tenant, $emailMessage, 'Bounce', 'sns-message'));
 
-    $tenant->execute(function () use ($emailMessage) {
+    $tenant->execute(function () use ($emailMessage): void {
         expect($emailMessage->events()->sole()->sns_message_id)->toBeNull();
     });
 });

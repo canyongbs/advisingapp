@@ -63,7 +63,7 @@ trait CanManagePromptLibrary
                 ->withCount('uses')
                 ->orderByDesc('upvotes_count')
                 ->get()
-                ->mapWithKeys(fn (Prompt $prompt) => [
+                ->mapWithKeys(fn (Prompt $prompt): array => [
                     $prompt->id => view('ai::components.options.prompt', ['prompt' => $prompt])->render(),
                 ])
                 ->all();
@@ -82,7 +82,7 @@ trait CanManagePromptLibrary
                     ])
                     ->default($this->isSmartPromptsTypePreselected)
                     ->live()
-                    ->afterStateUpdated(fn (Set $set) => $set('promptId', null))
+                    ->afterStateUpdated(fn (Set $set): mixed => $set('promptId', null))
                     ->grouped()
                     ->required(),
                 Select::make('typeId')
@@ -100,14 +100,14 @@ trait CanManagePromptLibrary
                         ->orderBy('title')
                         ->pluck('title', 'id')
                         ->all())
-                    ->afterStateUpdated(fn (Get $get, Set $set, $state) => (Prompt::find($get('promptId'))?->type_id !== $state) ?
+                    ->afterStateUpdated(fn (Get $get, Set $set, $state): mixed => (Prompt::find($get('promptId'))?->type_id !== $state) ?
                         $set('promptId', null) :
                         null)
                     ->live()
                     ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
                 Checkbox::make('myPrompts')
                     ->label('My prompts only')
-                    ->afterStateUpdated(function (Get $get, Set $set, bool $state) {
+                    ->afterStateUpdated(function (Get $get, Set $set, bool $state): void {
                         if ($state && ! Prompt::find($get('promptId'))?->user->is(auth()->user())) {
                             $set('promptId', null);
                         }
@@ -118,12 +118,12 @@ trait CanManagePromptLibrary
                     ->hidden(fn (Get $get): bool => blank($get('isSmart')) || $get('isSmart')),
                 Checkbox::make('myDepartmentPrompts')
                     ->label('My department\'s prompts only')
-                    ->afterStateUpdated(function (Set $set) {
+                    ->afterStateUpdated(function (Set $set): void {
                         $set('myPrompts', false);
                         $set('promptId', null);
                     })
                     ->hidden(fn (Get $get): bool => blank($get('isSmart')))
-                    ->visible(fn () => auth()->user()->department ? true : false)
+                    ->visible(fn (): bool => auth()->user()->department ? true : false)
                     ->live(),
                 Select::make('promptId')
                     ->label('Select a prompt')
@@ -151,7 +151,7 @@ trait CanManagePromptLibrary
                                 )
                                 ->when(
                                     $get('myDepartmentPrompts'),
-                                    function (Builder $query) {
+                                    function (Builder $query): void {
                                         $user = auth()->user();
 
                                         assert($user instanceof User);
@@ -194,7 +194,7 @@ trait CanManagePromptLibrary
                             )
                             ->when(
                                 $get('myDepartmentPrompts'),
-                                function (Builder $query) {
+                                function (Builder $query): void {
                                     $user = auth()->user();
 
                                     assert($user instanceof User);
@@ -235,7 +235,7 @@ trait CanManagePromptLibrary
                             )
                             ->when(
                                 $get('myDepartmentPrompts'),
-                                function (Builder $query) {
+                                function (Builder $query): void {
                                     $user = auth()->user();
 
                                     assert($user instanceof User);
@@ -271,7 +271,7 @@ trait CanManagePromptLibrary
                     ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
             ])
             ->modalWidth(Width::ExtraLarge)
-            ->action(function (array $data) {
+            ->action(function (array $data): void {
                 $prompt = Prompt::find($data['promptId']);
 
                 if (! $prompt) {

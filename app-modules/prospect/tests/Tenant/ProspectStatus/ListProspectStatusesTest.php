@@ -45,7 +45,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('The correct details are displayed on the ListProspectStatuses page', function () {
+test('The correct details are displayed on the ListProspectStatuses page', function (): void {
     $prospectStatuses = ProspectStatus::factory()
         // TODO: Fix this once Prospect factory is created
         ->count(10)
@@ -91,7 +91,7 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
 
 // Permission Tests
 
-test('ListProspectStatuses is gated with proper access control', function () {
+test('ListProspectStatuses is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
@@ -107,7 +107,7 @@ test('ListProspectStatuses is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('settings.view-any');

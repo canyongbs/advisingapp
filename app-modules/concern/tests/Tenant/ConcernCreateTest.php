@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 
-it('creates a subscription for the user that created the Concern', function () {
+it('creates a subscription for the user that created the Concern', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -57,7 +57,7 @@ it('creates a subscription for the user that created the Concern', function () {
     expect($user->subscriptions->first()->subscribable)->toEqual($concern->concern);
 });
 
-it('dispatches the proper notifications to subscribers on created', function () {
+it('dispatches the proper notifications to subscribers on created', function (): void {
     Notification::fake();
 
     $users = User::factory()->licensed(LicenseType::cases())->count(5)->create();
@@ -65,7 +65,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    $student->subscriptions()->createMany($users->map(fn (User $user) => [
+    $student->subscriptions()->createMany($users->map(fn (User $user): array => [
         'user_id' => $user->id,
     ])->toArray());
 
@@ -80,7 +80,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
     Notification::assertSentTimes(ConcernCreatedNotification::class, $student->subscriptions()->count());
 });
 
-it('only notifies active users of concerns', function () {
+it('only notifies active users of concerns', function (): void {
     // @Todo: This tests works but we should change it to use the Listener instead of the Notification
     Notification::fake();
 

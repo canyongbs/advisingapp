@@ -51,7 +51,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('ListResourceHubQuality is gated with proper access control', function () {
+test('ListResourceHubQuality is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -67,7 +67,7 @@ test('ListResourceHubQuality is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ListResourceHubQuality is gated with proper feature access control', function () {
+test('ListResourceHubQuality is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -93,7 +93,7 @@ test('ListResourceHubQuality is gated with proper feature access control', funct
         )->assertSuccessful();
 });
 
-test('ListResourceHubQuality is gated with proper license access control', function () {
+test('ListResourceHubQuality is gated with proper license access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     // When the feature is enabled
@@ -123,7 +123,7 @@ test('ListResourceHubQuality is gated with proper license access control', funct
         )->assertSuccessful();
 });
 
-test('The DeleteBulkAction is hidden without the delete permission and visible with it', function () {
+test('The DeleteBulkAction is hidden without the delete permission and visible with it', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('settings.view-any');

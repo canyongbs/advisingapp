@@ -42,9 +42,9 @@ use Illuminate\Support\ServiceProvider;
 
 class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleAnalyticsPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleAnalyticsPlugin()) instanceof Panel);
     }
 
     public function boot(): void {}

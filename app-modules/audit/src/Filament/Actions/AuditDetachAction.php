@@ -48,7 +48,7 @@ class AuditDetachAction extends DetachAction
     {
         parent::setUp();
 
-        $this->using(function (Model $record, Table $table) {
+        $this->using(function (Model $record, Table $table): void {
             /** @var BelongsToMany $relationship */
             $relationship = $table->getRelationship();
 

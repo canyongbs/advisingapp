@@ -43,7 +43,7 @@ use Illuminate\Routing\Route;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 
-it('will create an inbound webhook with the correct source and event the twilio webhook', function (string $event) {
+it('will create an inbound webhook with the correct source and event the twilio webhook', function (string $event): void {
     $request = new Request(server: ['REQUEST_URI' => "testing/{$event}"]);
 
     $request->setRouteResolver(function () use ($request) {

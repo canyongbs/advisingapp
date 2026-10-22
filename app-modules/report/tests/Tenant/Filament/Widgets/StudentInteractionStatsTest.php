@@ -52,7 +52,7 @@ $licenses = [
     LicenseType::RetentionCrm,
 ];
 
-it('cannot render without a license', function () {
+it('cannot render without a license', function (): void {
     $user = user();
 
     actingAs($user);
@@ -66,7 +66,7 @@ it('cannot render without a license', function () {
         ->assertForbidden();
 });
 
-it('cannot render without report access', function () use ($licenses) {
+it('cannot render without report access', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses
     ));
@@ -75,7 +75,7 @@ it('cannot render without report access', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses) {
+it('can render', function () use ($licenses): void {
     $user = user(
         licenses: $licenses
     );
@@ -91,7 +91,7 @@ it('can render', function () use ($licenses) {
         ->assertSuccessful();
 });
 
-it('Check total interactions', function () {
+it('Check total interactions', function (): void {
     $interactionCount = rand(1, 10);
     $studentInteractionStats = new StudentInteractionStats();
     $studentInteractionStats->cacheTag = 'report-student-interaction';
@@ -105,7 +105,7 @@ it('Check total interactions', function () {
     expect($totalStudentInteractionsStat->getValue())->toEqual($interactionCount);
 });
 
-it('Check unique students with interactions', function () {
+it('Check unique students with interactions', function (): void {
     $interactionCount = rand(1, 10);
     $studentInteractionStats = new StudentInteractionStats();
     $studentInteractionStats->cacheTag = 'report-student-interaction';
@@ -120,7 +120,7 @@ it('Check unique students with interactions', function () {
     expect($totaluniqueStudentInteractionsStat->getValue())->toEqual($interactionCount);
 });
 
-it('returns correct total and unique student interaction counts within the given date range', function () {
+it('returns correct total and unique student interaction counts within the given date range', function (): void {
     $studentsWithStartDateInteractions = random_int(1, 10);
     $studentsWithEndDateInteractions = random_int(1, 10);
     $interactionStartDate = now()->subDays(10);
@@ -170,7 +170,7 @@ it('returns correct total and unique student interaction counts within the given
         ->toEqual($studentsWithStartDateInteractions + $studentsWithEndDateInteractions + $studentsWithEndDateInteractions);
 });
 
-it('returns correct total and unique student interaction counts based on group filter', function () {
+it('returns correct total and unique student interaction counts based on group filter', function (): void {
     $studentsWithJohnNameInteractions = random_int(1, 10);
     $studentsWithDoeNameInteractions = random_int(1, 10);
 
@@ -246,7 +246,7 @@ it('returns correct total and unique student interaction counts based on group f
         ->toEqual($studentsWithJohnNameInteractions + $studentsWithDoeNameInteractions);
 });
 
-it('does not count archived students in the students with interactions stat', function () {
+it('does not count archived students in the students with interactions stat', function (): void {
     $startDate = now()->subDays(10);
 
     $active = Student::factory()->count(2)->create();
@@ -265,7 +265,7 @@ it('does not count archived students in the students with interactions stat', fu
 
     expect($widget->getStats()[1]->getValue())->toEqual(4);
 
-    $archived->each(fn (Student $student) => $student->archive());
+    $archived->each(fn (Student $student): bool => $student->archive());
 
     expect($widget->getStats()[1]->getValue())->toEqual(2);
 });

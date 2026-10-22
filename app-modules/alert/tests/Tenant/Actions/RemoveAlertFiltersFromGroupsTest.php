@@ -42,7 +42,7 @@ use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use Illuminate\Support\Str;
 
-it('removes alert rules matching the given configuration ids', function () {
+it('removes alert rules matching the given configuration ids', function (): void {
     $alertConfigId = (string) Str::uuid();
 
     $group = Group::factory()
@@ -87,7 +87,7 @@ it('removes alert rules matching the given configuration ids', function () {
     expect(array_values($rules)[0]['type'])->toBe('last');
 });
 
-it('does not modify groups without matching alert rules', function () {
+it('does not modify groups without matching alert rules', function (): void {
     $alertConfigId = (string) Str::uuid();
     $otherAlertConfigId = (string) Str::uuid();
 
@@ -126,7 +126,7 @@ it('does not modify groups without matching alert rules', function () {
     expect(array_values($rules)[0]['type'])->toBe('alertStatus');
 });
 
-it('removes alert rules nested inside OR groups', function () {
+it('removes alert rules nested inside OR groups', function (): void {
     $alertConfigId = (string) Str::uuid();
 
     $group = Group::factory()
@@ -188,7 +188,7 @@ it('removes alert rules nested inside OR groups', function () {
     expect($orRule['data']['groups'][0]['rules'][0]['type'])->toBe('last');
 });
 
-it('removes the entire OR rule when all nested groups become empty', function () {
+it('removes the entire OR rule when all nested groups become empty', function (): void {
     $alertConfigId = (string) Str::uuid();
 
     $group = Group::factory()
@@ -244,7 +244,7 @@ it('removes the entire OR rule when all nested groups become empty', function ()
     expect(array_values($rules)[0]['type'])->toBe('last');
 });
 
-it('skips groups that are not student dynamic groups', function () {
+it('skips groups that are not student dynamic groups', function (): void {
     $alertConfigId = (string) Str::uuid();
 
     $prospectGroup = Group::factory()
@@ -279,7 +279,7 @@ it('skips groups that are not student dynamic groups', function () {
     expect($prospectGroup->filters['queryBuilder']['rules'])->toHaveCount(1);
 });
 
-it('skips groups with empty or null filters', function () {
+it('skips groups with empty or null filters', function (): void {
     Group::factory()
         ->state([
             'model' => GroupModel::Student,
@@ -301,7 +301,7 @@ it('skips groups with empty or null filters', function () {
     expect($modifiedCount)->toBe(0);
 });
 
-it('can remove multiple alert configuration ids at once', function () {
+it('can remove multiple alert configuration ids at once', function (): void {
     $alertConfigId1 = (string) Str::uuid();
     $alertConfigId2 = (string) Str::uuid();
 

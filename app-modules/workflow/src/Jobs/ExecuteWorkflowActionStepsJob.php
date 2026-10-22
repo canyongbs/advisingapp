@@ -58,7 +58,7 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
             ->whereNotNull('execute_at')
             ->whereNull('dispatched_at');
 
-        $steps->each(function (WorkflowRunStep $step) {
+        $steps->each(function (WorkflowRunStep $step): void {
             try {
                 DB::beginTransaction();
 

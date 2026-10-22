@@ -43,7 +43,7 @@ use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Facades\Exceptions;
 
-it('delegates to the phone number lookup service when the provider is configured', function () {
+it('delegates to the phone number lookup service when the provider is configured', function (): void {
     $service = Mockery::mock(PhoneNumberLookupService::class);
     $service->shouldReceive('isConfigured')->andReturn(true);
     $service->shouldReceive('lookup')->once()->with('+16502530000'); // @phpstan-ignore method.notFound
@@ -53,7 +53,7 @@ it('delegates to the phone number lookup service when the provider is configured
     app()->call([new LookupPhoneNumber('+16502530000'), 'handle']);
 });
 
-it('does nothing when the lookup provider is not configured', function () {
+it('does nothing when the lookup provider is not configured', function (): void {
     $service = Mockery::mock(PhoneNumberLookupService::class);
     $service->shouldReceive('isConfigured')->andReturn(false);
     $service->shouldReceive('lookup')->never(); // @phpstan-ignore method.notFound
@@ -63,7 +63,7 @@ it('does nothing when the lookup provider is not configured', function () {
     app()->call([new LookupPhoneNumber('+16502530000'), 'handle']);
 });
 
-it('records an invalid result when the number fails E.164 validation', function () {
+it('records an invalid result when the number fails E.164 validation', function (): void {
     $service = Mockery::mock(PhoneNumberLookupService::class);
     $service->shouldReceive('isConfigured')->andReturn(true);
     $service->shouldReceive('lookup') // @phpstan-ignore method.notFound
@@ -77,11 +77,11 @@ it('records an invalid result when the number fails E.164 validation', function 
         ->toBe(PhoneNumberLookupStatus::Invalid);
 });
 
-it('is uniquely identified by its phone number', function () {
+it('is uniquely identified by its phone number', function (): void {
     expect((new LookupPhoneNumber('+16502530000'))->uniqueId())->toBe('+16502530000');
 });
 
-it('records a lookup_failed result when the job ultimately fails', function () {
+it('records a lookup_failed result when the job ultimately fails', function (): void {
     Exceptions::fake();
 
     (new LookupPhoneNumber('+16502530000'))->failed(new Exception('Telnyx is unavailable'));
@@ -92,7 +92,7 @@ it('records a lookup_failed result when the job ultimately fails', function () {
         ->and($lookup->raw_response)->toBe(['error' => 'Telnyx is unavailable']);
 });
 
-it('does not overwrite an existing result when the job fails', function () {
+it('does not overwrite an existing result when the job fails', function (): void {
     Exceptions::fake();
 
     PhoneNumberLookup::factory()->mobile()->create(['number' => '+16502530000']);
@@ -104,7 +104,7 @@ it('does not overwrite an existing result when the job fails', function () {
         ->toBe(PhoneNumberLookupStatus::ValidMobile);
 });
 
-it('releases the job with the rate-limit reset delay when the lookup service reports rate limiting', function () {
+it('releases the job with the rate-limit reset delay when the lookup service reports rate limiting', function (): void {
     $service = Mockery::mock(PhoneNumberLookupService::class);
     $service->shouldReceive('isConfigured')->andReturn(true);
     $service->shouldReceive('lookup') // @phpstan-ignore method.notFound

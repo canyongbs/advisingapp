@@ -38,7 +38,7 @@ use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachT
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToVectorStores;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `UploadFilesToVectorStores` for each eligible tenant', function () {
+it('dispatches `UploadFilesToVectorStores` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchUploadFilesToVectorStoresForEachTenant())->handle();

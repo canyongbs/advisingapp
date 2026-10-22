@@ -39,14 +39,14 @@ use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Event;
 
-it('dispatches the AiThreadTrashed event when an AiThread is deleted', function () {
+it('dispatches the AiThreadTrashed event when an AiThread is deleted', function (): void {
     $aiThread = AiThread::factory()->create();
 
     Event::fake();
 
     $aiThread->delete();
 
-    Event::assertDispatched(AiThreadTrashed::class, function (AiThreadTrashed $event) use ($aiThread) {
+    Event::assertDispatched(AiThreadTrashed::class, function (AiThreadTrashed $event) use ($aiThread): bool {
         return $event->aiThread->is($aiThread) && $event->aiThread->trashed();
     });
 

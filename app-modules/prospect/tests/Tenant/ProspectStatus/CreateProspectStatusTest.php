@@ -47,7 +47,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Tests\asSuperAdmin;
 
-test('A successful action on the CreateProspectStatus page', function () {
+test('A successful action on the CreateProspectStatus page', function (): void {
     asSuperAdmin()
         ->get(
             ProspectStatusResource::getUrl('create')
@@ -66,7 +66,7 @@ test('A successful action on the CreateProspectStatus page', function () {
     assertDatabaseHas(ProspectStatus::class, $request);
 });
 
-test('CreateProspectStatus requires valid data', function (CreateProspectStatusRequestFactory $data, array $errors) {
+test('CreateProspectStatus requires valid data', function (CreateProspectStatusRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     Livewire::test(CreateProspectStatus::class)
@@ -86,7 +86,7 @@ test('CreateProspectStatus requires valid data', function (CreateProspectStatusR
 
 // Permission Tests
 
-test('CreateProspectStatus is gated with proper access control', function () {
+test('CreateProspectStatus is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)

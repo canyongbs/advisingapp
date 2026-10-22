@@ -42,13 +42,13 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 
 use function PHPUnit\Framework\assertEquals;
 
-it('returns healthy status when the phone has a textable Telnyx lookup', function () {
+it('returns healthy status when the phone has a textable Telnyx lookup', function (): void {
     $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
 
     assertEquals(PhoneHealthStatus::Healthy, $phoneNumber->getHealthStatus());
 });
 
-it('returns no SMS capability status when the phone has no textable Telnyx lookup', function () {
+it('returns no SMS capability status when the phone has no textable Telnyx lookup', function (): void {
     $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
 
     $phoneNumber->phoneNumberLookup()->delete();
@@ -57,7 +57,7 @@ it('returns no SMS capability status when the phone has no textable Telnyx looku
     assertEquals(PhoneHealthStatus::NoSmsCapability, $phoneNumber->getHealthStatus());
 });
 
-it('returns bounced status when the phone has previously bounced', function () {
+it('returns bounced status when the phone has previously bounced', function (): void {
     $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
 
     BouncedPhoneNumber::factory()->create(['number' => $phoneNumber->number]);
@@ -65,7 +65,7 @@ it('returns bounced status when the phone has previously bounced', function () {
     assertEquals(PhoneHealthStatus::Bounced, $phoneNumber->getHealthStatus());
 });
 
-it('returns opted out status when the phone is opted out', function () {
+it('returns opted out status when the phone is opted out', function (): void {
     $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
 
     SmsOptOutPhoneNumber::factory()->create(['number' => $phoneNumber->number]);
@@ -73,7 +73,7 @@ it('returns opted out status when the phone is opted out', function () {
     assertEquals(PhoneHealthStatus::OptedOut, $phoneNumber->getHealthStatus());
 });
 
-it('returns healthy status in SMS demo mode even without a textable Telnyx lookup', function () {
+it('returns healthy status in SMS demo mode even without a textable Telnyx lookup', function (): void {
     $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
 
     $phoneNumber->phoneNumberLookup()->delete();
@@ -88,7 +88,7 @@ it('returns healthy status in SMS demo mode even without a textable Telnyx looku
     assertEquals(PhoneHealthStatus::Healthy, $phoneNumber->getHealthStatus());
 });
 
-it('still returns opted out status in SMS demo mode when the phone is opted out', function () {
+it('still returns opted out status in SMS demo mode when the phone is opted out', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->save();
@@ -100,7 +100,7 @@ it('still returns opted out status in SMS demo mode when the phone is opted out'
     assertEquals(PhoneHealthStatus::OptedOut, $phoneNumber->getHealthStatus());
 });
 
-it('still returns bounced status in SMS demo mode when the phone has previously bounced', function () {
+it('still returns bounced status in SMS demo mode when the phone has previously bounced', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->save();

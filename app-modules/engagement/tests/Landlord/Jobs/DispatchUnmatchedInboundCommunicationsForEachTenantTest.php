@@ -38,7 +38,7 @@ use AdvisingApp\Engagement\Jobs\DispatchUnmatchedInboundCommunicationsForEachTen
 use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `UnmatchedInboundCommunicationsJob` for each eligible tenant', function () {
+it('dispatches `UnmatchedInboundCommunicationsJob` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchUnmatchedInboundCommunicationsForEachTenant())->handle();

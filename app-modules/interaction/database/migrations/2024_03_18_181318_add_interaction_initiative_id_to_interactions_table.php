@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('interactions', function (Blueprint $table) {
+        Schema::table('interactions', function (Blueprint $table): void {
             $table->foreignUuid('interaction_initiative_id')->nullable()->constrained('interaction_initiatives');
         });
     }
 
     public function down(): void
     {
-        Schema::table('interactions', function (Blueprint $table) {
+        Schema::table('interactions', function (Blueprint $table): void {
             $table->dropColumn('interaction_initiative_id');
         });
     }

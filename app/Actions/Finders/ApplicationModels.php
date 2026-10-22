@@ -52,7 +52,7 @@ class ApplicationModels
     public function all(): Collection
     {
         return collect(File::allFiles(app_path()))
-            ->map(function (SplFileInfo $item) {
+            ->map(function (SplFileInfo $item): string {
                 $path = $item->getRelativePathName();
                 $class = sprintf(
                     '\%s%s',
@@ -62,7 +62,7 @@ class ApplicationModels
 
                 return $class;
             })
-            ->filter(function (string $class) {
+            ->filter(function (string $class): bool {
                 $isModel = false;
 
                 if (class_exists($class)) {

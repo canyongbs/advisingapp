@@ -41,7 +41,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();

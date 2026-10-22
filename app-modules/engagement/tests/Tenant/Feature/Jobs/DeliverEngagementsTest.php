@@ -39,7 +39,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use Illuminate\Support\Facades\Notification;
 
-it('will send engagements that have been scheduled for a past date and have not been dispatched', function () {
+it('will send engagements that have been scheduled for a past date and have not been dispatched', function (): void {
     Notification::fake();
 
     $engagement = Engagement::factory()->create([
@@ -54,7 +54,7 @@ it('will send engagements that have been scheduled for a past date and have not 
     );
 });
 
-it('will send engagements that have not been scheduled but have not been dispatched', function () {
+it('will send engagements that have not been scheduled but have not been dispatched', function (): void {
     Notification::fake();
 
     $engagement = Engagement::factory()->deliverNow()->create();
@@ -67,7 +67,7 @@ it('will send engagements that have not been scheduled but have not been dispatc
     );
 });
 
-it('will not send engagements that have been scheduled for a future date', function () {
+it('will not send engagements that have been scheduled for a future date', function (): void {
     Notification::fake();
 
     $engagement = Engagement::factory()->create([
@@ -82,7 +82,7 @@ it('will not send engagements that have been scheduled for a future date', funct
     );
 });
 
-it('will not send engagements that have already been dispatched', function () {
+it('will not send engagements that have already been dispatched', function (): void {
     Notification::fake();
 
     $engagement = Engagement::factory()->create([

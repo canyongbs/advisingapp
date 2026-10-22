@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('ListInteractionRelations is gated with proper access control', function () {
+test('ListInteractionRelations is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -62,7 +62,7 @@ test('ListInteractionRelations is gated with proper access control', function ()
         )->assertSuccessful();
 });
 
-test('it can filter by interactable type', function () {
+test('it can filter by interactable type', function (): void {
     asSuperAdmin();
 
     $studentRelations = InteractionRelation::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
@@ -78,7 +78,7 @@ test('it can filter by interactable type', function () {
         ->assertCanNotSeeTableRecords($studentRelations);
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('settings.view-any');
     actingAs($user);

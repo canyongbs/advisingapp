@@ -41,7 +41,7 @@ use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
 
-it('properly prunes AiMessageFile models', function (AiMessageFile $messageFile, bool $shouldPrune) {
+it('properly prunes AiMessageFile models', function (AiMessageFile $messageFile, bool $shouldPrune): void {
     assertTrue($messageFile->exists);
 
     artisan(PruneCommand::class, [

@@ -65,14 +65,14 @@ class CampaignDateTimeInput
                     ->inline()
                     ->live()
                     ->visible(
-                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! self::isFirstBlock($get, $component) &&
+                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire): bool => ! self::isFirstBlock($get, $component) &&
                             $livewire instanceof CreateCampaign
                     )
                     ->required(),
                 DateTimePicker::make('execute_at')
                     ->label('When should the journey step be executed?')
                     ->visible(
-                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! ($livewire instanceof CreateCampaign) ||
+                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire): bool => ! ($livewire instanceof CreateCampaign) ||
                             self::isFirstBlock($get, $component) ||
                             $get('input_type') === 'fixed'
                     )
@@ -105,7 +105,7 @@ class CampaignDateTimeInput
                             ->default(0),
                     ])
                     ->visible(
-                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! self::isFirstBlock($get, $component) &&
+                        fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire): bool => ! self::isFirstBlock($get, $component) &&
                             $get('input_type') === 'relative' &&
                             $livewire instanceof CreateCampaign
                     )

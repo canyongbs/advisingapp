@@ -41,12 +41,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = SystemUser::factory()->create();
     $student = Student::factory()->create();
     Sanctum::actingAs($user, ['api']);
@@ -72,7 +72,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a paginated list of student programs', function () {
+it('returns a paginated list of student programs', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -94,7 +94,7 @@ it('returns a paginated list of student programs', function () {
         ->toHaveCount(3);
 });
 
-it('can filter student programs by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue) {
+it('can filter student programs by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -141,7 +141,7 @@ dataset('sorts', [
     '`declare_dt`' => ['declare_dt', ['declare_dt' => '2023-01-01T00:00:00.000000Z'], ['declare_dt' => '2023-01-02T00:00:00.000000Z'], 'declare_dt', '2023-01-01T00:00:00.000000Z', '2023-01-02T00:00:00.000000Z'],
 ]);
 
-it('can sort student programs by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort student programs by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -160,7 +160,7 @@ it('can sort student programs by all attributes ascending', function (string $re
         ->toBe($responseSecondValue);
 })->with('sorts');
 
-it('can sort student programs by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort student programs by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'program.view-any']);
     Sanctum::actingAs($user, ['api']);

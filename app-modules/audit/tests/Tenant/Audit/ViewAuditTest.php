@@ -40,11 +40,11 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-test('The correct details are displayed on the ViewAudit page', function () {})->todo();
+test('The correct details are displayed on the ViewAudit page', function (): void {})->todo();
 
 // Permission Tests
 
-test('ViewAudit is gated with proper access control', function () {
+test('ViewAudit is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     $audit = Audit::factory()->create();

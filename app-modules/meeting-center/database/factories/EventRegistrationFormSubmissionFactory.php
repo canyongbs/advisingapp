@@ -66,11 +66,11 @@ class EventRegistrationFormSubmissionFactory extends Factory
 
     public function configure(): EventRegistrationFormSubmissionFactory|Factory
     {
-        return $this->afterCreating(function (EventRegistrationFormSubmission $eventRegistrationFormSubmission) {
+        return $this->afterCreating(function (EventRegistrationFormSubmission $eventRegistrationFormSubmission): void {
             $eventRegistrationFormSubmission
                 ->submissible
                 ->fields
-                ->each(function (EventRegistrationFormField $eventRegistrationFormField) use ($eventRegistrationFormSubmission) {
+                ->each(function (EventRegistrationFormField $eventRegistrationFormField) use ($eventRegistrationFormSubmission): void {
                     $eventRegistrationFormSubmission
                         ->fields()
                         ->attach($eventRegistrationFormField->getKey(), [

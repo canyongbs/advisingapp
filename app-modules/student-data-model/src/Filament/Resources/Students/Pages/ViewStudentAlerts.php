@@ -102,7 +102,7 @@ class ViewStudentAlerts extends Page implements HasTable
                             ELSE 'inactive'
                         END AS alert_status
                     ")
-                    ->leftJoin('student_alerts AS sa', function (JoinClause $join) use ($sisid) {
+                    ->leftJoin('student_alerts AS sa', function (JoinClause $join) use ($sisid): void {
                         $join->on('sa.alert_configuration_id', '=', 'alert_configurations.id')
                             ->where('sa.sisid', '=', $sisid);
                     })

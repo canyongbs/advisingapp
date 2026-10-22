@@ -43,19 +43,19 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('applications', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('applications', function (Blueprint $table): void {
                 $table->uuid('root_id')->nullable();
                 $table->timestamp('archived_at')->nullable();
             });
 
-            Schema::table('applications', function (Blueprint $table) {
+            Schema::table('applications', function (Blueprint $table): void {
                 $table->uuid('root_id')->nullable(false)->change();
                 $table->foreign('root_id')->references('id')->on('applications');
                 $table->index('root_id');
             });
 
-            Schema::table('applications', function (Blueprint $table) {
+            Schema::table('applications', function (Blueprint $table): void {
                 $table->dropUnique(['name']);
                 $table->uniqueIndex(['name'])->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
             });
@@ -64,7 +64,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->dropIndex('applications_name_unique_index');
             $table->unique('name');
             $table->dropForeign(['root_id']);

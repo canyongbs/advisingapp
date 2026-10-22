@@ -107,19 +107,19 @@ class EditPrompt extends EditRecord
                                 ->label('Users')
                                 ->multiple()
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                             Select::make('confidential_prompt_departments')
                                 ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
                                 ->label('Departments')
                                 ->multiple()
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         ])
                             ->columns(2)
                             ->columnSpanFull()
                             ->visible(
-                                fn (Get $get, Prompt $record) => $get('is_smart') === 0
+                                fn (Get $get, Prompt $record): bool => $get('is_smart') === 0
                                 && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
                                 || auth()->user()->id === $record['user_id']
                             ),

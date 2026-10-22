@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('resource_hub_articles', function (Blueprint $table) {
+        Schema::table('resource_hub_articles', function (Blueprint $table): void {
             $table->boolean('has_table_of_contents')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::table('resource_hub_articles', function (Blueprint $table) {
+        Schema::table('resource_hub_articles', function (Blueprint $table): void {
             $table->dropColumn('has_table_of_contents');
         });
     }

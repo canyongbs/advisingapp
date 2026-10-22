@@ -72,7 +72,7 @@ class WorkflowStepsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Group::make(function (WorkflowStep $record) {
+                Group::make(function (WorkflowStep $record): array {
                     assert($record->currentDetails instanceof WorkflowDetails);
 
                     return [
@@ -95,7 +95,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('type')
                     ->label('Step Type')
-                    ->state(function (WorkflowStep $record) {
+                    ->state(function (WorkflowStep $record): string {
                         assert($record->currentDetails instanceof WorkflowDetails);
 
                         return $record->currentDetails->getLabel();
@@ -117,7 +117,7 @@ class WorkflowStepsRelationManager extends RelationManager
                             ->blocks(WorkflowDetails::blocks())
                             ->dehydrated(false)
                             ->model($workflow)
-                            ->saveRelationshipsUsing(function (Builder $component, Workflow $record) {
+                            ->saveRelationshipsUsing(function (Builder $component, Workflow $record): void {
                                 $previousStepId = null;
 
                                 foreach ($component->getChildComponentContainers() as $item) {
@@ -161,12 +161,12 @@ class WorkflowStepsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn () => null),
+                    ->action(fn (): null => null),
             ])
             ->recordActions([
                 EditAction::make()
                     ->slideOver()
-                    ->modalHeading(function (WorkflowStep $workflowStep) {
+                    ->modalHeading(function (WorkflowStep $workflowStep): string {
                         assert($workflowStep->currentDetails instanceof WorkflowDetails);
 
                         return 'Edit ' . Str::title($workflowStep->currentDetails->getLabel());
@@ -205,7 +205,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     })
                     ->databaseTransaction(),
                 DeleteAction::make()
-                    ->modalHeading(function (WorkflowStep $workflowStep) {
+                    ->modalHeading(function (WorkflowStep $workflowStep): string {
                         assert($workflowStep->currentDetails instanceof WorkflowDetails);
 
                         return 'Delete ' . Str::title($workflowStep->currentDetails->getLabel());

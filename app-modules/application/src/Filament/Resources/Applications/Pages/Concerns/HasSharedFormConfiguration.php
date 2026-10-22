@@ -99,8 +99,8 @@ trait HasSharedFormConfiguration
                                 ->label('Allowed Domains')
                                 ->helperText('Only these domains will be allowed to embed this form.')
                                 ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                ->hidden(fn (Get $get): bool => ! $get('embed_enabled'))
+                                ->disabled(fn (Get $get): bool => ! $get('embed_enabled'))
                                 ->nestedRecursiveRules(
                                     [
                                         'string',
@@ -116,8 +116,8 @@ trait HasSharedFormConfiguration
                     Toggle::make('should_generate_prospects')
                         ->label('Generate Prospects')
                         ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
-                        ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                        ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
+                        ->disabled(fn (): bool => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                        ->hintIcon(fn (): ?string => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
                     Toggle::make('allow_view_past_submissions')
                         ->label('Allow viewing past submissions')
                         ->helperText('If enabled, students and prospects can view their past submissions on this form.'),
@@ -127,7 +127,7 @@ trait HasSharedFormConfiguration
                     $this->fieldBuilder(),
                 ])
                 ->disabled(fn (?Application $record) => $record?->submissions()->exists())
-                ->hidden(fn (Get $get) => $get('is_wizard')),
+                ->hidden(fn (Get $get): mixed => $get('is_wizard')),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -146,7 +146,7 @@ trait HasSharedFormConfiguration
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                ->visible(fn (Get $get) => $get('is_wizard'))
+                ->visible(fn (Get $get): mixed => $get('is_wizard'))
                 ->disabled(fn (?Application $record) => $record?->submissions()->exists())
                 ->relationship()
                 ->saveRelationshipsUsing(static function (Repeater $component): void {
@@ -190,7 +190,7 @@ trait HasSharedFormConfiguration
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, Application | ApplicationStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, Application | ApplicationStep $record): void {
                 if ($component->isDisabled()) {
                     return;
                 }

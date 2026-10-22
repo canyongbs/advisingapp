@@ -41,7 +41,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-it('is labelled `Follow` for a record the user is not following', function () {
+it('is labelled `Follow` for a record the user is not following', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -51,7 +51,7 @@ it('is labelled `Follow` for a record the user is not following', function () {
     expect(SubscribeTableAction::make()->record($student)->getLabel())->toBe('Follow');
 });
 
-it('is labelled `Unfollow` for a record the user is following', function () {
+it('is labelled `Unfollow` for a record the user is following', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);

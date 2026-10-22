@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('resource_hub_article_votes', function (Blueprint $table) {
+        Schema::create('resource_hub_article_votes', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->boolean('is_helpful');
             // Voter can be a Student, whose primary key is a non-UUID `sisid`, so this can't use uuidMorphs.

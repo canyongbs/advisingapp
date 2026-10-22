@@ -74,7 +74,7 @@ class EditAiAssistant extends EditRecord
             Action::make('archive')
                 ->authorize(fn (): bool => auth()->user()->can('assistant_custom.*.delete'))
                 ->color('danger')
-                ->action(function () {
+                ->action(function (): void {
                     $assistant = $this->getRecord();
                     $assistant->archived_at = now();
                     $assistant->save();
@@ -87,7 +87,7 @@ class EditAiAssistant extends EditRecord
                 ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at),
             Action::make('restore')
                 ->authorize(fn (): bool => auth()->user()->can('assistant_custom.*.restore'))
-                ->action(function () {
+                ->action(function (): void {
                     $assistant = $this->getRecord();
                     $assistant->archived_at = null;
                     $assistant->save();

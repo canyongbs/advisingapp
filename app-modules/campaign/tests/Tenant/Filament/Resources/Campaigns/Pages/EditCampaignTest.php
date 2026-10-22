@@ -54,7 +54,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 use function Tests\asSuperAdmin;
 
-test('archive action is visible on edit page', function () {
+test('archive action is visible on edit page', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $campaign = Campaign::factory()->enabled()->create();
 
@@ -77,7 +77,7 @@ test('archive action is visible on edit page', function () {
         ->assertActionVisible('archive');
 });
 
-test('archive action shows disable and archive label for enabled campaigns', function () {
+test('archive action shows disable and archive label for enabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -86,7 +86,7 @@ test('archive action shows disable and archive label for enabled campaigns', fun
         ->assertActionHasLabel('archive', 'Disable and Archive');
 });
 
-test('archive action shows archive label for disabled campaigns', function () {
+test('archive action shows archive label for disabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();
@@ -95,7 +95,7 @@ test('archive action shows archive label for disabled campaigns', function () {
         ->assertActionHasLabel('archive', 'Archive');
 });
 
-test('archive action disables and archives enabled campaigns', function () {
+test('archive action disables and archives enabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -112,7 +112,7 @@ test('archive action disables and archives enabled campaigns', function () {
         ->and($campaign->isArchived())->toBeTrue();
 });
 
-test('archive action archives disabled campaigns', function () {
+test('archive action archives disabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();
@@ -129,7 +129,7 @@ test('archive action archives disabled campaigns', function () {
         ->and($campaign->isArchived())->toBeTrue();
 });
 
-test('archive action redirects to index after archiving', function () {
+test('archive action redirects to index after archiving', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -139,7 +139,7 @@ test('archive action redirects to index after archiving', function () {
         ->assertRedirect(ListCampaigns::getUrl());
 });
 
-test('population group select offers every group of the appropriate type once the All Groups ownership is inferred', function () {
+test('population group select offers every group of the appropriate type once the All Groups ownership is inferred', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.*.view');
@@ -156,7 +156,7 @@ test('population group select offers every group of the appropriate type once th
     Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($otherUsersGroup, $campaign) {
+            function (Select $field) use ($otherUsersGroup, $campaign): true {
                 expect($field->getOptions())
                     ->toHaveKey($otherUsersGroup->getKey())
                     ->toHaveKey($campaign->segment_id);
@@ -166,7 +166,7 @@ test('population group select offers every group of the appropriate type once th
         );
 });
 
-test('group ownership and population type are pre-selected to match a group the user owns', function () {
+test('group ownership and population type are pre-selected to match a group the user owns', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.*.view');
@@ -187,7 +187,7 @@ test('group ownership and population type are pre-selected to match a group the 
         ]);
 });
 
-test('group ownership is pre-selected to My Department\'s Groups when the group belongs to a department colleague', function () {
+test('group ownership is pre-selected to My Department\'s Groups when the group belongs to a department colleague', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->licensed(LicenseType::cases())->create(['team_id' => $department->id]);
@@ -211,7 +211,7 @@ test('group ownership is pre-selected to My Department\'s Groups when the group 
         ]);
 });
 
-test('group ownership is pre-selected to All Groups when the group is neither the user\'s own nor their department\'s', function () {
+test('group ownership is pre-selected to All Groups when the group is neither the user\'s own nor their department\'s', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.*.view');
@@ -230,7 +230,7 @@ test('group ownership is pre-selected to All Groups when the group is neither th
         ]);
 });
 
-test('population type cannot be changed when editing an existing campaign', function () {
+test('population type cannot be changed when editing an existing campaign', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -239,7 +239,7 @@ test('population type cannot be changed when editing an existing campaign', func
         ->assertFormFieldDisabled('population_type');
 });
 
-test('rejects a segment_id that does not match the campaign\'s original population type, even when population_type is tampered with via form state', function () {
+test('rejects a segment_id that does not match the campaign\'s original population type, even when population_type is tampered with via form state', function (): void {
     asSuperAdmin();
 
     $studentGroup = Group::factory()->student()->create();

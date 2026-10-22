@@ -98,7 +98,7 @@ class EditForm extends EditRecord
                 ->formId('form'),
             ArchiveAction::make(),
             $this->getCancelFormAction()
-                ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
+                ->url(fn (): string => FormResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 
@@ -110,7 +110,7 @@ class EditForm extends EditRecord
                 ->formId('form'),
             ArchiveAction::make(),
             $this->getCancelFormAction()
-                ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
+                ->url(fn (): string => FormResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 }

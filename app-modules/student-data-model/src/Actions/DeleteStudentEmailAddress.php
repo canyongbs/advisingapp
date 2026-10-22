@@ -43,7 +43,7 @@ class DeleteStudentEmailAddress
 {
     public function execute(StudentEmailAddress $studentEmailAddress): void
     {
-        DB::transaction(function () use ($studentEmailAddress) {
+        DB::transaction(function () use ($studentEmailAddress): void {
             if ($studentEmailAddress->student?->primaryEmailAddress()->is($studentEmailAddress)) {
                 $studentEmailAddress->student->primaryEmailAddress()->associate(
                     $studentEmailAddress->student->emailAddresses()->whereKeyNot($studentEmailAddress)->first(),

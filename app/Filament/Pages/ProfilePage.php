@@ -256,7 +256,7 @@ abstract class ProfilePage extends Page
             'friday',
             'saturday',
         ])->map(
-            fn ($day) => Flex::make([
+            fn ($day): Flex => Flex::make([
                 Toggle::make("{$key}.{$day}.enabled")
                     ->label(str($day)->ucfirst())
                     ->inline(false)
@@ -264,26 +264,26 @@ abstract class ProfilePage extends Page
                 Flex::make([
                     TimePicker::make("{$key}.{$day}.starts_at")
                         ->required()
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
+                        ->visible(fn (Get $get): mixed => $get("{$key}.{$day}.enabled")),
                     TimePicker::make("{$key}.{$day}.ends_at")
                         ->required()
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
+                        ->visible(fn (Get $get): mixed => $get("{$key}.{$day}.enabled")),
                 ]),
 
                 Actions::make([
                     Action::make("copy_time_from_{$day}_{$key}")
                         ->label('Copy to All')
-                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
+                        ->visible(fn (Get $get): mixed => $get("{$key}.{$day}.enabled"))
                         ->link()
                         ->color('blue')
                         ->extraAttributes(['class' => 'fi-action-copytime-link'])
-                        ->action(function (Get $get, Set $set) use ($day, $key) {
+                        ->action(function (Get $get, Set $set) use ($day, $key): void {
                             $start = $get("{$key}.{$day}.starts_at");
                             $end = $get("{$key}.{$day}.ends_at");
 
                             collect(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'])
-                                ->filter(fn ($targetDay) => $targetDay !== $day)
-                                ->each(function (string $targetDay) use ($get, $set, $key, $start, $end) {
+                                ->filter(fn ($targetDay): bool => $targetDay !== $day)
+                                ->each(function (string $targetDay) use ($get, $set, $key, $start, $end): void {
                                     if ($get("{$key}.{$targetDay}.enabled") === false) {
                                         return;
                                     }

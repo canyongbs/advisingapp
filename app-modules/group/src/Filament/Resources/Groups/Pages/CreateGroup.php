@@ -109,7 +109,7 @@ class CreateGroup extends CreateRecord implements HasTable
                         ->default(GroupModel::default())
                         ->selectablePlaceholder(false)
                         ->live()
-                        ->afterStateUpdated(function () {
+                        ->afterStateUpdated(function (): void {
                             $this->resetTable();
                         }),
                 ])
@@ -275,7 +275,7 @@ class CreateGroup extends CreateRecord implements HasTable
 
         Bus::batch($importJobs->all())
             ->allowFailures()
-            ->finally(function () use ($import) {
+            ->finally(function () use ($import): void {
                 if ($import->failed_at) {
                     return;
                 }
@@ -293,19 +293,19 @@ class CreateGroup extends CreateRecord implements HasTable
                     ->body($import->importer::getCompletedNotificationBody($import))
                     ->when(
                         ! $failedRowsCount,
-                        fn (Notification $notification) => $notification->success(),
+                        fn (Notification $notification): Notification => $notification->success(),
                     )
                     ->when(
                         $failedRowsCount && ($failedRowsCount < $import->total_rows),
-                        fn (Notification $notification) => $notification->warning(),
+                        fn (Notification $notification): Notification => $notification->warning(),
                     )
                     ->when(
                         $failedRowsCount === $import->total_rows,
-                        fn (Notification $notification) => $notification->danger(),
+                        fn (Notification $notification): Notification => $notification->danger(),
                     )
                     ->when(
                         $failedRowsCount,
-                        fn (Notification $notification) => $notification->actions([
+                        fn (Notification $notification): Notification => $notification->actions([
                             Action::make('downloadFailedRowsCsv')
                                 ->label('Download information about the failed ' . Str::plural('row', $failedRowsCount))
                                 ->color('danger')
@@ -371,7 +371,7 @@ class CreateGroup extends CreateRecord implements HasTable
                     }
                 }
 
-                return response()->streamDownload(function () use ($csv) {
+                return response()->streamDownload(function () use ($csv): void {
                     echo $csv->toString();
                 }, $filename, ['Content-Type' => 'text/csv']);
             });

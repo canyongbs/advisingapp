@@ -52,7 +52,7 @@ $licenses = [
     LicenseType::RecruitmentCrm,
 ];
 
-it('cannot render without a license', function () {
+it('cannot render without a license', function (): void {
     $user = user();
 
     actingAs($user);
@@ -66,7 +66,7 @@ it('cannot render without a license', function () {
         ->assertForbidden();
 });
 
-it('cannot render without report access', function () use ($licenses) {
+it('cannot render without report access', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses
     ));
@@ -75,7 +75,7 @@ it('cannot render without report access', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses) {
+it('can render', function () use ($licenses): void {
     $user = user(
         licenses: $licenses
     );
@@ -91,7 +91,7 @@ it('can render', function () use ($licenses) {
         ->assertSuccessful();
 });
 
-it('Check total interactions', function () {
+it('Check total interactions', function (): void {
     $interactionCount = rand(1, 10);
     $prospectInteractionStats = new ProspectInteractionStats();
     $prospectInteractionStats->cacheTag = 'report-prospect-interaction';
@@ -105,7 +105,7 @@ it('Check total interactions', function () {
     expect($totalProspectInteractionsStat->getValue())->toEqual($interactionCount);
 });
 
-it('Check unique prospects with interactions', function () {
+it('Check unique prospects with interactions', function (): void {
     $interactionCount = rand(1, 10);
     $prospectInteractionStats = new ProspectInteractionStats();
     $prospectInteractionStats->cacheTag = 'report-prospect-interaction';
@@ -120,7 +120,7 @@ it('Check unique prospects with interactions', function () {
     expect($totaluniqueProspectInteractionsStat->getValue())->toEqual($interactionCount);
 });
 
-it('returns correct total and unique prospect interaction counts within the given date range', function () {
+it('returns correct total and unique prospect interaction counts within the given date range', function (): void {
     $prospectsWithStartDateInteractions = random_int(1, 10);
     $prospectsWithEndDateInteractions = random_int(1, 10);
     $interactionStartDate = now()->subDays(10);
@@ -169,7 +169,7 @@ it('returns correct total and unique prospect interaction counts within the give
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
 });
-it('returns correct total and unique prospect interaction counts based on group filter', function () {
+it('returns correct total and unique prospect interaction counts based on group filter', function (): void {
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 

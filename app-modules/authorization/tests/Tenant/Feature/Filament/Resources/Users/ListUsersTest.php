@@ -55,7 +55,7 @@ use STS\FilamentImpersonate\Actions\Impersonate;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-it('renders impersonate button for non super admin users when user is super admin', function () {
+it('renders impersonate button for non super admin users when user is super admin', function (): void {
     asSuperAdmin();
 
     $user = User::factory()->create();
@@ -68,7 +68,7 @@ it('renders impersonate button for non super admin users when user is super admi
         ->assertTableActionVisible(Impersonate::class, $user);
 });
 
-it('does not render impersonate button for super admin users when user is not super admin', function () {
+it('does not render impersonate button for super admin users when user is not super admin', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -86,7 +86,7 @@ it('does not render impersonate button for super admin users when user is not su
         ->assertCanNotSeeTableRecords([$superAdmin]);
 });
 
-it('does not render impersonate button for super admin users at all', function () {
+it('does not render impersonate button for super admin users at all', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -101,7 +101,7 @@ it('does not render impersonate button for super admin users at all', function (
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 
-it('does not render impersonate button for super admin users even if user is also a Super Admin', function () {
+it('does not render impersonate button for super admin users even if user is also a Super Admin', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -120,7 +120,7 @@ it('does not render impersonate button for super admin users even if user is als
         ->assertTableActionHidden(Impersonate::class, $superAdmin);
 });
 
-it('allows super admin user to impersonate', function () {
+it('allows super admin user to impersonate', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -137,7 +137,7 @@ it('allows super admin user to impersonate', function () {
         ->and(auth()->id())->toBe($user->id);
 });
 
-it('allows a user to leave impersonate', function () {
+it('allows a user to leave impersonate', function (): void {
     $first = User::factory()->create();
     asSuperAdmin($first);
 
@@ -154,7 +154,7 @@ it('allows a user to leave impersonate', function () {
         ->and(auth()->id())->toBe($first->id);
 });
 
-it('hides the bulk delete action from a user without the delete permission', function () {
+it('hides the bulk delete action from a user without the delete permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('user.view-any');
     actingAs($user);
@@ -166,7 +166,7 @@ it('hides the bulk delete action from a user without the delete permission', fun
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the bulk delete action to a user with the delete permission', function () {
+it('shows the bulk delete action to a user with the delete permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('user.view-any', 'user.*.delete');
     actingAs($user);
@@ -178,7 +178,7 @@ it('shows the bulk delete action to a user with the delete permission', function
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('hides the bulk restore action from a user without the restore permission', function () {
+it('hides the bulk restore action from a user without the restore permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('user.view-any');
     actingAs($user);
@@ -190,7 +190,7 @@ it('hides the bulk restore action from a user without the restore permission', f
         ->assertTableBulkActionHidden(RestoreBulkAction::class);
 });
 
-it('shows the bulk restore action to a user with the restore permission', function () {
+it('shows the bulk restore action to a user with the restore permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('user.view-any', 'user.*.restore');
     actingAs($user);
@@ -203,7 +203,7 @@ it('shows the bulk restore action to a user with the restore permission', functi
         ->assertTableBulkActionVisible(RestoreBulkAction::class);
 });
 
-it('does not allow a user without permission to assign licenses in bulk', function () {
+it('does not allow a user without permission to assign licenses in bulk', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo([
         'user.view-any',
@@ -224,7 +224,7 @@ it('does not allow a user without permission to assign licenses in bulk', functi
         ->assertTableBulkActionHidden(AssignLicensesBulkAction::class);
 });
 
-it('allows a user with permission to assign licenses in bulk', function () {
+it('allows a user with permission to assign licenses in bulk', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo([
         'user.view-any',
@@ -248,8 +248,8 @@ it('allows a user with permission to assign licenses in bulk', function () {
 
     $licenseTypes = collect(LicenseType::cases());
 
-    $records->each(function (User $record) use ($licenseTypes) {
-        $licenseTypes->each(fn ($license) => assertFalse($record->hasLicense($license)));
+    $records->each(function (User $record) use ($licenseTypes): void {
+        $licenseTypes->each(fn (\AdvisingApp\Authorization\Enums\LicenseType|string|array|null $license) => assertFalse($record->hasLicense($license)));
     });
 
     Livewire::test(ListUsers::class)
@@ -257,18 +257,18 @@ it('allows a user with permission to assign licenses in bulk', function () {
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => true,
-            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => true]),
         ])
         ->assertHasNoTableBulkActionErrors()
         ->assertNotified('Assigned Licenses');
 
-    $records->each(function (User $record) use ($licenseTypes) {
+    $records->each(function (User $record) use ($licenseTypes): void {
         $record->refresh();
         $licenseTypes->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
     });
 });
 
-it('can filter users by multiple departments', function () {
+it('can filter users by multiple departments', function (): void {
     asSuperAdmin();
 
     $adminDepartment = Department::factory()->create();
@@ -277,7 +277,7 @@ it('can filter users by multiple departments', function () {
         ->count(3)
         ->create();
 
-    $adminDepartmentGroup->each(function (User $user) use ($adminDepartment) {
+    $adminDepartmentGroup->each(function (User $user) use ($adminDepartment): void {
         $user->department()->associate($adminDepartment)->save();
     });
 
@@ -287,7 +287,7 @@ it('can filter users by multiple departments', function () {
         ->count(3)
         ->create();
 
-    $modsDepartmentGroup->each(function (User $user) use ($modDepartment) {
+    $modsDepartmentGroup->each(function (User $user) use ($modDepartment): void {
         $user->department()->associate($modDepartment)->save();
     });
 
@@ -297,7 +297,7 @@ it('can filter users by multiple departments', function () {
         ->count(3)
         ->create();
 
-    $supportDepartmentGroup->each(function (User $user) use ($supportDepartment) {
+    $supportDepartmentGroup->each(function (User $user) use ($supportDepartment): void {
         $user->department()->associate($supportDepartment)->save();
     });
 
@@ -311,7 +311,7 @@ it('can filter users by multiple departments', function () {
         ->assertCanNotSeeTableRecords($supportDepartmentGroup);
 });
 
-it('it filters users based on department', function () {
+it('it filters users based on department', function (): void {
     asSuperAdmin();
 
     $departmentA = Department::factory()->create(['name' => 'Department A']);
@@ -321,7 +321,7 @@ it('it filters users based on department', function () {
         ->count(3)
         ->create();
 
-    $userInDepartmentA->each(function (User $user) use ($departmentA) {
+    $userInDepartmentA->each(function (User $user) use ($departmentA): void {
         $user->department()->associate($departmentA)->save();
     });
 
@@ -329,7 +329,7 @@ it('it filters users based on department', function () {
         ->count(3)
         ->create();
 
-    $userInDepartmentB->each(function (User $user) use ($departmentB) {
+    $userInDepartmentB->each(function (User $user) use ($departmentB): void {
         $user->department()->associate($departmentB)->save();
     });
 
@@ -361,7 +361,7 @@ it('it filters users based on department', function () {
         );
 });
 
-it('filters users based on roles', function () {
+it('filters users based on roles', function (): void {
     asSuperAdmin();
 
     $roleA = Role::factory()->create(['name' => 'Role A']);
@@ -371,21 +371,21 @@ it('filters users based on roles', function () {
     $usersInRoleA = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) use ($roleA) {
+        ->each(function (User $user) use ($roleA): void {
             $user->assignRole($roleA);
         });
 
     $usersInRoleB = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) use ($roleB) {
+        ->each(function (User $user) use ($roleB): void {
             $user->assignRole($roleB);
         });
 
     $usersInRoleC = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) use ($roleC) {
+        ->each(function (User $user) use ($roleC): void {
             $user->assignRole($roleC);
         });
 
@@ -423,27 +423,27 @@ it('filters users based on roles', function () {
         );
 });
 
-it('Filter users based on licenses', function () {
+it('Filter users based on licenses', function (): void {
     asSuperAdmin();
 
     $usersWithRetentionCrmLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) {
+        ->each(function (User $user): void {
             $user->grantLicense(LicenseType::RetentionCrm);
         });
 
     $usersWithRecruitmentCrmLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) {
+        ->each(function (User $user): void {
             $user->grantLicense(LicenseType::RecruitmentCrm);
         });
 
     $usersWithConversationalAiLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function (User $user) {
+        ->each(function (User $user): void {
             $user->grantLicense(LicenseType::ConversationalAi);
         });
     $usersWithoutLicense = User::factory()
@@ -465,7 +465,7 @@ it('Filter users based on licenses', function () {
         ->assertCanNotSeeTableRecords($usersWithRetentionCrmLicense->merge($usersWithRecruitmentCrmLicense)->merge($usersWithConversationalAiLicense));
 });
 
-it('Filter users based on Created After', function () {
+it('Filter users based on Created After', function (): void {
     asSuperAdmin();
 
     $createdAfterUsers = User::factory()
@@ -497,8 +497,8 @@ it('Filter users based on Created After', function () {
         ->assertCanNotSeeTableRecords($createdBeforeUsers);
 });
 
-describe('enterprise ai', function () {
-    it('hides the `ConversationalAi` license column while Enterprise AI is disabled', function () {
+describe('enterprise ai', function (): void {
+    it('hides the `ConversationalAi` license column while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         Livewire::test(ListUsers::class)
@@ -511,7 +511,7 @@ describe('enterprise ai', function () {
             ->assertTableColumnVisible(LicenseType::RetentionCrm->value . '_enabled');
     });
 
-    it('excludes the `ConversationalAi` license from the license filter while Enterprise AI is disabled', function () {
+    it('excludes the `ConversationalAi` license from the license filter while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $licenseFilterOptions = fn (): array => Livewire::test(ListUsers::class)
@@ -528,7 +528,7 @@ describe('enterprise ai', function () {
             ->toHaveKeys([LicenseType::RetentionCrm->value, LicenseType::RecruitmentCrm->value]);
     });
 
-    it('treats users with only a `ConversationalAi` license as having no assigned license while Enterprise AI is disabled', function () {
+    it('treats users with only a `ConversationalAi` license as having no assigned license while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -548,7 +548,7 @@ describe('enterprise ai', function () {
             ->assertCanNotSeeTableRecords([$retentionUser]);
     });
 
-    it('does not filter by the `ConversationalAi` license while Enterprise AI is disabled', function () {
+    it('does not filter by the `ConversationalAi` license while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();

@@ -56,14 +56,14 @@ use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-$registerAdvisorRoutes = function () {
+$registerAdvisorRoutes = function (): void {
     Route::prefix('api/{advisor}')
         ->name('api.')
         ->middleware([
             EnsureCustomerAdvisorEmbedIsEnabled::class,
             EnsureCustomerAdvisorRequestComingFromAuthorizedDomain::class,
         ])
-        ->group(function () {
+        ->group(function (): void {
             Route::get('/', CustomerAdvisorResourcesController::class)
                 ->name('assets');
 

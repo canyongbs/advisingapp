@@ -38,7 +38,7 @@ use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
 use App\Models\User;
 use Livewire\Livewire;
 
-it('can filter users based they have ever logged in or not', function () {
+it('can filter users based they have ever logged in or not', function (): void {
     $loggedUsers = User::factory()->count(3)->create([
         'first_login_at' => now()->subDays(1),
     ]);
@@ -56,7 +56,7 @@ it('can filter users based they have ever logged in or not', function () {
         ->assertCanNotSeeTableRecords($loggedUsers);
 });
 
-it('can filter users to get users who first logged in between selected dates', function () {
+it('can filter users to get users who first logged in between selected dates', function (): void {
     $lastDayUsers = User::factory(2)->create([
         'first_login_at' => now()->subDays(1),
     ]);
@@ -80,7 +80,7 @@ it('can filter users to get users who first logged in between selected dates', f
         ->assertCanNotSeeTableRecords($lastDayUsers);
 });
 
-it('can filter users to get users who last logged in between selected dates', function () {
+it('can filter users to get users who last logged in between selected dates', function (): void {
     $lastDayUsers = User::factory(2)->create([
         'last_logged_in_at' => now()->subDays(1),
     ]);

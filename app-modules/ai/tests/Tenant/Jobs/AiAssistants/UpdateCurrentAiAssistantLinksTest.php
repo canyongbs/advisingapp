@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\AiAssistantLink;
 use App\Features\AiAssistantKeepCurrentFeature;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches FetchAiAssistantLinkParsingResults only for current links', function () {
+it('dispatches FetchAiAssistantLinkParsingResults only for current links', function (): void {
     Queue::fake();
 
     $currentLink = AiAssistantLink::factory()->create([
@@ -53,18 +53,18 @@ it('dispatches FetchAiAssistantLinkParsingResults only for current links', funct
 
     (new UpdateCurrentAiAssistantLinks())->handle();
 
-    Queue::assertPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($currentLink) {
+    Queue::assertPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($currentLink): bool {
         return $job->uniqueId() === $currentLink->id
             && $job->refreshesExistingParsingResults();
     });
 
-    Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($nonCurrentLink) {
+    Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($nonCurrentLink): bool {
         return $job->uniqueId() === $nonCurrentLink->id;
     });
 });
 
 //To Do: AiAssistantKeepCurrentFeature - Remove this test while feature flag cleanup
-it('does nothing while the feature is inactive', function () {
+it('does nothing while the feature is inactive', function (): void {
     AiAssistantKeepCurrentFeature::deactivate();
 
     Queue::fake();

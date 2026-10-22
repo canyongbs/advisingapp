@@ -40,12 +40,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
     getJson(route('api.v1.students.index', [], false))
@@ -58,7 +58,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a paginated list of students', function () {
+it('returns a paginated list of students', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -75,7 +75,7 @@ it('returns a paginated list of students', function () {
         ->toHaveCount(3);
 });
 
-it('can filter students by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue) {
+it('can filter students by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -134,7 +134,7 @@ dataset('sorts', [
     '`holds`' => ['holds', ['holds' => '1'], ['holds' => '2'], 'holds', '1', '2'],
 ]);
 
-it('can sort students by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort students by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -151,7 +151,7 @@ it('can sort students by all attributes ascending', function (string $requestKey
         ->toBe($responseSecondValue);
 })->with('sorts');
 
-it('can sort students by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort students by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -168,7 +168,7 @@ it('can sort students by all attributes descending', function (string $requestKe
         ->toBe($responseFirstValue);
 })->with('sorts');
 
-it('can include related student relationships', function (string $relationship, string $responseKey) {
+it('can include related student relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -196,7 +196,7 @@ it('can include related student relationships', function (string $relationship, 
     '`mostRecentEnrollmentTerm`' => ['most_recent_enrollment_term', 'most_recent_enrollment_term'],
 ]);
 
-it('does not list archived students', function () {
+it('does not list archived students', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('student.view-any');
     Sanctum::actingAs($user, ['api']);

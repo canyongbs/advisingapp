@@ -43,7 +43,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailStats;
 
-it('returns correct counts of emails and SMS sent/received with no filters', function () {
+it('returns correct counts of emails and SMS sent/received with no filters', function (): void {
     $prospectOne = Prospect::factory()->create();
     $prospectTwo = Prospect::factory()->create();
 
@@ -92,7 +92,7 @@ it('returns correct counts of emails and SMS sent/received with no filters', fun
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received within the given date range', function () {
+it('returns correct counts of emails and SMS sent/received within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -151,7 +151,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received based on group filters', function () {
+it('returns correct counts of emails and SMS sent/received based on group filters', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [

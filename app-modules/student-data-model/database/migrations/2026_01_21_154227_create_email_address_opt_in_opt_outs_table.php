@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('email_address_opt_in_opt_outs', function (Blueprint $table) {
+        Schema::create('email_address_opt_in_opt_outs', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('address');
             $table->string('status');

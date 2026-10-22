@@ -44,9 +44,9 @@ use Illuminate\Support\ServiceProvider;
 
 class TeamServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TeamPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new TeamPlugin()) instanceof Panel);
     }
 
     public function boot(): void

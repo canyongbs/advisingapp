@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use App\Enums\Feature;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\SelectFilter;
@@ -76,7 +77,7 @@ class StudentsActionCenterWidget extends TableWidget
                         'studentAlerts as alerts_count' => fn (Builder $query): Builder => $query->selectRaw('COUNT(DISTINCT alert_configuration_id)'),
                     ])
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                     );
 

@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Hash;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('redirects if password not set', function () {
+it('redirects if password not set', function (): void {
     $user = User::factory()->create([
         'password' => null,
     ]);
@@ -52,7 +52,7 @@ it('redirects if password not set', function () {
         ->assertRedirect(route('filament.admin.auth.set-password'));
 });
 
-it('does not redirect if user is external', function () {
+it('does not redirect if user is external', function (): void {
     $user = User::factory()->external()->create([
         'password' => null,
     ]);
@@ -63,7 +63,7 @@ it('does not redirect if user is external', function () {
         ->assertOk();
 });
 
-it('does not redirect if password set', function () {
+it('does not redirect if password set', function (): void {
     $user = User::factory()->create([
         'password' => Hash::make('password'),
     ]);

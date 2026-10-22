@@ -62,13 +62,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function PHPUnit\Framework\assertCount;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();
 });
 
-test('creating an employee advisor question is gated with proper access control', function () {
+test('creating an employee advisor question is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -98,7 +98,7 @@ test('creating an employee advisor question is gated with proper access control'
         )->assertSuccessful();
 });
 
-test('can create an employee advisor question', function () {
+test('can create an employee advisor question', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -129,7 +129,7 @@ test('can create an employee advisor question', function () {
     );
 });
 
-test('can create multiple employee advisor questions at once', function () {
+test('can create multiple employee advisor questions at once', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -159,7 +159,7 @@ test('can create multiple employee advisor questions at once', function () {
     assertDatabaseHas(EmployeeAdvisorQuestion::class, $secondQuestion->toArray());
 });
 
-test('creating an employee advisor question validates the inputs', function (EmployeeAdvisorQuestionRequestFactory $data, array $errors) {
+test('creating an employee advisor question validates the inputs', function (EmployeeAdvisorQuestionRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -178,7 +178,7 @@ test('creating an employee advisor question validates the inputs', function (Emp
 
     Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['questions' => [$questionData->toArray()]])
-        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["questions.0.{$field}" => $rule])->toArray());
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field): array => ["questions.0.{$field}" => $rule])->toArray());
 
     $undoRepeaterFake();
 
@@ -215,7 +215,7 @@ test('creating an employee advisor question validates the inputs', function (Emp
     ]
 );
 
-test('can edit an employee advisor question', function () {
+test('can edit an employee advisor question', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -246,7 +246,7 @@ test('can edit an employee advisor question', function () {
     );
 });
 
-test('editing an employee advisor question validates the inputs', function (EmployeeAdvisorQuestionRequestFactory $data, array $errors) {
+test('editing an employee advisor question validates the inputs', function (EmployeeAdvisorQuestionRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -300,8 +300,8 @@ test('editing an employee advisor question validates the inputs', function (Empl
         ]
     );
 
-describe('export', function () {
-    it('exports employee advisor questions as scoped csv content with category name', function () {
+describe('export', function (): void {
+    it('exports employee advisor questions as scoped csv content with category name', function (): void {
         Storage::fake('s3');
 
         config()->set('filament.default_filesystem_disk', 's3');
@@ -360,8 +360,8 @@ describe('export', function () {
     });
 });
 
-describe('import', function () {
-    it('imports employee advisor questions scoped to the selected assistant with case-insensitive category matching', function () {
+describe('import', function (): void {
+    it('imports employee advisor questions scoped to the selected assistant with case-insensitive category matching', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -416,7 +416,7 @@ describe('import', function () {
         ]);
     });
 
-    it('imports employee advisor questions through the `ImportAction` using the assistant scoped to the page', function () {
+    it('imports employee advisor questions through the `ImportAction` using the assistant scoped to the page', function (): void {
         config()->set('queue.default', 'sync');
 
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -454,7 +454,7 @@ describe('import', function () {
         ]);
     });
 
-    it('fails employee advisor question import cleanly when category does not exist', function () {
+    it('fails employee advisor question import cleanly when category does not exist', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -486,7 +486,7 @@ describe('import', function () {
         ]))->toThrow(RowImportFailedException::class);
     });
 
-    it('validates required fields during employee advisor question import', function () {
+    it('validates required fields during employee advisor question import', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -536,8 +536,8 @@ describe('import', function () {
     });
 });
 
-describe('authorization', function () {
-    it('shows the `ImportAction` and `ExportAction` to a user with the `assistant_custom.create` permission', function () {
+describe('authorization', function (): void {
+    it('shows the `ImportAction` and `ExportAction` to a user with the `assistant_custom.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
 
@@ -550,7 +550,7 @@ describe('authorization', function () {
             ->assertActionVisible(TestAction::make(ImportAction::class)->table());
     });
 
-    it('hides the `ImportAction` from a user without the `assistant_custom.create` permission', function () {
+    it('hides the `ImportAction` from a user without the `assistant_custom.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
 

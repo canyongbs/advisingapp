@@ -74,7 +74,7 @@ class CreateTenant
         ])
             ->name("deploy-tenant-{$tenant->getKey()}-{$domain}")
             ->onQueue(config('queue.landlord_queue'))
-            ->then(function () use ($tenant) {
+            ->then(function () use ($tenant): void {
                 $tenant->update(['setup_complete' => true]);
                 Event::dispatch(new NewTenantSetupComplete($tenant));
             })

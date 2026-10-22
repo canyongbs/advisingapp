@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('event_attendees_entities', function (Blueprint $table) {
+        Schema::create('event_attendees_entities', function (Blueprint $table): void {
             $table->string('entity_id');
             $table->string('entity_type');
             $table->foreignUuid('event_attendee_id')->constrained('event_attendees')->cascadeOnDelete();

@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('can bulk assign tags to students without remove the prior tags', function () {
+it('can bulk assign tags to students without remove the prior tags', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -56,7 +56,7 @@ it('can bulk assign tags to students without remove the prior tags', function ()
 
     $students = Student::factory()->hasAttached($tag)->count(5)->create();
 
-    $students->each(function (Student $student) use ($tag) {
+    $students->each(function (Student $student) use ($tag): void {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 
@@ -69,13 +69,13 @@ it('can bulk assign tags to students without remove the prior tags', function ()
         ])
         ->assertSuccessful();
 
-    $students->each(function (Student $student) use ($tag, $newTag) {
+    $students->each(function (Student $student) use ($tag, $newTag): void {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
         expect($student->tags()->where('tag_id', $newTag->getKey())->exists())->toBeTrue();
     });
 });
 
-it('can bulk assign tags to students and remove the prior tags', function () {
+it('can bulk assign tags to students and remove the prior tags', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -88,7 +88,7 @@ it('can bulk assign tags to students and remove the prior tags', function () {
 
     $students = Student::factory()->hasAttached($tag)->count(5)->create();
 
-    $students->each(function (Student $student) use ($tag) {
+    $students->each(function (Student $student) use ($tag): void {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 
@@ -101,7 +101,7 @@ it('can bulk assign tags to students and remove the prior tags', function () {
         ])
         ->assertSuccessful();
 
-    $students->each(function (Student $student) use ($tag, $newTag) {
+    $students->each(function (Student $student) use ($tag, $newTag): void {
         expect($student->tags()->where('tag_id', $tag->getKey())->exists())->toBeFalse();
         expect($student->tags()->where('tag_id', $newTag->getKey())->exists())->toBeTrue();
     });

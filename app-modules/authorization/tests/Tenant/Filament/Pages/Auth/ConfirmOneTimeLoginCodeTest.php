@@ -50,12 +50,12 @@ $startOneTimeLoginFor = function (User $user): void {
     ]);
 };
 
-it('redirects to the login page when no login is in progress', function () {
+it('redirects to the login page when no login is in progress', function (): void {
     Livewire::test(ConfirmOneTimeLoginCode::class)
         ->assertRedirect(route('filament.admin.auth.login'));
 });
 
-it('renders when a login is in progress', function () use ($startOneTimeLoginFor) {
+it('renders when a login is in progress', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $startOneTimeLoginFor($user);
@@ -65,7 +65,7 @@ it('renders when a login is in progress', function () use ($startOneTimeLoginFor
         ->assertNoRedirect();
 });
 
-it('authenticates an internal user with a valid code and sends them to set a password', function () use ($startOneTimeLoginFor) {
+it('authenticates an internal user with a valid code and sends them to set a password', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -83,7 +83,7 @@ it('authenticates an internal user with a valid code and sends them to set a pas
     assertAuthenticatedAs($user);
 });
 
-it('lands an external user on the home page', function () use ($startOneTimeLoginFor) {
+it('lands an external user on the home page', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->external()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addHour());
@@ -98,7 +98,7 @@ it('lands an external user on the home page', function () use ($startOneTimeLogi
     assertAuthenticatedAs($user);
 });
 
-it('soft deletes the code once it has been used so it cannot be reused', function () use ($startOneTimeLoginFor) {
+it('soft deletes the code once it has been used so it cannot be reused', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -115,7 +115,7 @@ it('soft deletes the code once it has been used so it cannot be reused', functio
         ->and(OneTimeLoginCode::withTrashed()->firstOrFail()->trashed())->toBeTrue();
 });
 
-it('does not authenticate when the code has already been used', function () use ($startOneTimeLoginFor) {
+it('does not authenticate when the code has already been used', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -133,7 +133,7 @@ it('does not authenticate when the code has already been used', function () use 
     assertGuest();
 });
 
-it('does not authenticate with an expired code', function () use ($startOneTimeLoginFor) {
+it('does not authenticate with an expired code', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->subMinute());
@@ -149,7 +149,7 @@ it('does not authenticate with an expired code', function () use ($startOneTimeL
     assertGuest();
 });
 
-it('does not authenticate with an incorrect code', function () use ($startOneTimeLoginFor) {
+it('does not authenticate with an incorrect code', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -169,7 +169,7 @@ it('does not authenticate with an incorrect code', function () use ($startOneTim
     expect(OneTimeLoginCode::count())->toBe(1);
 });
 
-it('does not consume a code belonging to another user', function () use ($startOneTimeLoginFor) {
+it('does not consume a code belonging to another user', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
     $otherUser = User::factory()->create(['password' => null]);
 
@@ -188,7 +188,7 @@ it('does not consume a code belonging to another user', function () use ($startO
     expect(OneTimeLoginCode::count())->toBe(1);
 });
 
-it('forgets the login session data after authenticating', function () use ($startOneTimeLoginFor) {
+it('forgets the login session data after authenticating', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -203,7 +203,7 @@ it('forgets the login session data after authenticating', function () use ($star
     expect(session()->has(ConfirmOneTimeLoginCode::SESSION_KEY))->toBeFalse();
 });
 
-it('validates the code', function (?string $code, array $errors) use ($startOneTimeLoginFor) {
+it('validates the code', function (?string $code, array $errors) use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     $startOneTimeLoginFor($user);
@@ -216,12 +216,12 @@ it('validates the code', function (?string $code, array $errors) use ($startOneT
 
     assertGuest();
 })->with([
-    'code required' => fn () => [null, ['code' => 'required']],
-    'code numeric' => fn () => ['abcdef', ['code']],
-    'code length' => fn () => ['123', ['code']],
+    'code required' => fn (): array => [null, ['code' => 'required']],
+    'code numeric' => fn (): array => ['abcdef', ['code']],
+    'code length' => fn (): array => ['123', ['code']],
 ]);
 
-it('rate limits repeated attempts', function () use ($startOneTimeLoginFor) {
+it('rate limits repeated attempts', function () use ($startOneTimeLoginFor): void {
     $user = User::factory()->create(['password' => null]);
 
     app(GenerateOneTimeLoginCode::class)($user, now()->addDay());

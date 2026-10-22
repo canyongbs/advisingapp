@@ -66,7 +66,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         return collect($service->calendarList->listCalendarList()
             ->getItems())
-            ->filter(fn (CalendarListEntry $item) => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
+            ->filter(fn (CalendarListEntry $item): bool => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
             ->pluck('summary', 'id')
             ->sortBy('summary')
             ->toArray();
@@ -173,7 +173,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         $events
             ->each(
-                function (Event $event) use ($calendar, $existingEvents) {
+                function (Event $event) use ($calendar, $existingEvents): void {
                     $data = [
                         'title' => filled($event->summary) ? $event->summary : '(No Subject)',
                         'description' => $event->description,
@@ -206,7 +206,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         $calendar->events()
             ->whereNull('provider_id')
-            ->each(fn ($event) => $this->createEvent($event));
+            ->each(fn (CalendarEvent $event) => $this->createEvent($event));
 
         // Only delete orphaned events within the synced date range
         $calendar->events()
@@ -320,7 +320,7 @@ class GoogleCalendarManager implements CalendarInterface
         $attendees = collect($event->attendees)
             // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
             ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
-            ->map(function (string $email) {
+            ->map(function (string $email): EventAttendee {
                 $attendee = new EventAttendee();
                 $attendee->setEmail($email);
 

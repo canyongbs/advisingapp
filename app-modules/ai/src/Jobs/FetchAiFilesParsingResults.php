@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Foundation\Queue\Queueable;
 
 class FetchAiFilesParsingResults implements ShouldQueue
@@ -56,21 +57,21 @@ class FetchAiFilesParsingResults implements ShouldQueue
         AiAssistantFile::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file) => dispatch(new FetchAiAssistantFileParsingResults($file)));
+            ->eachById(fn (AiAssistantFile $file): PendingDispatch => dispatch(new FetchAiAssistantFileParsingResults($file)));
 
         CustomerAdvisorFile::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (CustomerAdvisorFile $file) => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
+            ->eachById(fn (CustomerAdvisorFile $file): PendingDispatch => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
 
         CustomerAdvisorLink::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (CustomerAdvisorLink $link) => dispatch(new FetchCustomerAdvisorLinkParsingResults($link)));
+            ->eachById(fn (CustomerAdvisorLink $link): PendingDispatch => dispatch(new FetchCustomerAdvisorLinkParsingResults($link)));
 
         AiAssistantLink::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantLink $link) => dispatch(new FetchAiAssistantLinkParsingResults($link)));
+            ->eachById(fn (AiAssistantLink $link): PendingDispatch => dispatch(new FetchAiAssistantLinkParsingResults($link)));
     }
 }

@@ -43,7 +43,7 @@ class CreateProspectSourcesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('prospect_sources', function (Blueprint $table) {
+        Schema::create('prospect_sources', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name');

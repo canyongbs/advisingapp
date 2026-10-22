@@ -41,7 +41,7 @@ use App\Settings\LicenseSettings;
 
 use function PHPUnit\Framework\assertEquals;
 
-test('Users are counted in the available seats', function (LicenseType $licenseType) {
+test('Users are counted in the available seats', function (LicenseType $licenseType): void {
     $licenseSettings = app(LicenseSettings::class);
 
     $totalSeats = rand(1, 200);
@@ -65,7 +65,7 @@ test('Users are counted in the available seats', function (LicenseType $licenseT
         LicenseType::RecruitmentCrm,
     ]);
 
-test('Users with a Super Admin role are not counted in the available seats', function (LicenseType $licenseType) {
+test('Users with a Super Admin role are not counted in the available seats', function (LicenseType $licenseType): void {
     $licenseSettings = app(LicenseSettings::class);
 
     $totalSeats = rand(1, 200);
@@ -90,7 +90,7 @@ test('Users with a Super Admin role are not counted in the available seats', fun
         LicenseType::RecruitmentCrm,
     ]);
 
-it('treats the `ConversationalAi` license type as having no seats while Enterprise AI is disabled', function () {
+it('treats the `ConversationalAi` license type as having no seats while Enterprise AI is disabled', function (): void {
     $licenseSettings = app(LicenseSettings::class);
     $licenseSettings->data->limits->conversationalAiSeats = 10;
     $licenseSettings->save();
@@ -109,7 +109,7 @@ it('treats the `ConversationalAi` license type as having no seats while Enterpri
         ->and(LicenseType::ConversationalAi->hasAvailableLicenses())->toBeFalse();
 });
 
-it('excludes the `ConversationalAi` license type from the enabled cases while Enterprise AI is disabled', function () {
+it('excludes the `ConversationalAi` license type from the enabled cases while Enterprise AI is disabled', function (): void {
     expect(LicenseType::enabledCases())->toBe(LicenseType::cases());
 
     $licenseSettings = app(LicenseSettings::class);
@@ -119,7 +119,7 @@ it('excludes the `ConversationalAi` license type from the enabled cases while En
     expect(LicenseType::enabledCases())->toBe([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 });
 
-it('does not disable CRM license types while Enterprise AI is disabled', function (LicenseType $licenseType) {
+it('does not disable CRM license types while Enterprise AI is disabled', function (LicenseType $licenseType): void {
     $licenseSettings = app(LicenseSettings::class);
     $licenseSettings->data->limits->retentionCrmSeats = 10;
     $licenseSettings->data->limits->recruitmentCrmSeats = 10;

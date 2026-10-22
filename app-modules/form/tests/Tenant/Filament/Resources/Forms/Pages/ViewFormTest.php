@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('archive action is always visible and labeled Archive', function () {
+it('archive action is always visible and labeled Archive', function (): void {
     asSuperAdmin();
 
     $formWithSubmissions = Form::factory()->create();
@@ -64,7 +64,7 @@ it('archive action is always visible and labeled Archive', function () {
         ->assertActionHasLabel('archive', 'Archive');
 });
 
-it('archive action archives the form and redirects to the index when the form has submissions', function () {
+it('archive action archives the form and redirects to the index when the form has submissions', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -81,7 +81,7 @@ it('archive action archives the form and redirects to the index when the form ha
     expect($form->fresh()->isArchived())->toBeTrue();
 });
 
-it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function () {
+it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();

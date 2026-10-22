@@ -43,7 +43,7 @@ use Illuminate\Http\Request;
 use function Tests\loadFixtureFromModule;
 use function Tests\replaceKeyInFixture;
 
-it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType) {
+it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType): void {
     // Given that we have a sms message
     /** @var SmsMessage $smsMessage */
     $smsMessage = SmsMessage::factory()

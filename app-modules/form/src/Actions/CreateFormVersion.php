@@ -45,7 +45,7 @@ class CreateFormVersion
     /** @param array<string, mixed> $newData */
     public function execute(Form $oldVersion, array $newData): Form
     {
-        return DB::transaction(function () use ($oldVersion, $newData) {
+        return DB::transaction(function () use ($oldVersion, $newData): Form {
             $oldVersion->archive();
 
             $newVersion = new Form();
@@ -74,7 +74,7 @@ class CreateFormVersion
 
     private function reassociateWorkflowTriggers(Form $oldVersion, Form $newVersion): void
     {
-        $oldVersion->workflowTriggers->each(function (WorkflowTrigger $trigger) use ($newVersion) {
+        $oldVersion->workflowTriggers->each(function (WorkflowTrigger $trigger) use ($newVersion): void {
             $trigger->related()->associate($newVersion);
             $trigger->save();
         });

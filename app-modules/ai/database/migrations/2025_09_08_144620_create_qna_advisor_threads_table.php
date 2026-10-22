@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('qna_advisor_threads', function (Blueprint $table) {
+        Schema::create('qna_advisor_threads', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('advisor_id')->constrained('qna_advisors');
             $table->nullableUuidMorphs('author');

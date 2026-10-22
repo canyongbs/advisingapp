@@ -60,7 +60,7 @@ use function PHPUnit\Framework\assertCount;
 
 // Permission Tests
 
-test('CreateProspect is gated with proper access control', function () {
+test('CreateProspect is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
@@ -109,7 +109,7 @@ test('CreateProspect is gated with proper access control', function () {
     assertDatabaseHas(ProspectAddress::class, Arr::first($addresses));
 });
 
-it('selecting an address in the AddressInput sets the address fields', function () {
+it('selecting an address in the AddressInput sets the address fields', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -147,7 +147,7 @@ it('selecting an address in the AddressInput sets the address fields', function 
         ]);
 });
 
-it('can create a prospect with an address', function () {
+it('can create a prospect with an address', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');

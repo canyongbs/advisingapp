@@ -92,7 +92,7 @@ class ListBasicNeedsCategories extends ListRecords
                         ->label('Delete selected')
                         ->modalHeading('Delete selected categories')
                         ->modalIcon('heroicon-o-trash')
-                        ->action(function (Collection $records) {
+                        ->action(function (Collection $records): void {
                             $successfullyDeleted = 0;
                             $unsuccessfullyDeleted = 0;
 

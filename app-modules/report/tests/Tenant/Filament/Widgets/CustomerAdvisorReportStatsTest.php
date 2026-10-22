@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-it('returns correct total CustomerAdvisor stats of CustomerAdvisors, students, prospects and unauthenticated within the given date range', function () {
+it('returns correct total CustomerAdvisor stats of CustomerAdvisors, students, prospects and unauthenticated within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 

@@ -56,16 +56,16 @@ it('configures editor actions as slide-overs', function (string $block): void {
     'educatable phone number block' => EducatablePhoneNumberFormFieldBlock::class,
 ]);
 
-it('always uses the block type label for the rich editor header, regardless of the configured field label', function () {
+it('always uses the block type label for the rich editor header, regardless of the configured field label', function (): void {
     expect(TextInputFormFieldBlock::getPreviewLabel(['label' => 'First Name']))->toBe('Text input');
 });
 
-it('still renders the configured field label inside the block preview body', function () {
+it('still renders the configured field label inside the block preview body', function (): void {
     expect(TextInputFormFieldBlock::toPreviewHtml(['label' => 'First Name', 'isRequired' => true]))
         ->toContain('First Name');
 });
 
-it('falls back to the block type label inside the preview body when no field label has been configured yet', function () {
+it('falls back to the block type label inside the preview body when no field label has been configured yet', function (): void {
     expect(TextInputFormFieldBlock::toPreviewHtml([]))
         ->toContain('Text input');
 });

@@ -91,7 +91,7 @@ class HealthServiceProvider extends ServiceProvider
                 ->useCacheStore('health'),
             ClusterSafeRedisCheck::new(),
             AzureCredentialsExpiringCheck::new()
-                ->if(function () {
+                ->if(function (): bool {
                     $azureSsoSettings = app(AzureSsoSettings::class);
 
                     Cache::forget('azure_credentials_expiring');

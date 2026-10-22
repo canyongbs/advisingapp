@@ -55,7 +55,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('displays properly with no filters', function () {
+it('displays properly with no filters', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -81,7 +81,7 @@ it('displays properly with no filters', function () {
         ]));
 });
 
-it('displays engagements and responses within the given date range', function () {
+it('displays engagements and responses within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -126,7 +126,7 @@ it('displays engagements and responses within the given date range', function ()
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutOfRange]));
 });
 
-it('displays engagements and responses based on group filters', function () {
+it('displays engagements and responses based on group filters', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
@@ -195,7 +195,7 @@ it('displays engagements and responses based on group filters', function () {
         ]));
 });
 
-it('ensures direction is set properly for engagements and responses', function () {
+it('ensures direction is set properly for engagements and responses', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -219,7 +219,7 @@ it('ensures direction is set properly for engagements and responses', function (
         ->assertTableColumnStateSet('direction', 'inbound', record: $holisticEngagementInbound);
 });
 
-it('ensures status is set properly for engagements and responses', function () {
+it('ensures status is set properly for engagements and responses', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -243,7 +243,7 @@ it('ensures status is set properly for engagements and responses', function () {
         ->assertTableColumnFormattedStateSet('status', 'New', record: $holisticEngagementInbound);
 });
 
-it('ensures type is formatted properly for engagements and responses', function () {
+it('ensures type is formatted properly for engagements and responses', function (): void {
     $student = Student::factory()->create();
 
     $emailEngagement = Engagement::factory()->email()->create([
@@ -274,7 +274,7 @@ it('ensures type is formatted properly for engagements and responses', function 
         ->assertTableColumnFormattedStateSet('type', 'Text', record: $holisticSmsResponse);
 });
 
-it('ensures sent_by is properly rendered in the table', function () {
+it('ensures sent_by is properly rendered in the table', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 
@@ -300,7 +300,7 @@ it('ensures sent_by is properly rendered in the table', function () {
         ->assertTableColumnStateSet('sent_by', $student->full_name, $holisticEngagementInbound);
 });
 
-it('ensures sent_to is properly rendered in the table', function () {
+it('ensures sent_to is properly rendered in the table', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -324,7 +324,7 @@ it('ensures sent_to is properly rendered in the table', function () {
         ->assertTableColumnStateSet('sent_to', 'N/A', $holisticEngagementInbound);
 });
 
-it('ensures type is properly rendered in the table', function () {
+it('ensures type is properly rendered in the table', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -350,7 +350,7 @@ it('ensures type is properly rendered in the table', function () {
         ->assertTableColumnStateSet('type', 'sms', $holisticEngagementInbound);
 });
 
-it('ensures details are properly rendered in the table', function () {
+it('ensures details are properly rendered in the table', function (): void {
     $student = Student::factory()->create();
 
     $engagementEmail = Engagement::factory()->create([
@@ -392,7 +392,7 @@ it('ensures details are properly rendered in the table', function () {
         ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($responseSms->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticResponseSms);
 });
 
-it('ensures campaign is properly rendered in the table', function () {
+it('ensures campaign is properly rendered in the table', function (): void {
     $student = Student::factory()->create();
 
     $campaign = Campaign::factory()->create();
@@ -428,7 +428,7 @@ it('ensures campaign is properly rendered in the table', function () {
         ->assertTableColumnStateSet('campaign', 'N/A', $holisticEngagementResponse);
 });
 
-it('filters by direction properly', function () {
+it('filters by direction properly', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -463,7 +463,7 @@ it('filters by direction properly', function () {
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
 });
 
-it('offers email and text as type filter options', function () {
+it('offers email and text as type filter options', function (): void {
     Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
@@ -474,7 +474,7 @@ it('offers email and text as type filter options', function () {
         ]);
 });
 
-it('filters by type properly', function () {
+it('filters by type properly', function (): void {
     $student = Student::factory()->create();
 
     $engagementEmail = Engagement::factory()->create([
@@ -525,7 +525,7 @@ it('filters by type properly', function () {
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementEmail, $holisticResponseEmail]));
 });
 
-it('has export action with correct exporter class', function () {
+it('has export action with correct exporter class', function (): void {
     $student = Student::factory()->create();
 
     $engagement = Engagement::factory()->create([
@@ -546,7 +546,7 @@ it('has export action with correct exporter class', function () {
         ->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export, sending a notification', function (): void {
     $count = random_int(1, 5);
     Storage::fake('s3');
 
@@ -557,7 +557,7 @@ it('can start an export, sending a notification', function () {
 
     $students = Student::factory()->count($count)->create();
 
-    $students->each(function (Student $student) use ($user) {
+    $students->each(function (Student $student) use ($user): void {
         Engagement::factory()
             ->count(2)
             ->email()

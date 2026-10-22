@@ -113,7 +113,7 @@ enum LicenseType: string implements HasLabel
     public function getSeatsInUse(): int
     {
         return License::query()
-            ->whereDoesntHave('user', function (Builder $query) {
+            ->whereDoesntHave('user', function (Builder $query): void {
                 $query->role([
                     Authenticatable::SUPER_ADMIN_ROLE,
                     Authenticatable::PARTNER_ADMIN_ROLE,

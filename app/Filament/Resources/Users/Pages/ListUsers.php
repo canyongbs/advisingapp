@@ -49,6 +49,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -124,7 +125,7 @@ class ListUsers extends ListRecords
                 TextColumn::make('deleted_at')
                     ->label('Status')
                     ->state(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
-                    ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
+                    ->visible(fn ($livewire): bool => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
             ->recordActions([
                 Impersonate::make(),
@@ -169,7 +170,7 @@ class ListUsers extends ListRecords
                             $labels['unassigned'] = 'Unassigned';
                         }
 
-                        $departmentIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
+                        $departmentIds = array_values(array_filter($values, fn ($value): bool => $value !== 'unassigned'));
 
                         if ($departmentIds !== []) {
                             $labels = [
@@ -183,16 +184,16 @@ class ListUsers extends ListRecords
 
                         return $labels;
                     })
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         if (empty($data['values'])) {
                             return;
                         }
 
-                        $query->when(in_array('unassigned', $data['values']), function (Builder $query) {
+                        $query->when(in_array('unassigned', $data['values']), function (Builder $query): void {
                             $query->whereDoesntHave('department');
                         })
-                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('department', function (Builder $query) use ($data) {
-                                $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('department', function (Builder $query) use ($data): void {
+                                $query->whereIn('team_id', array_filter($data['values'], fn ($value): bool => $value !== 'unassigned'));
                             });
                     })
                     ->multiple()
@@ -218,7 +219,7 @@ class ListUsers extends ListRecords
                             $labels['none'] = 'None';
                         }
 
-                        $roleIds = array_values(array_filter($values, fn ($value) => $value !== 'none'));
+                        $roleIds = array_values(array_filter($values, fn ($value): bool => $value !== 'none'));
 
                         if ($roleIds !== []) {
                             $labels = [
@@ -233,16 +234,16 @@ class ListUsers extends ListRecords
                         return $labels;
                     })
                     ->query(
-                        function (Builder $query, array $data) {
+                        function (Builder $query, array $data): void {
                             if (empty($data['values'])) {
                                 return;
                             }
 
-                            $query->when(in_array('none', $data['values']), function (Builder $query) {
+                            $query->when(in_array('none', $data['values']), function (Builder $query): void {
                                 $query->whereDoesntHave('roles');
                             })
-                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function (Builder $query) use ($data) {
-                                    $query->whereIn('id', array_filter($data['values'], fn ($value) => $value !== 'none'));
+                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function (Builder $query) use ($data): void {
+                                    $query->whereIn('id', array_filter($data['values'], fn ($value): bool => $value !== 'none'));
                                 });
                         }
                     )
@@ -257,11 +258,11 @@ class ListUsers extends ListRecords
                                 'no_assigned_license' => 'No Assigned License',
                             ],
                             'Licenses' => collect(LicenseType::enabledCases())
-                                ->mapWithKeys(fn ($case) => [$case->value => $case->name])
+                                ->mapWithKeys(fn ($case): array => [$case->value => $case->name])
                                 ->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::enabledCases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::enabledCases())->filter(fn ($case): bool => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case): array => [$case->value => $case->name])->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -283,7 +284,7 @@ class ListUsers extends ListRecords
                         return $labels;
                     })
                     ->query(
-                        function (Builder $query, array $data) {
+                        function (Builder $query, array $data): void {
                             if (empty($data['values'])) {
                                 return;
                             }
@@ -293,10 +294,10 @@ class ListUsers extends ListRecords
                                 LicenseType::enabledCases(),
                             );
 
-                            $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) use ($enabledLicenseTypeValues) {
+                            $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) use ($enabledLicenseTypeValues): void {
                                 $query->whereDoesntHave('licenses', fn (Builder $query) => $query->whereIn('type', $enabledLicenseTypeValues));
                             })
-                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function (Builder $query) use ($data, $enabledLicenseTypeValues) {
+                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function (Builder $query) use ($data, $enabledLicenseTypeValues): void {
                                     $query->whereIn('type', array_intersect($data['values'], $enabledLicenseTypeValues));
                                 });
                         }
@@ -316,7 +317,7 @@ class ListUsers extends ListRecords
                         return $query
                             ->when(
                                 $data['created_at'],
-                                fn (Builder $query, $date): Builder => $query->where('created_at', '>=', Carbon::parse($date, app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')),
+                                fn (Builder $query, DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $date): Builder => $query->where('created_at', '>=', Carbon::parse($date, app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')),
                             );
                     })
                     ->indicateUsing(function (array $data): ?string {

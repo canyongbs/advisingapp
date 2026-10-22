@@ -61,11 +61,11 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
 
-beforeEach(function () {
+beforeEach(function (): void {
     setUnifiedInboxEnabled(true);
 });
 
-it('can activate the sent items tab within the unified inbox page', function () {
+it('can activate the sent items tab within the unified inbox page', function (): void {
     asSuperAdmin();
 
     Livewire::test(Inbox::class)
@@ -75,7 +75,7 @@ it('can activate the sent items tab within the unified inbox page', function () 
         ->assertSeeText('Sent Items');
 });
 
-it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {
+it('displays the type column with channel icon, email address, and healthy status for email engagements', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -102,7 +102,7 @@ it('displays the type column with channel icon, email address, and healthy statu
         ->assertTableColumnStateSet('channel', 'student@university.edu', record: $engagement);
 });
 
-it('displays the type column with channel icon, phone number, and healthy status for sms engagements', function () {
+it('displays the type column with channel icon, phone number, and healthy status for sms engagements', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -128,7 +128,7 @@ it('displays the type column with channel icon, phone number, and healthy status
         ->assertTableColumnStateSet('channel', '+15551234567', record: $engagement);
 });
 
-it('displays the bounced status icon for a bounced email address', function () {
+it('displays the bounced status icon for a bounced email address', function (): void {
     asSuperAdmin();
 
     $email = 'bounced@example.com';
@@ -156,7 +156,7 @@ it('displays the bounced status icon for a bounced email address', function () {
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
 
-it('displays the opted out status icon for an opted-out email address', function () {
+it('displays the opted out status icon for an opted-out email address', function (): void {
     asSuperAdmin();
 
     $email = 'optedout@example.com';
@@ -184,7 +184,7 @@ it('displays the opted out status icon for an opted-out email address', function
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
 
-it('displays the bounced status icon for a bounced phone number', function () {
+it('displays the bounced status icon for a bounced phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15552220000';
@@ -212,7 +212,7 @@ it('displays the bounced status icon for a bounced phone number', function () {
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
 
-it('displays the opted out status icon for an opted-out phone number', function () {
+it('displays the opted out status icon for an opted-out phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15553330000';
@@ -240,7 +240,7 @@ it('displays the opted out status icon for an opted-out phone number', function 
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
 
-it('resolves email recipient route from latest email message', function () {
+it('resolves email recipient route from latest email message', function (): void {
     asSuperAdmin();
 
     $engagement = Engagement::factory()
@@ -255,7 +255,7 @@ it('resolves email recipient route from latest email message', function () {
     expect($engagement->getRecipientRoute())->toBe('test@example.com');
 });
 
-it('resolves sms recipient route from latest sms message', function () {
+it('resolves sms recipient route from latest sms message', function (): void {
     asSuperAdmin();
 
     $engagement = Engagement::factory()
@@ -270,7 +270,7 @@ it('resolves sms recipient route from latest sms message', function () {
     expect($engagement->getRecipientRoute())->toBe('+15551234567');
 });
 
-it('falls back to recipient_route attribute when no message relationship exists', function () {
+it('falls back to recipient_route attribute when no message relationship exists', function (): void {
     asSuperAdmin();
 
     $emailFallback = Engagement::factory()
@@ -288,7 +288,7 @@ it('falls back to recipient_route attribute when no message relationship exists'
     expect($smsFallback->getRecipientRoute())->toBe('+15559876543');
 });
 
-it('returns null recipient route when no message and recipient_route is null', function () {
+it('returns null recipient route when no message and recipient_route is null', function (): void {
     asSuperAdmin();
 
     $engagement = Engagement::factory()
@@ -299,7 +299,7 @@ it('returns null recipient route when no message and recipient_route is null', f
     expect($engagement->getRecipientRoute())->toBeNull();
 });
 
-it('returns healthy email health status when address is not bounced or opted out', function () {
+it('returns healthy email health status when address is not bounced or opted out', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -320,7 +320,7 @@ it('returns healthy email health status when address is not bounced or opted out
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
 });
 
-it('returns bounced email health status for a bounced email address', function () {
+it('returns bounced email health status for a bounced email address', function (): void {
     asSuperAdmin();
 
     $email = 'bounced@example.com';
@@ -343,7 +343,7 @@ it('returns bounced email health status for a bounced email address', function (
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
 });
 
-it('returns opted out email health status for an opted-out email address', function () {
+it('returns opted out email health status for an opted-out email address', function (): void {
     asSuperAdmin();
 
     $email = 'optedout@example.com';
@@ -366,7 +366,7 @@ it('returns opted out email health status for an opted-out email address', funct
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
 });
 
-it('returns healthy phone health status when number is not bounced or opted out', function () {
+it('returns healthy phone health status when number is not bounced or opted out', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -387,7 +387,7 @@ it('returns healthy phone health status when number is not bounced or opted out'
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
 });
 
-it('returns bounced phone health status for a bounced phone number', function () {
+it('returns bounced phone health status for a bounced phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15552220000';
@@ -410,7 +410,7 @@ it('returns bounced phone health status for a bounced phone number', function ()
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
 
-it('returns opted out phone health status for an opted-out phone number', function () {
+it('returns opted out phone health status for an opted-out phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15553330000';
@@ -433,7 +433,7 @@ it('returns opted out phone health status for an opted-out phone number', functi
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
 });
 
-it('returns null health status when recipient route is null', function () {
+it('returns null health status when recipient route is null', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -450,7 +450,7 @@ it('returns null health status when recipient route is null', function () {
     expect($engagement->getRecipientRouteHealthStatus())->toBeNull();
 });
 
-it('returns bounced email health status even when no StudentEmailAddress record exists', function () {
+it('returns bounced email health status even when no StudentEmailAddress record exists', function (): void {
     asSuperAdmin();
 
     $email = 'no-record-bounced@example.com';
@@ -472,7 +472,7 @@ it('returns bounced email health status even when no StudentEmailAddress record 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
 });
 
-it('returns bounced phone health status even when no StudentPhoneNumber record exists', function () {
+it('returns bounced phone health status even when no StudentPhoneNumber record exists', function (): void {
     asSuperAdmin();
 
     $phone = '+15554440000';
@@ -494,7 +494,7 @@ it('returns bounced phone health status even when no StudentPhoneNumber record e
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
 
-it('displays the type column with channel icon, email address, and healthy status for prospect email engagements', function () {
+it('displays the type column with channel icon, email address, and healthy status for prospect email engagements', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
@@ -521,7 +521,7 @@ it('displays the type column with channel icon, email address, and healthy statu
         ->assertTableColumnStateSet('channel', 'prospect@university.edu', record: $engagement);
 });
 
-it('displays the type column with channel icon, phone number, and healthy status for prospect sms engagements', function () {
+it('displays the type column with channel icon, phone number, and healthy status for prospect sms engagements', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
@@ -547,7 +547,7 @@ it('displays the type column with channel icon, phone number, and healthy status
         ->assertTableColumnStateSet('channel', '+15557654321', record: $engagement);
 });
 
-it('displays the bounced status icon for a prospect bounced email address', function () {
+it('displays the bounced status icon for a prospect bounced email address', function (): void {
     asSuperAdmin();
 
     $email = 'prospect-bounced@example.com';
@@ -575,7 +575,7 @@ it('displays the bounced status icon for a prospect bounced email address', func
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
 
-it('displays the opted out status icon for a prospect opted-out email address', function () {
+it('displays the opted out status icon for a prospect opted-out email address', function (): void {
     asSuperAdmin();
 
     $email = 'prospect-optedout@example.com';
@@ -603,7 +603,7 @@ it('displays the opted out status icon for a prospect opted-out email address', 
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
 
-it('displays the bounced status icon for a prospect bounced phone number', function () {
+it('displays the bounced status icon for a prospect bounced phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15556660000';
@@ -631,7 +631,7 @@ it('displays the bounced status icon for a prospect bounced phone number', funct
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
 
-it('displays the opted out status icon for a prospect opted-out phone number', function () {
+it('displays the opted out status icon for a prospect opted-out phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15557770000';
@@ -659,7 +659,7 @@ it('displays the opted out status icon for a prospect opted-out phone number', f
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
 
-it('returns healthy email health status for a prospect when address is not bounced or opted out', function () {
+it('returns healthy email health status for a prospect when address is not bounced or opted out', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
@@ -680,7 +680,7 @@ it('returns healthy email health status for a prospect when address is not bounc
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
 });
 
-it('returns bounced email health status for a prospect bounced email address', function () {
+it('returns bounced email health status for a prospect bounced email address', function (): void {
     asSuperAdmin();
 
     $email = 'prospect-bounced@example.com';
@@ -703,7 +703,7 @@ it('returns bounced email health status for a prospect bounced email address', f
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
 });
 
-it('returns opted out email health status for a prospect opted-out email address', function () {
+it('returns opted out email health status for a prospect opted-out email address', function (): void {
     asSuperAdmin();
 
     $email = 'prospect-optedout@example.com';
@@ -726,7 +726,7 @@ it('returns opted out email health status for a prospect opted-out email address
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
 });
 
-it('returns healthy phone health status for a prospect when number is not bounced or opted out', function () {
+it('returns healthy phone health status for a prospect when number is not bounced or opted out', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
@@ -747,7 +747,7 @@ it('returns healthy phone health status for a prospect when number is not bounce
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
 });
 
-it('returns bounced phone health status for a prospect bounced phone number', function () {
+it('returns bounced phone health status for a prospect bounced phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15556660000';
@@ -770,7 +770,7 @@ it('returns bounced phone health status for a prospect bounced phone number', fu
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
 
-it('returns opted out phone health status for a prospect opted-out phone number', function () {
+it('returns opted out phone health status for a prospect opted-out phone number', function (): void {
     asSuperAdmin();
 
     $phone = '+15557770000';
@@ -793,14 +793,14 @@ it('returns opted out phone health status for a prospect opted-out phone number'
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
 });
 
-it('loads the Care Team filter as active when the component first renders', function () {
+it('loads the Care Team filter as active when the component first renders', function (): void {
     asSuperAdmin();
 
     Livewire::test(SentItemsTable::class)
         ->assertTableFilterExists('care_team')
         ->assertSet('tableFilters.care_team.isActive', true);
 });
-it('can properly filter by care team', function () {
+it('can properly filter by care team', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);
 
@@ -825,7 +825,7 @@ it('can properly filter by care team', function () {
         ->assertCanNotSeeTableRecords($otherEngagements);
 });
 
-it('accepts an active student as the submitted recipient of a new engagement', function () {
+it('accepts an active student as the submitted recipient of a new engagement', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -848,7 +848,7 @@ it('accepts an active student as the submitted recipient of a new engagement', f
     expect($student->engagements()->count())->toBe(1);
 });
 
-it('does not send a new engagement to an archived student even when their id is submitted', function () {
+it('does not send a new engagement to an archived student even when their id is submitted', function (): void {
     Queue::fake();
 
     asSuperAdmin();

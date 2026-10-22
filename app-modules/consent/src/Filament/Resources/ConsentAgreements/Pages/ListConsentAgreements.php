@@ -84,7 +84,7 @@ class ListConsentAgreements extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('type')
-                    ->formatStateUsing(fn (ConsentAgreementType $state) => $state->getLabel()),
+                    ->formatStateUsing(fn (ConsentAgreementType $state): ?string => $state->getLabel()),
                 TextColumn::make('title'),
             ])
             ->recordActions([
@@ -95,11 +95,11 @@ class ListConsentAgreements extends ListRecords
                             Action::make('save_changes')
                                 ->requiresConfirmation()
                                 ->modalIconColor('warning')
-                                ->modalHeading(fn ($record) => "Save Changes to {$record->title}?")
+                                ->modalHeading(fn ($record): string => "Save Changes to {$record->title}?")
                                 ->modalDescription(fn ($record) => $record->type->getModalDescription())
                                 ->modalSubmitActionLabel('I understand, save changes')
                                 ->modalWidth('xl')
-                                ->action(function () {
+                                ->action(function (): void {
                                     $this->unmountTableAction();
 
                                     $this->callMountedTableAction();

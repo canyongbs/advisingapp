@@ -49,9 +49,9 @@ use Illuminate\Support\ServiceProvider;
 
 class TimelineServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TimelinePlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new TimelinePlugin()) instanceof Panel);
     }
 
     public function boot(): void

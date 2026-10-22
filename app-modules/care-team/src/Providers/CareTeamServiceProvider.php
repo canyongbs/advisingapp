@@ -47,7 +47,7 @@ class CareTeamServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CareTeamPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new CareTeamPlugin()) instanceof Panel);
     }
 
     public function boot(): void

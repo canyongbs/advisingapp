@@ -92,10 +92,10 @@ class ListProspectStatuses extends ListRecords
                             $total = 0;
                             $totalDeleted = 0;
 
-                            $component->process(static function (Collection $records) use (&$total, &$totalDeleted) {
+                            $component->process(static function (Collection $records) use (&$total, &$totalDeleted): void {
                                 $total = $records->count();
 
-                                $records->each(function (Model $record) use (&$totalDeleted) {
+                                $records->each(function (Model $record) use (&$totalDeleted): void {
                                     try {
                                         $record->delete();
 

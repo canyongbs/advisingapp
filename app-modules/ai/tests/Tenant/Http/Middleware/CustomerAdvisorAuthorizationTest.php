@@ -46,7 +46,7 @@ $handleCustomerAdvisorRequest = function (Student $student): Response {
     $token = $student->createToken('customer-advisor-access-token')->plainTextToken;
     $request = Request::create('/', 'GET');
     $request->headers->set('Authorization', "Bearer {$token}");
-    $route = new Route(['GET'], '/{advisor}', fn () => null);
+    $route = new Route(['GET'], '/{advisor}', fn (): null => null);
     $route->bind($request);
     $route->setParameter('advisor', $advisor);
     $request->setRouteResolver(fn (): Route => $route);
@@ -57,13 +57,13 @@ $handleCustomerAdvisorRequest = function (Student $student): Response {
     );
 };
 
-it('allows a student with a valid token through', function () use ($handleCustomerAdvisorRequest) {
+it('allows a student with a valid token through', function () use ($handleCustomerAdvisorRequest): void {
     $student = Student::factory()->create();
 
     expect($handleCustomerAdvisorRequest($student)->getStatusCode())->toBe(200);
 });
 
-it('rejects a token belonging to an archived student', function () use ($handleCustomerAdvisorRequest) {
+it('rejects a token belonging to an archived student', function () use ($handleCustomerAdvisorRequest): void {
     $student = Student::factory()->create();
     $student->archive();
 

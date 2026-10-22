@@ -45,7 +45,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('requires a prospect license and the proper permission to access', function () {
+it('requires a prospect license and the proper permission to access', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -66,7 +66,7 @@ it('requires a prospect license and the proper permission to access', function (
         ->assertOk();
 });
 
-it('disables the form without the `settings.*.update` permission', function () {
+it('disables the form without the `settings.*.update` permission', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('settings.view-any');
@@ -81,7 +81,7 @@ it('disables the form without the `settings.*.update` permission', function () {
         ->assertFormFieldEnabled('estimated_average_revenue');
 });
 
-it('hides the `save` action without the `settings.*.update` permission', function () {
+it('hides the `save` action without the `settings.*.update` permission', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('settings.view-any');
@@ -96,7 +96,7 @@ it('hides the `save` action without the `settings.*.update` permission', functio
         ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 });
 
-it('requires proper permissions to update settings', function () {
+it('requires proper permissions to update settings', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('settings.view-any');

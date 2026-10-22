@@ -79,7 +79,7 @@ class ConnectedAccounts extends Page implements HasForms
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->schema(self::getConnectedAccounts()->toArray())
-                    ->visible(fn () => self::getConnectedAccounts()->count() > 0),
+                    ->visible(fn (): bool => self::getConnectedAccounts()->count() > 0),
             ]);
     }
 
@@ -145,7 +145,7 @@ class ConnectedAccounts extends Page implements HasForms
 
                     return filled($user->calendar?->oauth_token);
                 }),
-        ])->filter(fn (Component $component) => $component->isVisible());
+        ])->filter(fn (Component $component): bool => $component->isVisible());
 
         return $connectedAccounts;
     }

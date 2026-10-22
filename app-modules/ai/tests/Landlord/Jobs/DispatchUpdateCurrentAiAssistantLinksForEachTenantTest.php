@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Jobs\AiAssistants\UpdateCurrentAiAssistantLinks;
 use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentAiAssistantLinksForEachTenant;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `UpdateCurrentAiAssistantLinks` for each eligible tenant', function () {
+it('dispatches `UpdateCurrentAiAssistantLinks` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchUpdateCurrentAiAssistantLinksForEachTenant())->handle();

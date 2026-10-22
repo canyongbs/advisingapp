@@ -56,6 +56,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -139,7 +140,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
+                    ->modalHeading(fn (FormSubmission $record): string => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->schema(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated Submitter')
                             ->schema([
@@ -150,7 +151,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ])
                             ->columns(2),
                     ] : null)
-                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
+                    ->modalContent(fn (FormSubmission $record): Factory|\Illuminate\Contracts\View\View => view('form::submission', ['submission' => $record]))
                     ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 Action::make('archive')
                     ->icon('heroicon-o-archive-box')

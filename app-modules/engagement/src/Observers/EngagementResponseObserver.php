@@ -58,7 +58,7 @@ class EngagementResponseObserver
         TimelineableRecordCreated::dispatch($entity, $response);
 
         $entity->subscribedUsers()
-            ->eachById(function (User $user) use ($response, $entity) {
+            ->eachById(function (User $user) use ($response, $entity): void {
                 $type = match ($response->type) {
                     EngagementResponseType::Email => 'email',
                     EngagementResponseType::Sms => 'text message',

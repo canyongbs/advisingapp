@@ -120,7 +120,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
             ->filters([
                 SelectFilter::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query): void {
                         /** @var CustomerAdvisor $customerAdvisor */
                         $customerAdvisor = $this->getOwnerRecord();
                         $query->where('customer_advisor_id', $customerAdvisor->getKey());
@@ -190,7 +190,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
         return [
             Select::make('category_id')
                 ->label('Category')
-                ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
+                ->relationship('category', 'name', modifyQueryUsing: function (Builder $query): void {
                     /** @var CustomerAdvisor $advisor */
                     $advisor = $this->getOwnerRecord();
                     $query->where('customer_advisor_id', $advisor->getKey());

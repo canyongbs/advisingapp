@@ -43,9 +43,9 @@ use Illuminate\Support\ServiceProvider;
 
 class StockMediaServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StockMediaPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new StockMediaPlugin()) instanceof Panel);
     }
 
     public function boot(): void

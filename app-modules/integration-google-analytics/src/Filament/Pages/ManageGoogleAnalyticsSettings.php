@@ -74,7 +74,7 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
                     ->label('Enabled')
                     ->live(),
                 TextInput::make('id')
-                    ->visible(fn (Get $get) => $get('is_enabled')),
+                    ->visible(fn (Get $get): mixed => $get('is_enabled')),
                 // TODO: add key value options?
             ]);
     }

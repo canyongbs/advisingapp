@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('resource_hub_article_concerns', function (Blueprint $table) {
+        Schema::create('resource_hub_article_concerns', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('description');

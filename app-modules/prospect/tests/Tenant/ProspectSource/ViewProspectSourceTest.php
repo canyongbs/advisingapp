@@ -42,7 +42,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('The correct details are displayed on the ViewProspectSource page', function () {
+test('The correct details are displayed on the ViewProspectSource page', function (): void {
     $prospectSource = ProspectSource::factory()->create();
 
     asSuperAdmin()
@@ -62,7 +62,7 @@ test('The correct details are displayed on the ViewProspectSource page', functio
 
 // Permission Tests
 
-test('ViewProspectSource is gated with proper access control', function () {
+test('ViewProspectSource is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectSource = ProspectSource::factory()->create();

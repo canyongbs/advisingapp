@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Livewire\Livewire;
 
-it('displays only tasks added within the selected date range for students', function () {
+it('displays only tasks added within the selected date range for students', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -84,7 +84,7 @@ it('displays only tasks added within the selected date range for students', func
         ->assertCanNotSeeTableRecords(collect([$taskOutsideRange]));
 });
 
-it('displays only tasks added within the selected date range for prospects', function () {
+it('displays only tasks added within the selected date range for prospects', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -126,7 +126,7 @@ it('displays only tasks added within the selected date range for prospects', fun
         ->assertCanNotSeeTableRecords(collect([$taskOutsideRange]));
 });
 
-it('properly filters students by group', function () {
+it('properly filters students by group', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
@@ -171,7 +171,7 @@ it('properly filters students by group', function () {
         ->assertCanNotSeeTableRecords(collect([$nonGroupTask]));
 });
 
-it('properly filters prospects by group', function () {
+it('properly filters prospects by group', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [

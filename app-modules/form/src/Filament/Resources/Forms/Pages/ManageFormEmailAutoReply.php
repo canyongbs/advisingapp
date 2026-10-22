@@ -90,7 +90,7 @@ class ManageFormEmailAutoReply extends EditRecord
                         RichEditor::make('subject')
                             ->toolbarButtons([])
                             ->json()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->placeholder('Enter the email subject here...'),
@@ -107,8 +107,8 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->resizableImages()
                             ->activePanel('mergeTags')
                             ->json()
-                            ->required(fn (Get $get) => $get('is_enabled'))
-                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
+                            ->hintAction(fn (RichEditor $component): Action => Action::make('loadEmailTemplate')
                                 ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -168,13 +168,13 @@ class ManageFormEmailAutoReply extends EditRecord
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
                                         ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
                                     Checkbox::make('onlyMyDepartmentTemplates')
                                         ->label("Only show my department's templates")
                                         ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                        ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
                                 ])
-                                ->action(function (array $data) use ($component) {
+                                ->action(function (array $data) use ($component): void {
                                     $template = EmailTemplate::find($data['emailTemplate']);
 
                                     if (! $template) {

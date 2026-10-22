@@ -66,7 +66,7 @@ class BrandingBar extends ProfilePage
                         Toggle::make('is_branding_bar_dismissed')
                             ->label('Disable Branding Bar'),
                     ])
-                    ->visible(fn (CollegeBrandingSettings $settings) => $settings->dismissible),
+                    ->visible(fn (CollegeBrandingSettings $settings): bool => $settings->dismissible),
             ]);
     }
 }

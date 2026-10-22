@@ -47,11 +47,11 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Notification::fake();
 });
 
-it('executes email workflow step successfully', function () {
+it('executes email workflow step successfully', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 
@@ -111,7 +111,7 @@ it('executes email workflow step successfully', function () {
     Notification::assertSentTo(
         $student,
         EngagementNotification::class,
-        function (EngagementNotification $notification) {
+        function (EngagementNotification $notification): bool {
             return $notification->engagement->channel === NotificationChannel::Email;
         }
     );
@@ -120,7 +120,7 @@ it('executes email workflow step successfully', function () {
     expect($workflowRunStep->succeeded_at)->not->toBeNull();
 });
 
-it('throws exception for non-email channel', function () {
+it('throws exception for non-email channel', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 
@@ -152,7 +152,7 @@ it('throws exception for non-email channel', function () {
         ->toThrow(Exception::class, 'The notification channel is not email.');
 });
 
-it('creates an engagement with the correct email_type from workflow details', function () {
+it('creates an engagement with the correct email_type from workflow details', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 

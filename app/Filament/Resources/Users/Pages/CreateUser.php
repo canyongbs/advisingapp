@@ -43,6 +43,7 @@ use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -82,7 +83,7 @@ class CreateUser extends CreateRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
-                            ->afterStateUpdated(function (Toggle $component, $state) use ($azureSsoSettings, $googleSsoSettings) {
+                            ->afterStateUpdated(function (Toggle $component, $state) use ($azureSsoSettings, $googleSsoSettings): null {
                                 if ($state) {
                                     return null;
                                 }
@@ -96,10 +97,10 @@ class CreateUser extends CreateRecord
                             })
                             ->default(($azureSsoSettings || $googleSsoSettings)),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
             ]);
@@ -108,7 +109,7 @@ class CreateUser extends CreateRecord
     public function showSsoModal(): Action
     {
         return Action::make('Warning')
-            ->action(fn () => $this->data['is_external'] = false)
+            ->action(fn (): false => $this->data['is_external'] = false)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
             ->modalSubmitActionLabel('Continue')

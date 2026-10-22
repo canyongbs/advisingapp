@@ -42,10 +42,10 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::rename('otp_login_codes', 'one_time_login_codes');
 
-            Schema::table('one_time_login_codes', function (Blueprint $table) {
+            Schema::table('one_time_login_codes', function (Blueprint $table): void {
                 $table->timestamp('expires_at')->nullable();
                 $table->softDeletes();
                 $table->dropColumn('used_at');
@@ -55,8 +55,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('one_time_login_codes', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('one_time_login_codes', function (Blueprint $table): void {
                 $table->timestamp('used_at')->nullable();
                 $table->dropSoftDeletes();
                 $table->dropColumn('expires_at');

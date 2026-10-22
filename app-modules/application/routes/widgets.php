@@ -50,13 +50,13 @@ Route::middleware([
 ])
     ->prefix('widgets/applications')
     ->name('widgets.applications.')
-    ->group(function () {
+    ->group(function (): void {
         Route::prefix('api/{application}')
             ->name('api.')
             ->middleware([
                 EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
             ])
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [ApplicationWidgetController::class, 'assets'])
                     ->name('assets');
 
@@ -103,7 +103,7 @@ Route::prefix('api')
         'auth',
         EnsureOnlineAdmissionsFeatureIsActive::class,
     ])
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/applications/{application}/preview', [ApplicationWidgetController::class, 'preview'])
             ->name('applications.api.preview');
     });

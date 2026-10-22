@@ -40,7 +40,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('stores the email-facing logo publicly and keeps browser-only assets private', function () {
+it('stores the email-facing logo publicly and keeps browser-only assets private', function (): void {
     asSuperAdmin();
 
     Livewire::test(ManageBrandConfigurationSettings::class)

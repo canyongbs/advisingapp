@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('workflow_run_steps', function (Blueprint $table) {
+        Schema::table('workflow_run_steps', function (Blueprint $table): void {
             $table->integer('delay_minutes')->default(0);
 
             $table->dateTime('execute_at')->nullable()->change();
@@ -52,7 +52,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('workflow_run_steps', function (Blueprint $table) {
+        Schema::table('workflow_run_steps', function (Blueprint $table): void {
             $table->dropForeign(['previous_workflow_run_step_id']);
             $table->dropColumn(['delay_minutes', 'previous_workflow_run_step_id']);
         });

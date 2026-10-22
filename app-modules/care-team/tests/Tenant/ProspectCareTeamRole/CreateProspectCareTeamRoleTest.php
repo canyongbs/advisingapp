@@ -49,7 +49,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
 
-test('CreateProspectCareTeamRole is gated with proper access control', function () {
+test('CreateProspectCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -84,7 +84,7 @@ test('CreateProspectCareTeamRole is gated with proper access control', function 
         ->assertSuccessful();
 });
 
-test('A successful action on the CreateProspectCareTeamRole page', function () {
+test('A successful action on the CreateProspectCareTeamRole page', function (): void {
     asSuperAdmin()
         ->get(
             ProspectCareTeamRoleResource::getUrl('create')
@@ -103,7 +103,7 @@ test('A successful action on the CreateProspectCareTeamRole page', function () {
     assertDatabaseHas(CareTeamRole::class, $createRequest);
 });
 
-test('CreateProspectCareTeamRole requires valid data', function (CreateCareTeamRoleRequestFactory $data, array $errors) {
+test('CreateProspectCareTeamRole requires valid data', function (CreateCareTeamRoleRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $createRequest = CreateCareTeamRoleRequestFactory::new($data)->create();
@@ -122,7 +122,7 @@ test('CreateProspectCareTeamRole requires valid data', function (CreateCareTeamR
     ]
 );
 
-test('Creating a default care team role will make all other care team roles not the default', function () {
+test('Creating a default care team role will make all other care team roles not the default', function (): void {
     asSuperAdmin();
 
     CareTeamRole::factory()->create(['is_default' => true, 'type' => CareTeamRoleType::Prospect]);

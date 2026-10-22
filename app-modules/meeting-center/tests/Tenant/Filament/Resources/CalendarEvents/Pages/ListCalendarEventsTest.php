@@ -56,7 +56,7 @@ $listCalendarEventsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-it('the delete bulk action is gated by the delete permission', function () use ($listCalendarEventsTestUser) {
+it('the delete bulk action is gated by the delete permission', function () use ($listCalendarEventsTestUser): void {
     $user = $listCalendarEventsTestUser();
     $user->givePermissionTo('calendar_event.view-any');
 
@@ -71,7 +71,7 @@ it('the delete bulk action is gated by the delete permission', function () use (
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', function () use ($listCalendarEventsTestUser) {
+it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', function () use ($listCalendarEventsTestUser): void {
     $user = $listCalendarEventsTestUser();
     $user->givePermissionTo('calendar_event.view-any');
 

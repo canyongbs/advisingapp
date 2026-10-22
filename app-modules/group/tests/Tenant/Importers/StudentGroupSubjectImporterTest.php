@@ -72,7 +72,7 @@ $resolveStudentGroupSubject = function (Group $group, string $state): ?Student {
     return $subject;
 };
 
-it('resolves a student by their SIS ID', function () use ($resolveStudentGroupSubject) {
+it('resolves a student by their SIS ID', function () use ($resolveStudentGroupSubject): void {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
@@ -81,7 +81,7 @@ it('resolves a student by their SIS ID', function () use ($resolveStudentGroupSu
     expect($resolveStudentGroupSubject($group, $student->sisid)?->getKey())->toBe($student->getKey());
 });
 
-it('resolves a student by their other ID', function () use ($resolveStudentGroupSubject) {
+it('resolves a student by their other ID', function () use ($resolveStudentGroupSubject): void {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
@@ -90,7 +90,7 @@ it('resolves a student by their other ID', function () use ($resolveStudentGroup
     expect($resolveStudentGroupSubject($group, 'OTHER-1')?->getKey())->toBe($student->getKey());
 });
 
-it('does not resolve an archived student by their SIS ID', function () use ($resolveStudentGroupSubject) {
+it('does not resolve an archived student by their SIS ID', function () use ($resolveStudentGroupSubject): void {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
@@ -100,7 +100,7 @@ it('does not resolve an archived student by their SIS ID', function () use ($res
     expect($resolveStudentGroupSubject($group, $student->sisid))->toBeNull();
 });
 
-it('does not resolve an archived student by their other ID', function () use ($resolveStudentGroupSubject) {
+it('does not resolve an archived student by their other ID', function () use ($resolveStudentGroupSubject): void {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);

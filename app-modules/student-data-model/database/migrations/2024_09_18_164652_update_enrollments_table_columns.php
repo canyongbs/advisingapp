@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->dropColumn([
                 'acad_career',
                 'semester',
@@ -63,7 +63,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->string('division')->nullable(false)->change();
             $table->string('class_nbr')->nullable(false)->change();
             $table->string('crse_grade_off')->nullable(false)->change();

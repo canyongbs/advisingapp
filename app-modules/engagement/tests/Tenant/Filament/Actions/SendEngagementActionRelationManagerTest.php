@@ -45,7 +45,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('can create an Email Engagement properly', function () {
+it('can create an Email Engagement properly', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -78,7 +78,7 @@ it('can create an Email Engagement properly', function () {
     expect($student->engagements()->first()->body)->toEqual($body);
 });
 
-it('can create an SMS Engagement properly', function () {
+it('can create an SMS Engagement properly', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -114,7 +114,7 @@ it('can create an SMS Engagement properly', function () {
     expect($student->engagements()->first()->body)->toEqual($body);
 });
 
-it('disables new action when student has no valid email or sms', function () {
+it('disables new action when student has no valid email or sms', function (): void {
     asSuperAdmin();
 
     /** @var Student $student */
@@ -136,7 +136,7 @@ it('disables new action when student has no valid email or sms', function () {
         ->assertTableActionDisabled('engage');
 });
 
-it('enables new action when student has valid email', function () {
+it('enables new action when student has valid email', function (): void {
     asSuperAdmin();
 
     /** @var Student $student */
@@ -149,7 +149,7 @@ it('enables new action when student has valid email', function () {
         ->assertTableActionEnabled('engage');
 });
 
-it('disables new action when student email is bounced and phone unavailable', function () {
+it('disables new action when student email is bounced and phone unavailable', function (): void {
     asSuperAdmin();
 
     /** @var Student $student */
@@ -177,7 +177,7 @@ it('disables new action when student email is bounced and phone unavailable', fu
         ->assertTableActionDisabled('engage');
 });
 
-it('shows enabled action when bounced email but valid sms exists', function () {
+it('shows enabled action when bounced email but valid sms exists', function (): void {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);

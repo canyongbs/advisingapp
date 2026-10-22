@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('campaign_actions', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('campaign_actions', function (Blueprint $table): void {
                 $table->renameColumn('last_execution_attempt_at', 'execution_dispatched_at');
 
                 $table->renameColumn('successfully_executed_at', 'execution_finished_at');
@@ -55,8 +55,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('campaign_actions', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('campaign_actions', function (Blueprint $table): void {
                 $table->renameColumn('execution_dispatched_at', 'last_execution_attempt_at');
 
                 $table->renameColumn('execution_finished_at', 'successfully_executed_at');

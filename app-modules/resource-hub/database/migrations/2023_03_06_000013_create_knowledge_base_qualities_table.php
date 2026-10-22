@@ -43,7 +43,7 @@ class CreateKnowledgeBaseQualitiesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('knowledge_base_qualities', function (Blueprint $table) {
+        Schema::create('knowledge_base_qualities', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name');

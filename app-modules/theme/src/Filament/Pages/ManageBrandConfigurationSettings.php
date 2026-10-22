@@ -97,8 +97,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_favicon_active'),
                             )
-                            ->afterStateUpdated(fn (Set $set) => $set('is_favicon_active', true))
-                            ->deleteUploadedFileUsing(fn (Set $set) => $set('is_favicon_active', false))
+                            ->afterStateUpdated(fn (Set $set): mixed => $set('is_favicon_active', true))
+                            ->deleteUploadedFileUsing(fn (Set $set): mixed => $set('is_favicon_active', false))
                             ->hiddenLabel(),
                         Toggle::make('is_favicon_active')
                             ->label('Active')
@@ -115,8 +115,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_logo_active'),
                             )
-                            ->afterStateUpdated(fn (Set $set) => $set('is_logo_active', true))
-                            ->deleteUploadedFileUsing(fn (Set $set) => $set('is_logo_active', false))
+                            ->afterStateUpdated(fn (Set $set): mixed => $set('is_logo_active', true))
+                            ->deleteUploadedFileUsing(fn (Set $set): mixed => $set('is_logo_active', false))
                             ->hiddenLabel(),
                         SpatieMediaLibraryFileUpload::make('dark_logo')
                             ->disk('s3')
@@ -143,7 +143,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                 TextInput::make('support_url')
                                     ->label('Support URL')
                                     ->url()
-                                    ->visible(fn (Get $get) => $get('is_support_url_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_support_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
                         Section::make('Recent Updates')
@@ -155,7 +155,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                 TextInput::make('recent_updates_url')
                                     ->label('Recent Updates URL')
                                     ->url()
-                                    ->visible(fn (Get $get) => $get('is_recent_updates_url_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_recent_updates_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
                         Section::make('Custom Link')
@@ -168,12 +168,12 @@ class ManageBrandConfigurationSettings extends SettingsPage
                                     ->label('Custom Link URL Label')
                                     ->alphaNum()
                                     ->maxLength(16)
-                                    ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
                                 TextInput::make('custom_link_url')
                                     ->label('Custom Link URL')
                                     ->url()
-                                    ->visible(fn (Get $get) => $get('is_custom_link_url_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_custom_link_url_enabled'))
                                     ->columnSpanFull(),
                             ]),
                     ]),

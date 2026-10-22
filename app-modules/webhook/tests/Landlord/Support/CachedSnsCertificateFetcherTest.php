@@ -38,14 +38,14 @@ use AdvisingApp\Webhook\Support\CachedSnsCertificateFetcher;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Exceptions;
 
-it('returns a cached certificate without fetching it', function () {
+it('returns a cached certificate without fetching it', function (): void {
     $cache = Cache::store('array');
     $cache->put('sns-signing-certificate:https://sns.us-west-2.amazonaws.com/certificate.pem', 'CERTIFICATE');
 
     expect((new CachedSnsCertificateFetcher($cache))('https://sns.us-west-2.amazonaws.com/certificate.pem'))->toBe('CERTIFICATE');
 });
 
-it('fetches and caches a certificate it has not seen', function () {
+it('fetches and caches a certificate it has not seen', function (): void {
     $certificatePath = tempnam(sys_get_temp_dir(), 'sns');
     file_put_contents($certificatePath, 'CERTIFICATE');
 
@@ -57,7 +57,7 @@ it('fetches and caches a certificate it has not seen', function () {
     unlink($certificatePath);
 });
 
-it('reports a failed fetch without caching it', function () {
+it('reports a failed fetch without caching it', function (): void {
     Exceptions::fake();
 
     $certificatePath = sys_get_temp_dir() . '/missing-sns-certificate.pem';

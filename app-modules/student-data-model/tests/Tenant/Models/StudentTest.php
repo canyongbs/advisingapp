@@ -40,7 +40,7 @@ use Illuminate\Support\Carbon;
 
 use function Tests\asSuperAdmin;
 
-it('links term attributes by `sisid`', function () {
+it('links term attributes by `sisid`', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -52,8 +52,8 @@ it('links term attributes by `sisid`', function () {
         ->not->toContain($otherTermAttribute->sis_term_id);
 });
 
-describe('archiving', function () {
-    it('archives a student', function () {
+describe('archiving', function (): void {
+    it('archives a student', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -69,7 +69,7 @@ describe('archiving', function () {
             ->and($student->isArchived())->toBeTrue();
     });
 
-    it('unarchives a student', function () {
+    it('unarchives a student', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -83,7 +83,7 @@ describe('archiving', function () {
             ->and($student->isArchived())->toBeFalse();
     });
 
-    it('does not soft delete a student when it is archived', function () {
+    it('does not soft delete a student when it is archived', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -93,7 +93,7 @@ describe('archiving', function () {
         expect($student->refresh()->trashed())->toBeFalse();
     });
 
-    it('includes archived students by default', function () {
+    it('includes archived students by default', function (): void {
         asSuperAdmin();
 
         $archived = Student::factory()->create();
@@ -102,7 +102,7 @@ describe('archiving', function () {
         expect(Student::query()->pluck('sisid'))->toContain($archived->getKey());
     });
 
-    it('excludes archived students from `withoutArchived`', function () {
+    it('excludes archived students from `withoutArchived`', function (): void {
         asSuperAdmin();
 
         $active = Student::factory()->create();

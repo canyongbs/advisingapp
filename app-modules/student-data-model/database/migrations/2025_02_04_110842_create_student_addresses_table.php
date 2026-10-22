@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('student_addresses', function (Blueprint $table) {
+        Schema::create('student_addresses', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('sisid');
             $table->string('line_1')->nullable();

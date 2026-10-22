@@ -50,7 +50,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('can attach users without a care team role to a student', function () {
+it('can attach users without a care team role to a student', function (): void {
     Repeater::fake();
     asSuperAdmin();
 
@@ -82,7 +82,7 @@ it('can attach users without a care team role to a student', function () {
     expect($student->careTeam->pluck('id'))->toContain($user2->getKey());
 });
 
-it('can attach users without a care team role to a prospect', function () {
+it('can attach users without a care team role to a prospect', function (): void {
     Repeater::fake();
     asSuperAdmin();
 
@@ -114,7 +114,7 @@ it('can attach users without a care team role to a prospect', function () {
     expect($prospect->careTeam->pluck('id'))->toContain($user2->getKey());
 });
 
-it('can attach users with care team roles to a student', function () {
+it('can attach users with care team roles to a student', function (): void {
     Repeater::fake();
     asSuperAdmin();
 
@@ -150,7 +150,7 @@ it('can attach users with care team roles to a student', function () {
     expect(CareTeam::where('user_id', $user2->getKey())->where('educatable_id', $student->getKey())->first()->care_team_role_id)->toBe($careTeamRole2->getKey());
 });
 
-it('can attach users with care team roles to a prospect', function () {
+it('can attach users with care team roles to a prospect', function (): void {
     Repeater::fake();
     asSuperAdmin();
 
@@ -186,7 +186,7 @@ it('can attach users with care team roles to a prospect', function () {
     expect(CareTeam::where('user_id', $user2->getKey())->where('educatable_id', $prospect->getKey())->first()->care_team_role_id)->toBe($careTeamRole2->getKey());
 });
 
-it('gates the care team attach action behind the care_team.create permission', function () {
+it('gates the care team attach action behind the care_team.create permission', function (): void {
     $student = Student::factory()->create();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();

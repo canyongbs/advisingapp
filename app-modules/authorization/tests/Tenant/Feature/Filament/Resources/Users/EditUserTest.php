@@ -47,7 +47,7 @@ use STS\FilamentImpersonate\Actions\Impersonate;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-it('renders impersonate button for non super admin users when user is super admin', function () {
+it('renders impersonate button for non super admin users when user is super admin', function (): void {
     asSuperAdmin();
 
     $user = User::factory()->create();
@@ -61,7 +61,7 @@ it('renders impersonate button for non super admin users when user is super admi
         ->assertActionVisible(Impersonate::class);
 });
 
-it('does not render super admin profile for regular user', function () {
+it('does not render super admin profile for regular user', function (): void {
     // Create a super admin user
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
@@ -78,7 +78,7 @@ it('does not render super admin profile for regular user', function () {
         ->assertStatus(404);
 })->throws(ModelNotFoundException::class);
 
-it('does not render impersonate button for super admin users at all', function () {
+it('does not render impersonate button for super admin users at all', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -94,7 +94,7 @@ it('does not render impersonate button for super admin users at all', function (
         ->assertActionHidden(Impersonate::class);
 });
 
-it('allows super admin user to impersonate', function () {
+it('allows super admin user to impersonate', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -112,7 +112,7 @@ it('allows super admin user to impersonate', function () {
     expect(auth()->id())->toBe($user->id);
 });
 
-it('allows user with permission to impersonate', function () {
+it('allows user with permission to impersonate', function (): void {
     $first = User::factory()->create();
     $first->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
     asSuperAdmin($first);
@@ -131,8 +131,8 @@ it('allows user with permission to impersonate', function () {
     expect(auth()->id())->toBe($second->id);
 });
 
-describe('enterprise ai', function () {
-    it('hides the `ConversationalAi` license toggle while Enterprise AI is disabled', function () {
+describe('enterprise ai', function (): void {
+    it('hides the `ConversationalAi` license toggle while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $user = User::factory()->create();

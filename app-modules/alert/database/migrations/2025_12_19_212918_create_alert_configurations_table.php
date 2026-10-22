@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('alert_configurations', function (Blueprint $table) {
+        Schema::create('alert_configurations', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('preset');

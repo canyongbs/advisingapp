@@ -48,7 +48,7 @@ return new class () extends Migration {
             ->orderBy('id')
             ->first();
 
-        DB::table('campaigns')->orderBy('id')->chunk(100, function (Collection $campaigns) use ($firstUser) {
+        DB::table('campaigns')->orderBy('id')->chunk(100, function (Collection $campaigns) use ($firstUser): void {
             foreach ($campaigns as $campaign) {
                 DB::table('campaigns')
                     ->where('id', $campaign->id)

@@ -100,7 +100,7 @@ class Tenant extends SpatieTenant
 
     public function executeWithLandlordJobFailureAndBatching(callable $callback): void
     {
-        $this->execute(function () use ($callback) {
+        $this->execute(function () use ($callback): void {
             $currentQueueFailedConnection = config('queue.failed.database');
             $currentBatchingConnection = config('queue.batching.database');
 

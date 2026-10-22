@@ -49,14 +49,14 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-test('`SharedCalendar` page can be rendered', function () {
+test('`SharedCalendar` page can be rendered', function (): void {
     asSuperAdmin();
 
     get(SharedCalendar::getUrl())
         ->assertSuccessful();
 });
 
-test('`SharedCalendar` is gated with proper access control', function () {
+test('`SharedCalendar` is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -70,7 +70,7 @@ test('`SharedCalendar` is gated with proper access control', function () {
         ->assertSuccessful();
 });
 
-test('`SharedCalendar` page has the correct table columns', function () {
+test('`SharedCalendar` page has the correct table columns', function (): void {
     asSuperAdmin();
 
     Livewire::test(SharedCalendar::class)
@@ -83,7 +83,7 @@ test('`SharedCalendar` page has the correct table columns', function () {
         ->assertTableColumnExists('duration');
 });
 
-test('`SharedCalendar` table defaults to hiding past appointments', function () {
+test('`SharedCalendar` table defaults to hiding past appointments', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
@@ -107,7 +107,7 @@ test('`SharedCalendar` table defaults to hiding past appointments', function () 
         ->assertCanNotSeeTableRecords([$pastAppointment]);
 });
 
-test('`SharedCalendar` labels and links an appointment booked by an active student', function () {
+test('`SharedCalendar` labels and links an appointment booked by an active student', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -135,7 +135,7 @@ test('`SharedCalendar` labels and links an appointment booked by an active stude
         );
 });
 
-test('`SharedCalendar` still labels an appointment booked by an archived student without linking to them', function () {
+test('`SharedCalendar` still labels an appointment booked by an archived student without linking to them', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -165,7 +165,7 @@ test('`SharedCalendar` still labels an appointment booked by an archived student
         );
 });
 
-test('`SharedCalendar` table shows past appointments when Hide Past is disabled', function () {
+test('`SharedCalendar` table shows past appointments when Hide Past is disabled', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
@@ -192,7 +192,7 @@ test('`SharedCalendar` table shows past appointments when Hide Past is disabled'
         ->assertCanSeeTableRecords([$futureAppointment, $pastAppointment]);
 });
 
-test("`SharedCalendar` 'My Groups' filter only shows appointments from the user's directly-assigned groups", function () {
+test("`SharedCalendar` 'My Groups' filter only shows appointments from the user's directly-assigned groups", function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
@@ -221,7 +221,7 @@ test("`SharedCalendar` 'My Groups' filter only shows appointments from the user'
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 
-test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's department", function () {
+test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's department", function (): void {
     $department = Department::factory()->create();
     $user = User::factory()->create(['team_id' => $department->id]);
     $user->givePermissionTo('group_appointment.view-any');
@@ -251,7 +251,7 @@ test("`SharedCalendar` 'My Groups' filter includes appointments from groups link
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 
-test("`SharedCalendar` 'Selected Groups' filter shows appointments from the specified groups only", function () {
+test("`SharedCalendar` 'Selected Groups' filter shows appointments from the specified groups only", function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
@@ -283,7 +283,7 @@ test("`SharedCalendar` 'Selected Groups' filter shows appointments from the spec
         ->assertCanNotSeeTableRecords([$appointmentC]);
 });
 
-test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows all appointments", function () {
+test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows all appointments", function (): void {
     $group = BookingGroup::factory()->create();
 
     BookingGroupAppointment::factory()
@@ -301,7 +301,7 @@ test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows al
         ->assertCountTableRecords(1);
 });
 
-test('Settings view renders ListBookingGroups', function () {
+test('Settings view renders ListBookingGroups', function (): void {
     asSuperAdmin();
 
     get(SharedCalendar::getUrl() . '?view=settings')

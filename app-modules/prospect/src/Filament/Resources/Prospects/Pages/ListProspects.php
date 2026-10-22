@@ -172,12 +172,12 @@ class ListProspects extends ListRecords
                     ->optionsLimit(20)
                     ->multiple()
                     ->query(
-                        function (Builder $query, array $data) {
+                        function (Builder $query, array $data): void {
                             if (blank($data['values'])) {
                                 return;
                             }
 
-                            $query->whereHas('tags', function (Builder $query) use ($data) {
+                            $query->whereHas('tags', function (Builder $query) use ($data): void {
                                 $query->whereIn('tag_id', $data['values']);
                             });
                         }
@@ -207,14 +207,14 @@ class ListProspects extends ListRecords
                                 Textarea::make('description')
                                     ->string()
                                     ->required()
-                                    ->visible(fn (Get $get) => $get('field') === 'description'),
+                                    ->visible(fn (Get $get): bool => $get('field') === 'description'),
                                 TextInput::make('hsgrad')
                                     ->label('High School Graduation Year')
                                     ->numeric()
                                     ->minValue(1920)
                                     ->maxValue(now()->addYears(25)->year)
                                     ->required()
-                                    ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
+                                    ->visible(fn (Get $get): bool => $get('field') === 'hsgrad'),
                                 Select::make('source_id')
                                     ->label('Source')
                                     ->relationship('source', 'name')
@@ -223,7 +223,7 @@ class ListProspects extends ListRecords
                                         column: (new ProspectSource())->getKeyName()
                                     )
                                     ->required()
-                                    ->visible(fn (Get $get) => $get('field') === 'source_id'),
+                                    ->visible(fn (Get $get): bool => $get('field') === 'source_id'),
                                 Select::make('status_id')
                                     ->label('Status')
                                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('sort'))
@@ -232,9 +232,9 @@ class ListProspects extends ListRecords
                                         column: (new ProspectStatus())->getKeyName()
                                     )
                                     ->required()
-                                    ->visible(fn (Get $get) => $get('field') === 'status_id'),
+                                    ->visible(fn (Get $get): bool => $get('field') === 'status_id'),
                             ])
-                            ->action(function (Collection $records, array $data) {
+                            ->action(function (Collection $records, array $data): void {
                                 $records->each(
                                     fn (Prospect $prospect) => $prospect
                                         ->forceFill([$data['field'] => $data[$data['field']]])

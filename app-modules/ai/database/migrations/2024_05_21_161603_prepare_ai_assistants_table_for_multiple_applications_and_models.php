@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->string('application')->nullable();
             $table->boolean('is_default')->default(false);
             $table->string('model')->nullable();
@@ -50,7 +50,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->dropColumn('application');
             $table->dropColumn('model');
             $table->dropColumn('is_default');

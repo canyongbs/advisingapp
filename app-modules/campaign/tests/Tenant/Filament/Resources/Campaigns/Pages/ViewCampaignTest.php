@@ -47,7 +47,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('archive action is visible on view page', function () {
+test('archive action is visible on view page', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $campaign = Campaign::factory()->enabled()->create();
 
@@ -66,7 +66,7 @@ test('archive action is visible on view page', function () {
         ->assertActionVisible('archive');
 });
 
-test('archive action shows disable and archive label for enabled campaigns', function () {
+test('archive action shows disable and archive label for enabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -75,7 +75,7 @@ test('archive action shows disable and archive label for enabled campaigns', fun
         ->assertActionHasLabel('archive', 'Disable and Archive');
 });
 
-test('archive action shows archive label for disabled campaigns', function () {
+test('archive action shows archive label for disabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();
@@ -84,7 +84,7 @@ test('archive action shows archive label for disabled campaigns', function () {
         ->assertActionHasLabel('archive', 'Archive');
 });
 
-test('archive action disables and archives enabled campaigns', function () {
+test('archive action disables and archives enabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -101,7 +101,7 @@ test('archive action disables and archives enabled campaigns', function () {
         ->and($campaign->isArchived())->toBeTrue();
 });
 
-test('archive action archives disabled campaigns', function () {
+test('archive action archives disabled campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();
@@ -118,7 +118,7 @@ test('archive action archives disabled campaigns', function () {
         ->and($campaign->isArchived())->toBeTrue();
 });
 
-test('archive action redirects to index after archiving', function () {
+test('archive action redirects to index after archiving', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -128,7 +128,7 @@ test('archive action redirects to index after archiving', function () {
         ->assertRedirect(ListCampaigns::getUrl());
 });
 
-test('edit action is hidden for completed campaigns', function () {
+test('edit action is hidden for completed campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->has(CampaignAction::factory()->finishedAt(), 'actions')->create();
@@ -140,7 +140,7 @@ test('edit action is hidden for completed campaigns', function () {
         ->assertActionVisible('archive');
 });
 
-test('archive action successfully archives completed campaigns', function () {
+test('archive action successfully archives completed campaigns', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->has(CampaignAction::factory()->finishedAt(), 'actions')->create();

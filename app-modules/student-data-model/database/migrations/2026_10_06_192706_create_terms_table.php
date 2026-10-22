@@ -42,7 +42,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('terms', function (Blueprint $table) {
+        Schema::create('terms', function (Blueprint $table): void {
             $table->uuid('id')
                 ->default(DB::raw('gen_random_uuid()'))
                 ->primary();

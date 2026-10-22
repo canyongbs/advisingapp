@@ -63,7 +63,7 @@ class BookingGroupAppointmentFactory extends Factory
 
     public function past(): static
     {
-        return $this->state(function () {
+        return $this->state(function (): array {
             return [
                 'starts_at' => $this->faker->dateTimeBetween('-30 days', '-1 day'),
             ];

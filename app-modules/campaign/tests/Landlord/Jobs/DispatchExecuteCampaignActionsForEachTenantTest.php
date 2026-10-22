@@ -38,7 +38,7 @@ use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `ExecuteCampaignActions` for each eligible tenant', function () {
+it('dispatches `ExecuteCampaignActions` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchExecuteCampaignActionsForEachTenant())->handle();

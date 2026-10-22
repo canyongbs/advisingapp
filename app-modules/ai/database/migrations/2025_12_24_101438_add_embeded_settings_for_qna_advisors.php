@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('qna_advisors', function (Blueprint $table) {
+        Schema::table('qna_advisors', function (Blueprint $table): void {
             $table->string('title_text_color')->nullable();
             $table->string('description_text_color')->nullable();
             $table->string('button_text_color')->nullable();
@@ -53,7 +53,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('qna_advisors', function (Blueprint $table) {
+        Schema::table('qna_advisors', function (Blueprint $table): void {
             $table->dropColumn([
                 'title_text_color',
                 'description_text_color',

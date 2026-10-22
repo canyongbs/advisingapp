@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use Illuminate\Database\UniqueConstraintViolationException;
 
-it('does not allow duplicate category names for the same employee advisor case-insensitively', function () {
+it('does not allow duplicate category names for the same employee advisor case-insensitively', function (): void {
     $assistant = AiAssistant::factory()->create();
 
     EmployeeAdvisorCategory::factory()->state([
@@ -52,7 +52,7 @@ it('does not allow duplicate category names for the same employee advisor case-i
     ])->create();
 })->throws(UniqueConstraintViolationException::class);
 
-it('allows duplicate category names for different employee advisors', function () {
+it('allows duplicate category names for different employee advisors', function (): void {
     $assistant = AiAssistant::factory()->has(EmployeeAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
     $assistantTwo = AiAssistant::factory()->has(EmployeeAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
 

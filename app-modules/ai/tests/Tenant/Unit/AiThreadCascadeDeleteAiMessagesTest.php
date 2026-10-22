@@ -42,7 +42,9 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('soft deletes related AiMessages when an AiThread is deleted', function () {
+use Pest\Mixins\Expectation;
+
+it('soft deletes related AiMessages when an AiThread is deleted', function (): void {
     $aiThread = AiThread::factory()
         ->has(AiMessage::factory()->count(3), 'messages')
         ->create([
@@ -51,7 +53,7 @@ it('soft deletes related AiMessages when an AiThread is deleted', function () {
 
     assertDatabaseCount('ai_messages', 3);
 
-    $aiThread->messages->each(fn (AiMessage $message) => expect($message->trashed())->toBeFalse());
+    $aiThread->messages->each(fn (AiMessage $message): Expectation => expect($message->trashed())->toBeFalse());
 
     Event::fake();
 
@@ -59,5 +61,5 @@ it('soft deletes related AiMessages when an AiThread is deleted', function () {
 
     assertDatabaseCount('ai_messages', 3);
 
-    $aiThread->messages->each(fn (AiMessage $message) => expect($message->fresh()->trashed())->toBeTrue());
+    $aiThread->messages->each(fn (AiMessage $message): Expectation => expect($message->fresh()->trashed())->toBeTrue());
 });

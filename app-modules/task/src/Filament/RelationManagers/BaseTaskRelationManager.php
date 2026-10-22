@@ -85,14 +85,14 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             ->label('Users')
                             ->multiple()
                             ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         Select::make('confidential_task_departments')
                             ->relationship('confidentialAccessDepartments', 'name')
                             ->preload()
                             ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                     ]),
                 TextInput::make('title')
                     ->required()
@@ -134,8 +134,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->searchable()
                     ->wrap()
                     ->limit(50)
-                    ->icon(fn (Task $record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
+                    ->icon(fn (Task $record): ?string => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn (Task $record): ?string => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
                     ->badge()
@@ -146,11 +146,11 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
-                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                    ->url(fn (Task $record): ?string => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
                     ->sortable(),
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
-                    ->url(fn (Task $record) => match ($record->concern::class) {
+                    ->url(fn (Task $record): ?string => match ($record->concern::class) {
                         Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
@@ -179,7 +179,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->multiple(),
                 SelectFilter::make('status')
                     ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
+                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction): array => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
                     ->multiple()
                     ->default(
                         [
@@ -232,7 +232,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
 
                             return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                         })
-                        ->using(function (Collection $selectedRecords) {
+                        ->using(function (Collection $selectedRecords): void {
                             $selectedRecords->each(
                                 fn (Task $selectedRecord) => $selectedRecord->concern()->dissociate()->save()
                             );

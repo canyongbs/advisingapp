@@ -46,7 +46,7 @@ class AuditServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new AuditPlugin()) instanceof Panel);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/audit.php', 'audit');
     }

@@ -64,7 +64,7 @@ class InviteEventAttendeeAction extends Action
                     ->searchable()
                     ->required(),
             ])
-            ->action(function (array $data, Component $livewire, ?Educatable $record) {
+            ->action(function (array $data, Component $livewire, ?Educatable $record): void {
                 /** @var User $user */
                 $user = auth()->user();
 

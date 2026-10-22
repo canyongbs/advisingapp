@@ -37,7 +37,7 @@
 use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
 use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 
-it('saves numeric option values as explicit label and value rows', function () {
+it('saves numeric option values as explicit label and value rows', function (): void {
     $field = collect(RadioFormFieldBlock::fields())->first(fn (mixed $field): bool => $field instanceof OptionsKeyValue);
 
     $state = [
@@ -55,7 +55,7 @@ it('saves numeric option values as explicit label and value rows', function () {
     ]);
 });
 
-it('hydrates saved numeric option rows into the editor without losing their values', function () {
+it('hydrates saved numeric option rows into the editor without losing their values', function (): void {
     $field = collect(RadioFormFieldBlock::fields())->first(fn (mixed $field): bool => $field instanceof OptionsKeyValue);
 
     $state = [
@@ -73,7 +73,7 @@ it('hydrates saved numeric option rows into the editor without losing their valu
     ]);
 });
 
-it('renders the labels of numeric options in the preview', function () {
+it('renders the labels of numeric options in the preview', function (): void {
     $html = RadioFormFieldBlock::toPreviewHtml([
         'label' => 'Agree',
         'options' => [
@@ -85,7 +85,7 @@ it('renders the labels of numeric options in the preview', function () {
     expect($html)->toContain('No')->toContain('Yes');
 });
 
-it('resolves a numeric response to its label in the submission view', function () {
+it('resolves a numeric response to its label in the submission view', function (): void {
     $html = view('form::blocks.submissions.radio', [
         'label' => 'Agree',
         'isRequired' => false,

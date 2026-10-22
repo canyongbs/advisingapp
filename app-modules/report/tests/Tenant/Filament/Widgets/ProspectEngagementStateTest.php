@@ -42,7 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
 use App\Models\User;
 
-it('returns correct counts of prospects, emails, texts, and staff based on the given date range', function () {
+it('returns correct counts of prospects, emails, texts, and staff based on the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -85,7 +85,7 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
         ->and($stats[3]->getValue())->toEqual(2);
 });
 
-it('returns correct counts of prospects, emails, texts, and staff engagements based on group filters', function () {
+it('returns correct counts of prospects, emails, texts, and staff engagements based on group filters', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 

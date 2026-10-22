@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('new_student_alert_configurations', function (Blueprint $table) {
+        Schema::create('new_student_alert_configurations', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->unsignedInteger('number_of_semesters');

@@ -50,7 +50,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('EditDepartment is gated with proper access control', function () {
+test('EditDepartment is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     $department = Department::factory()->create();
@@ -96,7 +96,7 @@ test('EditDepartment is gated with proper access control', function () {
 
 // Non Super Admin Users can be added to a department test
 
-test('Non Super Admin Users can be added to a department', function () {
+test('Non Super Admin Users can be added to a department', function (): void {
     $user = User::factory()->create();
     $department = Department::factory()->has(User::factory()->count(1))->create();
 
@@ -124,7 +124,7 @@ test('Non Super Admin Users can be added to a department', function () {
 
 // Super Admin Users cannot be added to a department
 
-test('Super Admin Users cannot be added to a department', function () {
+test('Super Admin Users cannot be added to a department', function (): void {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
     $department = Department::factory()->create();
@@ -156,7 +156,7 @@ test('Super Admin Users cannot be added to a department', function () {
 
 //Super Admin Users do not show up in UsersRelationManager for Departments search results
 
-test('Super Admin Users do not show up in UsersRelationManager for Departments search results', function () {
+test('Super Admin Users do not show up in UsersRelationManager for Departments search results', function (): void {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
     $department = Department::factory()->create();
@@ -180,7 +180,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Departments s
         'pageClass' => EditDepartment::class,
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($superAdmin): bool {
             $options = $select->getSearchResults($superAdmin->name);
 
             return empty($options) ? true : false;
@@ -190,7 +190,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Departments s
 // The associate/dissociate/attach/detach actions on relation managers are gated by the
 // "update" ability of the owner record (see FilamentServiceProvider). On the read-only-able
 // view page, a user who can only view the department must not see the associate action.
-test('the associate action in the department users relation manager is gated by the department update permission', function () {
+test('the associate action in the department users relation manager is gated by the department update permission', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create();
@@ -213,7 +213,7 @@ test('the associate action in the department users relation manager is gated by 
     ])->assertTableActionVisible(AssociateAction::class);
 });
 
-test('EditDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
+test('EditDepartment does not allow for duplicate names of non-deleted departments case insensitively', function (): void {
     asSuperAdmin();
 
     Department::factory(['name' => 'Department', 'deleted_at' => now()])->create();

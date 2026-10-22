@@ -42,9 +42,9 @@ use Illuminate\Support\ServiceProvider;
 
 class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleRecaptchaPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleRecaptchaPlugin()) instanceof Panel);
     }
 
     public function boot(): void {}

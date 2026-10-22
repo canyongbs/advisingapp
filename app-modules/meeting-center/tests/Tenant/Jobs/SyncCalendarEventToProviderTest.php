@@ -59,7 +59,7 @@ $createSyncCalendarEvent = function (): CalendarEvent {
         ->createQuietly();
 };
 
-it('creates the event on the resolved provider driver', function () use ($createSyncCalendarEvent) {
+it('creates the event on the resolved provider driver', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -74,7 +74,7 @@ it('creates the event on the resolved provider driver', function () use ($create
     (new SyncCalendarEventToProvider($event))->handle();
 });
 
-it('skips events that already have a provider id', function () use ($createSyncCalendarEvent) {
+it('skips events that already have a provider id', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
     $event->provider_id = 'already-synced';
     $event->saveQuietly();
@@ -88,7 +88,7 @@ it('skips events that already have a provider id', function () use ($createSyncC
     expect($event->refresh()->provider_id)->toBe('already-synced');
 });
 
-it('swallows a CouldNotRefreshToken failure', function () use ($createSyncCalendarEvent) {
+it('swallows a CouldNotRefreshToken failure', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -103,7 +103,7 @@ it('swallows a CouldNotRefreshToken failure', function () use ($createSyncCalend
     expect($event->refresh()->provider_id)->toBeNull();
 });
 
-it('releases the job when the provider is rate limited', function () use ($createSyncCalendarEvent) {
+it('releases the job when the provider is rate limited', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -119,7 +119,7 @@ it('releases the job when the provider is rate limited', function () use ($creat
     $job->assertReleased(45);
 });
 
-it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($createSyncCalendarEvent) {
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -133,7 +133,7 @@ it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () u
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('prevents overlaps with other provider jobs for the same event', function () use ($createSyncCalendarEvent) {
+it('prevents overlaps with other provider jobs for the same event', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     $middleware = (new SyncCalendarEventToProvider($event))->middleware();
@@ -149,7 +149,7 @@ it('prevents overlaps with other provider jobs for the same event', function () 
     expect((bool) $shareKey)->toBeTrue();
 });
 
-it('has maxExceptions of 3', function () use ($createSyncCalendarEvent) {
+it('has maxExceptions of 3', function () use ($createSyncCalendarEvent): void {
     $event = $createSyncCalendarEvent();
 
     expect((new SyncCalendarEventToProvider($event))->maxExceptions)->toBe(3);

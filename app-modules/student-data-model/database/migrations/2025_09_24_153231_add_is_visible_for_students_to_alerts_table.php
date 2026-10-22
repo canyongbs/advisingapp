@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->boolean('is_visible_for_students')
                 ->default(false);
         });
@@ -49,7 +49,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->dropColumn('is_visible_for_students');
         });
     }

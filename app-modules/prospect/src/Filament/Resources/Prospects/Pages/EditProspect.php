@@ -209,7 +209,7 @@ class EditProspect extends EditRecord
                                 AddressInput::make()
                                     ->columnSpanFull()
                                     /** @phpstan-ignore argument.type */
-                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                    ->onItemSelected(function (Set $set, SearchResult $item): void {
                                         try {
                                             $data = $item->get('data');
 
@@ -320,7 +320,7 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
+            ConvertToStudent::make()->visible(fn (Prospect $record): bool => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             ViewAction::make(),
             DeleteAction::make(),

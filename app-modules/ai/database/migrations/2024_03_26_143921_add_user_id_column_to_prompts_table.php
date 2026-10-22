@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('prompts', function (Blueprint $table) {
+        Schema::table('prompts', function (Blueprint $table): void {
             $table->foreignUuid('user_id')->nullable()->constrained()->nullOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::table('prompts', function (Blueprint $table) {
+        Schema::table('prompts', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('user_id');
         });
     }

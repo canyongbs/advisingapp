@@ -51,13 +51,13 @@ Route::middleware([
 ])
     ->prefix('widgets/surveys')
     ->name('widgets.surveys.')
-    ->group(function () {
+    ->group(function (): void {
         Route::prefix('api/{survey}')
             ->name('api.')
             ->middleware([
                 EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',
             ])
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [SurveyWidgetController::class, 'assets'])
                     ->name('assets');
 

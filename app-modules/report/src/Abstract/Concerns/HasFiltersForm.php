@@ -55,16 +55,16 @@ trait HasFiltersForm
             Section::make()
                 ->schema([
                     DatePicker::make('startDate')
-                        ->maxDate(fn (Get $get) => $get('endDate') ?: now())
-                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
+                        ->maxDate(fn (Get $get): mixed => $get('endDate') ?: now())
+                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get): void {
                             if (blank($get('endDate')) && filled($state)) {
                                 $set('endDate', $state);
                             }
                         }),
                     DatePicker::make('endDate')
-                        ->minDate(fn (Get $get) => $get('startDate') ?: now())
+                        ->minDate(fn (Get $get): mixed => $get('startDate') ?: now())
                         ->maxDate(now())
-                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
+                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get): void {
                             if (blank($get('startDate')) && filled($state)) {
                                 $set('startDate', $state);
                             }

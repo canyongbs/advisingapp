@@ -41,7 +41,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             try {
                 $this->migrator->add('ai.is_open_ai_gpt_4o_responses_api_enabled', false);
             } catch (SettingAlreadyExists $exception) {

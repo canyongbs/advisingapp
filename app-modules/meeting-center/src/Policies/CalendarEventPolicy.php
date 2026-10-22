@@ -59,7 +59,7 @@ class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
         }
 
         if (! Gate::check(
-            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+            collect($this->requiredFeatures())->map(fn (Feature $feature): string => $feature->getGateName())
         )) {
             return FeatureAccessResponse::deny();
         }

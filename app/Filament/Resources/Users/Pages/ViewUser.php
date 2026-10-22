@@ -42,6 +42,7 @@ use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -81,10 +82,10 @@ class ViewUser extends ViewRecord
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)'),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ])
                     ->disabled(),
@@ -96,9 +97,9 @@ class ViewUser extends ViewRecord
                             ->relationship('department', 'name')
                             ->disabled(),
                     ])
-                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
+                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
                 Licenses::make()
-                    ->hidden(fn (?User $record) => is_null($record))
+                    ->hidden(fn (?User $record): bool => is_null($record))
                     ->disabled(function () {
                         /** @var User $user */
                         $user = auth()->user();
@@ -110,7 +111,7 @@ class ViewUser extends ViewRecord
                     ->options(RetentionCrmRestriction::class)
                     ->placeholder('No Restrictions')
                     ->disabled()
-                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
+                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
             ]);
     }
 
@@ -131,7 +132,7 @@ class ViewUser extends ViewRecord
         return [
             Action::make('mfa_reset')
                 ->visible(
-                    fn (User $record) => ! $record->is_external
+                    fn (User $record): bool => ! $record->is_external
                         && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
                         && auth()->user()->can('resetMultifactorAuthentication', $record),
                 )

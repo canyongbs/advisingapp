@@ -64,7 +64,7 @@ class EditSurvey extends EditRecord
     {
         return [
             Action::make('view')
-                ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
+                ->url(fn (Survey $survey): string => route('surveys.show', ['survey' => $survey]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -93,7 +93,7 @@ class EditSurvey extends EditRecord
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Survey $survey) => ! $survey->embed_enabled),
+                ->hidden(fn (Survey $survey): bool => ! $survey->embed_enabled),
             DeleteAction::make(),
         ];
     }

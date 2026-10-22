@@ -80,7 +80,7 @@ class BulkCreateConcernAction
                     ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                     ->exists('alert_statuses', 'id')
                     ->required(),
-            ])->action(function (Collection $records, array $data) {
+            ])->action(function (Collection $records, array $data): void {
                 try {
                     DB::beginTransaction();
 

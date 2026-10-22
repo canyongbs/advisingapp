@@ -94,7 +94,7 @@ class WorkflowRunStepFactory extends Factory
 
     public function withDetails(object $detailsModel): static
     {
-        return $this->state(function () use ($detailsModel) {
+        return $this->state(function () use ($detailsModel): array {
             return [
                 'details_type' => $detailsModel->getMorphClass(),
                 'details_id' => $detailsModel->getKey(),

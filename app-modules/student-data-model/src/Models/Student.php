@@ -229,7 +229,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->one()
             ->ofMany([
                 'start_date' => 'min',
-            ], function (Builder $query) {
+            ], function (Builder $query): void {
                 $query->whereNotNull('semester_code')
                     ->whereNotNull('start_date');
             });
@@ -244,7 +244,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->one()
             ->ofMany([
                 'start_date' => 'max',
-            ], function (Builder $query) {
+            ], function (Builder $query): void {
                 $query->whereNotNull('semester_code')
                     ->whereNotNull('start_date');
             });
@@ -624,7 +624,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! auth()->guard('web')->check()) {
                 return;
             }

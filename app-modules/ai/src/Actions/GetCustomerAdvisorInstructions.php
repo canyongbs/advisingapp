@@ -50,7 +50,7 @@ class GetCustomerAdvisorInstructions
             ->remember(
                 $customerAdvisor->getInstructionsCacheKey(),
                 now()->addHour(),
-                function () use ($customerAdvisor) {
+                function () use ($customerAdvisor): string {
                     $settings = app(AiCustomerAdvisorSettings::class);
 
                     $instructions = $settings->instructions ?? '';
@@ -94,9 +94,9 @@ class GetCustomerAdvisorInstructions
         $customerAdvisor
             ->categories
             ->where(fn (CustomerAdvisorCategory $category) => $category->questions->isNotEmpty())
-            ->each(function (CustomerAdvisorCategory $category) use (&$qnaSection) {
+            ->each(function (CustomerAdvisorCategory $category) use (&$qnaSection): void {
                 $questions = $category->questions->reduce(
-                    function (string $carry, CustomerAdvisorQuestion $question) {
+                    function (string $carry, CustomerAdvisorQuestion $question): string {
                         return $carry . <<<END
                         #### {$question->question}
                         {$question->answer}

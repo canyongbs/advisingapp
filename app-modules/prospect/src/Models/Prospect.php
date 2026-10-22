@@ -502,7 +502,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! Auth::guard('web')->check()) {
                 return;
             }

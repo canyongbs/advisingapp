@@ -45,7 +45,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-test('no notification sent when users exist but no channel is enabled', function () {
+test('no notification sent when users exist but no channel is enabled', function (): void {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -61,7 +61,7 @@ test('no notification sent when users exist but no channel is enabled', function
     Notification::assertNothingSent();
 });
 
-test('no notification sent when channels are enabled but no users qualify', function () {
+test('no notification sent when channels are enabled but no users qualify', function (): void {
     Notification::fake();
 
     $form = Form::factory()->create([
@@ -77,7 +77,7 @@ test('no notification sent when channels are enabled but no users qualify', func
     Notification::assertNothingSent();
 });
 
-test('notification sent to users via email only', function () {
+test('notification sent to users via email only', function (): void {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -93,11 +93,11 @@ test('notification sent to users via email only', function () {
     Notification::assertSentTo(
         $user,
         FormSubmissionNotification::class,
-        fn ($notification, $channels) => $channels === ['mail']
+        fn ($notification, $channels): bool => $channels === ['mail']
     );
 });
 
-test('notification sent to users via app only', function () {
+test('notification sent to users via app only', function (): void {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -113,11 +113,11 @@ test('notification sent to users via app only', function () {
     Notification::assertSentTo(
         $user,
         FormSubmissionNotification::class,
-        fn ($notification, $channels) => $channels === ['database']
+        fn ($notification, $channels): bool => $channels === ['database']
     );
 });
 
-test('notification sent to users via both email and app', function () {
+test('notification sent to users via both email and app', function (): void {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -133,11 +133,11 @@ test('notification sent to users via both email and app', function () {
     Notification::assertSentTo(
         $user,
         FormSubmissionNotification::class,
-        fn ($notification, $channels) => $channels === ['mail', 'database']
+        fn ($notification, $channels): bool => $channels === ['mail', 'database']
     );
 });
 
-test('care team members of a Student author are notified when notify_to_care_team is enabled', function () {
+test('care team members of a Student author are notified when notify_to_care_team is enabled', function (): void {
     Notification::fake();
 
     $careTeamUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -161,7 +161,7 @@ test('care team members of a Student author are notified when notify_to_care_tea
     Notification::assertSentTo($careTeamUser, FormSubmissionNotification::class);
 });
 
-test('care team members of a Prospect author are notified when notify_to_care_team is enabled', function () {
+test('care team members of a Prospect author are notified when notify_to_care_team is enabled', function (): void {
     Notification::fake();
 
     $careTeamUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -185,7 +185,7 @@ test('care team members of a Prospect author are notified when notify_to_care_te
     Notification::assertSentTo($careTeamUser, FormSubmissionNotification::class);
 });
 
-test('care team is not notified when submission has no author', function () {
+test('care team is not notified when submission has no author', function (): void {
     Notification::fake();
 
     $form = Form::factory()->create([
@@ -203,7 +203,7 @@ test('care team is not notified when submission has no author', function () {
     Notification::assertNothingSent();
 });
 
-test('subscribers of a Student author are notified when notify_to_subscribers is enabled', function () {
+test('subscribers of a Student author are notified when notify_to_subscribers is enabled', function (): void {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -229,7 +229,7 @@ test('subscribers of a Student author are notified when notify_to_subscribers is
     Notification::assertSentTo($subscriberUser, FormSubmissionNotification::class);
 });
 
-test('subscribers of a Prospect author are notified when notify_to_subscribers is enabled', function () {
+test('subscribers of a Prospect author are notified when notify_to_subscribers is enabled', function (): void {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -255,7 +255,7 @@ test('subscribers of a Prospect author are notified when notify_to_subscribers i
     Notification::assertSentTo($subscriberUser, FormSubmissionNotification::class);
 });
 
-test('subscribers are not notified when submission has no author', function () {
+test('subscribers are not notified when submission has no author', function (): void {
     Notification::fake();
 
     $form = Form::factory()->create([
@@ -273,7 +273,7 @@ test('subscribers are not notified when submission has no author', function () {
     Notification::assertNothingSent();
 });
 
-test('a user appearing in all three recipient lists only receives one notification', function () {
+test('a user appearing in all three recipient lists only receives one notification', function (): void {
     Notification::fake();
 
     $sharedUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -300,7 +300,7 @@ test('a user appearing in all three recipient lists only receives one notificati
     Notification::assertSentTo($sharedUser, FormSubmissionNotification::class);
 });
 
-test('distinct users each receive their own notification without interference', function () {
+test('distinct users each receive their own notification without interference', function (): void {
     Notification::fake();
 
     $manualUser = User::factory()->create();

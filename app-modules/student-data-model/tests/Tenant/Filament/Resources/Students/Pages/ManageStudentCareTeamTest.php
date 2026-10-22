@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('can render the manage student care team page', function () {
+it('can render the manage student care team page', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -56,7 +56,7 @@ it('can render the manage student care team page', function () {
 // `HasStudentHeader` renders the ArchiveAction on pages that are neither EditRecord nor
 // ViewRecord, which the action's default authorization and redirect do not support. This
 // page is a ManageRelatedRecords page, so it covers that shape.
-it('renders the `ArchiveAction` in the student header', function () {
+it('renders the `ArchiveAction` in the student header', function (): void {
     asSuperAdmin();
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -70,7 +70,7 @@ it('renders the `ArchiveAction` in the student header', function () {
         ->assertActionVisible(ArchiveAction::class);
 });
 
-it('archives the student from the student header', function () {
+it('archives the student from the student header', function (): void {
     asSuperAdmin();
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -87,8 +87,8 @@ it('archives the student from the student header', function () {
     expect($student->refresh()->archived_at)->not->toBeNull();
 });
 
-describe('authorization', function () {
-    it('denies access to the page without the `student.*.view` permission', function () {
+describe('authorization', function (): void {
+    it('denies access to the page without the `student.*.view` permission', function (): void {
         $user = User::factory()->licensed(Student::getLicenseType())->create();
         $student = Student::factory()->create();
 

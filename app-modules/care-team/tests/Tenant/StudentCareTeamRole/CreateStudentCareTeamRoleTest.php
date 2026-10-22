@@ -49,7 +49,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
 
-test('CreateStudentCareTeamRole is gated with proper access control', function () {
+test('CreateStudentCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -72,7 +72,7 @@ test('CreateStudentCareTeamRole is gated with proper access control', function (
         ->assertSuccessful();
 });
 
-test('A successful action on the CreateStudentCareTeamRole page', function () {
+test('A successful action on the CreateStudentCareTeamRole page', function (): void {
     asSuperAdmin()
         ->get(
             StudentCareTeamRoleResource::getUrl('create')
@@ -91,7 +91,7 @@ test('A successful action on the CreateStudentCareTeamRole page', function () {
     assertDatabaseHas(CareTeamRole::class, $createRequest);
 });
 
-test('CreateStudentCareTeamRole requires valid data', function (CreateCareTeamRoleRequestFactory $data, array $errors) {
+test('CreateStudentCareTeamRole requires valid data', function (CreateCareTeamRoleRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $createRequest = CreateCareTeamRoleRequestFactory::new($data)->create();
@@ -110,7 +110,7 @@ test('CreateStudentCareTeamRole requires valid data', function (CreateCareTeamRo
     ]
 );
 
-test('Creating a default care team role will make all other care team roles not the default', function () {
+test('Creating a default care team role will make all other care team roles not the default', function (): void {
     asSuperAdmin();
 
     CareTeamRole::factory()->create(['is_default' => true, 'type' => CareTeamRoleType::Student]);

@@ -48,8 +48,8 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-describe('archiving', function () {
-    it('archives the student without deleting them or their related records', function () {
+describe('archiving', function (): void {
+    it('archives the student without deleting them or their related records', function (): void {
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -74,7 +74,7 @@ describe('archiving', function () {
 
     // Once archived, the student's pages no longer resolve at all, so there is no edit page
     // on which the action could be shown or hidden.
-    it('cannot be opened once the student is archived', function () {
+    it('cannot be opened once the student is archived', function (): void {
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -92,7 +92,7 @@ describe('archiving', function () {
             ->toThrow(ModelNotFoundException::class);
     });
 
-    it('explains what archiving does in the confirmation modal', function () {
+    it('explains what archiving does in the confirmation modal', function (): void {
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -109,8 +109,8 @@ describe('archiving', function () {
     });
 });
 
-describe('authorization', function () {
-    it('renders the `ArchiveAction` based on proper access', function () {
+describe('authorization', function (): void {
+    it('renders the `ArchiveAction` based on proper access', function (): void {
         $user = User::factory()->licensed(Student::getLicenseType())->create();
 
         $user->givePermissionTo('student.view-any');

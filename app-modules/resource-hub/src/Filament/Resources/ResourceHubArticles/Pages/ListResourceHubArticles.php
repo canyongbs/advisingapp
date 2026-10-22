@@ -162,7 +162,7 @@ class ListResourceHubArticles extends ListRecords
                                     ->exists((new ResourceHubCategory())->getTable(), (new ResourceHubCategory())->getKeyName()),
                             ]),
                     ])
-                    ->before(function (array $data, Model $record) {
+                    ->before(function (array $data, Model $record): void {
                         $record->title = $data['title'];
                         $record->public = $data['public'];
                         $record->notes = $data['notes'];

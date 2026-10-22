@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('displays only students added within the selected date range', function () {
+it('displays only students added within the selected date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -75,14 +75,14 @@ it('displays only students added within the selected date range', function () {
         ->assertCanNotSeeTableRecords(collect([$studentOutsideRange]));
 });
 
-it('has table an export action', function () {
+it('has table an export action', function (): void {
     Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export, sending a notification', function (): void {
     $count = random_int(1, 5);
     Storage::fake('s3');
 
@@ -99,7 +99,7 @@ it('can start an export, sending a notification', function () {
         ->assertNotified();
 });
 
-it('does not list archived students', function () {
+it('does not list archived students', function (): void {
     $createdAt = now()->subDays(5);
 
     $active = Student::factory()->count(2)->create(['created_at_source' => $createdAt]);
@@ -119,7 +119,7 @@ it('does not list archived students', function () {
 
 // Archiving is not retroactive: a student archived in September was genuinely part of the
 // student body in March, so a report looking at March still has to list them.
-it('lists a student archived after the reported period', function () {
+it('lists a student archived after the reported period', function (): void {
     $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 

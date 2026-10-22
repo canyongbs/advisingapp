@@ -40,7 +40,7 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\withHeaders;
 use function Tests\loadFixtureFromModule;
 
-it('will abort the request if the request does not have the necessary header', function () {
+it('will abort the request if the request does not have the necessary header', function (): void {
     $response = post(
         route('inbound.webhook.twilio', 'status_callback'),
         loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
@@ -49,7 +49,7 @@ it('will abort the request if the request does not have the necessary header', f
     $response->assertForbidden();
 });
 
-it('will abort the request if the request cannot be verified to have originated from Twilio', function () {
+it('will abort the request if the request cannot be verified to have originated from Twilio', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->auth_token = '';
     $settings->save();

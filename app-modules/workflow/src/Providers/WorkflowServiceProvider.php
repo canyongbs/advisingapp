@@ -59,9 +59,9 @@ use Illuminate\Support\ServiceProvider;
 
 class WorkflowServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new WorkflowPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new WorkflowPlugin()) instanceof Panel);
 
         $this->app->singleton(WorkflowTypeFormRegistry::class);
     }

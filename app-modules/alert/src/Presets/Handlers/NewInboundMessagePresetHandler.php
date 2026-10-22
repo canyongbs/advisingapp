@@ -69,7 +69,7 @@ class NewInboundMessagePresetHandler implements AlertPresetHandler
     {
         return DB::table('students')
             ->select('students.sisid')
-            ->join('engagement_responses', function (JoinClause $join) {
+            ->join('engagement_responses', function (JoinClause $join): void {
                 $join->on('students.sisid', '=', 'engagement_responses.sender_id')
                     ->where('engagement_responses.sender_type', '=', 'student')
                     ->where('engagement_responses.status', EngagementResponseStatus::New->value)

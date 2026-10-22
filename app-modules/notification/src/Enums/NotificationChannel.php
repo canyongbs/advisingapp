@@ -78,7 +78,7 @@ enum NotificationChannel: string implements HasLabel, HasIcon
     {
         $integration = $this->caseDependsOnIntegration();
 
-        return $this->getCaseDisabled() && $integration
+        return $this->getCaseDisabled() && $integration instanceof Integration
             ? sprintf(
                 '%s (%s)',
                 $this->getLabel(),

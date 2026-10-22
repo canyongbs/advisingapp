@@ -52,7 +52,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 use function Tests\asSuperAdmin;
 
-it('can view the all campaigns in the list page', function () {
+it('can view the all campaigns in the list page', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin();
 
@@ -73,7 +73,7 @@ it('can view the all campaigns in the list page', function () {
         ->assertCountTableRecords(6);
 });
 
-it('can filter campaigns by `My Campaigns`', function () {
+it('can filter campaigns by `My Campaigns`', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     asSuperAdmin($user);
@@ -94,7 +94,7 @@ it('can filter campaigns by `My Campaigns`', function () {
         ->assertCanNotSeeTableRecords($filteredOutCampaigns);
 });
 
-it('can filter campaigns by `Enabled`', function () {
+it('can filter campaigns by `Enabled`', function (): void {
     asSuperAdmin();
 
     $enabledCampaigns = Campaign::factory()->count(2)->enabled()->create();
@@ -110,7 +110,7 @@ it('can filter campaigns by `Enabled`', function () {
         ->assertCanNotSeeTableRecords($disabledCampaigns);
 });
 
-it('can filter campaigns by `Disabled`', function () {
+it('can filter campaigns by `Disabled`', function (): void {
     asSuperAdmin();
 
     $enabledCampaigns = Campaign::factory()->count(2)->enabled()->create();
@@ -126,7 +126,7 @@ it('can filter campaigns by `Disabled`', function () {
         ->assertCanNotSeeTableRecords($enabledCampaigns);
 });
 
-it('can filter campaigns by `Completed`', function () {
+it('can filter campaigns by `Completed`', function (): void {
     asSuperAdmin();
 
     $completeCampaign = Campaign::factory()
@@ -156,7 +156,7 @@ it('can filter campaigns by `Completed`', function () {
         ]);
 });
 
-it('can filter campaigns by `In Progress`', function () {
+it('can filter campaigns by `In Progress`', function (): void {
     asSuperAdmin();
 
     $completeCampaign = Campaign::factory()
@@ -188,7 +188,7 @@ it('can filter campaigns by `In Progress`', function () {
         ]);
 });
 
-it('excludes archived campaigns from the list', function () {
+it('excludes archived campaigns from the list', function (): void {
     asSuperAdmin();
 
     $activeCampaign = Campaign::factory()->create();
@@ -202,7 +202,7 @@ it('excludes archived campaigns from the list', function () {
         ->assertCountTableRecords(1);
 });
 
-it('shows the group name and population as the name column description for a static group', function (GroupModel $model, int $memberCount, string $expectedLabel) {
+it('shows the group name and population as the name column description for a static group', function (GroupModel $model, int $memberCount, string $expectedLabel): void {
     asSuperAdmin();
 
     $modelClass = $model->class();
@@ -234,7 +234,7 @@ it('shows the group name and population as the name column description for a sta
     'a single prospect' => [GroupModel::Prospect, 1, 'Prospect'],
 ]);
 
-it('shows the group name and population as the name column description for a dynamic group', function (GroupModel $model, string $expectedLabel, string $attribute, array $rule) {
+it('shows the group name and population as the name column description for a dynamic group', function (GroupModel $model, string $expectedLabel, string $attribute, array $rule): void {
     asSuperAdmin();
 
     $modelClass = $model->class();
@@ -283,7 +283,7 @@ it('shows the group name and population as the name column description for a dyn
     ]],
 ]);
 
-it('archives and disables every selected campaign without deleting any', function () {
+it('archives and disables every selected campaign without deleting any', function (): void {
     asSuperAdmin();
 
     $executed = Campaign::factory()->enabled()
@@ -316,7 +316,7 @@ it('archives and disables every selected campaign without deleting any', functio
     }
 });
 
-it('shows the disable and archive confirmation copy with the selected count', function () {
+it('shows the disable and archive confirmation copy with the selected count', function (): void {
     asSuperAdmin();
 
     $campaigns = Campaign::factory()->count(2)->create();
@@ -326,7 +326,7 @@ it('shows the disable and archive confirmation copy with the selected count', fu
         ->assertMountedActionModalSee('This action will disable and archive 2 selected campaign(s).');
 });
 
-it('does not render per-row view, edit, or delete actions', function () {
+it('does not render per-row view, edit, or delete actions', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->create();
@@ -338,7 +338,7 @@ it('does not render per-row view, edit, or delete actions', function () {
         ->assertTableActionDoesNotExist('delete');
 });
 
-it('links each row to the campaign view page', function () {
+it('links each row to the campaign view page', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->create();
@@ -348,7 +348,7 @@ it('links each row to the campaign view page', function () {
         ->assertSee(CampaignResource::getUrl('view', ['record' => $campaign]));
 });
 
-it('hides the archive bulk action from users without delete permission', function () {
+it('hides the archive bulk action from users without delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
 

@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -65,7 +66,7 @@ class ProspectStats extends StatsOverviewWidget
         $endDate = $this->getEndDate();
         $groupId = $this->getSelectedGroup();
 
-        $prospectQuery = function (Builder $query) use ($groupId) {
+        $prospectQuery = function (Builder $query) use ($groupId): void {
             if ($groupId) {
                 $this->groupFilter($query, $groupId);
             }
@@ -75,7 +76,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('New Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->where('status', EngagementResponseStatus::New)
@@ -83,7 +84,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Open Concerns', Number::format(Concern::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
@@ -91,7 +92,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Open Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
@@ -99,7 +100,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->where('status', EngagementResponseStatus::Actioned)
@@ -108,7 +109,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Closed Concerns', Number::format(Concern::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
@@ -117,7 +118,7 @@ class ProspectStats extends StatsOverviewWidget
             Stat::make('Closed Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])

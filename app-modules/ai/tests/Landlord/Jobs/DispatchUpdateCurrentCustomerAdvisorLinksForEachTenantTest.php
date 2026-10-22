@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
 use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `UpdateCurrentCustomerAdvisorLinks` for each eligible tenant', function () {
+it('dispatches `UpdateCurrentCustomerAdvisorLinks` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant())->handle();

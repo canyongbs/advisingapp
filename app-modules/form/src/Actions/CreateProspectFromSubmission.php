@@ -78,7 +78,7 @@ class CreateProspectFromSubmission
             return null;
         }
 
-        return DB::transaction(function () use ($email, $nameData, $submission) {
+        return DB::transaction(function () use ($email, $nameData, $submission): Prospect {
             $prospect = ($this->createProspect)([
                 'first_name' => $nameData['first_name'],
                 'last_name' => $nameData['last_name'],

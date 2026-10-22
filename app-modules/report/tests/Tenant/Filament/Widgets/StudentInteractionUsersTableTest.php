@@ -48,7 +48,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('can see student interaction users table', function () {
+it('can see student interaction users table', function (): void {
     $department = Department::factory()->create();
 
     $user1 = User::factory()->create();
@@ -93,14 +93,14 @@ it('can see student interaction users table', function () {
     $totalPerUser1 = $totalInteractions > 0 ? round(($user1->interactions->count() / $totalInteractions) * 100) : 0;
     $totalPerUser2 = $totalInteractions > 0 ? round(($user2->interactions->count() / $totalInteractions) * 100) : 0;
 
-    $durationsUser1 = $user1->interactions->map(function ($interaction) {
+    $durationsUser1 = $user1->interactions->map(function ($interaction): float {
         return Carbon::parse($interaction->end_datetime)
             ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
     })->filter();
 
     $avgUser1 = round($durationsUser1->avg());
 
-    $durationsUser2 = $user2->interactions->map(function ($interaction) {
+    $durationsUser2 = $user2->interactions->map(function ($interaction): float {
         return Carbon::parse($interaction->end_datetime)
             ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
     })->filter();
@@ -125,7 +125,7 @@ it('can see student interaction users table', function () {
         ->assertTableColumnStateSet('avg_interaction_duration', "{$avgUser2} Min.", $user2);
 });
 
-it('can filter users by name', function () {
+it('can filter users by name', function (): void {
     $department = Department::factory()->create([
         'name' => 'Test Department',
     ]);
@@ -166,7 +166,7 @@ it('can filter users by name', function () {
         ->assertCanNotSeeTableRecords(collect([$user2]));
 });
 
-it('can filter users by job title', function () {
+it('can filter users by job title', function (): void {
     $department = Department::factory()->create([
         'name' => 'Test Department',
     ]);
@@ -207,7 +207,7 @@ it('can filter users by job title', function () {
         ->assertCanNotSeeTableRecords(collect([$user2]));
 });
 
-it('can filter users by department', function () {
+it('can filter users by department', function (): void {
     $department = Department::factory()->create([
         'name' => 'Interaction Department',
     ]);
@@ -248,7 +248,7 @@ it('can filter users by department', function () {
         ->assertCanNotSeeTableRecords(collect([$user1]));
 });
 
-it('displays only users with student interactions within the selected date range', function () {
+it('displays only users with student interactions within the selected date range', function (): void {
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 
@@ -302,7 +302,7 @@ it('displays only users with student interactions within the selected date range
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });
 
-it('displays only users with student interactions based on group filter', function () {
+it('displays only users with student interactions based on group filter', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
@@ -377,14 +377,14 @@ it('displays only users with student interactions based on group filter', functi
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });
 
-it('has an export action', function () {
+it('has an export action', function (): void {
     Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export, sending a notification', function (): void {
     Storage::fake('s3');
 
     $user1 = User::factory()->create();

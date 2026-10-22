@@ -43,7 +43,7 @@ class DeleteProspect
 {
     public function execute(Prospect $prospect): void
     {
-        DB::transaction(function () use ($prospect) {
+        DB::transaction(function () use ($prospect): void {
             $prospect->emailAddresses()->delete();
             $prospect->phoneNumbers()->delete();
             $prospect->addresses()->delete();

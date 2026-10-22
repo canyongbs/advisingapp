@@ -42,23 +42,23 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->index('sisid');
         });
 
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->index('sisid');
         });
 
-        Schema::table('student_email_addresses', function (Blueprint $table) {
+        Schema::table('student_email_addresses', function (Blueprint $table): void {
             $table->index('sisid');
         });
 
-        Schema::table('student_phone_numbers', function (Blueprint $table) {
+        Schema::table('student_phone_numbers', function (Blueprint $table): void {
             $table->index('sisid');
         });
 
-        Schema::table('student_addresses', function (Blueprint $table) {
+        Schema::table('student_addresses', function (Blueprint $table): void {
             $table->index('sisid');
         });
     }
@@ -66,23 +66,23 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->dropIndex(['sisid']);
         });
 
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->dropIndex(['sisid']);
         });
 
-        Schema::table('student_email_addresses', function (Blueprint $table) {
+        Schema::table('student_email_addresses', function (Blueprint $table): void {
             $table->dropIndex(['sisid']);
         });
 
-        Schema::table('student_phone_numbers', function (Blueprint $table) {
+        Schema::table('student_phone_numbers', function (Blueprint $table): void {
             $table->dropIndex(['sisid']);
         });
 
-        Schema::table('student_addresses', function (Blueprint $table) {
+        Schema::table('student_addresses', function (Blueprint $table): void {
             $table->dropIndex(['sisid']);
         });
     }

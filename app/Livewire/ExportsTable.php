@@ -89,7 +89,7 @@ class ExportsTable extends Component implements HasActions, HasForms, HasTable
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->url(fn (Export $record) => url()->signedRoute('exports.download', $record))
-                    ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+                    ->visible(fn (Export $record): bool => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
             ]);
     }
 

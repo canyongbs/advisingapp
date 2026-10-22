@@ -80,7 +80,7 @@ return new class () extends Migration {
 
         DB::table('assistant_chats')
             ->get(['id', 'name', 'user_id', 'assistant_chat_folder_id', 'created_at', 'updated_at', 'deleted_at', 'thread_id', 'ai_assistant_id'])
-            ->each(function (stdClass $thread) use ($defaultAiAssistantId) {
+            ->each(function (stdClass $thread) use ($defaultAiAssistantId): void {
                 DB::table('ai_threads')
                     ->insert([
                         'id' => $thread->id,

@@ -48,7 +48,7 @@ class FailIfBatchCancelled
      *
      * @return mixed
      */
-    public function handle(ExecuteCampaignActionOnEducatableJob $job, $next)
+    public function handle(ExecuteCampaignActionOnEducatableJob $job, $next): void
     {
         if ($job->batch()->cancelled()) {
             $job->actionEducatable->markFailed();

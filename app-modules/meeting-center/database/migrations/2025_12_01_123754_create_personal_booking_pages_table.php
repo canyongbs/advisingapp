@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('personal_booking_pages', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::create('personal_booking_pages', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
 
                 $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
@@ -58,7 +58,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::dropIfExists('personal_booking_pages');
         });
     }

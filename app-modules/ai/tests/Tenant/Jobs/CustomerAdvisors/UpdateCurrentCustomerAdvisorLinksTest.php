@@ -39,7 +39,7 @@ use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
+it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function (): void {
     Queue::fake();
 
     $currentLink = CustomerAdvisorLink::factory()->create([
@@ -52,12 +52,12 @@ it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', f
 
     (new UpdateCurrentCustomerAdvisorLinks())->handle();
 
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
+    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink): bool {
         return $job->uniqueId() === $currentLink->id
             && $job->refreshesExistingParsingResults();
     });
 
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
+    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink): bool {
         return $job->uniqueId() === $nonCurrentLink->id;
     });
 });

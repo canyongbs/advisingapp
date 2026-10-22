@@ -38,7 +38,7 @@ use AdvisingApp\Form\Filament\Blocks\CheckboxesFormFieldBlock;
 use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\FormField;
 
-it('saves numeric option values as explicit label and value rows', function () {
+it('saves numeric option values as explicit label and value rows', function (): void {
     $field = collect(CheckboxesFormFieldBlock::fields())->first(fn (mixed $field): bool => $field instanceof OptionsKeyValue);
 
     $state = [
@@ -56,7 +56,7 @@ it('saves numeric option values as explicit label and value rows', function () {
     ]);
 });
 
-it('hydrates saved numeric option rows into the editor without losing their values', function () {
+it('hydrates saved numeric option rows into the editor without losing their values', function (): void {
     $field = collect(CheckboxesFormFieldBlock::fields())->first(fn (mixed $field): bool => $field instanceof OptionsKeyValue);
 
     $state = [
@@ -74,7 +74,7 @@ it('hydrates saved numeric option rows into the editor without losing their valu
     ]);
 });
 
-it('renders the labels of numeric options in the preview', function () {
+it('renders the labels of numeric options in the preview', function (): void {
     $html = CheckboxesFormFieldBlock::toPreviewHtml([
         'label' => 'Agree',
         'options' => [
@@ -86,7 +86,7 @@ it('renders the labels of numeric options in the preview', function () {
     expect($html)->toContain('No')->toContain('Yes');
 });
 
-it('resolves numeric responses to their labels in the submission state', function () {
+it('resolves numeric responses to their labels in the submission state', function (): void {
     $field = new FormField();
     $field->forceFill([
         'config' => [

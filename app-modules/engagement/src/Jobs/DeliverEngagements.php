@@ -62,7 +62,7 @@ class DeliverEngagements implements ShouldQueue
             ->whereNull('dispatched_at')
             ->withWhereHas('recipient')
             ->eachById(
-                fn (Engagement $engagement) => DB::transaction(function () use ($engagement) {
+                fn (Engagement $engagement) => DB::transaction(function () use ($engagement): void {
                     $updatedEngagementsCount = Engagement::query()
                         ->whereNull('dispatched_at')
                         ->whereKey($engagement)

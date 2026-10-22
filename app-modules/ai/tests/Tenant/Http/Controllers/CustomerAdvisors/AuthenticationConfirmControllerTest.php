@@ -76,11 +76,11 @@ $confirmCustomerAdvisorAuthentication = function (Student $student, string $code
     return postJson($customerAdvisorAuthenticationUrl($student, $code), ['code' => $code]);
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     withHeader('Origin', config('app.url'));
 });
 
-it('issues tokens for an active student', function () use ($confirmCustomerAdvisorAuthentication) {
+it('issues tokens for an active student', function () use ($confirmCustomerAdvisorAuthentication): void {
     $student = Student::factory()->create();
 
     $confirmCustomerAdvisorAuthentication($student)
@@ -90,7 +90,7 @@ it('issues tokens for an active student', function () use ($confirmCustomerAdvis
 
 // The middleware already rejects an archived student on every functional route, but redeeming
 // the code would still hand out a three day refresh cookie and report a successful sign in.
-it('rejects a code issued before the student was archived', function () use ($confirmCustomerAdvisorAuthentication) {
+it('rejects a code issued before the student was archived', function () use ($confirmCustomerAdvisorAuthentication): void {
     $student = Student::factory()->create();
     $student->archive();
 
@@ -99,7 +99,7 @@ it('rejects a code issued before the student was archived', function () use ($co
         ->assertJson(['message' => 'Authentication code is expired.']);
 });
 
-it('locks out after too many invalid code attempts', function () use ($customerAdvisorAuthenticationUrl) {
+it('locks out after too many invalid code attempts', function () use ($customerAdvisorAuthenticationUrl): void {
     $code = '123456';
 
     $url = $customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
@@ -116,7 +116,7 @@ it('locks out after too many invalid code attempts', function () use ($customerA
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
 });
 
-it('resets the attempt counter after a successful authentication', function () use ($customerAdvisorAuthenticationUrl) {
+it('resets the attempt counter after a successful authentication', function () use ($customerAdvisorAuthenticationUrl): void {
     $code = '123456';
 
     $url = $customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);

@@ -122,7 +122,7 @@ class ListInteractionDrivers extends ListRecords
                                 Toggle::make('is_driver_required')
                                     ->label('Required')
                                     ->live()
-                                    ->visible(fn (Get $get) => $get('is_driver_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_driver_enabled'))
                                     ->afterStateUpdated(function (bool $state): void {
                                         abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();

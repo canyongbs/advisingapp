@@ -61,7 +61,7 @@ class DuplicateSurvey
     {
         $stepMap = [];
 
-        $this->original->steps()->each(function (SurveyStep $step) use (&$stepMap) {
+        $this->original->steps()->each(function (SurveyStep $step) use (&$stepMap): void {
             $newStep = $step->replicate();
             $newStep->survey_id = $this->replica->id;
             $newStep->save();
@@ -81,7 +81,7 @@ class DuplicateSurvey
     {
         $fieldMap = [];
 
-        $this->original->fields()->each(function (SurveyField $field) use (&$fieldMap, $stepMap) {
+        $this->original->fields()->each(function (SurveyField $field) use (&$fieldMap, $stepMap): void {
             $newField = $field->replicate();
             $newField->survey_id = $this->replica->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -98,7 +98,7 @@ class DuplicateSurvey
      */
     protected function updateStepContent(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (SurveyStep $step) use ($fieldMap) {
+        $this->replica->steps()->each(function (SurveyStep $step) use ($fieldMap): void {
             $content = $step->content;
 
             $step->update([
@@ -107,7 +107,7 @@ class DuplicateSurvey
         });
     }
 
-    protected function replaceIdsInContent(&$content, $fieldMap)
+    protected function replaceIdsInContent(&$content, array $fieldMap)
     {
         if (is_array($content)) {
             foreach ($content as $key => &$value) {

@@ -125,7 +125,7 @@ class ListGroups extends ListRecords
                     ->authorize(function () {
                         return auth()->user()->can('delete');
                     })
-                    ->action(function (DeleteAction $action, Group $record) {
+                    ->action(function (DeleteAction $action, Group $record): void {
                         try {
                             $this->authorize('delete', $record);
                             // Let Filament handle the default success notification

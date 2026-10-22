@@ -42,12 +42,12 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
+        Schema::table('assistant_chats', function (Blueprint $table): void {
             $table->string('assistant_id')->nullable();
             $table->string('thread_id')->nullable();
         });
 
-        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+        Schema::table('assistant_chat_messages', function (Blueprint $table): void {
             $table->string('message_id')->nullable();
             $table->string('run_id')->nullable();
             // @phpstan-ignore Common.jsonColumnInMigration
@@ -58,12 +58,12 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
+        Schema::table('assistant_chats', function (Blueprint $table): void {
             $table->dropColumn('assistant_id');
             $table->dropColumn('thread_id');
         });
 
-        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+        Schema::table('assistant_chat_messages', function (Blueprint $table): void {
             $table->dropColumn('message_id');
             $table->dropColumn('run_id');
             $table->dropColumn('file_ids');

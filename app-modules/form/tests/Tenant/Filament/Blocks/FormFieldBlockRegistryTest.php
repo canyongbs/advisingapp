@@ -36,7 +36,7 @@
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 
-it('returns the type of every mapped block', function () {
+it('returns the type of every mapped block', function (): void {
     expect(FormFieldBlockRegistry::getMappedBlockTypes())->toBe([
         'educatable_name',
         'educatable_birthdate',

@@ -43,7 +43,7 @@ use Livewire\Livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-test('CreateRole does not allow duplicate role names case insensitively within a guard', function () {
+test('CreateRole does not allow duplicate role names case insensitively within a guard', function (): void {
     asSuperAdmin();
 
     Role::factory()->create(['name' => 'Support Team', 'guard_name' => 'web']);
@@ -61,8 +61,8 @@ test('CreateRole does not allow duplicate role names case insensitively within a
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-describe('enterprise ai', function () {
-    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function () {
+describe('enterprise ai', function (): void {
+    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $getAvailablePermissionGroupNames = function (): array {

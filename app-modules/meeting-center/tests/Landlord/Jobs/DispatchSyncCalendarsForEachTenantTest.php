@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `SyncCalendars` for each eligible tenant', function () {
+it('dispatches `SyncCalendars` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchSyncCalendarsForEachTenant())->handle();

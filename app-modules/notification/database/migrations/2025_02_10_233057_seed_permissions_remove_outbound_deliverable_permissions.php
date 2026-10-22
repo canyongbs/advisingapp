@@ -66,7 +66,7 @@ return new class () extends Migration {
     public function down(): void
     {
         collect($this->guards)
-            ->each(function (string $guard) {
+            ->each(function (string $guard): void {
                 $permissions = Arr::except($this->permissions, DB::table('permissions')
                     ->where('guard_name', $guard)
                     ->pluck('name')

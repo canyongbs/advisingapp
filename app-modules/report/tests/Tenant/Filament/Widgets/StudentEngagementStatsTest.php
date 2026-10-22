@@ -42,7 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
-it('returns correct counts of students, emails, texts, and staff engagements within the given date range', function () {
+it('returns correct counts of students, emails, texts, and staff engagements within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -85,7 +85,7 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
         ->and($stats[3]->getValue())->toEqual(2);
 });
 
-it('returns correct counts of students, emails, texts, and staff engagements based on group filters', function () {
+it('returns correct counts of students, emails, texts, and staff engagements based on group filters', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -181,7 +181,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
         ->and($stats[3]->getValue())->toEqual(4);
 });
 
-it('does not count archived students in the total students stat', function () {
+it('does not count archived students in the total students stat', function (): void {
     $startDate = now()->subDays(10);
 
     Student::factory()->count(3)->state(['created_at_source' => $startDate])->create();
@@ -196,7 +196,7 @@ it('does not count archived students in the total students stat', function () {
 
     expect($widget->getStats()[0]->getValue())->toEqual(5);
 
-    $archived->each(fn (Student $student) => $student->archive());
+    $archived->each(fn (Student $student): bool => $student->archive());
 
     expect($widget->getStats()[0]->getValue())->toEqual(3);
 });

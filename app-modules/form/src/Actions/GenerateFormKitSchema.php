@@ -106,7 +106,7 @@ class GenerateFormKitSchema
         $fromBreakpoint = $component['attrs']['data-from-breakpoint'] ?? 'lg';
 
         $colSpans = array_map(
-            fn ($child) => (int) ($child['attrs']['data-col-span'] ?? 1),
+            fn (array $child): int => (int) ($child['attrs']['data-col-span'] ?? 1),
             $children,
         );
         $isAsymmetric = count(array_unique($colSpans)) > 1;

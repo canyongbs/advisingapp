@@ -52,7 +52,7 @@ class SubscribeHeaderAction extends Action
 
         $this->button();
 
-        $this->label(function (Subscribable $record) {
+        $this->label(function (Subscribable $record): string {
             return $record
                 ->subscriptions()
                 ->whereHas('user', function (Builder $query) {
@@ -61,7 +61,7 @@ class SubscribeHeaderAction extends Action
                 ->exists() ? 'Unfollow' : 'Follow';
         });
 
-        $this->action(function (Subscribable $record) {
+        $this->action(function (Subscribable $record): void {
             resolve(SubscriptionToggle::class)->handle(auth()->user(), $record);
         });
     }

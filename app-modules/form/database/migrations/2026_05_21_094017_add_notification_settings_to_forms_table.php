@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
+        Schema::table('forms', function (Blueprint $table): void {
             $table->boolean('notify_to_care_team')->default(false);
             $table->boolean('notify_to_subscribers')->default(false);
             $table->boolean('notify_via_app')->default(false);
@@ -51,7 +51,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
+        Schema::table('forms', function (Blueprint $table): void {
             $table->dropColumn(['notify_via_app', 'notify_via_email', 'notify_to_care_team', 'notify_to_subscribers']);
         });
     }

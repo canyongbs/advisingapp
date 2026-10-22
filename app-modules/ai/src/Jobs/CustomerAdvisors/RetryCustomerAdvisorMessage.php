@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -181,7 +182,7 @@ class RetryCustomerAdvisorMessage implements ShouldQueue
                 }
             }
 
-            if ($finishChunk?->rateLimitResetsAt || $finishChunk?->error) {
+            if ($finishChunk?->rateLimitResetsAt instanceof CarbonInterface || $finishChunk?->error) {
                 event(new CustomerAdvisorMessageChunk(
                     $this->advisor,
                     $this->thread,

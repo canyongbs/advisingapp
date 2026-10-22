@@ -59,7 +59,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
         $runningTotalPerMonth = $shouldBypassCache
            ? $this->getProspectEngagementData($startDate, $endDate, $groupId)
-           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function () {
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function (): array {
                return $this->getProspectEngagementData();
            });
 
@@ -112,7 +112,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
         $baseQuery = fn (string $channel) => Engagement::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+            ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                 $query->when(
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -122,7 +122,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")
             ->get()
-            ->mapWithKeys(fn (object $item) => [
+            ->mapWithKeys(fn (object $item): array => [
                 Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
             ]);
 

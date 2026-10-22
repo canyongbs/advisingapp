@@ -71,7 +71,7 @@ class StudentEmailAddressImporter extends Importer
                 ->boolean()
                 ->rules(['boolean'])
                 ->example('false')
-                ->fillRecordUsing(fn (StudentEmailAddress $record, mixed $state) => $record->order = $state ? 1 : null),
+                ->fillRecordUsing(fn (StudentEmailAddress $record, mixed $state): ?int => $record->order = $state ? 1 : null),
         ];
     }
 

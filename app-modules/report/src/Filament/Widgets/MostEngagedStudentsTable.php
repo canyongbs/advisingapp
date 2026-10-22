@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
@@ -61,7 +62,7 @@ class MostEngagedStudentsTable extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -82,7 +83,7 @@ class MostEngagedStudentsTable extends BaseWidget
                     ->select('sisid', 'full_name', 'primary_email_id', 'archived_at')
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
-                            if ($startDate && $endDate) {
+                            if ($startDate instanceof Carbon && $endDate instanceof Carbon) {
                                 $query->whereBetween('created_at', [$startDate, $endDate]);
                             }
 
@@ -90,7 +91,7 @@ class MostEngagedStudentsTable extends BaseWidget
                         },
                     ])
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereHas(
                                 'engagements',

@@ -43,12 +43,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
     $createProspectEmailAddressRequestData = CreateProspectEmailAddressRequestFactory::new()->create();
 
@@ -73,7 +73,7 @@ it('is gated with proper access control', function () {
         ->assertCreated();
 });
 
-it('creates a prospect email address', function () {
+it('creates a prospect email address', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -109,7 +109,7 @@ it('creates a prospect email address', function () {
     ]);
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

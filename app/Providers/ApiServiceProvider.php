@@ -50,7 +50,7 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Route::macro('api', function (int $majorVersion, Closure $routes) {
+        Route::macro('api', function (int $majorVersion, Closure $routes): void {
             Route::middleware([
                 'api',
                 'auth:sanctum',
@@ -86,7 +86,7 @@ class ApiServiceProvider extends ServiceProvider
                 ui: "/docs/api/v{$majorVersion}",
                 document: "/docs/api/v{$majorVersion}.json",
             )
-            ->withDocumentTransformers(function (OpenApi $openApi) {
+            ->withDocumentTransformers(function (OpenApi $openApi): void {
                 $openApi->secure(
                     SecurityScheme::http('bearer')
                         ->setDescription('You can issue a bearer token by visiting the "User Management > Programmatic Users" section of the app, and creating a new programmatic user. Once created, you will be able to see a generated API key for the user.'),

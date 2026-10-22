@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->dropColumn('type');
             $table->string('application')->nullable(false)->change();
             $table->string('model')->nullable(false)->change();
@@ -53,7 +53,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->string('type')->nullable();
             $table->string('application')->nullable()->change();
             $table->string('model')->nullable()->change();

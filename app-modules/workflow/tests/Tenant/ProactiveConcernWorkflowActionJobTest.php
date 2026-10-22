@@ -43,7 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 
-it('executes concern workflow step successfully', function () {
+it('executes concern workflow step successfully', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 

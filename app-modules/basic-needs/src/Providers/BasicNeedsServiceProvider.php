@@ -45,12 +45,12 @@ use Illuminate\Support\ServiceProvider;
 
 class BasicNeedsServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new BasicNeedsPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new BasicNeedsPlugin()) instanceof Panel);
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'basic_needs_category' => BasicNeedsCategory::class,

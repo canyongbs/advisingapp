@@ -82,7 +82,7 @@ class IsInApplicationSubmissionStateOperator extends Operator
                     $selectedIds = $state ?? [];
 
                     return ApplicationSubmissionState::query()
-                        ->where(function (Builder $query) use ($selectedIds) {
+                        ->where(function (Builder $query) use ($selectedIds): void {
                             $query->withoutArchived();  // @phpstan-ignore method.notFound
 
                             if (! empty($selectedIds)) {

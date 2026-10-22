@@ -54,7 +54,7 @@ class TenantAwareBackgroundQueue extends BackgroundQueue
         $serializedJob = serialize($job);
 
         Concurrency::driver('process')->defer(
-            function () use ($tenantId, $serializedJob, $data, $queue) {
+            function () use ($tenantId, $serializedJob, $data, $queue): void {
                 if ($tenantId) {
                     Tenant::find($tenantId)->makeCurrent();
                 }

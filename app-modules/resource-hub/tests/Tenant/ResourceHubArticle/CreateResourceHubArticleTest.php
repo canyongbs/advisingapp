@@ -54,7 +54,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('CreateResourceHubArticle is gated with proper access control', function () {
+test('CreateResourceHubArticle is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -83,7 +83,7 @@ test('CreateResourceHubArticle is gated with proper access control', function ()
     assertDatabaseHas(ResourceHubArticle::class, $data);
 });
 
-test('CreateResourceHubArticle is gated with proper feature access control', function () {
+test('CreateResourceHubArticle is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -120,7 +120,7 @@ test('CreateResourceHubArticle is gated with proper feature access control', fun
     assertDatabaseHas(ResourceHubArticle::class, $data);
 });
 
-test('CreateResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {
+test('CreateResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function (): void {
     asSuperAdmin();
 
     $article = ResourceHubArticle::factory(['title' => 'Article Title'])->create();

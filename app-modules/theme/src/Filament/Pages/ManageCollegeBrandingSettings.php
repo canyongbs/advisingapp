@@ -81,18 +81,18 @@ class ManageCollegeBrandingSettings extends SettingsPage
                 Toggle::make('dismissible')
                     ->inline(false)
                     ->label('Dismissible')
-                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->visible(fn (Get $get): mixed => $get('is_enabled'))
                     ->columnSpanFull(),
                 TextInput::make('college_text')
                     ->label('College Text')
                     ->placeholder('@ Canyon Community College - Go Lions!')
                     ->required()
                     ->string()
-                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->visible(fn (Get $get): mixed => $get('is_enabled'))
                     ->autocomplete(false),
                 ColorSelect::make('color')
                     ->label('Branding Bar Color')
-                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->visible(fn (Get $get): mixed => $get('is_enabled'))
                     ->required(),
             ])
             ->disabled(! auth()->user()->can('settings.*.update'));

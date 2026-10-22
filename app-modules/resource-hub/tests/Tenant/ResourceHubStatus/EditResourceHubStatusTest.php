@@ -54,7 +54,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('EditResourceHubStatus is gated with proper access control', function () {
+test('EditResourceHubStatus is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $resourceHubStatus = ResourceHubStatus::factory()->create();
@@ -93,7 +93,7 @@ test('EditResourceHubStatus is gated with proper access control', function () {
     assertEquals($request['name'], $resourceHubStatus->fresh()->name);
 });
 
-test('EditResourceHubStatus is gated with proper feature access control', function () {
+test('EditResourceHubStatus is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -142,7 +142,7 @@ test('EditResourceHubStatus is gated with proper feature access control', functi
     assertEquals($request['name'], $resourceHubStatus->fresh()->name);
 });
 
-test('EditResourceHubStatus does not allow for duplicate names of non-deleted statuses case insensitively', function () {
+test('EditResourceHubStatus does not allow for duplicate names of non-deleted statuses case insensitively', function (): void {
     asSuperAdmin();
 
     $deletedStatus = ResourceHubStatus::factory(['name' => 'Status Name'])->create();

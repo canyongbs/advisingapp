@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('email_messages', function (Blueprint $table) {
+        Schema::create('email_messages', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('notification_class');
             $table->string('external_reference_id')->nullable()->unique();

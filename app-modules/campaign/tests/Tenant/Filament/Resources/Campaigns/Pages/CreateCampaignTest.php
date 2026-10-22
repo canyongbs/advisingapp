@@ -60,11 +60,11 @@ use Spatie\Permission\PermissionRegistrar;
 
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     asSuperAdmin();
 });
 
-it('clears journey steps when the population group is changed', function (GroupModel $newPopulationModel) {
+it('clears journey steps when the population group is changed', function (GroupModel $newPopulationModel): void {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
     $newGroup = Group::factory()->create(['model' => $newPopulationModel, 'user_id' => auth()->id()]);
 
@@ -102,7 +102,7 @@ it('clears journey steps when the population group is changed', function (GroupM
     'to another group of the same population model type' => GroupModel::Student,
 ]);
 
-it('requires population group on campaign creation', function () {
+it('requires population group on campaign creation', function (): void {
     Livewire::test(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
@@ -113,12 +113,12 @@ it('requires population group on campaign creation', function () {
         ]);
 });
 
-it('allows the population type to be changed when creating a campaign', function () {
+it('allows the population type to be changed when creating a campaign', function (): void {
     Livewire::test(CreateCampaign::class)
         ->assertFormFieldEnabled('population_type');
 });
 
-it('only offers the user\'s own population groups by default when they lack the group.*.view permission', function () {
+it('only offers the user\'s own population groups by default when they lack the group.*.view permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -133,7 +133,7 @@ it('only offers the user\'s own population groups by default when they lack the 
     Livewire::test(CreateCampaign::class)
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($ownGroup, $otherUsersGroup) {
+            function (Select $field) use ($ownGroup, $otherUsersGroup): true {
                 expect($field->getOptions())
                     ->toHaveKey($ownGroup->getKey())
                     ->not->toHaveKey($otherUsersGroup->getKey());
@@ -143,7 +143,7 @@ it('only offers the user\'s own population groups by default when they lack the 
         );
 });
 
-it('hides the All Groups ownership option for users without the group.*.view or group.view-any permission', function () {
+it('hides the All Groups ownership option for users without the group.*.view or group.view-any permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -155,11 +155,11 @@ it('hides the All Groups ownership option for users without the group.*.view or 
     Livewire::test(CreateCampaign::class)
         ->assertFormFieldExists(
             'group_ownership',
-            fn (ToggleButtons $field) => ! array_key_exists(GroupOwnership::All->value, $field->getOptions()),
+            fn (ToggleButtons $field): bool => ! array_key_exists(GroupOwnership::All->value, $field->getOptions()),
         );
 });
 
-it('rejects a manually supplied All Groups ownership value for users without the group.*.view or group.view-any permission', function () {
+it('rejects a manually supplied All Groups ownership value for users without the group.*.view or group.view-any permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -174,7 +174,7 @@ it('rejects a manually supplied All Groups ownership value for users without the
         ->fillForm(['group_ownership' => GroupOwnership::All->value])
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($otherUsersGroup) {
+            function (Select $field) use ($otherUsersGroup): true {
                 expect($field->getOptions())->not->toHaveKey($otherUsersGroup->getKey());
 
                 return true;
@@ -182,7 +182,7 @@ it('rejects a manually supplied All Groups ownership value for users without the
         );
 });
 
-it('offers every population group of the selected type when the All Groups ownership option is selected', function () {
+it('offers every population group of the selected type when the All Groups ownership option is selected', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -201,7 +201,7 @@ it('offers every population group of the selected type when the All Groups owner
         ])
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($otherUsersGroup) {
+            function (Select $field) use ($otherUsersGroup): true {
                 expect($field->getOptions())->toHaveKey($otherUsersGroup->getKey());
 
                 return true;
@@ -209,7 +209,7 @@ it('offers every population group of the selected type when the All Groups owner
         );
 });
 
-it('offers only the groups belonging to the user\'s department when the My Department\'s Groups ownership option is selected', function () {
+it('offers only the groups belonging to the user\'s department when the My Department\'s Groups ownership option is selected', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->licensed(LicenseType::cases())->create(['team_id' => $department->id]);
@@ -231,7 +231,7 @@ it('offers only the groups belonging to the user\'s department when the My Depar
         ])
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($colleaguesGroup, $outsidersGroup) {
+            function (Select $field) use ($colleaguesGroup, $outsidersGroup): true {
                 expect($field->getOptions())
                     ->toHaveKey($colleaguesGroup->getKey())
                     ->not->toHaveKey($outsidersGroup->getKey());
@@ -241,7 +241,7 @@ it('offers only the groups belonging to the user\'s department when the My Depar
         );
 });
 
-it('filters the population group options by the selected population type', function () {
+it('filters the population group options by the selected population type', function (): void {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
     $prospectGroup = Group::factory()->prospect()->create(['user_id' => auth()->id()]);
 
@@ -249,7 +249,7 @@ it('filters the population group options by the selected population type', funct
         ->fillForm(['population_type' => GroupModel::Prospect->value])
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($studentGroup, $prospectGroup) {
+            function (Select $field) use ($studentGroup, $prospectGroup): true {
                 expect($field->getOptions())
                     ->toHaveKey($prospectGroup->getKey())
                     ->not->toHaveKey($studentGroup->getKey());
@@ -259,7 +259,7 @@ it('filters the population group options by the selected population type', funct
         );
 });
 
-it('hides the Population Type toggle and defaults to Prospects for a user only licensed for prospects', function () {
+it('hides the Population Type toggle and defaults to Prospects for a user only licensed for prospects', function (): void {
     $user = User::factory()->licensed(LicenseType::RecruitmentCrm)->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -274,7 +274,7 @@ it('hides the Population Type toggle and defaults to Prospects for a user only l
         ->assertFormFieldHidden('population_type')
         ->assertFormFieldExists(
             'segment_id',
-            function (Select $field) use ($prospectGroup) {
+            function (Select $field) use ($prospectGroup): true {
                 expect($field->getOptions())->toHaveKey($prospectGroup->getKey());
 
                 return true;
@@ -282,7 +282,7 @@ it('hides the Population Type toggle and defaults to Prospects for a user only l
         );
 });
 
-it('clears the selected population group when the population type changes', function () {
+it('clears the selected population group when the population type changes', function (): void {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
     Livewire::test(CreateCampaign::class)
@@ -292,7 +292,7 @@ it('clears the selected population group when the population type changes', func
         ->assertSchemaStateSet(['segment_id' => null]);
 });
 
-it('clears the selected population group when the group ownership changes', function () {
+it('clears the selected population group when the group ownership changes', function (): void {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
     Livewire::test(CreateCampaign::class)

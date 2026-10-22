@@ -45,7 +45,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Support\Facades\Event;
 
-it('surfaces the rate limit reset time and does not persist a partial response when the stream is rate limited', function () {
+it('surfaces the rate limit reset time and does not persist a partial response when the stream is rate limited', function (): void {
     Event::fake([CustomerAdvisorMessageChunk::class]);
 
     $advisor = CustomerAdvisor::factory()->create(['model' => AiModel::Test]);
@@ -73,7 +73,7 @@ it('surfaces the rate limit reset time and does not persist a partial response w
     );
 });
 
-it('completes and persists the response when the stream finishes normally', function () {
+it('completes and persists the response when the stream finishes normally', function (): void {
     Event::fake([CustomerAdvisorMessageChunk::class]);
 
     $advisor = CustomerAdvisor::factory()->create(['model' => AiModel::Test]);

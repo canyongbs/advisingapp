@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('portal_guests', function (Blueprint $table) {
+        Schema::create('portal_guests', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->softDeletes();

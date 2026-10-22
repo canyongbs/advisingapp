@@ -44,7 +44,7 @@ class CreateTemporaryStudentDataImportTables
     public function execute(
         StudentDataImport $import,
     ): void {
-        DB::transaction(function () use ($import) {
+        DB::transaction(function () use ($import): void {
             DB::statement("create table \"import_{$import->studentsImport->getKey()}_students\" (like \"students\" including all)");
 
             DB::statement("create table \"import_{$import->studentsImport->getKey()}_care_teams\" (like \"care_teams\" including all)");

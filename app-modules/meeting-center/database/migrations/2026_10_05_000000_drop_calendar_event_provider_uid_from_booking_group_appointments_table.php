@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_group_appointments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('booking_group_appointments', function (Blueprint $table): void {
                 $table->dropColumn('calendar_event_provider_uid');
             });
         });
@@ -51,8 +51,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_group_appointments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('booking_group_appointments', function (Blueprint $table): void {
                 $table->string('calendar_event_provider_uid')->nullable();
             });
         });

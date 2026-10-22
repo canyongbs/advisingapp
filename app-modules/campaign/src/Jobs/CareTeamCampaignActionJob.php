@@ -81,7 +81,7 @@ class CareTeamCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             collect($addedOrUpdatedPivotModels)
                 ->flatten()
                 ->unique()
-                ->each(function (string $addedOrUpdatedPivotModel) {
+                ->each(function (string $addedOrUpdatedPivotModel): void {
                     $careTeam = CareTeam::query()
                         ->where('user_id', $addedOrUpdatedPivotModel)
                         ->where('educatable_type', $this->actionEducatable->educatable_type)

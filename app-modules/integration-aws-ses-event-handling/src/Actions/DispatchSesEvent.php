@@ -71,7 +71,7 @@ class DispatchSesEvent
             throw new CouldNotFindTenantFromData($data);
         }
 
-        $tenant->execute(function () use ($data, $snsMessageId) {
+        $tenant->execute(function () use ($data, $snsMessageId): void {
             if (
                 filled($snsMessageId)
                 && SesEventDeduplicationFeature::active()

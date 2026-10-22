@@ -49,7 +49,7 @@ return new class () extends Migration {
 
         DB::table('permissions')
             ->whereNull('group_id')
-            ->eachById(function (object $permission) use (&$groups) {
+            ->eachById(function (object $permission) use (&$groups): void {
                 if (! str($permission->name)->contains('.')) {
                     throw new Exception("Invalid permission name: [{$permission->name}] does not contain a period.");
                 }

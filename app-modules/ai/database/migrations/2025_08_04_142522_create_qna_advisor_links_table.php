@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('qna_advisor_links', function (Blueprint $table) {
+        Schema::create('qna_advisor_links', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('advisor_id')->constrained('qna_advisors')->cascadeOnDelete();
             $table->string('url');

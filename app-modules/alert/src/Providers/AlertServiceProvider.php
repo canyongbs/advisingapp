@@ -47,9 +47,9 @@ use Illuminate\Support\ServiceProvider;
 
 class AlertServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()) instanceof Panel);
     }
 
     public function boot(): void

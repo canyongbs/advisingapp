@@ -105,7 +105,7 @@ class Group extends BaseModel
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! auth()->guard('web')->check()) {
                 return;
             }

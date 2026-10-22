@@ -58,7 +58,7 @@ $listEventsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser) {
+it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser): void {
     $user = $listEventsTestUser();
     $user->givePermissionTo('event.view-any');
 
@@ -77,7 +77,7 @@ it('the duplicate action is gated by the create permission', function () use ($l
         ->assertTableActionVisible('Duplicate', $event);
 });
 
-it('can duplicate a event its registration form its steps and its fields', function () {
+it('can duplicate a event its registration form its steps and its fields', function (): void {
     asSuperAdmin();
 
     // Given that we have an event
@@ -103,7 +103,7 @@ it('can duplicate a event its registration form its steps and its fields', funct
     expect($duplicatedEvent->eventRegistrationForm->steps->count())->toBe($event->eventRegistrationForm->steps->count());
 });
 
-it('does not allow duplicating an event to a title matching another non-deleted event case-insensitively', function () {
+it('does not allow duplicating an event to a title matching another non-deleted event case-insensitively', function (): void {
     asSuperAdmin();
 
     Event::factory()->create(['title' => 'Existing Event']);
@@ -116,7 +116,7 @@ it('does not allow duplicating an event to a title matching another non-deleted 
         ->assertHasTableActionErrors(['title' => 'unique']);
 });
 
-it('allows duplicating an event to a title freed up by a soft-deleted event', function () {
+it('allows duplicating an event to a title freed up by a soft-deleted event', function (): void {
     asSuperAdmin();
 
     $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
@@ -133,7 +133,7 @@ it('allows duplicating an event to a title freed up by a soft-deleted event', fu
     expect(Event::query()->where('title', 'reusable title')->exists())->toBeTrue();
 });
 
-it('will not duplicate event registration form submissions if they exist', function () {
+it('will not duplicate event registration form submissions if they exist', function (): void {
     asSuperAdmin();
 
     // Given that we have an event with registration form submissions
@@ -155,7 +155,7 @@ it('will not duplicate event registration form submissions if they exist', funct
     expect($duplicatedEvent->eventRegistrationForm->submissions()->count())->toBe(0);
 });
 
-it('gives a duplicated event registration form its own version tree rather than sharing the original', function () {
+it('gives a duplicated event registration form its own version tree rather than sharing the original', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -173,7 +173,7 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->archived_at)->toBeNull();
 });
 
-it('archive bulk action archives all selected events', function () {
+it('archive bulk action archives all selected events', function (): void {
     asSuperAdmin();
 
     $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
@@ -194,12 +194,12 @@ it('archive bulk action archives all selected events', function () {
     expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () {
-    beforeEach(function () {
+describe('duplication', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
     });
 
-    it('leaves the original registration form steps fields submissions and attendees untouched', function () {
+    it('leaves the original registration form steps fields submissions and attendees untouched', function (): void {
         $event = Event::factory()->create();
         $originalForm = $event->eventRegistrationForm;
 
@@ -229,7 +229,7 @@ describe('duplication', function () {
             ->and($duplicatedEvent->attendees()->count())->toBe(0);
     });
 
-    it('copies the description images and hero image to the duplicated event', function () {
+    it('copies the description images and hero image to the duplicated event', function (): void {
         Storage::fake('s3-public');
 
         $event = Event::factory()->create();

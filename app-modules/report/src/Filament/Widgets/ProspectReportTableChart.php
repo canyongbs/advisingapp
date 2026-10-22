@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\MostRecentProspectsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
@@ -60,7 +61,7 @@ class ProspectReportTableChart extends TableWidget
 
     protected static ?string $pollingInterval = null;
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -90,7 +91,7 @@ class ProspectReportTableChart extends TableWidget
                         ->whereNotNull('created_at')
                         ->whereNull('deleted_at')
                         ->when(
-                            $startDate && $endDate,
+                            $startDate instanceof Carbon && $endDate instanceof Carbon,
                             function (Builder $query) use ($startDate, $endDate): Builder {
                                 return $query->whereBetween('created_at', [$startDate, $endDate]);
                             }

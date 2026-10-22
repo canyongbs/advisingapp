@@ -45,6 +45,6 @@ class EngagementScheduledAtDateTimePicker
     {
         return DateTimePicker::make('scheduled_at')
             ->required()
-            ->visible(fn (Get $get) => $get('send_later'));
+            ->visible(fn (Get $get): mixed => $get('send_later'));
     }
 }

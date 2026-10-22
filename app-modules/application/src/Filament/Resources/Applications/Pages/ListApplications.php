@@ -63,7 +63,7 @@ class ListApplications extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): void {
                 $submissionsCountQuery = ApplicationSubmission::query()
                     ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
                     ->whereColumn('version_applications.root_id', 'applications.root_id')

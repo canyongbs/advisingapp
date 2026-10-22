@@ -188,7 +188,7 @@ class ProgramsRelationManager extends RelationManager
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                        ->action(function (Collection $records) {
+                        ->action(function (Collection $records): void {
                             $deletedCount = 0;
                             $notDeleteCount = 0;
 
@@ -205,7 +205,7 @@ class ProgramsRelationManager extends RelationManager
                                 }
                             }
 
-                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+                            $wasWere = fn ($count): string => $count === 1 ? 'was' : 'were';
 
                             $notification = match (true) {
                                 $deletedCount === 0 => [

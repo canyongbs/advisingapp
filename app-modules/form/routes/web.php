@@ -45,7 +45,7 @@ Route::prefix('forms')
         'web',
         EnsureFormsFeatureIsActive::class,
     ])
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{form}/respond', RenderForm::class)
             ->name('show');
 

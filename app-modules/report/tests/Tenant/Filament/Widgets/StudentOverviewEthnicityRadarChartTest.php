@@ -40,7 +40,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentOverviewEthnicityRadarChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 
-it('checks student ethnicity polar area chart', function () {
+it('checks student ethnicity polar area chart', function (): void {
     $asianCount = random_int(1, 10);
     $hispanicCount = random_int(1, 10);
     $caucasianCount = random_int(1, 10);
@@ -59,7 +59,7 @@ it('checks student ethnicity polar area chart', function () {
         ->and($labels->count())->toEqual(3);
 });
 
-it('returns correct student counts by ethnicity within the selected date range', function () {
+it('returns correct student counts by ethnicity within the selected date range', function (): void {
     $asianCount = random_int(1, 10);
     $hispanicCount = random_int(1, 10);
     $caucasianCount = random_int(1, 10);
@@ -103,7 +103,7 @@ it('returns correct student counts by ethnicity within the selected date range',
         ->and($labels->count())->toEqual(2);
 });
 
-it('returns correct student counts by ethnicity based on group filter', function () {
+it('returns correct student counts by ethnicity based on group filter', function (): void {
     $asianCountJohn = random_int(1, 10);
     $hispanicCountJohn = random_int(1, 10);
     $asianCountDoe = random_int(1, 10);
@@ -177,7 +177,7 @@ it('returns correct student counts by ethnicity based on group filter', function
     expect($stats->sum())->toEqual($asianCountJohn + $hispanicCountJohn + $asianCountDoe + $hispanicCountDoe);
 });
 
-it('handles case-sensitive ethnicity grouping', function () {
+it('handles case-sensitive ethnicity grouping', function (): void {
     $asianUpperCount = random_int(1, 10);
     $asianLowerCount = random_int(1, 10);
     $asianMixedCount = random_int(1, 10);
@@ -196,7 +196,7 @@ it('handles case-sensitive ethnicity grouping', function () {
         ->and($stats->sum())->toEqual($asianUpperCount + $asianLowerCount + $asianMixedCount);
 });
 
-it('excludes students with null or empty ethnicity', function () {
+it('excludes students with null or empty ethnicity', function (): void {
     $asianCount = random_int(1, 10);
     $nullEthnicityCount = random_int(1, 10);
 
@@ -213,7 +213,7 @@ it('excludes students with null or empty ethnicity', function () {
         ->and($labels->count())->toEqual(2);
 });
 
-it('does not count archived students', function () {
+it('does not count archived students', function (): void {
     $createdAt = now()->subDays(5);
 
     Student::factory()->count(3)->create(['ethnicity' => 'Asian', 'created_at_source' => $createdAt]);
@@ -228,14 +228,14 @@ it('does not count archived students', function () {
 
     expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(5);
 
-    $archived->each(fn (Student $student) => $student->archive());
+    $archived->each(fn (Student $student): bool => $student->archive());
 
     expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(3);
 });
 
 // Archiving is not retroactive: a student archived in September was genuinely part of the
 // student body in March, so a report looking at March still has to count them.
-it('counts a student archived after the reported period', function () {
+it('counts a student archived after the reported period', function (): void {
     $student = Student::factory()->create(['ethnicity' => 'Asian', 'created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 

@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-test('An email is allowed to be sent if there is available quota and its quota usage is tracked', function () {
+test('An email is allowed to be sent if there is available quota and its quota usage is tracked', function (): void {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -63,7 +63,7 @@ test('An email is allowed to be sent if there is available quota and its quota u
     $notifiable->notify($notification);
 
     Event::assertDispatched(
-        function (MessageSent $event) use ($configurationSet) {
+        function (MessageSent $event) use ($configurationSet): bool {
             assertDatabaseCount(EmailMessage::class, 1);
 
             $emailMessage = EmailMessage::first();
@@ -75,7 +75,7 @@ test('An email is allowed to be sent if there is available quota and its quota u
     );
 });
 
-test('An email is prevented from being sent if there is no available quota', function () {
+test('An email is prevented from being sent if there is no available quota', function (): void {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -106,7 +106,7 @@ test('An email is prevented from being sent if there is no available quota', fun
         ->and($emailMessage->events->first()->type)->toBe(EmailMessageEventType::RateLimited);
 });
 
-test('An email is sent to a user even if there is no available quota', function () {
+test('An email is sent to a user even if there is no available quota', function (): void {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';

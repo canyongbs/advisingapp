@@ -47,7 +47,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('CreateDepartment is gated with proper access control', function () {
+test('CreateDepartment is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -78,7 +78,7 @@ test('CreateDepartment is gated with proper access control', function () {
     assertDatabaseHas(Department::class, $request->only(['name', 'description']));
 });
 
-test('CreateDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
+test('CreateDepartment does not allow for duplicate names of non-deleted departments case insensitively', function (): void {
     asSuperAdmin();
 
     Department::factory(['name' => 'department', 'deleted_at' => now()])->create();

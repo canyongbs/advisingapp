@@ -65,7 +65,7 @@ use function Tests\setEnterpriseAiEnabled;
 
 $setUp = function (
     bool $hasUserConsented = true,
-) {
+): array {
     $consentAgreement = ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
@@ -95,7 +95,7 @@ $setUp = function (
     return ['user' => $user, 'assistant' => $assistant, 'consentAgreement' => $consentAgreement, 'thread' => $thread];
 };
 
-it('renders successfully', function () {
+it('renders successfully', function (): void {
     ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
@@ -106,7 +106,7 @@ it('renders successfully', function () {
         ->assertStatus(200);
 });
 
-it('is properly gated with access control', function () {
+it('is properly gated with access control', function (): void {
     ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
@@ -125,7 +125,7 @@ it('is properly gated with access control', function () {
         ->assertStatus(200);
 });
 
-it('denies a super admin access while Enterprise AI is disabled', function () {
+it('denies a super admin access while Enterprise AI is disabled', function (): void {
     ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
@@ -141,7 +141,7 @@ it('denies a super admin access while Enterprise AI is disabled', function () {
         ->assertStatus(403);
 });
 
-it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () use ($setUp) {
+it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () use ($setUp): void {
     ['consentAgreement' => $consentAgreement] = $setUp(
         hasUserConsented: false,
     );
@@ -153,7 +153,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
         ->assertSeeHtml(str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString());
 });
 
-it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () use ($setUp) {
+it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () use ($setUp): void {
     ['consentAgreement' => $consentAgreement] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -163,7 +163,7 @@ it('will show the AI Assistant interface if the user has agreed to the terms and
         ->assertDontSee($consentAgreement->body);
 });
 
-it('will redirect the user back to the dashboard if they dismiss the consent modal', function () use ($setUp) {
+it('will redirect the user back to the dashboard if they dismiss the consent modal', function () use ($setUp): void {
     $setUp(
         hasUserConsented: false,
     );
@@ -173,7 +173,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
         ->assertRedirect(Dashboard::getUrl());
 });
 
-it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () use ($setUp) {
+it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () use ($setUp): void {
     ['user' => $user, 'consentAgreement' => $consentAgreement] = $setUp(
         hasUserConsented: false,
     );
@@ -197,7 +197,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
     expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
 });
 
-it('can select a thread', function () use ($setUp) {
+it('can select a thread', function () use ($setUp): void {
     ['user' => $user, 'assistant' => $assistant, 'thread' => $thread] = $setUp();
 
     $newThread = AiThread::factory()
@@ -216,7 +216,7 @@ it('can select a thread', function () use ($setUp) {
         ->assertSet('thread.id', $newThread->id);
 });
 
-it('can not select a thread belonging to a different user', function () use ($setUp) {
+it('can not select a thread belonging to a different user', function () use ($setUp): void {
     ['assistant' => $assistant, 'thread' => $thread] = $setUp();
 
     $newThread = AiThread::factory()
@@ -235,7 +235,7 @@ it('can not select a thread belonging to a different user', function () use ($se
         ->assertNotFound();
 });
 
-it('can start a new thread', function () use ($setUp) {
+it('can start a new thread', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -243,7 +243,7 @@ it('can start a new thread', function () use ($setUp) {
         ->assertNotSet('thread.id', $thread->id);
 });
 
-it('shows a link to switch back to the institutional advisor when using an employee advisor', function () use ($setUp) {
+it('shows a link to switch back to the institutional advisor when using an employee advisor', function () use ($setUp): void {
     ['user' => $user, 'assistant' => $institutionalAdvisor] = $setUp();
 
     $employeeAdvisor = AiAssistant::factory()->create([
@@ -265,7 +265,7 @@ it('shows a link to switch back to the institutional advisor when using an emplo
         ->assertSet('thread.assistant_id', $institutionalAdvisor->id);
 });
 
-it('does not show the switch link when already using the institutional advisor', function () use ($setUp) {
+it('does not show the switch link when already using the institutional advisor', function () use ($setUp): void {
     $setUp();
 
     AiAssistant::factory()->create([
@@ -278,7 +278,7 @@ it('does not show the switch link when already using the institutional advisor',
         ->assertDontSee('Switch to institutional advisor');
 });
 
-it('shows the switch link for a thread on an archived employee advisor even when no active custom advisors exist', function () use ($setUp) {
+it('shows the switch link for a thread on an archived employee advisor even when no active custom advisors exist', function () use ($setUp): void {
     ['user' => $user, 'assistant' => $institutionalAdvisor] = $setUp();
 
     $archivedEmployeeAdvisor = AiAssistant::factory()->create([
@@ -301,7 +301,7 @@ it('shows the switch link for a thread on an archived employee advisor even when
         ->assertSet('thread.assistant_id', $institutionalAdvisor->id);
 });
 
-it('can create a folder', function () use ($setUp) {
+it('can create a folder', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -316,7 +316,7 @@ it('can create a folder', function () use ($setUp) {
     ]);
 });
 
-it('can not create a folder without a name', function () use ($setUp) {
+it('can not create a folder without a name', function () use ($setUp): void {
     $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -326,7 +326,7 @@ it('can not create a folder without a name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'required']);
 });
 
-it('can not create a folder with a duplicate name', function () use ($setUp) {
+it('can not create a folder with a duplicate name', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -342,7 +342,7 @@ it('can not create a folder with a duplicate name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'unique']);
 });
 
-it('can create a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
+it('can create a folder with a duplicate name but belonging to a different user', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -363,7 +363,7 @@ it('can create a folder with a duplicate name but belonging to a different user'
     ]);
 });
 
-it('can rename a folder', function () use ($setUp) {
+it('can rename a folder', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -386,7 +386,7 @@ it('can rename a folder', function () use ($setUp) {
     ]);
 });
 
-it('can not rename a folder without a name', function () use ($setUp) {
+it('can not rename a folder without a name', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -404,7 +404,7 @@ it('can not rename a folder without a name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'required']);
 });
 
-it('can not rename a folder with a duplicate name', function () use ($setUp) {
+it('can not rename a folder with a duplicate name', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -428,7 +428,7 @@ it('can not rename a folder with a duplicate name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'unique']);
 });
 
-it('can rename a folder with a duplicate name but belonging to a different user', function () use ($setUp) {
+it('can rename a folder with a duplicate name but belonging to a different user', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -457,7 +457,7 @@ it('can rename a folder with a duplicate name but belonging to a different user'
     ]);
 });
 
-it('can not rename a folder belonging to a different user', function () use ($setUp) {
+it('can not rename a folder belonging to a different user', function () use ($setUp): void {
     $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -484,7 +484,7 @@ it('can not rename a folder belonging to a different user', function () use ($se
         ->not->toEqual($newFolderName);
 });
 
-it('can delete a folder', function () use ($setUp) {
+it('can delete a folder', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -503,7 +503,7 @@ it('can delete a folder', function () use ($setUp) {
     ]);
 });
 
-it('can not delete a folder belonging to a different user', function () use ($setUp) {
+it('can not delete a folder belonging to a different user', function () use ($setUp): void {
     $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -522,7 +522,7 @@ it('can not delete a folder belonging to a different user', function () use ($se
     ]);
 });
 
-it('can move a thread in to a folder', function () use ($setUp) {
+it('can move a thread in to a folder', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -544,7 +544,7 @@ it('can move a thread in to a folder', function () use ($setUp) {
     ]);
 });
 
-it('can move a thread between folders', function () use ($setUp) {
+it('can move a thread between folders', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -575,7 +575,7 @@ it('can move a thread between folders', function () use ($setUp) {
     ]);
 });
 
-it('can move a thread out of a folder', function () use ($setUp) {
+it('can move a thread out of a folder', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -600,7 +600,7 @@ it('can move a thread out of a folder', function () use ($setUp) {
     ]);
 });
 
-it('can not move a thread belonging to a different user in to a folder', function () use ($setUp) {
+it('can not move a thread belonging to a different user in to a folder', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $thread->user()->associate(User::factory()->create());
@@ -625,7 +625,7 @@ it('can not move a thread belonging to a different user in to a folder', functio
     ]);
 });
 
-it('can not move a thread in to a folder belonging to a different user', function () use ($setUp) {
+it('can not move a thread in to a folder belonging to a different user', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -647,7 +647,7 @@ it('can not move a thread in to a folder belonging to a different user', functio
     ]);
 });
 
-it('can move a thread in to a folder with drag and drop', function () use ($setUp) {
+it('can move a thread in to a folder with drag and drop', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -666,7 +666,7 @@ it('can move a thread in to a folder with drag and drop', function () use ($setU
     ]);
 });
 
-it('can move a thread between folders with drag and drop', function () use ($setUp) {
+it('can move a thread between folders with drag and drop', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -694,7 +694,7 @@ it('can move a thread between folders with drag and drop', function () use ($set
     ]);
 });
 
-it('can move a thread out of a folder with drag and drop', function () use ($setUp) {
+it('can move a thread out of a folder with drag and drop', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -716,7 +716,7 @@ it('can move a thread out of a folder with drag and drop', function () use ($set
     ]);
 });
 
-it('can not move a thread belonging to a different user in to a folder with drag and drop', function () use ($setUp) {
+it('can not move a thread belonging to a different user in to a folder with drag and drop', function () use ($setUp): void {
     ['user' => $user, 'thread' => $thread] = $setUp();
 
     $thread->user()->associate(User::factory()->create());
@@ -738,7 +738,7 @@ it('can not move a thread belonging to a different user in to a folder with drag
     ]);
 });
 
-it('can not move a thread in to a folder belonging to a different user with drag and drop', function () use ($setUp) {
+it('can not move a thread in to a folder belonging to a different user with drag and drop', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $folder = AiThreadFolder::factory()
@@ -757,7 +757,7 @@ it('can not move a thread in to a folder belonging to a different user with drag
     ]);
 });
 
-it('can delete a thread', function () use ($setUp) {
+it('can delete a thread', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -768,7 +768,7 @@ it('can delete a thread', function () use ($setUp) {
     assertSoftDeleted($thread);
 });
 
-it('can not delete a thread belonging to a different user', function () use ($setUp) {
+it('can not delete a thread belonging to a different user', function () use ($setUp): void {
     ['assistant' => $assistant] = $setUp();
 
     $threadBelongingToAnotherUser = AiThread::factory()
@@ -786,7 +786,7 @@ it('can not delete a thread belonging to a different user', function () use ($se
     ]);
 });
 
-it('can insert a prompt from the library', function () use ($setUp) {
+it('can insert a prompt from the library', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
@@ -800,7 +800,7 @@ it('can insert a prompt from the library', function () use ($setUp) {
         ->assertDispatched('set-chat-message', content: $prompt->prompt);
 });
 
-it('can insert a prompt owned by another user when "my prompts only" is unchecked', function () use ($setUp) {
+it('can insert a prompt owned by another user when "my prompts only" is unchecked', function () use ($setUp): void {
     $setUp();
 
     $prompt = Prompt::factory()->create();
@@ -818,7 +818,7 @@ it('can insert a prompt owned by another user when "my prompts only" is unchecke
         ->assertDispatched('set-chat-message', content: $prompt->prompt);
 });
 
-it('can not insert a missing prompt from the library', function () use ($setUp) {
+it('can not insert a missing prompt from the library', function () use ($setUp): void {
     $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -829,7 +829,7 @@ it('can not insert a missing prompt from the library', function () use ($setUp) 
         ->assertHasActionErrors(['promptId' => 'required']);
 });
 
-it('can upvote a prompt from the library while inserting it', function () use ($setUp) {
+it('can upvote a prompt from the library while inserting it', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
@@ -853,7 +853,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
     ]);
 });
 
-it('can remove upvote from a prompt from the library while inserting it', function () use ($setUp) {
+it('can remove upvote from a prompt from the library while inserting it', function () use ($setUp): void {
     ['user' => $user] = $setUp();
 
     $prompt = Prompt::factory()->create();
@@ -878,7 +878,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
     ]);
 });
 
-it('can rename a thread', function () use ($setUp) {
+it('can rename a thread', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -898,7 +898,7 @@ it('can rename a thread', function () use ($setUp) {
         ->not->toBeNull();
 });
 
-it('can not rename a thread without a name', function () use ($setUp) {
+it('can not rename a thread without a name', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -910,7 +910,7 @@ it('can not rename a thread without a name', function () use ($setUp) {
         ->assertHasActionErrors(['name' => 'required']);
 });
 
-it('can not rename a thread belonging to a different user', function () use ($setUp) {
+it('can not rename a thread belonging to a different user', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $thread->user()->associate(User::factory()->create());
@@ -935,7 +935,7 @@ it('can not rename a thread belonging to a different user', function () use ($se
         ->not->toEqual($newThreadName);
 });
 
-it('can clone a thread to a user', function () use ($setUp) {
+it('can clone a thread to a user', function () use ($setUp): void {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
@@ -951,7 +951,7 @@ it('can clone a thread to a user', function () use ($setUp) {
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $otherUser, $user) {
+    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $otherUser, $user): bool {
         if (! $job->thread->is($thread)) {
             return false;
         }
@@ -972,7 +972,7 @@ it('can clone a thread to a user', function () use ($setUp) {
     });
 });
 
-it('can clone a thread to a department', function () use ($setUp) {
+it('can clone a thread to a department', function () use ($setUp): void {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
@@ -988,7 +988,7 @@ it('can clone a thread to a department', function () use ($setUp) {
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $department, $user) {
+    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $department, $user): bool {
         if (! $job->thread->is($thread)) {
             return false;
         }
@@ -1009,7 +1009,7 @@ it('can clone a thread to a department', function () use ($setUp) {
     });
 });
 
-it('can not clone a thread without a target type', function () use ($setUp) {
+it('can not clone a thread without a target type', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
@@ -1024,7 +1024,7 @@ it('can not clone a thread without a target type', function () use ($setUp) {
         ->assertHasActionErrors(['targetType' => 'required']);
 });
 
-it('can not clone a thread without any targets', function () use ($setUp) {
+it('can not clone a thread without any targets', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -1037,7 +1037,7 @@ it('can not clone a thread without any targets', function () use ($setUp) {
         ->assertHasActionErrors(['targetIds' => 'required']);
 });
 
-it('can not clone a thread belonging to a different user', function () use ($setUp) {
+it('can not clone a thread belonging to a different user', function () use ($setUp): void {
     Bus::fake();
 
     ['thread' => $thread] = $setUp();
@@ -1058,7 +1058,7 @@ it('can not clone a thread belonging to a different user', function () use ($set
     Bus::assertNotDispatched(PrepareAiThreadCloning::class);
 });
 
-it('can email a thread to a user', function () use ($setUp) {
+it('can email a thread to a user', function () use ($setUp): void {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
@@ -1074,7 +1074,7 @@ it('can email a thread to a user', function () use ($setUp) {
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $otherUser, $user) {
+    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $otherUser, $user): bool {
         if (! $job->thread->is($thread)) {
             return false;
         }
@@ -1095,7 +1095,7 @@ it('can email a thread to a user', function () use ($setUp) {
     });
 });
 
-it('can email a thread to a department', function () use ($setUp) {
+it('can email a thread to a department', function () use ($setUp): void {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
@@ -1111,7 +1111,7 @@ it('can email a thread to a department', function () use ($setUp) {
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $department, $user) {
+    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $department, $user): bool {
         if (! $job->thread->is($thread)) {
             return false;
         }
@@ -1132,7 +1132,7 @@ it('can email a thread to a department', function () use ($setUp) {
     });
 });
 
-it('can not email a thread without a target type', function () use ($setUp) {
+it('can not email a thread without a target type', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $otherUser = User::factory()->create();
@@ -1147,7 +1147,7 @@ it('can not email a thread without a target type', function () use ($setUp) {
         ->assertHasActionErrors(['targetType' => 'required']);
 });
 
-it('can not email a thread without any targets', function () use ($setUp) {
+it('can not email a thread without any targets', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     Livewire::test(InstitutionalAdvisor::class)
@@ -1160,7 +1160,7 @@ it('can not email a thread without any targets', function () use ($setUp) {
         ->assertHasActionErrors(['targetIds' => 'required']);
 });
 
-it('can not email a thread belonging to a different user', function () use ($setUp) {
+it('can not email a thread belonging to a different user', function () use ($setUp): void {
     Bus::fake();
 
     ['thread' => $thread] = $setUp();
@@ -1181,7 +1181,7 @@ it('can not email a thread belonging to a different user', function () use ($set
     Bus::assertNotDispatched(PrepareAiThreadEmailing::class);
 });
 
-it('can not email a thread to a super admin', function () use ($setUp) {
+it('can not email a thread to a super admin', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $superAdmin = User::factory()->create();
@@ -1198,7 +1198,7 @@ it('can not email a thread to a super admin', function () use ($setUp) {
         ->assertHasActionErrors(['targetIds' => 'Super admin users cannot have a thread emailed to them.']);
 });
 
-it('can not clone a thread to a super admin', function () use ($setUp) {
+it('can not clone a thread to a super admin', function () use ($setUp): void {
     ['thread' => $thread] = $setUp();
 
     $superAdmin = User::factory()->create();
@@ -1215,7 +1215,7 @@ it('can not clone a thread to a super admin', function () use ($setUp) {
         ->assertHasActionErrors(['targetIds' => 'Super admin users cannot have a thread shared with them.']);
 });
 
-test('super admin users do not show up in email user search', function () use ($setUp) {
+test('super admin users do not show up in email user search', function () use ($setUp): void {
     $setUp();
 
     $superAdmin = User::factory()->create();
@@ -1224,7 +1224,7 @@ test('super admin users do not show up in email user search', function () use ($
 
     Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('emailThread')
-        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin): bool {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
 
@@ -1232,7 +1232,7 @@ test('super admin users do not show up in email user search', function () use ($
         });
 });
 
-test('super admin users do not show up in clone user search', function () use ($setUp) {
+test('super admin users do not show up in clone user search', function () use ($setUp): void {
     $setUp();
 
     $superAdmin = User::factory()->create();
@@ -1241,7 +1241,7 @@ test('super admin users do not show up in clone user search', function () use ($
 
     Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('cloneThread')
-        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin): bool {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
 

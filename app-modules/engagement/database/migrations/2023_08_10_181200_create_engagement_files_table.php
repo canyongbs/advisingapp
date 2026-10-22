@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('engagement_files', function (Blueprint $table) {
+        Schema::create('engagement_files', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('description');

@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAd
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -60,7 +61,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $totalStudents = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -77,7 +78,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $studentsPrimaryEmailMissing = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -96,7 +97,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -115,7 +116,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $studentsPrimaryPhoneMissing = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -134,7 +135,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(

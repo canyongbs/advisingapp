@@ -183,7 +183,7 @@ class ManagePersonalBookingPage extends Page implements HasForms
                             ])
                             ->prefix(config('app.url') . '/direct-booking/')
                             ->maxLength(255)
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                         Select::make('default_appointment_duration')
                             ->label('Default Appointment Duration')
                             ->required()
@@ -192,7 +192,7 @@ class ManagePersonalBookingPage extends Page implements HasForms
                                 30 => '30 minutes',
                                 60 => '1 hour',
                             ])
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                         TextInput::make('minimum_booking_lead_time_hours')
                             ->label('Minimum Lead Time')
                             ->suffix('hours')
@@ -200,14 +200,14 @@ class ManagePersonalBookingPage extends Page implements HasForms
                             ->minValue(0)
                             ->maxValue(720)
                             ->integer()
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                         TextInput::make('maximum_booking_lead_time_days')
                             ->label('Maximum Lead Time')
                             ->suffix('days')
                             ->default(0)
                             ->minValue(0)
                             ->integer()
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                         Section::make('Personal Booking Availability')
                             ->visible($hasCrmLicense)
                             ->schema([
@@ -220,8 +220,8 @@ class ManagePersonalBookingPage extends Page implements HasForms
                                     ])
                                     ->rules([
                                         fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
-                                        function (Get $get) {
-                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                        function (Get $get): Closure {
+                                            return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
                                                 if (! $value) {
                                                     return;
                                                 }
@@ -236,7 +236,7 @@ class ManagePersonalBookingPage extends Page implements HasForms
                                                 }
 
                                                 $hasAnyEnabledDay = collect($officeHours)
-                                                    ->filter(fn ($day) => ($day['is_enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->filter(fn ($day): bool => ($day['is_enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
@@ -247,16 +247,16 @@ class ManagePersonalBookingPage extends Page implements HasForms
                                     ]),
                                 Checkbox::make('appointments_are_restricted_to_existing_students')
                                     ->label('Restrict appointments to existing students')
-                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                    ->visible(fn (Get $get): mixed => $get('office_hours_are_enabled')),
                                 Section::make('Days')
                                     ->schema([
                                         DailyHoursRepeater::make('office_hours')
                                             ->label('Days and Hours')
                                             ->columnSpanFull(),
                                     ])
-                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                    ->visible(fn (Get $get): mixed => $get('office_hours_are_enabled')),
                             ])
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                         Section::make('Out of Office')
                             ->schema([
                                 Grid::make()
@@ -276,14 +276,14 @@ class ManagePersonalBookingPage extends Page implements HasForms
                                             ->columnSpan(1)
                                             ->label('Start')
                                             ->required()
-                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                            ->visible(fn (Get $get): mixed => $get('out_of_office_is_enabled')),
                                         DateTimePicker::make('out_of_office_ends_at')
                                             ->columnSpan(1)
                                             ->label('End')
                                             ->required()
-                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                            ->visible(fn (Get $get): mixed => $get('out_of_office_is_enabled')),
                                     ]),
-                            ])->visible(fn (Get $get) => $get('is_enabled')),
+                            ])->visible(fn (Get $get): mixed => $get('is_enabled')),
                     ]),
             ]);
     }

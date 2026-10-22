@@ -102,7 +102,7 @@ class EngagementRecipientStep
                         ->typeSelectToggleButtons()
                         ->required()
                         ->columns(2)
-                        ->afterStateUpdated(function (Get $get, Set $set) {
+                        ->afterStateUpdated(function (Get $get, Set $set): void {
                             $educatable = match ($get('recipient_type')) {
                                 'student' => Student::query()->tap(new WithoutArchivedStudents())->find($get('recipient_id')),
                                 'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::query()->find($get('recipient_id')) : null,
@@ -221,7 +221,7 @@ class EngagementRecipientStep
                                 ->columnSpanFull(),
                         ];
                     })
-                    ->visible(fn (Get $get) => ! is_null(($getEducatable)()) || $get('recipient_id')),
+                    ->visible(fn (Get $get): bool => ! is_null(($getEducatable)()) || $get('recipient_id')),
             ]);
     }
 }

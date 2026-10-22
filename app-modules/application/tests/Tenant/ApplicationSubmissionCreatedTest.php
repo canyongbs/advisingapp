@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\seed;
 
-it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission is created', function () {
+it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission is created', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     Event::fake(ApplicationSubmissionCreated::class);
@@ -58,7 +58,7 @@ it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission i
     );
 });
 
-test('ApplicationSubmissionCreated Event has the proper listeners', function () {
+test('ApplicationSubmissionCreated Event has the proper listeners', function (): void {
     Event::fake();
 
     Event::assertListening(
@@ -67,7 +67,7 @@ test('ApplicationSubmissionCreated Event has the proper listeners', function () 
     );
 });
 
-test('NotifySubscribersOfApplicationSubmission dispatches the correct Notification', function () {
+test('NotifySubscribersOfApplicationSubmission dispatches the correct Notification', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     Notification::fake();
@@ -84,7 +84,7 @@ test('NotifySubscribersOfApplicationSubmission dispatches the correct Notificati
 
     $submission->save();
 
-    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user) {
+    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user): void {
         Notification::assertSentTo(notifiable: $user, notification: AuthorLinkedApplicationSubmissionCreatedNotification::class);
     });
 });

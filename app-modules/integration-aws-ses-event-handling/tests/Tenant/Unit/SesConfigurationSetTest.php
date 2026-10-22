@@ -46,7 +46,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
-it('Does not send the message if configuration_set is set in settings but is not present in mail', function () {
+it('Does not send the message if configuration_set is set in settings but is not present in mail', function (): void {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -61,11 +61,11 @@ it('Does not send the message if configuration_set is set in settings but is not
     );
 
     Event::assertNotDispatched(
-        fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
+        fn (MessageSent $event): bool => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
     );
 })->expectExceptionMessage('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
 
-it('The configuration set headers are present and emails are sent if configuration_set is set in setting', function () {
+it('The configuration set headers are present and emails are sent if configuration_set is set in setting', function (): void {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -81,12 +81,12 @@ it('The configuration set headers are present and emails are sent if configurati
     $notifiable->notify($notification);
 
     Event::assertDispatched(
-        fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
+        fn (MessageSent $event): bool => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
             && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === sprintf('app_message_id=%s, tenant_id=%s', EmailMessage::first()->getKey(), Tenant::current()->getKey())
     );
 });
 
-it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set is not', function () {
+it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set is not', function (): void {
     Event::fake(MessageSent::class);
 
     Mail::raw(
@@ -95,7 +95,7 @@ it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set
     );
 
     Event::assertDispatched(
-        fn (MessageSent $event) => is_null($event->message->getHeaders()->get('X-SES-CONFIGURATION-SET'))
+        fn (MessageSent $event): bool => is_null($event->message->getHeaders()->get('X-SES-CONFIGURATION-SET'))
     );
 });
 

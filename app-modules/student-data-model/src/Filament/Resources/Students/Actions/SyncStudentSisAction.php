@@ -55,7 +55,7 @@ class SyncStudentSisAction
             ->labeledFrom('sm')
             ->icon('heroicon-m-arrow-path')
             ->color('gray')
-            ->action(function (Student $student) {
+            ->action(function (Student $student): void {
                 $tenantId = Tenant::current()->getKey();
 
                 try {

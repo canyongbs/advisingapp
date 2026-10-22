@@ -81,7 +81,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
-                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                    ->url(fn ($record): string => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.prospectCareTeamRole.name')
@@ -97,14 +97,14 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                     ->label('Remove')
-                    ->modalHeading(function (User $record) {
+                    ->modalHeading(function (User $record): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
                         return "Remove {$record->name} from {$prospect->display_name}'s Care Team";
                     })
                     ->modalSubmitActionLabel('Remove')
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
@@ -116,14 +116,14 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                         ->label('Remove selected')
-                        ->modalHeading(function () {
+                        ->modalHeading(function (): string {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
                             return "Remove selected users from {$prospect->display_name}'s Care Team";
                         })
                         ->modalSubmitActionLabel('Remove')
-                        ->successNotificationTitle(function () {
+                        ->successNotificationTitle(function (): string {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 

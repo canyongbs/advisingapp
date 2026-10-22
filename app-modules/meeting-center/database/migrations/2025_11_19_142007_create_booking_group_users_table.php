@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('booking_group_users', function (Blueprint $table) {
+        Schema::create('booking_group_users', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();

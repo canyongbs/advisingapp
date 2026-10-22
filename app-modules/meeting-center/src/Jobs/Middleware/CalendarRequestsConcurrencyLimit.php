@@ -60,9 +60,9 @@ class CalendarRequestsConcurrencyLimit
         Redis::funnel("{calendar-concurrency-{$calendar->provider_id}}")
             ->block(10)
             ->limit(4)
-            ->then(function () use ($job, $next) {
+            ->then(function () use ($job, $next): void {
                 $next($job);
-            }, function () use ($job) {
+            }, function () use ($job): void {
                 $job->release(10);
             });
     }

@@ -68,7 +68,7 @@ class CreateStudent extends CreateRecord
 
     public function form(Schema $schema): Schema
     {
-        $generateFullName = function (Get $get, Set $set) {
+        $generateFullName = function (Get $get, Set $set): void {
             $firstName = trim($get('first'));
 
             if (blank($firstName)) {
@@ -241,7 +241,7 @@ class CreateStudent extends CreateRecord
                                 AddressInput::make()
                                     ->columnSpanFull()
                                     /** @phpstan-ignore argument.type */
-                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                    ->onItemSelected(function (Set $set, SearchResult $item): void {
                                         try {
                                             $data = $item->get('data');
 

@@ -95,7 +95,7 @@ class SurveyWidgetController extends Controller
         abort_if(is_null($stream), 404, 'File not found.');
 
         return response()->streamDownload(
-            function () use ($stream) {
+            function () use ($stream): void {
                 fpassthru($stream);
                 fclose($stream);
             },

@@ -55,7 +55,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('requires form_id to submit the request', function () {
+it('requires form_id to submit the request', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -73,7 +73,7 @@ it('requires form_id to submit the request', function () {
         ->assertHasTableActionErrors(['form_id' => 'required']);
 });
 
-it('can request a form submission via email', function () {
+it('can request a form submission via email', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -104,7 +104,7 @@ it('can request a form submission via email', function () {
         ->and($submission->canceled_at)->toBeNull();
 });
 
-it('can request a form submission via sms', function () {
+it('can request a form submission via sms', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -130,7 +130,7 @@ it('can request a form submission via sms', function () {
         ->and($submission->request_method)->toBe(FormSubmissionRequestDeliveryMethod::Sms);
 });
 
-it('defaults request_method to email', function () {
+it('defaults request_method to email', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -153,7 +153,7 @@ it('defaults request_method to email', function () {
         ->and($submission->request_method)->toBe(FormSubmissionRequestDeliveryMethod::Email);
 });
 
-it('allows request_note to be optional', function () {
+it('allows request_note to be optional', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -178,7 +178,7 @@ it('allows request_note to be optional', function () {
         ->and($submission->request_note)->toBeNull();
 });
 
-it('only lists forms with authentication enabled and not archived in the form select table', function () {
+it('only lists forms with authentication enabled and not archived in the form select table', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -198,7 +198,7 @@ it('only lists forms with authentication enabled and not archived in the form se
         ->and($formIds)->not->toContain($archivedForm->id);
 });
 
-it('rejects a form_id belonging to a form without authentication enabled', function () {
+it('rejects a form_id belonging to a form without authentication enabled', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -217,7 +217,7 @@ it('rejects a form_id belonging to a form without authentication enabled', funct
         ->assertHasTableActionErrors(['form_id']);
 });
 
-it('rejects a form_id belonging to an archived form', function () {
+it('rejects a form_id belonging to an archived form', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -237,7 +237,7 @@ it('rejects a form_id belonging to an archived form', function () {
         ->assertHasTableActionErrors(['form_id']);
 });
 
-it('reuses an existing requested submission for the same form instead of creating a new one', function () {
+it('reuses an existing requested submission for the same form instead of creating a new one', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -278,7 +278,7 @@ it('reuses an existing requested submission for the same form instead of creatin
         ->and($submission->request_note)->toBe('Updated note');
 });
 
-it('creates a new submission when existing one is already submitted', function () {
+it('creates a new submission when existing one is already submitted', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -306,7 +306,7 @@ it('creates a new submission when existing one is already submitted', function (
     expect($student->formSubmissions()->count())->toBe(2);
 });
 
-it('creates a new submission when existing one is canceled', function () {
+it('creates a new submission when existing one is canceled', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -335,7 +335,7 @@ it('creates a new submission when existing one is canceled', function () {
     expect($student->formSubmissions()->count())->toBe(2);
 });
 
-it('associates the current authenticated user as the requester', function () {
+it('associates the current authenticated user as the requester', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -360,7 +360,7 @@ it('associates the current authenticated user as the requester', function () {
         ->and($submission->requester->is($user))->toBeTrue();
 });
 
-it('dispatches the delivery job after creating the submission', function () {
+it('dispatches the delivery job after creating the submission', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -381,7 +381,7 @@ it('dispatches the delivery job after creating the submission', function () {
     Queue::assertPushed(DeliverFormSubmissionRequestByEmail::class);
 });
 
-it('dispatches the sms delivery job when sms method is selected', function () {
+it('dispatches the sms delivery job when sms method is selected', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -402,7 +402,7 @@ it('dispatches the sms delivery job when sms method is selected', function () {
     Queue::assertPushed(DeliverFormSubmissionRequestBySms::class);
 });
 
-it('does not dispatch `FormSubmissionCreated` when a form submission is requested', function () {
+it('does not dispatch `FormSubmissionCreated` when a form submission is requested', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -429,7 +429,7 @@ it('does not dispatch `FormSubmissionCreated` when a form submission is requeste
     Event::assertNotDispatched(FormSubmissionCreated::class);
 });
 
-it('sends a success notification after the request is sent', function () {
+it('sends a success notification after the request is sent', function (): void {
     Queue::fake();
 
     asSuperAdmin();

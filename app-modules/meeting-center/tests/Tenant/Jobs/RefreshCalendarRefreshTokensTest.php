@@ -40,7 +40,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches a refresh only for calendars with a refresh token not updated in 14 days', function () {
+it('dispatches a refresh only for calendars with a refresh token not updated in 14 days', function (): void {
     Queue::fake();
 
     $staleCalendar = Calendar::factory()->for(User::factory())->create(['updated_at' => now()->subDays(15)]);

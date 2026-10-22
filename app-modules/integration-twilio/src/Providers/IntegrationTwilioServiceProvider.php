@@ -53,9 +53,9 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationTwilioPlugin()) instanceof Panel);
 
-        $this->app->scoped(EngagementResponseSenderFinder::class, function () {
+        $this->app->scoped(EngagementResponseSenderFinder::class, function (): PlaygroundFindEngagementResponseSender|FindEngagementResponseSender {
             if (config('local_development.twilio.enable_test_sender') === true) {
                 return new PlaygroundFindEngagementResponseSender();
             }
@@ -69,7 +69,7 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
         $this->app->scoped(
             Client::class,
-            fn () => Integration::Twilio->isOn()
+            fn (): Client => Integration::Twilio->isOn()
                 ? new Client($settings->account_sid, $settings->auth_token)
                 : throw IntegrationException::make(Integration::Twilio)
         );

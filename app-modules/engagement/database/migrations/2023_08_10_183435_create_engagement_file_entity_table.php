@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('engagement_file_entities', function (Blueprint $table) {
+        Schema::create('engagement_file_entities', function (Blueprint $table): void {
             $table->foreignUuid('engagement_file_id')->constrained('engagement_files')->cascadeOnDelete();
             $table->string('entity_id');
             $table->string('entity_type');

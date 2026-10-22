@@ -37,7 +37,7 @@
 use AdvisingApp\Notification\Http\Controllers\UnsubscribeController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('web')->group(function () {
+Route::middleware('web')->group(function (): void {
     Route::get('/unsubscribe', [UnsubscribeController::class, 'show'])
         ->name('unsubscribe')
         ->middleware('signed');

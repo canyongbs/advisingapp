@@ -51,7 +51,7 @@ use Twilio\Rest\Api\V2010\Account\MessageList;
 use Twilio\Rest\Client;
 use Twilio\Rest\MessagingBase;
 
-test('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function () {
+test('An sms is allowed to be sent if there is available quota and its quota usage is tracked', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -86,7 +86,7 @@ test('An sms is allowed to be sent if there is available quota and its quota usa
         )
     );
 
-    app()->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn (): ClientMock => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,
@@ -105,7 +105,7 @@ test('An sms is allowed to be sent if there is available quota and its quota usa
         ->toBe(SmsMessageEventType::Dispatched);
 });
 
-test('An sms is prevented from being sent if there is no available quota', function () {
+test('An sms is prevented from being sent if there is no available quota', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -145,7 +145,7 @@ test('An sms is prevented from being sent if there is no available quota', funct
         )
     );
 
-    app()->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn (): ClientMock => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,
@@ -163,7 +163,7 @@ test('An sms is prevented from being sent if there is no available quota', funct
         ->and($smsMessage->events()->first()->type)->toBe(SmsMessageEventType::RateLimited);
 });
 
-test('An sms is sent to a user even if there is no available quota', function () {
+test('An sms is sent to a user even if there is no available quota', function (): void {
     $notifiable = User::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -203,7 +203,7 @@ test('An sms is sent to a user even if there is no available quota', function ()
         )
     );
 
-    app()->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn (): ClientMock => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,

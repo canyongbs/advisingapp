@@ -92,8 +92,8 @@ class CustomerAdvisorEmbed extends EditRecord
                             ->label('Authorized Domains')
                             ->helperText('Only these domains will be allowed to embed this customer advisor.')
                             ->placeholder('example.com')
-                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled'))
-                            ->disabled(fn (Get $get) => ! $get('is_embed_enabled'))
+                            ->hidden(fn (Get $get): bool => ! $get('is_embed_enabled'))
+                            ->disabled(fn (Get $get): bool => ! $get('is_embed_enabled'))
                             ->nestedRecursiveRules(
                                 [
                                     'string',
@@ -103,11 +103,11 @@ class CustomerAdvisorEmbed extends EditRecord
                         Toggle::make('is_requires_authentication_enabled')
                             ->label('Requires Authentication')
                             ->live()
-                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled')),
+                            ->hidden(fn (Get $get): bool => ! $get('is_embed_enabled')),
                         Toggle::make('is_generate_prospects_enabled')
                             ->label('Generate Prospects')
                             ->helperText('If enabled, the customer advisor will allow for the registration of an unrecognized prospect.')
-                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
+                            ->hidden(fn (Get $get): bool => ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
                         Radio::make('default_theme')
                             ->label('Theme')
                             ->options([
@@ -115,7 +115,7 @@ class CustomerAdvisorEmbed extends EditRecord
                                 'dark' => 'Dark',
                             ])
                             ->default('light')
-                            ->visible(fn (Get $get) => $get('is_embed_enabled'))
+                            ->visible(fn (Get $get): mixed => $get('is_embed_enabled'))
                             ->inline(),
                         Grid::make()
                             ->schema([
@@ -132,7 +132,7 @@ class CustomerAdvisorEmbed extends EditRecord
                                 ColorPicker::make('button_background_hover_color')
                                     ->label('Button Hover Background Color'),
                             ])
-                            ->visible(fn (Get $get) => $get('is_embed_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_embed_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
@@ -161,7 +161,7 @@ class CustomerAdvisorEmbed extends EditRecord
                                 )
                                 ->modalSubmitAction(false)
                                 ->modalCancelActionLabel('Close')
-                                ->visible(fn (Get $get) => $get('is_embed_enabled')),
+                                ->visible(fn (Get $get): mixed => $get('is_embed_enabled')),
                         ]),
                     ]),
             ]);

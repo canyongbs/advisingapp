@@ -42,9 +42,9 @@ use Illuminate\Support\ServiceProvider;
 
 class MultifactorAuthenticationServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new MultifactorAuthenticationPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new MultifactorAuthenticationPlugin()) instanceof Panel);
     }
 
     public function boot() {}

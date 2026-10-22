@@ -45,7 +45,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-it('can send a notification containing a thread transcript', function () {
+it('can send a notification containing a thread transcript', function (): void {
     Notification::fake();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();

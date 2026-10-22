@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('booking_group_appointments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::create('booking_group_appointments', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
                 $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
                 $table->string('calendar_event_provider_uid')->nullable();
@@ -54,7 +54,7 @@ return new class () extends Migration {
                 $table->timestamps();
             });
 
-            Schema::table('calendar_events', function (Blueprint $table) {
+            Schema::table('calendar_events', function (Blueprint $table): void {
                 $table->string('provider_uid')->nullable();
             });
         });
@@ -62,8 +62,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('calendar_events', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('calendar_events', function (Blueprint $table): void {
                 $table->dropColumn('provider_uid');
             });
 

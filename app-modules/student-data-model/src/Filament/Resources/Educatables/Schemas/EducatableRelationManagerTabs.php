@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Schemas;
 
+use Closure;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
@@ -61,7 +62,7 @@ class EducatableRelationManagerTabs
             ->hidden($managers->isEmpty())
             ->tabs(
                 $managers
-                    ->map(fn ($manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
+                    ->map(fn (string|Closure $manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
                         ->key($key)
                         ->schema([
                             Livewire::make($manager, [

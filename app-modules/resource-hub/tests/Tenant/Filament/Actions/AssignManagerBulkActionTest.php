@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('can bulk assign managers to articles', function () {
+it('can bulk assign managers to articles', function (): void {
     asSuperAdmin();
 
     $manager = User::factory()->create();
@@ -62,12 +62,12 @@ it('can bulk assign managers to articles', function () {
         )
         ->assertHasNoErrors();
 
-    $articles->each(function (ResourceHubArticle $article) use ($manager) {
+    $articles->each(function (ResourceHubArticle $article) use ($manager): void {
         expect($article->refresh()->managers->pluck('id'))->toContain($manager->id);
     });
 });
 
-it('can bulk assign managers to articles without removing previously assigned managers', function () {
+it('can bulk assign managers to articles without removing previously assigned managers', function (): void {
     asSuperAdmin();
 
     $oldManager = User::factory()->create();
@@ -75,7 +75,7 @@ it('can bulk assign managers to articles without removing previously assigned ma
 
     $articles = ResourceHubArticle::factory(5)->create();
 
-    $articles->each(function (ResourceHubArticle $article) use ($oldManager) {
+    $articles->each(function (ResourceHubArticle $article) use ($oldManager): void {
         $article->managers()->attach($oldManager->id);
     });
 
@@ -90,12 +90,12 @@ it('can bulk assign managers to articles without removing previously assigned ma
         )
         ->assertHasNoErrors();
 
-    $articles->each(function (ResourceHubArticle $article) use ($oldManager, $newManager) {
+    $articles->each(function (ResourceHubArticle $article) use ($oldManager, $newManager): void {
         expect($article->refresh()->managers->pluck('id'))->toContain($oldManager->id, $newManager->id);
     });
 });
 
-it('can bulk assign managers to articles with removing previously assigned managers', function () {
+it('can bulk assign managers to articles with removing previously assigned managers', function (): void {
     asSuperAdmin();
 
     $oldManager = User::factory()->create();
@@ -103,7 +103,7 @@ it('can bulk assign managers to articles with removing previously assigned manag
 
     $articles = ResourceHubArticle::factory(5)->create();
 
-    $articles->each(function (ResourceHubArticle $article) use ($oldManager) {
+    $articles->each(function (ResourceHubArticle $article) use ($oldManager): void {
         $article->managers()->attach($oldManager->id);
     });
 
@@ -118,13 +118,13 @@ it('can bulk assign managers to articles with removing previously assigned manag
         )
         ->assertHasNoErrors();
 
-    $articles->each(function (ResourceHubArticle $article) use ($oldManager, $newManager) {
+    $articles->each(function (ResourceHubArticle $article) use ($oldManager, $newManager): void {
         expect($article->refresh()->managers->pluck('id'))->toContain($newManager->id);
         expect($article->managers->pluck('id'))->not()->toContain($oldManager->id);
     });
 });
 
-it('renders the bulk assign managers action based on proper access', function () {
+it('renders the bulk assign managers action based on proper access', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('resource_hub_article.view-any');

@@ -90,8 +90,8 @@ trait HasSharedFormConfiguration
                         ->label('Allowed Domains')
                         ->helperText('Only these domains will be allowed to embed this survey.')
                         ->placeholder('example.com')
-                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                        ->hidden(fn (Get $get): bool => ! $get('embed_enabled'))
+                        ->disabled(fn (Get $get): bool => ! $get('embed_enabled'))
                         ->nestedRecursiveRules(
                             [
                                 'string',
@@ -110,7 +110,7 @@ trait HasSharedFormConfiguration
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
                 ->live()
-                ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                ->disabled(fn (GoogleRecaptchaSettings $settings): bool => ! $settings->is_enabled)
                 ->helperText(function (GoogleRecaptchaSettings $settings) {
                     if (! $settings->is_enabled) {
                         return 'Enable and configure reCAPTCHA in order to use it on your surveys.';
@@ -120,7 +120,7 @@ trait HasSharedFormConfiguration
                 ->schema([
                     $this->fieldBuilder(),
                 ])
-                ->hidden(fn (Get $get) => $get('is_wizard'))
+                ->hidden(fn (Get $get): mixed => $get('is_wizard'))
                 ->disabled(fn (?Survey $record) => $record?->submissions()->submitted()->exists()),
             Repeater::make('steps')
                 ->schema([
@@ -135,7 +135,7 @@ trait HasSharedFormConfiguration
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                ->visible(fn (Get $get) => $get('is_wizard'))
+                ->visible(fn (Get $get): mixed => $get('is_wizard'))
                 ->disabled(fn (?Survey $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->orderColumn('sort')
@@ -164,7 +164,7 @@ trait HasSharedFormConfiguration
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your survey')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, Survey | SurveyStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, Survey | SurveyStep $record): void {
                 if ($component->isDisabled()) {
                     return;
                 }

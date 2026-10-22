@@ -72,7 +72,7 @@ class EducatableConcernsWidget extends Widget
             ->get();
 
         return collect(SystemConcernStatusClassification::cases())
-            ->map(fn (SystemConcernStatusClassification $classification) => [
+            ->map(fn (SystemConcernStatusClassification $classification): array => [
                 'id' => ConcernStatus::where('classification', $classification->value)->first()?->id,
                 'classification' => $classification->value,
                 'concern_count' => $counts->where('classification', $classification->value)->first()->concern_count ?? 0,

@@ -50,7 +50,7 @@ class NotifySubscribersOfApplicationSubmission implements ShouldQueue
         /** @var Student|Prospect|null $author */
         $author = $event->submission->author;
 
-        $author?->subscriptions?->each(function (Subscription $subscription) use ($event) {
+        $author?->subscriptions?->each(function (Subscription $subscription) use ($event): void {
             $subscription->user->notify(new AuthorLinkedApplicationSubmissionCreatedNotification(submission: $event->submission));
         });
     }

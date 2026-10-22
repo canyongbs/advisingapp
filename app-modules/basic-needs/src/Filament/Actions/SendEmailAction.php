@@ -125,21 +125,21 @@ class SendEmailAction
                             ])
                             ->inline()
                             ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
+                            ->afterStateUpdated(fn (Set $set): mixed => $set('recipient_id', null))
                             ->required(),
                         Select::make('recipient_id')
                             ->label('Recipient')
                             ->searchable()
-                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
-                            ->options(fn (Get $get) => self::getRecipientOptions($get))
-                            ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
-                            ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
+                            ->hidden(fn (Get $get): bool => ! filled($get('recipient_type')))
+                            ->options(fn (Get $get): array => self::getRecipientOptions($get))
+                            ->getSearchResultsUsing(fn (string $search, Get $get): array => self::getRecipientSearchResults($search, $get))
+                            ->getOptionLabelUsing(fn (string $value, Get $get): string => self::getRecipientOptionLabel($value, $get))
                             ->rule(fn (Get $get): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get): void {
                                 if (! self::resolveRecipient($get('recipient_type'), $value)) {
                                     $fail('The selected recipient is not available.');
                                 }
                             })
-                            ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
+                            ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view): void {
                                 $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
 
                                 self::updateBodyAndRouteId($get, $set, $record, $view);
@@ -149,8 +149,8 @@ class SendEmailAction
                     ]),
 
                 Grid::make(1)
-                    ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
-                    ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
+                    ->schema(fn (Get $get): array => self::getRecipientRouteIdSchema($get))
+                    ->hidden(fn (Get $get): bool => ! filled($get('recipient_type'))),
             ]);
     }
 
@@ -211,9 +211,9 @@ class SendEmailAction
                     ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->json()
-                    ->required(fn (Get $get) => $get('is_signature_enabled'))
+                    ->required(fn (Get $get): mixed => $get('is_signature_enabled'))
                     ->fileAttachmentsDisk('s3-public')
-                    ->visible(fn (Get $get) => $get('is_signature_enabled'))
+                    ->visible(fn (Get $get): mixed => $get('is_signature_enabled'))
                     ->default(Auth::user()->signature)
                     ->saveRelationshipsUsing(null),
             ])
@@ -229,7 +229,7 @@ class SendEmailAction
                     ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
                 DateTimePicker::make('scheduled_at')
                     ->required()
-                    ->visible(fn (Get $get) => $get('send_later')),
+                    ->visible(fn (Get $get): mixed => $get('send_later')),
             ]);
     }
 
@@ -302,7 +302,7 @@ class SendEmailAction
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
                 ->get()
-                ->mapWithKeys(fn (Student $student) => [$student->sisid => self::formatStudentLabel($student)])
+                ->mapWithKeys(fn (Student $student): array => [$student->sisid => self::formatStudentLabel($student)])
                 ->toArray();
         }
 
@@ -312,7 +312,7 @@ class SendEmailAction
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
                 ->get()
-                ->mapWithKeys(fn (Prospect $prospect) => [$prospect->id => self::formatProspectLabel($prospect)])
+                ->mapWithKeys(fn (Prospect $prospect): array => [$prospect->id => self::formatProspectLabel($prospect)])
                 ->toArray();
         }
 
@@ -330,7 +330,7 @@ class SendEmailAction
             return Student::query()
                 ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
-                ->when($search, function (Builder $query) use ($search) {
+                ->when($search, function (Builder $query) use ($search): void {
                     // Grouped so the archived and bounced filters apply to every search
                     // branch, rather than binding only to the first one.
                     $query->where(fn (Builder $query) => $query
@@ -341,14 +341,14 @@ class SendEmailAction
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
                 ->get()
-                ->mapWithKeys(fn (Student $student) => [$student->sisid => self::formatStudentLabel($student)])
+                ->mapWithKeys(fn (Student $student): array => [$student->sisid => self::formatStudentLabel($student)])
                 ->toArray();
         }
 
         if ($recipientType === 'prospect') {
             return Prospect::query()
                 ->with('primaryEmailAddress')
-                ->when($search, function (Builder $query) use ($search) {
+                ->when($search, function (Builder $query) use ($search): void {
                     // Grouped so the bounced filter applies to every search branch, rather
                     // than binding only to the first one, matching the student branch above.
                     $query->where(fn (Builder $query) => $query
@@ -358,7 +358,7 @@ class SendEmailAction
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
                 ->get()
-                ->mapWithKeys(fn (Prospect $prospect) => [$prospect->id => self::formatProspectLabel($prospect)])
+                ->mapWithKeys(fn (Prospect $prospect): array => [$prospect->id => self::formatProspectLabel($prospect)])
                 ->toArray();
         }
 

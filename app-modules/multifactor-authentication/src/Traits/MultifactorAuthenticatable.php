@@ -57,13 +57,13 @@ trait MultifactorAuthenticatable
     public function multifactorRecoveryCodes(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => $value ? json_decode(decrypt(
+            get: fn (?string $value): mixed => $value ? json_decode(decrypt(
                 $value
             ), true) : null
         );
     }
 
-    public function enableMultifactorAuthentication()
+    public function enableMultifactorAuthentication(): void
     {
         $this->disableMultifactorAuthentication();
 
@@ -73,7 +73,7 @@ trait MultifactorAuthenticatable
         ])->save();
     }
 
-    public function disableMultifactorAuthentication()
+    public function disableMultifactorAuthentication(): void
     {
         $this->forceFill(
             [
@@ -84,30 +84,30 @@ trait MultifactorAuthenticatable
         )->save();
     }
 
-    public function confirmMultifactorAuthentication()
+    public function confirmMultifactorAuthentication(): void
     {
         $this->forceFill([
             'multifactor_confirmed_at' => now(),
         ])->save();
     }
 
-    public function generateRecoveryCodes()
+    public function generateRecoveryCodes(): string
     {
-        return encrypt(json_encode(Collection::times(8, function () {
+        return encrypt(json_encode(Collection::times(8, function (): string {
             return Str::random(10) . '-' . Str::random(10);
         })->all()));
     }
 
     public function destroyRecoveryCode(string $recoveryCode): void
     {
-        $unusedCodes = array_filter($this->multifactor_recovery_codes ?? [], fn ($code) => $code !== $recoveryCode);
+        $unusedCodes = array_filter($this->multifactor_recovery_codes ?? [], fn ($code): true => $code !== $recoveryCode);
 
         $this->forceFill([
             'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
         ])->save();
     }
 
-    public function getMultifactorQrCodeUrl()
+    public function getMultifactorQrCodeUrl(): string
     {
         return app(MultifactorService::class)->getQrCodeUrl(
             config('app.name') . ' | ' . Tenant::current()->name,
@@ -116,7 +116,7 @@ trait MultifactorAuthenticatable
         );
     }
 
-    public function reGenerateRecoveryCodes()
+    public function reGenerateRecoveryCodes(): void
     {
         $this->forceFill([
             'multifactor_recovery_codes' => $this->generateRecoveryCodes(),

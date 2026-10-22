@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('assistant_chat_messages', function (Blueprint $table) {
+        Schema::create('assistant_chat_messages', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('assistant_chat_id')->constrained('assistant_chats')->onDelete('cascade');

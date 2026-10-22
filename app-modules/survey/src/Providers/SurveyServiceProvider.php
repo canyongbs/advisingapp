@@ -48,9 +48,9 @@ use Illuminate\Support\ServiceProvider;
 
 class SurveyServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new SurveyPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new SurveyPlugin()) instanceof Panel);
     }
 
     public function boot(): void

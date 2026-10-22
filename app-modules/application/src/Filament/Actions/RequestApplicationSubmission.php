@@ -95,7 +95,7 @@ class RequestApplicationSubmission extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire) {
+        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire): void {
             $owner = $livewire->getOwnerRecord();
 
             assert($owner instanceof Student || $owner instanceof Prospect);

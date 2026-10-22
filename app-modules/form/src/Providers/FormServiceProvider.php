@@ -55,12 +55,12 @@ use Illuminate\Support\ServiceProvider;
 
 class FormServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new FormPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new FormPlugin()) instanceof Panel);
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'form' => Form::class,

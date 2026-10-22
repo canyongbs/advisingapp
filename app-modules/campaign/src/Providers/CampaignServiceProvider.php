@@ -48,9 +48,9 @@ use Illuminate\Support\ServiceProvider;
 
 class CampaignServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
+        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()) instanceof Panel);
     }
 
     public function boot(): void

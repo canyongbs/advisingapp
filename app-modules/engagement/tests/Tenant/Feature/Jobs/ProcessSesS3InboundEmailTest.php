@@ -57,7 +57,7 @@ use function Pest\Laravel\partialMock;
 
 use PhpMimeMailParser\Parser;
 
-it('handles spam verdict failure properly', function () {
+it('handles spam verdict failure properly', function (): void {
     Storage::fake('s3');
     Storage::fake('s3-inbound-email');
 
@@ -70,12 +70,12 @@ it('handles spam verdict failure properly', function () {
     Storage::disk('s3-inbound-email')->putFileAs('', $file, 's3_email_spam');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
         // @phpstan-ignore-next-line
-        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception) {
+        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception): bool {
             return $exception instanceof SesS3InboundSpamOrVirusDetected
                 && $exception->context()['spam_verdict'] === 'FAIL'
                 && $exception->context()['virus_verdict'] === 'PASS';
@@ -91,7 +91,7 @@ it('handles spam verdict failure properly', function () {
     assertDatabaseCount(EngagementResponse::class, 0);
 });
 
-it('handles virus verdict failure properly', function () {
+it('handles virus verdict failure properly', function (): void {
     Storage::fake('s3');
     Storage::fake('s3-inbound-email');
 
@@ -104,12 +104,12 @@ it('handles virus verdict failure properly', function () {
     Storage::disk('s3-inbound-email')->putFileAs('', $file, 's3_email_virus');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
         // @phpstan-ignore-next-line
-        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception) {
+        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception): bool {
             return $exception instanceof SesS3InboundSpamOrVirusDetected
                 && $exception->context()['spam_verdict'] === 'PASS'
                 && $exception->context()['virus_verdict'] === 'FAIL';
@@ -125,7 +125,7 @@ it('handles virus verdict failure properly', function () {
     assertDatabaseCount(EngagementResponse::class, 0);
 });
 
-it('properly handles not finding a Student or Prospect match and creates an UnmatchedInboundCommunication', function () {
+it('properly handles not finding a Student or Prospect match and creates an UnmatchedInboundCommunication', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -138,7 +138,7 @@ it('properly handles not finding a Student or Prospect match and creates an Unma
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -160,7 +160,7 @@ it('properly handles not finding a Student or Prospect match and creates an Unma
     $filesystem->assertMissing('s3_email');
 });
 
-it('properly creates an EngagementResponse for an inbound email matching a Student', function () {
+it('properly creates an EngagementResponse for an inbound email matching a Student', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -179,7 +179,7 @@ it('properly creates an EngagementResponse for an inbound email matching a Stude
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -204,7 +204,7 @@ it('properly creates an EngagementResponse for an inbound email matching a Stude
     $filesystem->assertMissing('s3_email');
 });
 
-it('routes forward-only mail on the SES delivery recipient when the To header is the original mailbox', function () {
+it('routes forward-only mail on the SES delivery recipient when the To header is the original mailbox', function (): void {
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -222,7 +222,7 @@ it('routes forward-only mail on the SES delivery recipient when the To header is
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -255,7 +255,7 @@ it('routes forward-only mail on the SES delivery recipient when the To header is
     $filesystem->assertMissing('s3_email');
 });
 
-it('does not create duplicate EngagementResponses when the To header and the SES delivery recipient are the same address', function () {
+it('does not create duplicate EngagementResponses when the To header and the SES delivery recipient are the same address', function (): void {
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -273,7 +273,7 @@ it('does not create duplicate EngagementResponses when the To header and the SES
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -300,7 +300,7 @@ it('does not create duplicate EngagementResponses when the To header and the SES
     $filesystem->assertMissing('s3_email');
 });
 
-it('does not create duplicate EngagementResponses when forwarding preserves the local part across domains', function () {
+it('does not create duplicate EngagementResponses when forwarding preserves the local part across domains', function (): void {
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -318,7 +318,7 @@ it('does not create duplicate EngagementResponses when forwarding preserves the 
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -346,7 +346,7 @@ it('does not create duplicate EngagementResponses when forwarding preserves the 
     $filesystem->assertMissing('s3_email');
 });
 
-it('extracts the SES delivery recipient from the Received header', function (string $rawHeaders, ?string $expected) {
+it('extracts the SES delivery recipient from the Received header', function (string $rawHeaders, ?string $expected): void {
     $parser = (new Parser())->setText($rawHeaders . "\r\n\r\nbody");
 
     $job = new ProcessSesS3InboundEmail('s3_email');
@@ -372,7 +372,7 @@ it('extracts the SES delivery recipient from the Received header', function (str
     ],
 ]);
 
-it('properly creates an EngagementResponse for an inbound email matching a Prospect', function () {
+it('properly creates an EngagementResponse for an inbound email matching a Prospect', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -391,7 +391,7 @@ it('properly creates an EngagementResponse for an inbound email matching a Prosp
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -416,7 +416,7 @@ it('properly creates an EngagementResponse for an inbound email matching a Prosp
     $filesystem->assertMissing('s3_email');
 });
 
-it('handles attachments properly for a Student', function () {
+it('handles attachments properly for a Student', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -435,7 +435,7 @@ it('handles attachments properly for a Student', function () {
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -461,10 +461,10 @@ it('handles attachments properly for a Student', function () {
     expect($engagementResponse->getMedia('attachments'))->toHaveCount(2)
         ->and($inlineAttachments)->toHaveCount(1)
         ->and($inlineAttachments->first()->getCustomProperty('cid'))->toBe('image001.png@01DBEF93.EE8A3EB0')
-        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_id === $student->getKey()))->toBeTrue()
-        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
-        ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $student->getKey()))->toBeTrue()
-        ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media): bool => $media->created_by_id === $student->getKey()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media): bool => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media): bool => $media->created_by_id === $student->getKey()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media): bool => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
         ->and($engagementResponse->getMedia('attachments')->pluck('name')->all())->toBe(['SampleJPGImage_1mbmb', 'SampleJPGImage_50kbmb'])
         ->and($engagementResponse->getMedia('attachments')->pluck('file_name')->all())->toBe(['SampleJPGImage_1mbmb.jpg', 'SampleJPGImage_50kbmb.jpg'])
         ->and($inlineAttachments->first()->name)->toBe('image001')
@@ -479,7 +479,7 @@ it('handles attachments properly for a Student', function () {
     $filesystem->assertMissing('s3_email');
 });
 
-it('handles attachments properly for a Prospect', function () {
+it('handles attachments properly for a Prospect', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -498,7 +498,7 @@ it('handles attachments properly for a Prospect', function () {
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);
@@ -524,10 +524,10 @@ it('handles attachments properly for a Prospect', function () {
     expect($engagementResponse->getMedia('attachments'))->toHaveCount(2)
         ->and($inlineAttachments)->toHaveCount(1)
         ->and($inlineAttachments->first()->getCustomProperty('cid'))->toBe('image001.png@01DBEF93.EE8A3EB0')
-        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_id === $prospect->getKey()))->toBeTrue()
-        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
-        ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $prospect->getKey()))->toBeTrue()
-        ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media): bool => $media->created_by_id === $prospect->getKey()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media): bool => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media): bool => $media->created_by_id === $prospect->getKey()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media): bool => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
         ->and($engagementResponse->getMedia('attachments')->pluck('name')->all())->toBe(['SampleJPGImage_1mbmb', 'SampleJPGImage_50kbmb'])
         ->and($engagementResponse->getMedia('attachments')->pluck('file_name')->all())->toBe(['SampleJPGImage_1mbmb.jpg', 'SampleJPGImage_50kbmb.jpg'])
         ->and($inlineAttachments->first()->name)->toBe('image001')
@@ -542,7 +542,7 @@ it('handles attachments properly for a Prospect', function () {
     $filesystem->assertMissing('s3_email');
 });
 
-it('handles exceptions correctly in the failed method', function (?Exception $exception, string $expectedPath) {
+it('handles exceptions correctly in the failed method', function (?Exception $exception, string $expectedPath): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -570,7 +570,7 @@ it('handles exceptions correctly in the failed method', function (?Exception $ex
     'unable to detect tenant exception' => [new UnableToDetectTenantFromSesS3EmailPayload('s3_email'), '/failed'],
 ]);
 
-it('does not match an inbound email to an archived student', function () {
+it('does not match an inbound email to an archived student', function (): void {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
@@ -591,7 +591,7 @@ it('does not match an inbound email to an archived student', function () {
     $filesystem->putFileAs('', $file, 's3_email');
 
     /** @var ProcessSesS3InboundEmail&MockInterface $mock */
-    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content): void {
         $mock->shouldAllowMockingProtectedMethods();
         // @phpstan-ignore-next-line
         $mock->shouldReceive('getContent')->once()->andReturn($content);

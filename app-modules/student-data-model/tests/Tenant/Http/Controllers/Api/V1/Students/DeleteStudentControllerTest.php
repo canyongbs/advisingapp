@@ -42,12 +42,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\deleteJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
 
     $user = SystemUser::factory()->create();
@@ -84,7 +84,7 @@ it('is gated with proper access control', function () {
         ->assertNoContent();
 });
 
-it('deletes a student', function () {
+it('deletes a student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -104,7 +104,7 @@ it('deletes a student', function () {
 });
 
 // An archived student is unreachable by URL, so they cannot be deleted through the API either.
-it('returns not found for an archived student', function () {
+it('returns not found for an archived student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

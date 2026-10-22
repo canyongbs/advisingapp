@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('ai_assistant_uses', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::create('ai_assistant_uses', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
                 $table->foreignUuid('assistant_id')->constrained('ai_assistants');
                 $table->foreignUuid('user_id')->constrained();
@@ -67,7 +67,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::dropIfExists('ai_assistant_uses');
         });
     }

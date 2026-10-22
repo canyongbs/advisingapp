@@ -54,7 +54,7 @@ class DisassociateStudent extends Action
             ->requiresConfirmation()
             ->color('danger')
             ->modalSubmitActionLabel('Yes')
-            ->action(function (Prospect $record) {
+            ->action(function (Prospect $record): void {
                 /** @var Prospect $record */
                 $record->student()->dissociate();
 

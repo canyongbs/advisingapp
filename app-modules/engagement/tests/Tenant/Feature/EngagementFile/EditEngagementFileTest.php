@@ -50,7 +50,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('EditEngagementFile is gated with proper access control', function () {
+test('EditEngagementFile is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $engagementFile = EngagementFile::factory()->create();

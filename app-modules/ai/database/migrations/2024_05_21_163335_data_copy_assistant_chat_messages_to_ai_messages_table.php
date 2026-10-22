@@ -43,7 +43,7 @@ return new class () extends Migration {
         DB::table('assistant_chat_messages')
             ->leftJoin('assistant_chats', 'assistant_chat_messages.assistant_chat_id', '=', 'assistant_chats.id')
             ->get(['assistant_chat_messages.id', 'assistant_chat_id', 'from', 'message', 'assistant_chat_messages.name', 'user_id', 'assistant_chat_messages.created_at', 'assistant_chat_messages.updated_at', 'assistant_chat_messages.deleted_at', 'message_id'])
-            ->each(function (stdClass $message) {
+            ->each(function (stdClass $message): void {
                 DB::table('ai_messages')
                     ->insert([
                         'id' => $message->id,

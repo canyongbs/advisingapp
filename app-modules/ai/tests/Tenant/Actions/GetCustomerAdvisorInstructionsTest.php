@@ -41,12 +41,12 @@ use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Clear the cache before each test
     Cache::tags(['{customer_advisor_instructions}'])->flush();
 });
 
-it('returns the correct instructions for a CustomerAdvisor', function () {
+it('returns the correct instructions for a CustomerAdvisor', function (): void {
     // Setup settings
     $settings = app(AiCustomerAdvisorSettings::class);
     $settings->instructions = 'Test instructions content';
@@ -141,7 +141,7 @@ it('returns the correct instructions for a CustomerAdvisor', function () {
     expect($result)->toMatch('/## Restrictions\s+Test restrictions content/');
 });
 
-it('does not contain details on a category that has no questions', function () {
+it('does not contain details on a category that has no questions', function (): void {
     // Setup settings
     $settings = app(AiCustomerAdvisorSettings::class);
     $settings->instructions = 'Test instructions';
@@ -194,7 +194,7 @@ it('does not contain details on a category that has no questions', function () {
     expect($result)->toContain('## Restrictions');
 });
 
-it('handles empty settings gracefully', function () {
+it('handles empty settings gracefully', function (): void {
     // Setup empty settings
     $settings = app(AiCustomerAdvisorSettings::class);
     $settings->instructions = null;
@@ -235,7 +235,7 @@ it('handles empty settings gracefully', function () {
     expect($result)->toContain('The library is open Monday through Friday from 8am to 10pm.');
 });
 
-it('handles CustomerAdvisor with no categories', function () {
+it('handles CustomerAdvisor with no categories', function (): void {
     // Setup settings
     $settings = app(AiCustomerAdvisorSettings::class);
     $settings->instructions = 'Test instructions';
@@ -265,7 +265,7 @@ it('handles CustomerAdvisor with no categories', function () {
     expect($result)->not->toContain('####');
 });
 
-it('uses cache correctly', function () {
+it('uses cache correctly', function (): void {
     // Setup settings
     $settings = app(AiCustomerAdvisorSettings::class);
     $settings->instructions = 'Cached instructions';

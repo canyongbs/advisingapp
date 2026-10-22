@@ -42,7 +42,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineSurveys = true;
     $settings->save();
@@ -50,7 +50,7 @@ beforeEach(function () {
     asSuperAdmin();
 });
 
-it('can update a survey', function () {
+it('can update a survey', function (): void {
     $survey = Survey::factory()->create(['name' => 'Original Name']);
 
     Livewire::test(EditSurvey::class, ['record' => $survey->id])
@@ -64,7 +64,7 @@ it('can update a survey', function () {
     ]);
 });
 
-it('allows saving a survey without changing its own name', function () {
+it('allows saving a survey without changing its own name', function (): void {
     $survey = Survey::factory()->create(['name' => 'Keep Name']);
 
     Livewire::test(EditSurvey::class, ['record' => $survey->id])
@@ -73,7 +73,7 @@ it('allows saving a survey without changing its own name', function () {
         ->assertHasNoFormErrors();
 });
 
-it('prevents renaming a survey to a case-insensitive duplicate', function () {
+it('prevents renaming a survey to a case-insensitive duplicate', function (): void {
     $survey = Survey::factory()->create(['name' => 'First Survey']);
     Survey::factory()->create(['name' => 'Second Survey']);
 
@@ -83,7 +83,7 @@ it('prevents renaming a survey to a case-insensitive duplicate', function () {
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows renaming a survey to the name of a soft-deleted survey', function () {
+it('allows renaming a survey to the name of a soft-deleted survey', function (): void {
     $survey = Survey::factory()->create(['name' => 'Active Survey']);
     Survey::factory()->create(['name' => 'Archived Survey'])->delete();
 

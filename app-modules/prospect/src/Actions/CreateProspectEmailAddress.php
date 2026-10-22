@@ -45,7 +45,7 @@ class CreateProspectEmailAddress
 {
     public function execute(Prospect $prospect, CreateProspectEmailAddressData $data): ProspectEmailAddress
     {
-        return DB::transaction(function () use ($data, $prospect) {
+        return DB::transaction(function () use ($data, $prospect): ProspectEmailAddress {
             $emailAddress = new ProspectEmailAddress();
             $emailAddress->prospect()->associate($prospect);
             $emailAddress->fill($data->toArray());

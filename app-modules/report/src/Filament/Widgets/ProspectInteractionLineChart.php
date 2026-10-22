@@ -58,7 +58,7 @@ class ProspectInteractionLineChart extends LineChartReportWidget
 
         $runningTotalPerMonth = $shouldBypassCache
            ? $this->getProspectInteractionData($startDate, $endDate, $groupId)
-           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function () {
+           : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_line_chart', now()->addHours(24), function (): array {
                return $this->getProspectInteractionData();
            });
 
@@ -103,7 +103,7 @@ class ProspectInteractionLineChart extends LineChartReportWidget
 
         $monthlyData = Interaction::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+            ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId): void {
                 $query->when(
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)

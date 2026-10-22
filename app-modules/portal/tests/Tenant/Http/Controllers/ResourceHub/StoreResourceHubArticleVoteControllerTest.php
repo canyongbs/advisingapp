@@ -46,13 +46,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\postJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $portalSettings = app(PortalSettings::class);
     $portalSettings->resource_hub_portal_enabled = true;
     $portalSettings->save();
 });
 
-it('creates a vote for an anonymous guest and starts a guest session', function () {
+it('creates a vote for an anonymous guest and starts a guest session', function (): void {
     $article = ResourceHubArticle::factory()->public()->create();
 
     $response = postJson(route('portals.resource-hub.api.article-vote.store'), [
@@ -75,7 +75,7 @@ it('creates a vote for an anonymous guest and starts a guest session', function 
     ]);
 });
 
-it('creates a vote for an authenticated student', function () {
+it('creates a vote for an authenticated student', function (): void {
     $student = Student::factory()->create();
 
     $article = ResourceHubArticle::factory()->public()->create();
@@ -100,7 +100,7 @@ it('creates a vote for an authenticated student', function () {
     ]);
 });
 
-it('creates a vote for an authenticated prospect', function () {
+it('creates a vote for an authenticated prospect', function (): void {
     $prospect = Prospect::factory()->create();
 
     $article = ResourceHubArticle::factory()->public()->create();
@@ -122,7 +122,7 @@ it('creates a vote for an authenticated prospect', function () {
     ]);
 });
 
-it('switches an existing vote instead of creating a duplicate', function () {
+it('switches an existing vote instead of creating a duplicate', function (): void {
     $student = Student::factory()->create();
 
     $article = ResourceHubArticle::factory()->public()->create();
@@ -148,7 +148,7 @@ it('switches an existing vote instead of creating a duplicate', function () {
     ]);
 });
 
-it('removes the vote when toggled off', function () {
+it('removes the vote when toggled off', function (): void {
     $student = Student::factory()->create();
 
     $article = ResourceHubArticle::factory()->public()->create();
@@ -175,7 +175,7 @@ it('removes the vote when toggled off', function () {
     ]);
 });
 
-it('calculates the helpful vote percentage across all voters', function () {
+it('calculates the helpful vote percentage across all voters', function (): void {
     $article = ResourceHubArticle::factory()->public()->create();
 
     ResourceHubArticleVote::factory()->for($article, 'resourceHubArticle')->create(['is_helpful' => true]);
