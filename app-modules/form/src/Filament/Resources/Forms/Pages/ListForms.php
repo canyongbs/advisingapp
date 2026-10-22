@@ -55,7 +55,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Unique;
 
 class ListForms extends ListRecords
@@ -146,7 +146,7 @@ class ListForms extends ListRecords
                         ->disabled(fn (): bool => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
                         ->hintIcon(fn (): ?string => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
                 ])
-                ->action(fn (array $data): Redirector|\Illuminate\Http\RedirectResponse => redirect(FormResource::getUrl('create', [
+                ->action(fn (array $data): RedirectResponse => redirect(FormResource::getUrl('create', [
                     'is_authenticated' => $data['is_authenticated'] ?? false,
                     'generate_prospects' => $data['generate_prospects'] ?? false,
                 ]))),

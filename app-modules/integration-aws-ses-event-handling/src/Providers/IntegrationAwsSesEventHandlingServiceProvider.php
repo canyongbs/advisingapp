@@ -70,7 +70,13 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAwsSesEventHandlingPlugin()) instanceof Panel);
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new IntegrationAwsSesEventHandlingPlugin());
+        });
 
         // The ECS task role is the intended credential source; an explicit key and secret are the fallback.
         $this->app->bind(SqsClient::class, function (): SqsClient {

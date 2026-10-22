@@ -150,6 +150,10 @@ class DuplicateEvent
         return json_decode($json, true);
     }
 
+    /**
+     * @param mixed $content
+     * @param array<int|string, string> $fieldMap
+     */
     private function replaceIdsInContent(&$content, array $fieldMap)
     {
         if (is_array($content)) {

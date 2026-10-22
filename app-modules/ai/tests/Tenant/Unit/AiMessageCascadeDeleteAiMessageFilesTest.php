@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Listeners\AiMessageCascadeDeleteAiMessageFiles;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Support\Facades\Event;
-use Pest\Expectation;
 
 use function Pest\Laravel\assertDatabaseCount;
 
@@ -52,7 +51,9 @@ it('soft deletes related AiMessageFiles when an AiMessage is deleted', function 
 
     assertDatabaseCount('ai_message_files', 1);
 
-    $aiMessage->files->each(fn (AiMessageFile $file): Expectation => expect($file->trashed())->toBeFalse());
+    $aiMessage->files->each(function (AiMessageFile $file): void {
+        expect($file->trashed())->toBeFalse();
+    });
 
     Event::fake();
 
@@ -60,5 +61,7 @@ it('soft deletes related AiMessageFiles when an AiMessage is deleted', function 
 
     assertDatabaseCount('ai_messages', 1);
 
-    $aiMessage->files->each(fn (AiMessageFile $file): Expectation => expect($file->fresh()->trashed())->toBeTrue());
+    $aiMessage->files->each(function (AiMessageFile $file): void {
+        expect($file->fresh()->trashed())->toBeTrue();
+    });
 });

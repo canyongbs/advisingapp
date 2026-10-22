@@ -52,5 +52,6 @@
     </dl>
 
     <pre class="max-h-96 overflow-auto rounded-lg bg-gray-950/5 p-3 text-xs dark:bg-white/5">
-{{ $record->exception }}</pre>
+{{ $record->exception }}</pre
+    >
 </div>

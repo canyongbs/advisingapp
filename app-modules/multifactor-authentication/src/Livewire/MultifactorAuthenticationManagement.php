@@ -170,9 +170,16 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             });
     }
 
+    /**
+     * @return Collection<int, string>
+     */
     public function getRecoveryCodesProperty(): Collection
     {
-        return collect($this->user->multifactor_recovery_codes ?? []);
+        $recoveryCodes = $this->user->multifactor_recovery_codes ?? [];
+
+        assert(is_array($recoveryCodes));
+
+        return collect($recoveryCodes);
     }
 
     public function getMultifactorQrCode(): string

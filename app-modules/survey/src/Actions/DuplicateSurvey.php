@@ -107,6 +107,10 @@ class DuplicateSurvey
         });
     }
 
+    /**
+     * @param mixed $content
+     * @param array<int|string, string> $fieldMap
+     */
     protected function replaceIdsInContent(&$content, array $fieldMap)
     {
         if (is_array($content)) {

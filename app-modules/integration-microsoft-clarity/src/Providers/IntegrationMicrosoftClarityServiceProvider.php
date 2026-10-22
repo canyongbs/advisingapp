@@ -44,7 +44,13 @@ class IntegrationMicrosoftClarityServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel): true => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationMicrosoftClarityPlugin()) instanceof Panel);
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new IntegrationMicrosoftClarityPlugin());
+        });
     }
 
     public function boot(): void {}

@@ -50,7 +50,13 @@ class ConcernServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel): true => $panel->getId() !== 'admin' || $panel->plugin(new ConcernPlugin()) instanceof Panel);
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new ConcernPlugin());
+        });
     }
 
     public function boot(): void

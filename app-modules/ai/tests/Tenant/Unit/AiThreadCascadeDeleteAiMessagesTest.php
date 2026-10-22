@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Listeners\AiThreadCascadeDeleteAiMessages;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Event;
-use Pest\Expectation;
 
 use function Pest\Laravel\assertDatabaseCount;
 
@@ -52,7 +51,9 @@ it('soft deletes related AiMessages when an AiThread is deleted', function (): v
 
     assertDatabaseCount('ai_messages', 3);
 
-    $aiThread->messages->each(fn (AiMessage $message): Expectation => expect($message->trashed())->toBeFalse());
+    $aiThread->messages->each(function (AiMessage $message): void {
+        expect($message->trashed())->toBeFalse();
+    });
 
     Event::fake();
 
@@ -60,5 +61,7 @@ it('soft deletes related AiMessages when an AiThread is deleted', function (): v
 
     assertDatabaseCount('ai_messages', 3);
 
-    $aiThread->messages->each(fn (AiMessage $message): Expectation => expect($message->fresh()->trashed())->toBeTrue());
+    $aiThread->messages->each(function (AiMessage $message): void {
+        expect($message->fresh()->trashed())->toBeTrue();
+    });
 });
