@@ -42,12 +42,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = SystemUser::factory()->create();
     $student = Student::factory()->create();
     Sanctum::actingAs($user, ['api']);
@@ -73,7 +73,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a paginated list of student enrollments', function () {
+it('returns a paginated list of student enrollments', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -95,7 +95,7 @@ it('returns a paginated list of student enrollments', function () {
         ->toHaveCount(3);
 });
 
-it('can filter student enrollments by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue) {
+it('can filter student enrollments by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -154,7 +154,7 @@ dataset('sorts', [
     '`end_date`' => ['end_date', ['end_date' => '2024-10-02T00:00:00.000000Z'], ['end_date' => '2024-10-03T00:00:00.000000Z'], 'end_date', '2024-10-02T00:00:00.000000Z', '2024-10-03T00:00:00.000000Z'],
 ]);
 
-it('can sort student enrollments by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort student enrollments by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -173,7 +173,7 @@ it('can sort student enrollments by all attributes ascending', function (string 
         ->toBe($responseSecondValue);
 })->with('sorts');
 
-it('can sort student enrollments by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort student enrollments by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
     Sanctum::actingAs($user, ['api']);
@@ -192,8 +192,8 @@ it('can sort student enrollments by all attributes descending', function (string
         ->toBe($responseFirstValue);
 })->with('sorts');
 
-describe('while `TermAttributesFeature` is inactive', function () {
-    it('does not return the `sis_term_id`', function () {
+describe('while `TermAttributesFeature` is inactive', function (): void {
+    it('does not return the `sis_term_id`', function (): void {
         $user = SystemUser::factory()->create();
         $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
         Sanctum::actingAs($user, ['api']);
@@ -210,7 +210,7 @@ describe('while `TermAttributesFeature` is inactive', function () {
         expect($response['data'][0])->not->toHaveKey('sis_term_id');
     });
 
-    it('does not allow filtering by `sis_term_id`', function () {
+    it('does not allow filtering by `sis_term_id`', function (): void {
         $user = SystemUser::factory()->create();
         $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
         Sanctum::actingAs($user, ['api']);
@@ -223,7 +223,7 @@ describe('while `TermAttributesFeature` is inactive', function () {
             ->assertBadRequest();
     });
 
-    it('does not allow sorting by `sis_term_id`', function (string $sort) {
+    it('does not allow sorting by `sis_term_id`', function (string $sort): void {
         $user = SystemUser::factory()->create();
         $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
         Sanctum::actingAs($user, ['api']);

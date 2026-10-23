@@ -69,7 +69,7 @@ class StudentTagsAction extends Action
                     ->default(fn (?Student $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function (array $data, Student $record) {
+            ->action(function (array $data, Student $record): void {
                 $record->tags()->sync($data['tag_ids']);
                 $record->save();
 

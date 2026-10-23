@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('phone_number_lookups', function (Blueprint $table) {
+        Schema::create('phone_number_lookups', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('number')->unique();
             $table->string('status');

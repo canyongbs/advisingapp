@@ -66,7 +66,7 @@ class FindGroupsUsingAlerts
 
         foreach ($alertConfigurationIds as $alertConfigId) {
             $matchingGroupCount = $groups->filter(
-                fn (Group $group) => $this->groupReferencesAlert($group, $alertConfigId)
+                fn (Group $group): bool => $this->groupReferencesAlert($group, $alertConfigId)
             )->count();
 
             if ($matchingGroupCount > 0) {

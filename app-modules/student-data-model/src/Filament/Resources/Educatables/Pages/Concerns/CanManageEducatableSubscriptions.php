@@ -70,7 +70,7 @@ trait CanManageEducatableSubscriptions
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
-                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                    ->url(fn ($record): string => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('pivot.created_at')
                     ->dateTime()
@@ -80,7 +80,7 @@ trait CanManageEducatableSubscriptions
                 AttachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('create', Subscription::class))
                     ->label('New')
-                    ->modalHeading(function () {
+                    ->modalHeading(function (): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
@@ -90,14 +90,14 @@ trait CanManageEducatableSubscriptions
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select a User'),
+                        fn (Select $select): Select => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
                         fn (Builder $query) => $query
                             ->tap(new HasLicense(Student::getLicenseType()))
                             ->tap(new WithoutAnyAdmin()),
                     )
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
@@ -108,14 +108,14 @@ trait CanManageEducatableSubscriptions
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                     ->label('Remove')
-                    ->modalHeading(function (User $record) {
+                    ->modalHeading(function (User $record): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
                         return "Remove {$record->name} as a follower of {$student->display_name}";
                     })
                     ->modalSubmitActionLabel('Remove')
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
@@ -127,14 +127,14 @@ trait CanManageEducatableSubscriptions
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                         ->label('Remove selected')
-                        ->modalHeading(function () {
+                        ->modalHeading(function (): string {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
                             return "Remove selected followers from {$student->display_name}";
                         })
                         ->modalSubmitActionLabel('Remove')
-                        ->successNotificationTitle(function () {
+                        ->successNotificationTitle(function (): string {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 

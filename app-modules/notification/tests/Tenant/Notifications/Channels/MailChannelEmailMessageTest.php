@@ -47,7 +47,7 @@ use App\Models\User;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Event;
 
-it('will create an EmailMessage for the notification', function () {
+it('will create an EmailMessage for the notification', function (): void {
     $notifiable = User::factory()->create();
 
     $notification = new TestEmailNotification();
@@ -60,7 +60,7 @@ it('will create an EmailMessage for the notification', function () {
     expect($emailMessages->first()->notification_class)->toBe(TestEmailNotification::class);
 });
 
-it('will not send emails in demo mode and record a BlockedByDemoMode event', function () {
+it('will not send emails in demo mode and record a BlockedByDemoMode event', function (): void {
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -81,7 +81,7 @@ it('will not send emails in demo mode and record a BlockedByDemoMode event', fun
     expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::BlockedByDemoMode);
 });
 
-it('will send system notifications in demo mode', function () {
+it('will send system notifications in demo mode', function (): void {
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -103,7 +103,7 @@ it('will send system notifications in demo mode', function () {
     expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::Dispatched);
 });
 
-it('will not send system notifications in demo mode when system notifications are not excluded', function () {
+it('will not send system notifications in demo mode when system notifications are not excluded', function (): void {
     $user = User::factory()->create();
 
     $tenantConfig = Tenant::current()->config;
@@ -125,7 +125,7 @@ it('will not send system notifications in demo mode when system notifications ar
     expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::BlockedByDemoMode);
 });
 
-it('sets email_type to marketing when notification implements HasEmailType returning Marketing', function () {
+it('sets email_type to marketing when notification implements HasEmailType returning Marketing', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestMarketingNotification();
@@ -138,7 +138,7 @@ it('sets email_type to marketing when notification implements HasEmailType retur
         ->and($emailMessage->email_type)->toBe(EmailType::Marketing);
 });
 
-it('sets email_type to transactional when notification implements HasEmailType returning Transactional', function () {
+it('sets email_type to transactional when notification implements HasEmailType returning Transactional', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestTransactionalNotification();
@@ -151,7 +151,7 @@ it('sets email_type to transactional when notification implements HasEmailType r
         ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
 });
 
-it('defaults email_type to transactional when notification does not implement HasEmailType', function () {
+it('defaults email_type to transactional when notification does not implement HasEmailType', function (): void {
     $notifiable = User::factory()->create();
 
     $notification = new TestEmailNotification();
@@ -164,7 +164,7 @@ it('defaults email_type to transactional when notification does not implement Ha
         ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
 });
 
-it('includes unsubscribeUrl in viewData for marketing email', function () {
+it('includes unsubscribeUrl in viewData for marketing email', function (): void {
     Event::fake(MessageSent::class);
 
     $notifiable = Prospect::factory()->create();
@@ -173,7 +173,7 @@ it('includes unsubscribeUrl in viewData for marketing email', function () {
 
     $notifiable->notify($notification);
 
-    Event::assertDispatched(function (MessageSent $event) {
+    Event::assertDispatched(function (MessageSent $event): bool {
         $htmlBody = $event->message->getHtmlBody();
 
         return str_contains($htmlBody, 'Unsubscribe')
@@ -181,7 +181,7 @@ it('includes unsubscribeUrl in viewData for marketing email', function () {
     });
 });
 
-it('does not include unsubscribeUrl in viewData for transactional email', function () {
+it('does not include unsubscribeUrl in viewData for transactional email', function (): void {
     Event::fake(MessageSent::class);
 
     $notifiable = Prospect::factory()->create();
@@ -190,7 +190,7 @@ it('does not include unsubscribeUrl in viewData for transactional email', functi
 
     $notifiable->notify($notification);
 
-    Event::assertDispatched(function (MessageSent $event) {
+    Event::assertDispatched(function (MessageSent $event): bool {
         $htmlBody = $event->message->getHtmlBody();
 
         return ! str_contains($htmlBody, '/unsubscribe');

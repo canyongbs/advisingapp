@@ -42,12 +42,12 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('personal_booking_pages', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('personal_booking_pages', function (Blueprint $table): void {
                 $table->unsignedInteger('minimum_booking_lead_time_hours')->default(0);
             });
 
-            Schema::table('booking_groups', function (Blueprint $table) {
+            Schema::table('booking_groups', function (Blueprint $table): void {
                 $table->unsignedInteger('minimum_booking_lead_time_hours')->default(0);
             });
         });
@@ -55,12 +55,12 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('personal_booking_pages', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('personal_booking_pages', function (Blueprint $table): void {
                 $table->dropColumn('minimum_booking_lead_time_hours');
             });
 
-            Schema::table('booking_groups', function (Blueprint $table) {
+            Schema::table('booking_groups', function (Blueprint $table): void {
                 $table->dropColumn('minimum_booking_lead_time_hours');
             });
         });

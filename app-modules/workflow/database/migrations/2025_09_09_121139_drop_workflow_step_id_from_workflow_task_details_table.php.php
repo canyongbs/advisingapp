@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('workflow_task_details', function (Blueprint $table) {
+        Schema::table('workflow_task_details', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('workflow_step_id');
         });
     }
 
     public function down(): void
     {
-        Schema::table('workflow_task_details', function (Blueprint $table) {
+        Schema::table('workflow_task_details', function (Blueprint $table): void {
             $table->foreignUuid('workflow_step_id')->nullable()->constrained('workflow_steps');
         });
     }

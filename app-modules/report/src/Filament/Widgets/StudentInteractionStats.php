@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -56,14 +57,14 @@ class StudentInteractionStats extends StatsOverviewReportWidget
 
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
-                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -77,9 +78,9 @@ class StudentInteractionStats extends StatsOverviewReportWidget
 
         $studentsWithInteractionsCount = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
-                ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
+                ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate): void {
                     $query->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereBetween('created_at', [$startDate, $endDate]);
                         }

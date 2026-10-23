@@ -54,7 +54,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('renders all prospects correctly in the recruitment dashboard for the All tab', function () {
+it('renders all prospects correctly in the recruitment dashboard for the All tab', function (): void {
     $allProspects = Prospect::factory()->has(
         Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
         'tasks'
@@ -99,7 +99,7 @@ it('renders all prospects correctly in the recruitment dashboard for the All tab
         ->assertCanSeeTableRecords($allRelevantProspects);
 });
 
-it('renders subscribed prospects correctly in the recruitment dashboard for the Subscribed tab', function () {
+it('renders subscribed prospects correctly in the recruitment dashboard for the Subscribed tab', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user);
@@ -129,7 +129,7 @@ it('renders subscribed prospects correctly in the recruitment dashboard for the 
         ->assertCanSeeTableRecords($prospectsWithSubscription);
 });
 
-it('renders care team prospects correctly in the recruitment dashboard for the Care Team tab', function () {
+it('renders care team prospects correctly in the recruitment dashboard for the Care Team tab', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user);
@@ -162,7 +162,7 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
         ->assertCanSeeTableRecords($prospectsWithCareTeam);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -183,7 +183,7 @@ it('is gated with proper access control', function () {
     get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a department that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

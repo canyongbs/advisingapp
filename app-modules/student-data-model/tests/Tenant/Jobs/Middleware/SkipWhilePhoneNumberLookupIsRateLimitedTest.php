@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Cache;
 
 use function Pest\Laravel\travelTo;
 
-it('releases the job for the remaining window when the rate limit is currently active', function () {
+it('releases the job for the remaining window when the rate limit is currently active', function (): void {
     travelTo(now()->startOfMinute());
 
     Cache::put(
@@ -57,7 +57,7 @@ it('releases the job for the remaining window when the rate limit is currently a
     (new SkipWhilePhoneNumberLookupIsRateLimited())->handle($job, $next); // @phpstan-ignore argument.type
 });
 
-it('passes the job through when no rate limit window is active', function () {
+it('passes the job through when no rate limit window is active', function (): void {
     Cache::forget(SkipWhilePhoneNumberLookupIsRateLimited::cacheKey());
 
     $job = Mockery::mock(LookupPhoneNumber::class);
@@ -73,7 +73,7 @@ it('passes the job through when no rate limit window is active', function () {
     expect($called)->toBeTrue();
 });
 
-it('passes the job through when the cached window has already elapsed', function () {
+it('passes the job through when the cached window has already elapsed', function (): void {
     travelTo(now()->startOfMinute());
 
     Cache::put(

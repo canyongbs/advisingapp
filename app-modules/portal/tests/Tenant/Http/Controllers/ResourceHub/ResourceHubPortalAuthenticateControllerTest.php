@@ -60,7 +60,7 @@ $authenticateResourceHubPortal = function (Student $student, string $code = '123
     return json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 };
 
-it('authenticates a student and issues a token', function () use ($authenticateResourceHubPortal) {
+it('authenticates a student and issues a token', function () use ($authenticateResourceHubPortal): void {
     $student = Student::factory()->create();
 
     $payload = $authenticateResourceHubPortal($student);
@@ -71,7 +71,7 @@ it('authenticates a student and issues a token', function () use ($authenticateR
 });
 
 // A code is valid for a day, so a student can be archived between requesting and redeeming it.
-it('does not authenticate an archived student', function () use ($authenticateResourceHubPortal) {
+it('does not authenticate an archived student', function () use ($authenticateResourceHubPortal): void {
     $student = Student::factory()->create();
     $student->archive();
 

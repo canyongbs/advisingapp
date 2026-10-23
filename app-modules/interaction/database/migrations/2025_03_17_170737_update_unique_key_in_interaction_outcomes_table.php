@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('interaction_outcomes', function (Blueprint $table) {
+        Schema::table('interaction_outcomes', function (Blueprint $table): void {
             $table->dropUnique(['is_default', 'deleted_at']);
 
             DB::statement('
@@ -55,7 +55,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('interaction_outcomes', function (Blueprint $table) {
+        Schema::table('interaction_outcomes', function (Blueprint $table): void {
             DB::statement('DROP INDEX IF EXISTS interaction_outcomes_is_default_unique;');
 
             $table->unique(['is_default', 'deleted_at']);

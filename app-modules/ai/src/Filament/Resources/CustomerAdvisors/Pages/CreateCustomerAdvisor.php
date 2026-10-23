@@ -65,7 +65,7 @@ class CreateCustomerAdvisor extends CreateRecord
                     ->maxLength(255),
                 Select::make('model')
                     ->live()
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],

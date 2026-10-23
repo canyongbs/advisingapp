@@ -45,7 +45,7 @@ use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Livewire\Livewire;
 
-it('it returns deliverability data only for students created within the given date range', function () {
+it('it returns deliverability data only for students created within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -55,7 +55,7 @@ it('it returns deliverability data only for students created within the given da
             'created_at_source' => $startDate,
         ]);
 
-    $optOutStartDateStudents->each(function (Student $student) {
+    $optOutStartDateStudents->each(function (Student $student): void {
         BouncedEmailAddress::factory()->create([
             'address' => $student->primaryEmailAddress->address,
         ]);
@@ -91,7 +91,7 @@ it('it returns deliverability data only for students created within the given da
         ->assertCanNotSeeTableRecords($optOutStartDateStudents->merge($optOutEndDateStudents));
 });
 
-it('it returns deliverability data only for students based on group filters', function () {
+it('it returns deliverability data only for students based on group filters', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
@@ -142,12 +142,12 @@ it('it returns deliverability data only for students based on group filters', fu
         ->assertCanSeeTableRecords($studentWithJoeName->merge($studentWithDoeName));
 });
 
-it('can filter table based on email bounce status', function () {
+it('can filter table based on email bounce status', function (): void {
     $unHealthyEmailsStudents = Student::factory()
         ->count(2)
         ->create();
 
-    $unHealthyEmailsStudents->each(function (Student $student) {
+    $unHealthyEmailsStudents->each(function (Student $student): void {
         BouncedEmailAddress::factory()->create([
             'address' => $student->primaryEmailAddress->address,
         ]);
@@ -173,12 +173,12 @@ it('can filter table based on email bounce status', function () {
         ->assertCanNotSeeTableRecords($unHealthyEmailsStudents);
 });
 
-it('can filter table based on phone sms opt-out status', function () {
+it('can filter table based on phone sms opt-out status', function (): void {
     $unHealthyPhoneStudents = Student::factory()
         ->count(2)
         ->create();
 
-    $unHealthyPhoneStudents->each(function (Student $student) {
+    $unHealthyPhoneStudents->each(function (Student $student): void {
         SmsOptOutPhoneNumber::factory()->create([
             'number' => $student->primaryPhoneNumber->number,
         ]);
@@ -204,7 +204,7 @@ it('can filter table based on phone sms opt-out status', function () {
         ->assertCanNotSeeTableRecords($unHealthyPhoneStudents);
 });
 
-it('does not list archived students', function () {
+it('does not list archived students', function (): void {
     $active = Student::factory()->count(2)->create();
     $archived = Student::factory()->create();
     $archived->archive();
@@ -219,7 +219,7 @@ it('does not list archived students', function () {
 
 // Archiving is not retroactive: a student archived in September was genuinely part of the
 // student body in March, so a report looking at March still has to list them.
-it('lists a student archived after the reported period without linking to them', function () {
+it('lists a student archived after the reported period without linking to them', function (): void {
     $active = Student::factory()->create(['created_at_source' => '2026-03-10']);
 
     $archived = Student::factory()->create(['created_at_source' => '2026-03-10']);

@@ -62,8 +62,8 @@ class ManageEnrollmentSemesters extends ManageRecords
             Action::make('syncAll')
                 ->authorize(fn (): bool => auth()->user()->can('create', EnrollmentSemester::class))
                 ->label('Sync')
-                ->disabled(fn () => ! $unsyncedEnrollments->exists())
-                ->tooltip(fn () => $unsyncedEnrollments->exists() ? '' : 'No additional semesters to sync.')
+                ->disabled(fn (): bool => ! $unsyncedEnrollments->exists())
+                ->tooltip(fn (): string => $unsyncedEnrollments->exists() ? '' : 'No additional semesters to sync.')
                 ->slideOver()
                 ->schema([
                     TableSelect::make('enrollments')
@@ -73,7 +73,7 @@ class ManageEnrollmentSemesters extends ManageRecords
                         ->default(fn () => $unsyncedEnrollments->pluck('id'))
                         ->tableConfiguration(UnsyncedEnrollmentsTable::class),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data): void {
                     try {
                         DB::beginTransaction();
 
@@ -104,7 +104,7 @@ class ManageEnrollmentSemesters extends ManageRecords
                 ->modalHeading('Add Semester Manually')
                 ->modalDescription('Use this feature to add a semester to your semester list manually.')
                 ->modalSubmitActionLabel('Add')
-                ->createAnotherAction(fn (Action $action) => $action->label('Add & Add Another')),
+                ->createAnotherAction(fn (Action $action): Action => $action->label('Add & Add Another')),
         ];
     }
 }

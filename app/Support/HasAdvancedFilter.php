@@ -110,7 +110,7 @@ trait HasAdvancedFilter
 
         $data['filter_match'] = 'or';
 
-        $data['f'] = array_map(function (string $column) use ($data) {
+        $data['f'] = array_map(function (string $column) use ($data): array {
             return [
                 'column' => $column,
                 'operator' => 'contains',

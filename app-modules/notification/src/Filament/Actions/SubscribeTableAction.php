@@ -47,7 +47,7 @@ class SubscribeTableAction extends Action
     {
         parent::setUp();
 
-        $this->label(function (Subscribable $record) {
+        $this->label(function (Subscribable $record): string {
             return $record
                 ->subscriptions()
                 ->whereHas('user', function (Builder $query) {
@@ -56,7 +56,7 @@ class SubscribeTableAction extends Action
                 ->exists() ? 'Unfollow' : 'Follow';
         });
 
-        $this->icon(function (Subscribable $record) {
+        $this->icon(function (Subscribable $record): string {
             return $record
                 ->subscriptions()
                 ->whereHas('user', function (Builder $query) {
@@ -65,7 +65,7 @@ class SubscribeTableAction extends Action
                 ->exists() ? 'heroicon-s-bell-slash' : 'heroicon-s-bell';
         });
 
-        $this->action(function (Subscribable $record) {
+        $this->action(function (Subscribable $record): void {
             resolve(SubscriptionToggle::class)->handle(auth()->user(), $record);
         });
     }

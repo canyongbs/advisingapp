@@ -41,12 +41,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\deleteJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
 
     $user = SystemUser::factory()->create();
@@ -73,7 +73,7 @@ it('is gated with proper access control', function () {
         ->assertNoContent();
 });
 
-it('deletes a prospect', function () {
+it('deletes a prospect', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.delete']);
     Sanctum::actingAs($user, ['api']);

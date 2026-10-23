@@ -43,11 +43,11 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\patchJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
     $updateProspectRequestData = UpdateProspectRequestFactory::new()->create();
 
@@ -72,7 +72,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('updates a prospect', function () {
+it('updates a prospect', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -132,7 +132,7 @@ it('updates a prospect', function () {
     }
 });
 
-it('updates a prospect\'s primary email address', function () {
+it('updates a prospect\'s primary email address', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -158,7 +158,7 @@ it('updates a prospect\'s primary email address', function () {
         ->toBe($prospectEmailAddress->getKey());
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -187,7 +187,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`hsgrad` is numeric' => [['hsgrad' => 'not-a-number'], 'hsgrad', 'The hsgrad must be a number.'],
     '`primary_email_id` is a valid UUID' => [['primary_email_id' => 'not-a-uuid'], 'primary_email_id', 'The primary email id must be a valid UUID.'],
     '`primary_email_id` is an existing email address ID' => [['primary_email_id' => (string) Str::orderedUuid()], 'primary_email_id', 'The selected primary email id is invalid.'],
-    '`primary_email_id` is an email address ID for the current prospect' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId) {
+    '`primary_email_id` is an email address ID for the current prospect' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId): void {
         ProspectEmailAddress::factory()
             ->for(Prospect::factory())
             ->create([
@@ -196,7 +196,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     }],
 ]);
 
-it('can include related prospect relationships', function (string $relationship, string $responseKey) {
+it('can include related prospect relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

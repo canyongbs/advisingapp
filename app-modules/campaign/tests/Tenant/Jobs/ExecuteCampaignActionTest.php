@@ -61,7 +61,7 @@ use Illuminate\Support\Facades\Bus;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 
-it('dispatches the correct job based on the CampaignAction type into the batch', function (GroupModel $groupModel, Collection $educatables, CampaignActionType $actionType, string $jobClass) {
+it('dispatches the correct job based on the CampaignAction type into the batch', function (GroupModel $groupModel, Collection $educatables, CampaignActionType $actionType, string $jobClass): void {
     Bus::fake();
 
     $group = Group::factory()->create([
@@ -69,7 +69,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         'model' => $groupModel,
     ]);
 
-    $educatables->each(function (Model $educatable) use ($group) {
+    $educatables->each(function (Model $educatable) use ($group): void {
         $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
@@ -157,7 +157,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         ],
     ]);
 
-it('re-uses the same CampaignActionEducatable if it already exists', function () {
+it('re-uses the same CampaignActionEducatable if it already exists', function (): void {
     Bus::fake();
 
     $groupModel = GroupModel::cases()[array_rand(GroupModel::cases())];
@@ -172,7 +172,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
         GroupModel::Prospect => Prospect::factory()->count(rand(1, 10))->create(),
     };
 
-    $educatables->each(function (Model $educatable) use ($group) {
+    $educatables->each(function (Model $educatable) use ($group): void {
         $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
@@ -191,7 +191,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
             'type' => CampaignActionType::cases()[array_rand(CampaignActionType::cases())],
         ]);
 
-    $educatables->each(function (Model $educatable) use ($action) {
+    $educatables->each(function (Model $educatable) use ($action): void {
         CampaignActionEducatable::factory()->create([
             'campaign_action_id' => $action->getKey(),
             'educatable_id' => $educatable->getKey(),

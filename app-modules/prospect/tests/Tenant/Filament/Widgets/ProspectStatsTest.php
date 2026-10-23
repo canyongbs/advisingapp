@@ -47,7 +47,7 @@ use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct stats for prospects within the given date range', function () {
+it('returns correct stats for prospects within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
     $count = random_int(1, 5);
@@ -137,7 +137,7 @@ it('returns correct stats for prospects within the given date range', function (
         ->and($stats[5]->getValue())->toEqual($count);
 });
 
-it('returns correct stats for prospects based on group filter', function () {
+it('returns correct stats for prospects based on group filter', function (): void {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([

@@ -52,7 +52,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 
-it('can render list page', function () {
+it('can render list page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     actingAs($user)
         ->get(
@@ -65,7 +65,7 @@ it('can render list page', function () {
         ->assertSuccessful();
 });
 
-it('can render data in list page', function () {
+it('can render data in list page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -79,7 +79,7 @@ it('can render data in list page', function () {
         ->assertCanSeeTableRecords($basicNeedsCategories);
 });
 
-it('can render create page', function () {
+it('can render create page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -94,7 +94,7 @@ it('can render create page', function () {
         ->assertSuccessful();
 });
 
-it('can validate input on create page', function () {
+it('can validate input on create page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -113,7 +113,7 @@ it('can validate input on create page', function () {
         ->assertHasFormErrors(['name' => 'required']);
 });
 
-it('can create basic needs catgory', function () {
+it('can create basic needs catgory', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -137,7 +137,7 @@ it('can create basic needs catgory', function () {
     ]);
 });
 
-it('can render edit page', function () {
+it('can render edit page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategory = BasicNeedsCategory::factory()->create();
 
@@ -155,7 +155,7 @@ it('can render edit page', function () {
     ]))->assertSuccessful();
 });
 
-it('can retrieve data', function () {
+it('can retrieve data', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategory = BasicNeedsCategory::factory()->create();
 
@@ -177,7 +177,7 @@ it('can retrieve data', function () {
         ]);
 });
 
-it('can validate input on edit page', function () {
+it('can validate input on edit page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategory = BasicNeedsCategory::factory()->create();
 
@@ -200,7 +200,7 @@ it('can validate input on edit page', function () {
         ->assertHasFormErrors(['name' => 'required']);
 });
 
-it('can save basic needs category', function () {
+it('can save basic needs category', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $oldBasicNeedsCategory = BasicNeedsCategory::factory()->create();
     $newBasicNeedsCategory = BasicNeedsCategory::factory()->make();
@@ -229,7 +229,7 @@ it('can save basic needs category', function () {
         ->description->toBe($newBasicNeedsCategory->description);
 });
 
-it('can render view page', function () {
+it('can render view page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategory = BasicNeedsCategory::factory()->create();
 
@@ -247,7 +247,7 @@ it('can render view page', function () {
     ]))->assertSuccessful();
 });
 
-it('can delete basic needs category', function () {
+it('can delete basic needs category', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategory = BasicNeedsCategory::factory()->create();
 
@@ -271,7 +271,7 @@ it('can delete basic needs category', function () {
     assertSoftDeleted($basicNeedsCategory);
 });
 
-it('can bulk delete basic needs categories', function () {
+it('can bulk delete basic needs categories', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsCategories = BasicNeedsCategory::factory()->count(10)->create();
 
@@ -293,7 +293,7 @@ it('can bulk delete basic needs categories', function () {
     }
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->supportPrograms = false;

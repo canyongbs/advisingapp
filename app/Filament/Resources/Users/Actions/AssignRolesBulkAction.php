@@ -64,9 +64,9 @@ class AssignRolesBulkAction extends BulkAction
                     ->options(Role::where('guard_name', 'web')->pluck('name', 'name'))
                     ->multiple(),
             ])
-            ->action(function (array $data, Collection $records) {
+            ->action(function (array $data, Collection $records): void {
                 /** @var Collection <int, User> $records */
-                $records->each(function (User $record) use ($data) {
+                $records->each(function (User $record) use ($data): void {
                     if ($data['replace']) {
                         $record->syncRoles($data['roles']);
                     } else {

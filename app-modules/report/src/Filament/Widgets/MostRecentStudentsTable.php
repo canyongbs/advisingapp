@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
@@ -65,7 +66,7 @@ class MostRecentStudentsTable extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -88,7 +89,7 @@ class MostRecentStudentsTable extends BaseWidget
                     ->whereNotNull('created_at_source')
                     ->whereNull('deleted_at')
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereBetween('created_at_source', [$startDate, $endDate]);
                         }

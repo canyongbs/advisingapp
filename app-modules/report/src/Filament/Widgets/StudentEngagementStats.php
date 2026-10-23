@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -65,7 +66,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
         $studentsCount = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -77,7 +78,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $emailsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -85,7 +86,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Email)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -93,7 +94,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 'total-emails-count',
                 now()->addHours(24),
                 fn () => Engagement::query()
-                    ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId) {
+                    ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
                         $query->when(
                             $groupId,
                             fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -105,7 +106,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $textsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -113,7 +114,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Sms)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -121,7 +122,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 'total-texts-count',
                 now()->addHours(24),
                 fn () => Engagement::query()
-                    ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId) {
+                    ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
                         $query->when(
                             $groupId,
                             fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -132,14 +133,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
             );
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate, $groupId): void {
-            $query->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId) {
+            $query->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
                 $query->when(
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)
                 );
             })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 );
         };

@@ -139,7 +139,7 @@ class ViewCustomerAdvisor extends ViewRecord
             Action::make('archive')
                 ->authorize(fn (): bool => auth()->user()->can('customer_advisor.*.delete'))
                 ->color('danger')
-                ->action(function () {
+                ->action(function (): void {
                     /** @var CustomerAdvisor $record */
                     $record = $this->getRecord();
                     $record->archived_at = now();
@@ -153,7 +153,7 @@ class ViewCustomerAdvisor extends ViewRecord
                 ->hidden(fn (CustomerAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->authorize(fn (): bool => auth()->user()->can('customer_advisor.*.restore'))
-                ->action(function () {
+                ->action(function (): void {
                     /** @var CustomerAdvisor $record */
                     $record = $this->getRecord();
                     $record->archived_at = null;

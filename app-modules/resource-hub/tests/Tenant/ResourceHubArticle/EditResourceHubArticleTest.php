@@ -55,7 +55,7 @@ use function Tests\setEnterpriseAiEnabled;
 
 // Permission Tests
 
-test('EditResourceHubArticle is gated with proper access control', function () {
+test('EditResourceHubArticle is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -85,7 +85,7 @@ test('EditResourceHubArticle is gated with proper access control', function () {
     // TODO Restore testing the edit form
 });
 
-test('EditResourceHubArticle is gated with proper feature access control', function () {
+test('EditResourceHubArticle is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -125,7 +125,7 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
     // TODO Restore testing the edit form
 });
 
-it('hides the `draftWithAi` action while Enterprise AI is disabled', function () {
+it('hides the `draftWithAi` action while Enterprise AI is disabled', function (): void {
     asSuperAdmin();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
@@ -139,7 +139,7 @@ it('hides the `draftWithAi` action while Enterprise AI is disabled', function ()
         ->assertSchemaComponentHidden('draft-with-ai');
 });
 
-test('EditResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {
+test('EditResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function (): void {
     asSuperAdmin();
 
     $deletedArticle = ResourceHubArticle::factory(['title' => 'Article Title'])->create();

@@ -48,7 +48,7 @@ use function Pest\Laravel\get;
 
 // Permission Tests
 
-test('ViewResourceHubArticle is gated with proper access control', function () {
+test('ViewResourceHubArticle is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
@@ -71,7 +71,7 @@ test('ViewResourceHubArticle is gated with proper access control', function () {
     )->assertSuccessful();
 });
 
-test('ViewResourceHubArticle is gated with proper feature access control', function () {
+test('ViewResourceHubArticle is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;

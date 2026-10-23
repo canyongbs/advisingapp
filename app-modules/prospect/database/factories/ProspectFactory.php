@@ -72,7 +72,7 @@ class ProspectFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Prospect $prospect) {
+        return $this->afterCreating(function (Prospect $prospect): void {
             $prospect->primaryEmailAddress()->associate(ProspectEmailAddress::factory()->create([
                 'prospect_id' => $prospect->getKey(),
                 'address' => $this->faker->unique()->email(),

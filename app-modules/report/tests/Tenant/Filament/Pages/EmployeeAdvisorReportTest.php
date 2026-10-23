@@ -46,7 +46,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
     $user = User::factory()->create();
 
@@ -76,7 +76,7 @@ it('is gated with proper access control', function () {
     get(EmployeeAdvisorReport::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a department that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->employeeAdvisors = true;

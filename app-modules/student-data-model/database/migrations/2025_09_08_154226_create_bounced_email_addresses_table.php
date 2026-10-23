@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('bounced_email_addresses', function (Blueprint $table) {
+        Schema::create('bounced_email_addresses', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('address')->unique();
             $table->timestamps();

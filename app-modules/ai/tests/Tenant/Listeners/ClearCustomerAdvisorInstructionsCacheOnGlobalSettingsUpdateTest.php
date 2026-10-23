@@ -40,11 +40,11 @@ use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
 use Illuminate\Support\Facades\Cache;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Cache::tags(['{customer_advisor_instructions}'])->flush();
 });
 
-it('clears the cached customer advisor instructions when the customer advisor settings are saved', function () {
+it('clears the cached customer advisor instructions when the customer advisor settings are saved', function (): void {
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
     app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor);
@@ -59,7 +59,7 @@ it('clears the cached customer advisor instructions when the customer advisor se
         ->and(app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor))->toContain('Updated instructions');
 });
 
-it('does not clear the cached customer advisor instructions when other settings are saved', function () {
+it('does not clear the cached customer advisor instructions when other settings are saved', function (): void {
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
     app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor);

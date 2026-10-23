@@ -45,7 +45,7 @@ use App\Enums\TagType;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable, bool $removePrior): void {
     Bus::fake();
 
     $workflowRun = WorkflowRun::factory()->create([
@@ -103,7 +103,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
         : [...$priorTags, ...$tags->pluck('id')->toArray()];
 
     $relatedModel->tags()
-        ->each(function (Tag $tag) use ($expectedTagIds) {
+        ->each(function (Tag $tag) use ($expectedTagIds): void {
             expect($tag)->toBeInstanceOf(Tag::class);
 
             expect($tag->getKey())->toBeIn($expectedTagIds);
@@ -143,7 +143,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
     ],
 ]);
 
-it('will only apply the correct tags to an educatable', function () {
+it('will only apply the correct tags to an educatable', function (): void {
     Bus::fake();
 
     $student = Student::factory()->create();

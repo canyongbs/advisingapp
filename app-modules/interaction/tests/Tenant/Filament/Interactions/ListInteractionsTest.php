@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-test('ListInteractions is gated with proper access control', function () {
+test('ListInteractions is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -59,7 +59,7 @@ test('ListInteractions is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('interaction.view-any');
     actingAs($user);

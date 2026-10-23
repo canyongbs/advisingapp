@@ -55,7 +55,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('CreateResourceHubCategory is gated with proper access control', function () {
+test('CreateResourceHubCategory is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -86,7 +86,7 @@ test('CreateResourceHubCategory is gated with proper access control', function (
     assertDatabaseHas(ResourceHubCategory::class, $request->toArray());
 });
 
-test('CreateResourceHubCategory is gated with proper feature access control', function () {
+test('CreateResourceHubCategory is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -127,7 +127,7 @@ test('CreateResourceHubCategory is gated with proper feature access control', fu
     assertDatabaseHas(ResourceHubCategory::class, $request->toArray());
 });
 
-test('CreateResourceHubCategory does not allow for duplicate names of non-deleted categories case insensitively', function () {
+test('CreateResourceHubCategory does not allow for duplicate names of non-deleted categories case insensitively', function (): void {
     asSuperAdmin();
 
     $category = ResourceHubCategory::factory(['name' => 'Category Name'])->create();

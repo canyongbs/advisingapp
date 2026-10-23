@@ -151,11 +151,11 @@ class WorkflowsRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
+                    ->url(fn (Workflow $record): string => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
-                    ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
+                    ->modalHeading(fn (Workflow $record): string => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
+            ->recordUrl(fn (Workflow $record): string => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
     protected function getCreateAction(): Action

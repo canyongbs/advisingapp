@@ -46,7 +46,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('can create an Email Engagement properly', function () {
+it('can create an Email Engagement properly', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -78,7 +78,7 @@ it('can create an Email Engagement properly', function () {
     expect($student->engagements()->first()->body)->toEqual($body);
 });
 
-it('can create an SMS Engagement properly', function () {
+it('can create an SMS Engagement properly', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -113,7 +113,7 @@ it('can create an SMS Engagement properly', function () {
     expect($student->engagements()->first()->body)->toEqual($body);
 });
 
-it('shows no-contact-info message when student has no valid email or sms', function () {
+it('shows no-contact-info message when student has no valid email or sms', function (): void {
     asSuperAdmin();
 
     /** @var Student $student */
@@ -136,7 +136,7 @@ it('shows no-contact-info message when student has no valid email or sms', funct
         ->assertActionDisabled('engage');
 });
 
-it('disables channel options when student has bounced email and no phone', function () {
+it('disables channel options when student has bounced email and no phone', function (): void {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);
@@ -171,7 +171,7 @@ it('disables channel options when student has bounced email and no phone', funct
         ->assertActionDisabled('engage');
 });
 
-it('excludes bounced phones from sms channel options', function () {
+it('excludes bounced phones from sms channel options', function (): void {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);
@@ -211,7 +211,7 @@ it('excludes bounced phones from sms channel options', function () {
         ->assertActionDisabled('engage');
 });
 
-it('enables action when student has no valid email but valid sms', function () {
+it('enables action when student has no valid email but valid sms', function (): void {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);

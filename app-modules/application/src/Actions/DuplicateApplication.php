@@ -59,7 +59,7 @@ class DuplicateApplication
     {
         $stepMap = [];
 
-        $this->original->steps()->each(function (ApplicationStep $step) use (&$stepMap) {
+        $this->original->steps()->each(function (ApplicationStep $step) use (&$stepMap): void {
             $newStep = $step->replicate();
             $newStep->application_id = $this->replica->id;
             $newStep->save();
@@ -81,7 +81,7 @@ class DuplicateApplication
     {
         $fieldMap = [];
 
-        $this->original->fields()->each(function (ApplicationField $field) use (&$fieldMap, $stepMap) {
+        $this->original->fields()->each(function (ApplicationField $field) use (&$fieldMap, $stepMap): void {
             $newField = $field->replicate();
             $newField->application_id = $this->replica->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -98,7 +98,7 @@ class DuplicateApplication
      */
     private function updateStepContent(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap) {
+        $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap): void {
             $content = $step->content;
 
             $step->update([

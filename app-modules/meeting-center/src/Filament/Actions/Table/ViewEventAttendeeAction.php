@@ -53,7 +53,7 @@ class ViewEventAttendeeAction extends ViewAction
     {
         parent::setUp();
 
-        $this->modalHeading(fn (EventAttendee $record) => $record->event->title . ' - ' . $record->email)
+        $this->modalHeading(fn (EventAttendee $record): string => $record->event->title . ' - ' . $record->email)
             ->infolist(fn (EventAttendee $record): array => [
                 Fieldset::make('Attendee Info')
                     ->schema([

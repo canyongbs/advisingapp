@@ -45,7 +45,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('EditInteractionOutcome is gated with proper access control', function () {
+test('EditInteractionOutcome is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $outcome = InteractionOutcome::factory()->create();
@@ -64,7 +64,7 @@ test('EditInteractionOutcome is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('it cannot delete instances used by an interaction', function () {
+test('it cannot delete instances used by an interaction', function (): void {
     asSuperAdmin();
 
     $outcome = InteractionOutcome::factory()->create();

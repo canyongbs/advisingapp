@@ -71,13 +71,13 @@ class ExecuteCampaignActions implements ShouldQueue
             ->tap(new CampaignActionNotCancelled())
             ->campaignEnabled()
             ->cursor()
-            ->each(function (CampaignAction $action) {
+            ->each(function (CampaignAction $action): void {
                 Bus::batch([
                     new ExecuteCampaignAction($action),
                 ])
                     ->name('Execute Campaign Action: ' . $action->getKey())
                     ->allowFailures()
-                    ->finally(function (Batch $batch) use ($action) {
+                    ->finally(function (Batch $batch) use ($action): void {
                         if ($action->campaign->createdBy instanceof User) {
                             $action->campaign->createdBy->notify(new CampaignActionFinished($action));
                         }

@@ -39,7 +39,7 @@ use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
 use Illuminate\Database\UniqueConstraintViolationException;
 
-it('links student term attributes by `sis_term_id`', function () {
+it('links student term attributes by `sis_term_id`', function (): void {
     $term = Term::factory()->create();
     $termAttributes = StudentTermAttribute::factory()->count(2)->create(['sis_term_id' => $term->sis_term_id]);
     $otherTermAttribute = StudentTermAttribute::factory()->create();
@@ -49,7 +49,7 @@ it('links student term attributes by `sis_term_id`', function () {
         ->not->toContain($otherTermAttribute->sisid);
 });
 
-it('links enrollments by `sis_term_id`', function () {
+it('links enrollments by `sis_term_id`', function (): void {
     $term = Term::factory()->create();
     $enrollments = Enrollment::factory()->count(2)->create(['sis_term_id' => $term->sis_term_id]);
     $otherEnrollment = Enrollment::factory()->create(['sis_term_id' => Term::factory()->create()->sis_term_id]);
@@ -59,19 +59,19 @@ it('links enrollments by `sis_term_id`', function () {
         ->not->toContain($otherEnrollment->sisid);
 });
 
-it('allows different terms to share the same name', function () {
+it('allows different terms to share the same name', function (): void {
     Term::factory()->count(2)->create(['name' => 'FA-20']);
 
     expect(Term::query()->where('name', 'FA-20')->count())->toBe(2);
 });
 
-it('does not allow two terms with the same `sis_term_id`', function () {
+it('does not allow two terms with the same `sis_term_id`', function (): void {
     $term = Term::factory()->create();
 
     Term::factory()->create(['sis_term_id' => $term->sis_term_id]);
 })->throws(UniqueConstraintViolationException::class);
 
-it('includes the start month in the display name', function () {
+it('includes the start month in the display name', function (): void {
     $term = Term::factory()->create([
         'name' => 'FA-20',
         'start_date' => '2020-09-14',
@@ -80,7 +80,7 @@ it('includes the start month in the display name', function () {
     expect($term->getDisplayName())->toBe('FA-20 (Sep 2020)');
 });
 
-it('uses only the name as the display name when the term has no start date', function () {
+it('uses only the name as the display name when the term has no start date', function (): void {
     $term = Term::factory()->create([
         'name' => 'Summer TBD',
         'start_date' => null,

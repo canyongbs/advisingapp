@@ -45,7 +45,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('EditGroup is gated with proper access control', function () {
+test('EditGroup is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $group = Group::factory()->create();
@@ -64,7 +64,7 @@ test('EditGroup is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('EditGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function () {
+test('EditGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function (): void {
     asSuperAdmin();
 
     $deletedGroup = Group::factory()->create(['name' => 'Group Name']);
@@ -86,7 +86,7 @@ test('EditGroup does not allow duplicate group names case insensitively, ignorin
 
 // The group builder renders the shared `StudentsTable`, which scopes its own query
 // independently of `GroupModel::query()`.
-test('the group builder does not list archived students', function () {
+test('the group builder does not list archived students', function (): void {
     asSuperAdmin();
 
     $group = Group::factory()->student()->dynamic()->create();

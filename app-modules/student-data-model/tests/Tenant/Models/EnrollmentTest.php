@@ -37,14 +37,14 @@
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Term;
 
-it('belongs to a term by `sis_term_id`', function () {
+it('belongs to a term by `sis_term_id`', function (): void {
     $term = Term::factory()->create();
     $enrollment = Enrollment::factory()->create(['sis_term_id' => $term->sis_term_id]);
 
     expect($enrollment->term->sis_term_id)->toBe($term->sis_term_id);
 });
 
-it('has no term when `sis_term_id` is not set', function () {
+it('has no term when `sis_term_id` is not set', function (): void {
     $enrollment = Enrollment::factory()->create(['sis_term_id' => null]);
 
     expect($enrollment->term)->toBeNull();

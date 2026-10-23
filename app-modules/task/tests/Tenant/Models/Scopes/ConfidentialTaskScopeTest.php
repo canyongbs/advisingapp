@@ -44,13 +44,13 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('is applied as a global scope to the task model', function () {
+it('is applied as a global scope to the task model', function (): void {
     Task::bootHasGlobalScopes();
 
     expect(Task::hasGlobalScope(ConfidentialTaskScope::class))->toBeTrue();
 });
 
-it('can be accessed by users when not confidential', function () {
+it('can be accessed by users when not confidential', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -66,7 +66,7 @@ it('can be accessed by users when not confidential', function () {
     expect($tasks->pluck('id'))->not->toContain(...$confidentialTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users who created it', function () {
+it('can be accessed when confidential by users who created it', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -81,7 +81,7 @@ it('can be accessed when confidential by users who created it', function () {
     expect($tasks->pluck('id'))->toContain(...$userTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users on a department with access', function () {
+it('can be accessed when confidential by users on a department with access', function (): void {
     $department = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->department()->associate($department)->save();
@@ -108,7 +108,7 @@ it('can be accessed when confidential by users on a department with access', fun
     expect($tasks->pluck('id'))->not->toContain(...$otherDepartmentTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by super admins', function () {
+it('can be accessed when confidential by super admins', function (): void {
     $confidentialTasks = Task::factory()->count(10)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
 
     asSuperAdmin();

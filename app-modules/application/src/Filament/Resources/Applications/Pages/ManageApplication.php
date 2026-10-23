@@ -225,10 +225,10 @@ class ManageApplication extends EditRecord
             Action::make('preview')
                 ->label('Preview')
                 ->icon(Heroicon::OutlinedEye)
-                ->url(fn (Application $application) => route('applications.preview', $application))
+                ->url(fn (Application $application): string => route('applications.preview', $application))
                 ->openUrlInNewTab(),
             Action::make('view')
-                ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
+                ->url(fn (Application $application): string => route('applications.show', ['application' => $application]))
                 ->icon(Heroicon::ArrowTopRightOnSquare)
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -255,7 +255,7 @@ class ManageApplication extends EditRecord
                 ])
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Application $application) => ! $application->embed_enabled),
+                ->hidden(fn (Application $application): bool => ! $application->embed_enabled),
         ];
     }
 
@@ -266,7 +266,7 @@ class ManageApplication extends EditRecord
                 ->label('Save'),
             ArchiveAction::make(),
             $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->getRecord()])),
+                ->url(fn (): string => ApplicationResource::getUrl('view', ['record' => $this->getRecord()])),
         ];
     }
 

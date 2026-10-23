@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('ai_assistant_links', function (Blueprint $table) {
+        Schema::create('ai_assistant_links', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('ai_assistant_id')->constrained('ai_assistants')->cascadeOnDelete();
             $table->string('url');

@@ -57,7 +57,7 @@ use function Pest\Laravel\seed;
 
 // Permission Tests
 
-test('EditProspect is gated with proper access control', function () {
+test('EditProspect is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -106,7 +106,7 @@ test('EditProspect is gated with proper access control', function () {
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
 });
 
-test('convert action visible when prospect is not converted to student', function () {
+test('convert action visible when prospect is not converted to student', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -124,7 +124,7 @@ test('convert action visible when prospect is not converted to student', functio
         ->assertActionHidden(DisassociateStudent::class);
 });
 
-test('edit page is forbidden when prospect is converted to student', function () {
+test('edit page is forbidden when prospect is converted to student', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $prospect = Prospect::factory()
@@ -142,7 +142,7 @@ test('edit page is forbidden when prospect is converted to student', function ()
         ->assertForbidden();
 });
 
-test('convert prospect to student', function () {
+test('convert prospect to student', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -185,7 +185,7 @@ test('convert prospect to student', function () {
         ->email->toBe($student->email);
 });
 
-test('the convert action does not attach an archived student even when their id is submitted', function () {
+test('the convert action does not attach an archived student even when their id is submitted', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -217,7 +217,7 @@ test('the convert action does not attach an archived student even when their id 
         ->and($prospect->status_id)->toBe($statusId);
 });
 
-test('the convert action does not offer archived students', function () {
+test('the convert action does not offer archived students', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');

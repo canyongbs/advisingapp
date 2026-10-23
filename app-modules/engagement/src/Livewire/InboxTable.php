@@ -90,7 +90,7 @@ class InboxTable extends Component implements HasActions, HasForms, HasTable
                     ->tooltip(fn (EngagementResponse $record): ?string => $record->status === EngagementResponseStatus::Actioned ? $record->latestActionedNote?->getActionedNoteTooltip() : null),
                 TextColumn::make('sender_type')
                     ->label('Relation')
-                    ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
+                    ->formatStateUsing(fn (EngagementResponse $record): string => ucwords($record->sender_type))
                     ->sortable(),
                 TextColumn::make('sender.full_name')
                     ->label('From')
@@ -101,7 +101,7 @@ class InboxTable extends Component implements HasActions, HasForms, HasTable
                     })
                     ->openUrlInNewTab(),
                 TextColumn::make('type')
-                    ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
+                    ->formatStateUsing(fn (EngagementResponse $record): string => match ($record->type) {
                         EngagementResponseType::Email => 'Email',
                         EngagementResponseType::Sms => 'Text',
                     })

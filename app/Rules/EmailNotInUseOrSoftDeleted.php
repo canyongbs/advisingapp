@@ -79,7 +79,7 @@ class EmailNotInUseOrSoftDeleted implements ValidationRule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
         return $this->message;
     }

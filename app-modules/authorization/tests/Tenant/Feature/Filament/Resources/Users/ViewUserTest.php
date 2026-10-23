@@ -47,7 +47,7 @@ use STS\FilamentImpersonate\Actions\Impersonate;
 
 use function Tests\asSuperAdmin;
 
-it('renders impersonate button for non super admin users when user is super admin', function () {
+it('renders impersonate button for non super admin users when user is super admin', function (): void {
     asSuperAdmin();
 
     $user = User::factory()->create();
@@ -59,7 +59,7 @@ it('renders impersonate button for non super admin users when user is super admi
         ->assertActionVisible(Impersonate::class);
 });
 
-it('does not render impersonate button for super admin users at all', function () {
+it('does not render impersonate button for super admin users at all', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -73,7 +73,7 @@ it('does not render impersonate button for super admin users at all', function (
         ->assertActionHidden(Impersonate::class);
 });
 
-it('does not render super admin profile for regular user', function () {
+it('does not render super admin profile for regular user', function (): void {
     // Create a super admin user
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
@@ -90,7 +90,7 @@ it('does not render super admin profile for regular user', function () {
         ->assertStatus(404);
 })->throws(ModelNotFoundException::class);
 
-it('allows super admin user to impersonate', function () {
+it('allows super admin user to impersonate', function (): void {
     $superAdmin = User::factory()->create();
     asSuperAdmin($superAdmin);
 
@@ -106,7 +106,7 @@ it('allows super admin user to impersonate', function () {
     expect(auth()->id())->toBe($user->id);
 });
 
-it('does not display the mfa_status for an external User', function () {
+it('does not display the mfa_status for an external User', function (): void {
     $user = User::factory()->external()->create();
 
     asSuperAdmin();
@@ -119,7 +119,7 @@ it('does not display the mfa_status for an external User', function () {
         ->assertDontSeeHtml('data-identifier="mfa-disabled"');
 });
 
-it('displays the proper mfa_status for an internal User without MFA enabled', function () {
+it('displays the proper mfa_status for an internal User without MFA enabled', function (): void {
     $user = User::factory()->internal()->create();
 
     asSuperAdmin();
@@ -130,7 +130,7 @@ it('displays the proper mfa_status for an internal User without MFA enabled', fu
         ->assertSeeHtml('data-identifier="mfa-disabled"');
 });
 
-it('displays the proper mfa_status for an internal User with MFA enabled but not confirmed', function () {
+it('displays the proper mfa_status for an internal User with MFA enabled but not confirmed', function (): void {
     $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();
@@ -143,7 +143,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled but not
         ->assertSeeHtml('data-identifier="mfa-not-confirmed"');
 });
 
-it('displays the proper mfa_status for an internal User with MFA enabled and confirmed', function () {
+it('displays the proper mfa_status for an internal User with MFA enabled and confirmed', function (): void {
     $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();
@@ -158,7 +158,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled and con
         ->assertSeeHtml('data-identifier="mfa-enabled"');
 });
 
-it('does not display the mfa_reset Action if the user is external', function () {
+it('does not display the mfa_reset Action if the user is external', function (): void {
     $user = User::factory()->external()->create();
 
     asSuperAdmin();
@@ -169,7 +169,7 @@ it('does not display the mfa_reset Action if the user is external', function () 
         ->assertActionHidden('mfa_reset');
 });
 
-it('does not display the mfa_reset Action if the authed user does not have the proper permission', function () {
+it('does not display the mfa_reset Action if the authed user does not have the proper permission', function (): void {
     $user = User::factory()->external()->create();
 
     $user->enableMultifactorAuthentication();
@@ -186,7 +186,7 @@ it('does not display the mfa_reset Action if the authed user does not have the p
         ->assertActionHidden('mfa_reset');
 });
 
-it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function () {
+it('does not display the mfa_reset Action if the user is internal but has not enabled and/or confirmed MFA', function (): void {
     $user = User::factory()->internal()->create();
 
     asSuperAdmin();
@@ -197,7 +197,7 @@ it('does not display the mfa_reset Action if the user is internal but has not en
         ->assertActionHidden('mfa_reset');
 });
 
-it('displays the mfa_reset Action if the user is internal, has MFA enabled and/or confirmed, and the authed user has proper permission', function (User $user) {
+it('displays the mfa_reset Action if the user is internal, has MFA enabled and/or confirmed, and the authed user has proper permission', function (User $user): void {
     $actingAsUser = User::factory()->create();
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
     actingAs($actingAsUser);
@@ -210,7 +210,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     'Has MFA Enabled' => function () {
         return tap(
             User::factory()->internal()->create(),
-            function (User $user) {
+            function (User $user): void {
                 $user->enableMultifactorAuthentication();
             }
         );
@@ -218,7 +218,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     'Has MFA Confirmed' => function () {
         return tap(
             User::factory()->internal()->create(),
-            function (User $user) {
+            function (User $user): void {
                 $user->enableMultifactorAuthentication();
 
                 $user->confirmMultifactorAuthentication();
@@ -227,7 +227,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     },
 ]);
 
-it('resets the users MFA when the mfa_reset Action is triggered', function () {
+it('resets the users MFA when the mfa_reset Action is triggered', function (): void {
     $user = User::factory()->internal()->create();
 
     $user->enableMultifactorAuthentication();

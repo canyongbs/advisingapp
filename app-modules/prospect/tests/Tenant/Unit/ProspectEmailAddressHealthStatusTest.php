@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 
 use function PHPUnit\Framework\assertEquals;
 
-it('returns healthy status for email address with no issues', function () {
+it('returns healthy status for email address with no issues', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -52,7 +52,7 @@ it('returns healthy status for email address with no issues', function () {
     assertEquals(EmailHealthStatus::Healthy, $emailAddress->getHealthStatus());
 });
 
-it('returns bounced status when email address has bounced', function () {
+it('returns bounced status when email address has bounced', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -66,7 +66,7 @@ it('returns bounced status when email address has bounced', function () {
     assertEquals(EmailHealthStatus::Bounced, $emailAddress->getHealthStatus());
 });
 
-it('returns opted out status when email address is opted out', function () {
+it('returns opted out status when email address is opted out', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -80,7 +80,7 @@ it('returns opted out status when email address is opted out', function () {
     assertEquals(EmailHealthStatus::OptedOut, $emailAddress->getHealthStatus());
 });
 
-it('returns healthy status when email address is opted in', function () {
+it('returns healthy status when email address is opted in', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -94,7 +94,7 @@ it('returns healthy status when email address is opted in', function () {
     assertEquals(EmailHealthStatus::Healthy, $emailAddress->getHealthStatus());
 });
 
-it('prioritizes bounced status over opted out status', function () {
+it('prioritizes bounced status over opted out status', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -114,7 +114,7 @@ it('prioritizes bounced status over opted out status', function () {
     assertEquals(EmailHealthStatus::Bounced, $emailAddress->getHealthStatus());
 });
 
-it('is case insensitive when checking health status', function () {
+it('is case insensitive when checking health status', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()

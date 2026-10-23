@@ -64,7 +64,7 @@ class SyncTimelineData
             return Carbon::parse($record->timeline()->sortableBy())->timestamp;
         });
 
-        $aggregateRecords->each(function ($record) use ($recordModel) {
+        $aggregateRecords->each(function ($record) use ($recordModel): void {
             $timelineRecord = Timeline::firstOrCreate([
                 'entity_type' => $recordModel->getMorphClass(),
                 'entity_id' => $recordModel->getKey(),

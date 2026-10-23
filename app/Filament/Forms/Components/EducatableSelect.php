@@ -82,7 +82,7 @@ class EducatableSelect extends Component
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             $morphToSelect = MorphToSelect::make($name)
                 ->searchable()
-                ->types(fn (?Model $record, MorphToSelect $component) => [
+                ->types(fn (?Model $record, MorphToSelect $component): array => [
                     static::getStudentType($component->getRelationship()->getForeignKeyName(), $record),
                     static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
@@ -119,7 +119,7 @@ class EducatableSelect extends Component
                 return;
             }
 
-            if (filled($keyColumnName) && $record && (string) $record->{$keyColumnName} === (string) $value) {
+            if (filled($keyColumnName) && $record instanceof Model && (string) $record->{$keyColumnName} === (string) $value) {
                 return;
             }
 
@@ -133,14 +133,14 @@ class EducatableSelect extends Component
     {
         return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey())
-            ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+            ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record): void {
                 // Filament runs this closure when resolving the label of the selected value as
                 // well as when building the options, so an already-selected archived student
                 // must stay resolvable or their name disappears from the record they are on.
                 $query->where(fn (Builder $query) => $query
                     ->tap(new WithoutArchivedStudents())
                     ->when(
-                        filled($keyColumnName) && $record,
+                        filled($keyColumnName) && $record instanceof Model,
                         fn (Builder $query) => $query->orWhere($query->getModel()->getQualifiedKeyName(), $record->{$keyColumnName}),
                     ));
             });
@@ -152,7 +152,7 @@ class EducatableSelect extends Component
             ->titleAttribute(Prospect::displayNameKey());
 
         if ($isExcludingConvertedProspects) {
-            $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+            $prospectType->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record): void {
                 $query->tap(new ExcludeConvertedProspects());
 
                 if ($record) {
@@ -195,7 +195,7 @@ class EducatableSelect extends Component
             ->getOptionLabelUsing($type->getOptionLabelUsing)
             ->required($this->isRequired())
             ->searchable()
-            ->afterStateUpdated(function () {
+            ->afterStateUpdated(function (): void {
                 $this->callAfterStateUpdatedForChildComponent();
             });
 

@@ -53,7 +53,7 @@ $testSubmissions = fn (Application $application): Testable => Livewire::test(Sub
     'pageClass' => ManageApplication::class,
 ]);
 
-test('tabs are generated for each state', function () use ($testSubmissions) {
+test('tabs are generated for each state', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -75,7 +75,7 @@ test('tabs are generated for each state', function () use ($testSubmissions) {
     expect($tabs)->toHaveKey($reviewState->id);
 });
 
-test('tab label includes Archived when the state for that classification is archived but still has submissions', function () use ($testSubmissions) {
+test('tab label includes Archived when the state for that classification is archived but still has submissions', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -102,7 +102,7 @@ test('tab label includes Archived when the state for that classification is arch
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
 });
 
-test('default active tab is the state with is_default true', function () use ($testSubmissions) {
+test('default active tab is the state with is_default true', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -124,7 +124,7 @@ test('default active tab is the state with is_default true', function () use ($t
     expect($defaultTab)->toBe($defaultState->id);
 });
 
-test('default active tab falls back to all when the default state is archived and unused', function () use ($testSubmissions) {
+test('default active tab falls back to all when the default state is archived and unused', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $defaultState = ApplicationSubmissionState::factory()->create([
@@ -147,7 +147,7 @@ test('default active tab falls back to all when the default state is archived an
     expect($defaultTab)->toBe('all');
 });
 
-test('default tab falls back to all when no state has is_default true', function () use ($testSubmissions) {
+test('default tab falls back to all when no state has is_default true', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -169,7 +169,7 @@ test('default tab falls back to all when no state has is_default true', function
     expect($defaultTab)->toBe('all');
 });
 
-test('archived state that has submissions still appears as a tab', function () use ($testSubmissions) {
+test('archived state that has submissions still appears as a tab', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -192,7 +192,7 @@ test('archived state that has submissions still appears as a tab', function () u
     expect($tabs)->toHaveKey($receivedState->id);
 });
 
-test('multiple states with the same classification each get their own tab', function () use ($testSubmissions) {
+test('multiple states with the same classification each get their own tab', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $firstReceivedState = ApplicationSubmissionState::factory()->create([
@@ -213,7 +213,7 @@ test('multiple states with the same classification each get their own tab', func
     expect($tabs)->toHaveKey($secondReceivedState->id);
 });
 
-test('switching tabs filters the table to only show submissions for that state', function () use ($testSubmissions) {
+test('switching tabs filters the table to only show submissions for that state', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -248,7 +248,7 @@ test('switching tabs filters the table to only show submissions for that state',
         ->assertCanNotSeeTableRecords([$receivedSubmission]);
 });
 
-test('all tab shows submissions from all states', function () use ($testSubmissions) {
+test('all tab shows submissions from all states', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -279,7 +279,7 @@ test('all tab shows submissions from all states', function () use ($testSubmissi
         ->assertCanSeeTableRecords([$receivedSubmission, $reviewSubmission]);
 });
 
-test('archive action is visible when submission is not archived', function () use ($testSubmissions) {
+test('archive action is visible when submission is not archived', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -293,7 +293,7 @@ test('archive action is visible when submission is not archived', function () us
         ->assertTableActionVisible('archive', $submission);
 });
 
-test('archive action successfully archives a submission', function () use ($testSubmissions) {
+test('archive action successfully archives a submission', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -313,7 +313,7 @@ test('archive action successfully archives a submission', function () use ($test
     expect($submission->fresh()->isArchived())->toBeTrue();
 });
 
-test('bulk archive action successfully archives multiple submissions', function () use ($testSubmissions) {
+test('bulk archive action successfully archives multiple submissions', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -339,7 +339,7 @@ test('bulk archive action successfully archives multiple submissions', function 
     });
 });
 
-test('archived submissions are hidden by default', function () use ($testSubmissions) {
+test('archived submissions are hidden by default', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -360,7 +360,7 @@ test('archived submissions are hidden by default', function () use ($testSubmiss
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
 
-test('archived submissions are visible when the withoutArchived filter is removed', function () use ($testSubmissions) {
+test('archived submissions are visible when the withoutArchived filter is removed', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -381,7 +381,7 @@ test('archived submissions are visible when the withoutArchived filter is remove
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
 });
 
-describe('submission links', function () {
+describe('submission links', function (): void {
     $linkTo = fn (ApplicationSubmission $submission, array $query = []): array => [
         'actionComponent' => 'submissions',
         'tableAction' => 'view',
@@ -389,7 +389,7 @@ describe('submission links', function () {
         ...$query,
     ];
 
-    it('opens the linked submission', function () use ($linkTo) {
+    it('opens the linked submission', function () use ($linkTo): void {
         asSuperAdmin();
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
@@ -406,7 +406,7 @@ describe('submission links', function () {
             ->assertSet('mountedActions.0.context.recordKey', $submission->getKey());
     });
 
-    it('removes the link from the URL once the submission opens', function () use ($linkTo) {
+    it('removes the link from the URL once the submission opens', function () use ($linkTo): void {
         asSuperAdmin();
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
@@ -424,7 +424,7 @@ describe('submission links', function () {
             ->assertSet('defaultTableActionRecord', null);
     });
 
-    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo) {
+    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo): void {
         asSuperAdmin();
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
@@ -443,7 +443,7 @@ describe('submission links', function () {
         'page' => 'page',
     ]);
 
-    it('does not open a submission from another application', function () use ($linkTo) {
+    it('does not open a submission from another application', function () use ($linkTo): void {
         asSuperAdmin();
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
@@ -460,8 +460,8 @@ describe('submission links', function () {
     });
 });
 
-describe('authorization', function () use ($testSubmissions) {
-    it('denies access to the submissions without the `application.view-any` permission', function () use ($testSubmissions) {
+describe('authorization', function () use ($testSubmissions): void {
+    it('denies access to the submissions without the `application.view-any` permission', function () use ($testSubmissions): void {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
@@ -470,7 +470,7 @@ describe('authorization', function () use ($testSubmissions) {
         $testSubmissions($application)->assertForbidden();
     });
 
-    it('does not archive submissions without the `application.*.update` permission', function (bool $isBulk) use ($testSubmissions) {
+    it('does not archive submissions without the `application.*.update` permission', function (bool $isBulk) use ($testSubmissions): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('application.view-any', 'application.*.view');
         actingAs($user);

@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->string('title_font_weight')->nullable();
             $table->string('title_color')->nullable();
         });
@@ -49,7 +49,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->dropColumn('title_font_weight');
             $table->dropColumn('title_color');
         });

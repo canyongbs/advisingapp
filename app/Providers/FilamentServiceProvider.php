@@ -213,15 +213,15 @@ class FilamentServiceProvider extends ServiceProvider
             QueryBuilderIconAlias::OR_GROUP_BLOCK => Heroicon::ArrowsRightLeft,
         ]);
 
-        RuleBuilder::configureUsing(fn (RuleBuilder $ruleBuilder) => $ruleBuilder
+        RuleBuilder::configureUsing(fn (RuleBuilder $ruleBuilder): RuleBuilder => $ruleBuilder
             ->searchable()
             ->searchPrompt('Search filters')
             ->noSearchResultsMessage('No filters match your search.'));
 
         $defaultDateTimeDisplayFormat = 'M j, Y <\b\r /> <\s\p\a\n \c\l\a\s\s="\f\i-\d\a\t\e\t\i\m\e-\d\e\s\c\r\i\p\t\i\o\n">g:i a (T)</\s\p\a\n>';
 
-        Table::configureUsing(fn (Table $table) => $table->defaultDateTimeDisplayFormat('M j, Y g:i a'));
-        Schema::configureUsing(fn (Schema $infolist) => $infolist
+        Table::configureUsing(fn (Table $table): Table => $table->defaultDateTimeDisplayFormat('M j, Y g:i a'));
+        Schema::configureUsing(fn (Schema $infolist): Schema => $infolist
             ->defaultDateTimeDisplayFormat($defaultDateTimeDisplayFormat)
             ->defaultTimeDisplayFormat('g:i a'));
 
@@ -230,15 +230,15 @@ class FilamentServiceProvider extends ServiceProvider
             fn (): View => view('filament.footer'),
         );
 
-        Select::configureUsing(function (Select $component) {
+        Select::configureUsing(function (Select $component): void {
             $component->native(false);
         });
 
-        SelectFilter::configureUsing(function (SelectFilter $component) {
+        SelectFilter::configureUsing(function (SelectFilter $component): void {
             $component->native(false);
         });
 
-        DateTimePicker::configureUsing(function (DateTimePicker $component) {
+        DateTimePicker::configureUsing(function (DateTimePicker $component): void {
             if ($component instanceof DatePicker) {
                 return;
             }
@@ -256,7 +256,7 @@ class FilamentServiceProvider extends ServiceProvider
                 ->hintIconTooltip("This time is set in {$timezoneLabel}.");
         });
 
-        TextColumn::configureUsing(function (TextColumn $column) {
+        TextColumn::configureUsing(function (TextColumn $column): void {
             $timezone = app(DisplaySettings::class)->getTimezone();
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
@@ -280,7 +280,7 @@ class FilamentServiceProvider extends ServiceProvider
                 });
         });
 
-        TextEntry::configureUsing(function (TextEntry $entry) {
+        TextEntry::configureUsing(function (TextEntry $entry): void {
             $timezone = app(DisplaySettings::class)->getTimezone();
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
@@ -314,14 +314,14 @@ class FilamentServiceProvider extends ServiceProvider
         Toggle::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
             /** @var Toggle $this */
             return $this->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                 ->hintIconTooltip('A CRM license is required for our public profile features.');
         });
 
         Checkbox::macro('lockedWithoutAnyLicenses', function (User $user, array $licenses) {
             /** @var Checkbox $this */
             return $this->disabled(! $user->hasAnyLicense($licenses))
-                ->hintIcon(fn (Checkbox $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                ->hintIcon(fn (Checkbox $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                 ->hintIconTooltip('A CRM license is required for our public profile features.');
         });
 
@@ -345,23 +345,23 @@ class FilamentServiceProvider extends ServiceProvider
                 ->defaultDateTimeDisplayFormat($defaultDateTimeDisplayFormat)
                 ->defaultTimeDisplayFormat('g:i a')
                 ->paginationPageOptions([5, 10, 20])
-                ->defaultPaginationPageOption(fn (Component $livewire) => $livewire instanceof TableWidget ? 5 : 10);
+                ->defaultPaginationPageOption(fn (Component $livewire): int => $livewire instanceof TableWidget ? 5 : 10);
         });
 
-        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+        Fieldset::configureUsing(fn (Fieldset $fieldset): Fieldset => $fieldset
             ->columnSpanFull());
 
-        Grid::configureUsing(fn (Grid $grid) => $grid
+        Grid::configureUsing(fn (Grid $grid): Grid => $grid
             ->columnSpanFull());
 
-        Section::configureUsing(fn (Section $section) => $section
+        Section::configureUsing(fn (Section $section): Section => $section
             ->columnSpanFull());
 
         Textarea::configureUsing(function (Textarea $textarea): void {
             $textarea->disableGrammarly();
         });
 
-        ReplicateAction::configureUsing(fn (ReplicateAction $replicateAction) => $replicateAction
+        ReplicateAction::configureUsing(fn (ReplicateAction $replicateAction): ReplicateAction => $replicateAction
             ->label('Duplicate')
             ->modalSubmitActionLabel('Duplicate')
             ->modalHeading('Duplicate'));

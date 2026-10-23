@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('archive action is always visible and labeled Archive', function () {
+it('archive action is always visible and labeled Archive', function (): void {
     asSuperAdmin();
 
     $formWithSubmissions = Form::factory()->create();
@@ -64,7 +64,7 @@ it('archive action is always visible and labeled Archive', function () {
         ->assertActionHasLabel('archive', 'Archive');
 });
 
-it('archive action archives the form and redirects to the index when the form has submissions', function () {
+it('archive action archives the form and redirects to the index when the form has submissions', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -81,7 +81,7 @@ it('archive action archives the form and redirects to the index when the form ha
     expect($form->fresh()->isArchived())->toBeTrue();
 });
 
-it('does not allow updating a form to a name matching another non-archived form case-insensitively', function () {
+it('does not allow updating a form to a name matching another non-archived form case-insensitively', function (): void {
     asSuperAdmin();
 
     Form::factory()->create(['name' => 'Other Form']);
@@ -93,7 +93,7 @@ it('does not allow updating a form to a name matching another non-archived form 
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows updating a form to a name freed up by an archived form case-insensitively', function () {
+it('allows updating a form to a name freed up by an archived form case-insensitively', function (): void {
     asSuperAdmin();
 
     $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
@@ -107,7 +107,7 @@ it('allows updating a form to a name freed up by an archived form case-insensiti
         ->assertHasNoFormErrors();
 });
 
-it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -116,7 +116,7 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-it('persists edits to an existing wizard step\'s description onto the new form version', function () {
+it('persists edits to an existing wizard step\'s description onto the new form version', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_wizard' => true]);

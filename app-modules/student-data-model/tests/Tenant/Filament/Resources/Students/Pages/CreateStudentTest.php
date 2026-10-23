@@ -44,7 +44,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('requires proper access', function () {
+it('requires proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -63,7 +63,7 @@ it('requires proper access', function () {
         ->assertOk();
 });
 
-it('selecting an address in the AddressInput sets the address fields', function () {
+it('selecting an address in the AddressInput sets the address fields', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -105,7 +105,7 @@ it('selecting an address in the AddressInput sets the address fields', function 
         ]);
 });
 
-it('can create a student with an address', function () {
+it('can create a student with an address', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);

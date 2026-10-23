@@ -58,10 +58,10 @@ $officeHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-beforeEach(function () {
+beforeEach(function (): void {
     $mockDriver = Mockery::mock(CalendarInterface::class);
     /** @phpstan-ignore method.notFound */
-    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event): void {
         $event->updateQuietly([
             'provider_id' => 'mock-provider-id',
             'provider_uid' => 'mock-provider-uid',
@@ -70,14 +70,14 @@ beforeEach(function () {
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
-    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver): void {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
     });
 
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('returns available slots for the member with fewest meeting hours', function () use ($officeHours) {
+it('returns available slots for the member with fewest meeting hours', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -131,7 +131,7 @@ it('returns available slots for the member with fewest meeting hours', function 
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns empty slots when no members have connected calendars', function () use ($officeHours) {
+it('returns empty slots when no members have connected calendars', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create();
@@ -152,7 +152,7 @@ it('returns empty slots when no members have connected calendars', function () u
     $response->assertJson(['blocks' => []]);
 });
 
-it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours) {
+it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create();
@@ -182,7 +182,7 @@ it('returns 422 when no members have connected calendars at booking time', funct
     ]);
 });
 
-it('books on the least busy member calendar and advances cursor', function () use ($officeHours) {
+it('books on the least busy member calendar and advances cursor', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -250,7 +250,7 @@ it('books on the least busy member calendar and advances cursor', function () us
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($bob->id);
 });
 
-it('uses round robin tiebreaker when members have equal meeting hours', function () use ($officeHours) {
+it('uses round robin tiebreaker when members have equal meeting hours', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -339,7 +339,7 @@ it('uses round robin tiebreaker when members have equal meeting hours', function
     expect($appointment2->meeting_owner_id)->toBe($bob->id);
 });
 
-it('returns 409 with fresh blocks when resolved member has a conflict', function () use ($officeHours) {
+it('returns 409 with fresh blocks when resolved member has a conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -397,7 +397,7 @@ it('returns 409 with fresh blocks when resolved member has a conflict', function
     expect($response->json('blocks'))->toHaveCount(20);
 });
 
-it('returns 409 with fresh blocks when all members have conflicts', function () use ($officeHours) {
+it('returns 409 with fresh blocks when all members have conflicts', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -461,7 +461,7 @@ it('returns 409 with fresh blocks when all members have conflicts', function () 
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('assigns member with fewer calendar hours over member with more', function () use ($officeHours) {
+it('assigns member with fewer calendar hours over member with more', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -535,7 +535,7 @@ it('assigns member with fewer calendar hours over member with more', function ()
     expect($appointment->meeting_owner_id)->toBe($bob->id);
 });
 
-it('only counts busy transparency events toward meeting hours', function () use ($officeHours) {
+it('only counts busy transparency events toward meeting hours', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -592,7 +592,7 @@ it('only counts busy transparency events toward meeting hours', function () use 
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses min lead time as availability window start', function () use ($officeHours) {
+it('uses min lead time as availability window start', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -653,7 +653,7 @@ it('uses min lead time as availability window start', function () use ($officeHo
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses max lead time as availability window end', function () use ($officeHours) {
+it('uses max lead time as availability window end', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -714,7 +714,7 @@ it('uses max lead time as availability window end', function () use ($officeHour
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses both min and max lead time to bound the availability window', function () use ($officeHours) {
+it('uses both min and max lead time to bound the availability window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -782,7 +782,7 @@ it('uses both min and max lead time to bound the availability window', function 
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('excludes out of office days from resolved member available slots', function () use ($officeHours) {
+it('excludes out of office days from resolved member available slots', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -820,10 +820,10 @@ it('excludes out of office days from resolved member available slots', function 
     $blocks = collect($blocksData);
 
     // Alice is resolved (least busy tiebreaker picks alphabetically), but OOO on Apr 7
-    $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
+    $apr7Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-07'));
     expect($apr7Blocks)->toBeEmpty();
 
     // Other days should still have slots
-    $apr8Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-08'));
+    $apr8Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-08'));
     expect($apr8Blocks)->not->toBeEmpty();
 });

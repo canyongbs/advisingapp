@@ -60,7 +60,7 @@ return new class () extends SettingsMigration {
 
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $this->renameIfExists(
                 'ai-custom-advisor.allow_selection_of_model',
                 'ai-employee-advisor.allow_selection_of_model',
@@ -79,7 +79,7 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             foreach ($this->applicableFeatureKeys as $key) {
                 $this->mapApplicableFeatures($key, 'employee_advisors', 'custom_advisors');
             }

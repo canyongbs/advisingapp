@@ -84,7 +84,7 @@ class ApplicationAdmissionActions
                         ->required()
                         ->default(fn (ApplicationSubmission $record) => $record->state_id),
                 ])
-                ->action(function (ApplicationSubmission $record, array $data) {
+                ->action(function (ApplicationSubmission $record, array $data): void {
                     try {
                         $record->refresh();
                         $newState = ApplicationSubmissionState::findOrFail($data['state_id']);

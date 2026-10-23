@@ -98,7 +98,7 @@ class PersonalBookingPageWidgetController extends Controller
         abort_if(is_null($stream), 404, 'File not found.');
 
         return response()->streamDownload(
-            function () use ($stream) {
+            function () use ($stream): void {
                 fpassthru($stream);
                 fclose($stream);
             },
@@ -308,7 +308,7 @@ class PersonalBookingPageWidgetController extends Controller
             $bookingPage->maximum_booking_lead_time_days ?? 0,
         );
 
-        return collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt) {
+        return collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt): bool {
             $blockStart = Carbon::parse($block['start']);
             $blockEnd = Carbon::parse($block['end']);
 

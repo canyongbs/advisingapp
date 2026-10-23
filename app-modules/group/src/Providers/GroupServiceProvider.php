@@ -45,9 +45,15 @@ use Illuminate\Support\ServiceProvider;
 
 class GroupServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new GroupPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new GroupPlugin());
+        });
     }
 
     public function boot(): void

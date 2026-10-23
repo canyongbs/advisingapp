@@ -335,7 +335,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'recipient full name' => fn () => $this->recipient?->getAttribute($this->recipient->displayNameKey()),
             'recipient email' => fn () => $this->recipient?->primaryEmailAddress?->address,
             'recipient preferred name' => fn () => $this->recipient?->getAttribute($this->recipient->displayPreferredNameKey()), /** @phpstan-ignore method.notFound */
-            'user first name' => fn () => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
+            'user first name' => fn (): ?string => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
             'user full name' => fn () => $this->user?->name,
             'user job title' => fn () => $this->user?->job_title,
             'user email' => fn () => $this->user?->email,
@@ -348,7 +348,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $tags = array_keys((new self())->getMergeData());
 
         if (! $withUserTags) {
-            $tags = array_values(array_filter($tags, fn (string $tag) => ! str_starts_with($tag, 'user ')));
+            $tags = array_values(array_filter($tags, fn (string $tag): bool => ! str_starts_with($tag, 'user ')));
         }
 
         return $tags;
@@ -373,7 +373,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             $builder->tap(new LicensedToEducatable('recipient'));
         });
     }

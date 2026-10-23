@@ -40,12 +40,14 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Actions\DispatchSesEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindTenantFromData;
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 // TODO: Cleanup Task (ses-sqs): delete this controller and its route once the HTTP SNS subscription is removed everywhere.
 class AwsSesInboundWebhookController extends Controller
 {
-    public function __invoke(Request $request, DispatchSesEvent $dispatchSesEvent)
+    public function __invoke(Request $request, DispatchSesEvent $dispatchSesEvent): ResponseFactory|Response
     {
         $snsMessageId = $request->json('MessageId');
 

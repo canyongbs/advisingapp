@@ -45,7 +45,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Support\Facades\Event;
 
-it('reuses the existing user message when retrying instead of duplicating it', function () {
+it('reuses the existing user message when retrying instead of duplicating it', function (): void {
     Event::fake([CustomerAdvisorMessageChunk::class]);
 
     $advisor = CustomerAdvisor::factory()->create(['model' => AiModel::Test]);

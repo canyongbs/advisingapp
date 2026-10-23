@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_message_files', function (Blueprint $table) {
+        Schema::table('ai_message_files', function (Blueprint $table): void {
             $table->foreignUuid('message_id')->nullable()->change();
         });
     }
 
     public function down(): void
     {
-        Schema::table('ai_message_files', function (Blueprint $table) {
+        Schema::table('ai_message_files', function (Blueprint $table): void {
             $table->foreignUuid('message_id')->nullable(false)->change();
         });
     }

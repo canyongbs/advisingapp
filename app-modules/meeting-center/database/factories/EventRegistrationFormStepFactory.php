@@ -57,7 +57,7 @@ class EventRegistrationFormStepFactory extends Factory
 
     public function configure(): EventRegistrationFormStepFactory|Factory
     {
-        return $this->afterCreating(function (EventRegistrationFormStep $eventRegistrationFormStep) {
+        return $this->afterCreating(function (EventRegistrationFormStep $eventRegistrationFormStep): void {
             $fields = $this->generateFields($eventRegistrationFormStep, rand(1, 3));
 
             $eventRegistrationFormStep->content = [
@@ -78,7 +78,7 @@ class EventRegistrationFormStepFactory extends Factory
                 'form_id' => $eventRegistrationFormStep->submissible->getKey(),
                 'step_id' => $eventRegistrationFormStep->getKey(),
             ])
-            ->map(fn (EventRegistrationFormField $field) => [
+            ->map(fn (EventRegistrationFormField $field): array => [
                 'type' => 'customBlock',
                 'attrs' => [
                     'config' => [

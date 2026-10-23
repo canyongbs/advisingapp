@@ -49,7 +49,7 @@ class GenerateSubmissibleEmbedCode
     public function handle(Submissible $submissible, bool $preview = false): string
     {
         return match ($submissible::class) {
-            Form::class => (function () use ($submissible, $preview) {
+            Form::class => (function () use ($submissible, $preview): string {
                 $manifestPath = Storage::disk('public')->get('widgets/forms/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {
@@ -73,7 +73,7 @@ class GenerateSubmissibleEmbedCode
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
-            Application::class => (function () use ($submissible, $preview) {
+            Application::class => (function () use ($submissible, $preview): string {
                 $manifestPath = Storage::disk('public')->get('widgets/applications/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {
@@ -97,7 +97,7 @@ class GenerateSubmissibleEmbedCode
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
-            Survey::class => (function () use ($submissible) {
+            Survey::class => (function () use ($submissible): string {
                 $manifestPath = Storage::disk('public')->get('widgets/surveys/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {
@@ -116,7 +116,7 @@ class GenerateSubmissibleEmbedCode
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
-            EventRegistrationForm::class => (function () use ($submissible) {
+            EventRegistrationForm::class => (function () use ($submissible): string {
                 /** @var EventRegistrationForm $submissible */
                 $manifestPath = Storage::disk('public')->get('widgets/event-registration/.vite/manifest.json');
 

@@ -42,12 +42,12 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('email_templates', function (Blueprint $table) {
+        Schema::table('email_templates', function (Blueprint $table): void {
             // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable()->change();
         });
 
-        Schema::table('sms_templates', function (Blueprint $table) {
+        Schema::table('sms_templates', function (Blueprint $table): void {
             // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable()->change();
         });
@@ -56,12 +56,12 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('email_templates', function (Blueprint $table) {
+        Schema::table('email_templates', function (Blueprint $table): void {
             // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable(false)->change();
         });
 
-        Schema::table('sms_templates', function (Blueprint $table) {
+        Schema::table('sms_templates', function (Blueprint $table): void {
             // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable(false)->change();
         });

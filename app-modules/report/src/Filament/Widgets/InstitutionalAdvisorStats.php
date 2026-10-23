@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Ai\Models\PromptUse;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -58,7 +59,7 @@ class InstitutionalAdvisorStats extends StatsOverviewReportWidget
             ? AiAssistantUse::query()
                 ->whereRelation('assistant', 'is_default', true)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -74,7 +75,7 @@ class InstitutionalAdvisorStats extends StatsOverviewReportWidget
             ? PromptUse::query()
                 ->whereRelation('prompt', 'is_smart', false)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -90,7 +91,7 @@ class InstitutionalAdvisorStats extends StatsOverviewReportWidget
             ? PromptUse::query()
                 ->whereRelation('prompt', 'is_smart', true)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()

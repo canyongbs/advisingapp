@@ -43,7 +43,7 @@ class CreateProspectsTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('prospects', function (Blueprint $table) {
+        Schema::create('prospects', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('status_id')->references('id')->on('prospect_statuses');

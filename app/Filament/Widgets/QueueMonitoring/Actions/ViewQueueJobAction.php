@@ -38,6 +38,7 @@ namespace App\Filament\Widgets\QueueMonitoring\Actions;
 
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Filament\Actions\Action;
+use Illuminate\Contracts\View\Factory;
 
 class ViewQueueJobAction
 {
@@ -49,7 +50,7 @@ class ViewQueueJobAction
         return Action::make('details')
             ->label('Details')
             ->modalHeading(fn (JobMonitor $record): string => $record->display_name ?? $record->job_class)
-            ->modalContent(fn (JobMonitor $record) => view('filament.widgets.queue-monitoring.queue-job-detail', [
+            ->modalContent(fn (JobMonitor $record): Factory|\Illuminate\Contracts\View\View => view('filament.widgets.queue-monitoring.queue-job-detail', [
                 'record' => $record,
                 'tenantName' => $tenantNames[$record->getAttribute('tenant_id')] ?? ($record->getAttribute('tenant_id') === null ? 'Landlord' : 'Deleted tenant'),
             ]))

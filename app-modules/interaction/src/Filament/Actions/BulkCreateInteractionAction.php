@@ -137,11 +137,11 @@ class BulkCreateInteractionAction
                     ])
                     ->columns(1),
             ])
-            ->action(function (Collection $records, array $data) {
+            ->action(function (Collection $records, array $data): void {
                 try {
                     DB::beginTransaction();
 
-                    $records->each(function ($record) use ($data) {
+                    $records->each(function ($record) use ($data): void {
                         throw_unless($record instanceof Student || $record instanceof Prospect, new Exception('Record must be of type student or prospect.'));
                         $record->interactions()->create([
                             ...$data,

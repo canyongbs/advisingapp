@@ -140,8 +140,8 @@ trait HasManyMorphedInteractionsTrait
                             ($this->getSettings()->is_driver_enabled && $record->driver?->name) ? '(' . $record->driver->name . ')' : null,
                         ])->filter()->implode(' ');
                     })
-                    ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
+                    ->icon(fn ($record): ?string => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn ($record): ?string => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('type.name')
                     ->label('Type')
                     ->toggleable()
@@ -179,7 +179,7 @@ trait HasManyMorphedInteractionsTrait
             ->headerActions([
                 CreateAction::make()
                     ->slideOver()
-                    ->steps(function () use ($ownerRecord) {
+                    ->steps(function () use ($ownerRecord): array {
                         return InteractionForm::getSteps($ownerRecord);
                     })
                     ->authorize(function () use ($ownerRecord) {
@@ -197,7 +197,7 @@ trait HasManyMorphedInteractionsTrait
                     ]),
                 EditAction::make()
                     ->slideOver()
-                    ->steps(function () use ($ownerRecord) {
+                    ->steps(function () use ($ownerRecord): array {
                         return InteractionForm::getSteps($ownerRecord);
                     })
                     ->modalHeading('Edit Interaction'),

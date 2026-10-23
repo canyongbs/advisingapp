@@ -43,7 +43,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-it('returns correct counts of emails and SMS sent/received with no filters', function () {
+it('returns correct counts of emails and SMS sent/received with no filters', function (): void {
     $studentOne = Student::factory()->create();
     $studentTwo = Student::factory()->create();
 
@@ -92,7 +92,7 @@ it('returns correct counts of emails and SMS sent/received with no filters', fun
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received within the given date range', function () {
+it('returns correct counts of emails and SMS sent/received within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -151,7 +151,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received based on group filters', function () {
+it('returns correct counts of emails and SMS sent/received based on group filters', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [

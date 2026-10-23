@@ -116,7 +116,7 @@ class SendEngagementAction extends Action
 
                 return null;
             })
-            ->mountUsing(function (array $arguments, Schema $schema) {
+            ->mountUsing(function (array $arguments, Schema $schema): void {
                 $this->dispatchLivewireEvent('engage-action-finished-loading');
 
                 $educatable = $this->getEducatable();
@@ -134,7 +134,7 @@ class SendEngagementAction extends Action
 
                     $schema->fill([
                         'channel' => $defaultChannel?->value,
-                        'recipient_route_id' => ($educatable && $defaultChannel)
+                        'recipient_route_id' => ($educatable && $defaultChannel instanceof NotificationChannel)
                             ? $educatable->getDefaultRouteForEngagementChannel($defaultChannel)
                             : null,
                         'signature' => auth()->user()->signature,
@@ -142,7 +142,7 @@ class SendEngagementAction extends Action
                 }
             })
             ->steps(fn (): array => $this->getEngagementSteps())
-            ->action(function (array $data, Schema $schema) {
+            ->action(function (array $data, Schema $schema): void {
                 $this->createEngagement($data, $schema);
             })
             ->modalSubmitActionLabel('Send')
@@ -203,8 +203,8 @@ class SendEngagementAction extends Action
     {
         return [
             EngagementRecipientStep::make(
-                getEducatable: fn () => $this->getEducatable(),
-                resolveEducatable: fn (Get $get) => $this->resolveEducatable($get),
+                getEducatable: fn (): Student|\AdvisingApp\Prospect\Models\Prospect|null => $this->getEducatable(),
+                resolveEducatable: fn (Get $get): Student|\AdvisingApp\Prospect\Models\Prospect|null => $this->resolveEducatable($get),
             ),
             Step::make('Message Details')
                 ->schema(function (Get $get): array {
@@ -231,9 +231,9 @@ class SendEngagementAction extends Action
                         ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                         ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                         ->json()
-                        ->required(fn (Get $get) => $get('is_signature_enabled'))
+                        ->required(fn (Get $get): mixed => $get('is_signature_enabled'))
                         ->fileAttachmentsDisk('s3-public')
-                        ->visible(fn (Get $get) => $get('is_signature_enabled'))
+                        ->visible(fn (Get $get): mixed => $get('is_signature_enabled'))
                         ->default(auth()->user()->signature)
                         ->saveRelationshipsUsing(null),
                 ])

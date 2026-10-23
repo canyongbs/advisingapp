@@ -44,7 +44,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('triggers a phone number lookup scan when messaging is turned on', function () {
+it('triggers a phone number lookup scan when messaging is turned on', function (): void {
     asSuperAdmin(User::factory()->create());
 
     // Messaging starts disabled, but the Telnyx credentials are already saved.
@@ -65,7 +65,7 @@ it('triggers a phone number lookup scan when messaging is turned on', function (
     Bus::assertDispatched(QueuePhoneNumberLookups::class);
 });
 
-it('does not trigger a scan when messaging was already enabled', function () {
+it('does not trigger a scan when messaging was already enabled', function (): void {
     asSuperAdmin(User::factory()->create());
 
     $settings = app(TwilioSettings::class);

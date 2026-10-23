@@ -38,7 +38,7 @@ use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `ExecuteWorkflowActionStepsJob` for each eligible tenant', function () {
+it('dispatches `ExecuteWorkflowActionStepsJob` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchExecuteWorkflowActionStepsForEachTenant())->handle();

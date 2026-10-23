@@ -68,7 +68,7 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::rename('qna_advisor_categories', 'customer_advisor_categories');
             Schema::rename('qna_advisor_files', 'customer_advisor_files');
             Schema::rename('qna_advisor_links', 'customer_advisor_links');
@@ -77,7 +77,7 @@ return new class () extends Migration {
             Schema::rename('qna_advisor_threads', 'customer_advisor_threads');
             Schema::rename('qna_advisors', 'customer_advisors');
 
-            Schema::table('customer_advisor_categories', function (Blueprint $table) {
+            Schema::table('customer_advisor_categories', function (Blueprint $table): void {
                 $table->renameColumn('qna_advisor_id', 'customer_advisor_id');
             });
 
@@ -89,7 +89,7 @@ return new class () extends Migration {
                 ->where('portal_type', 'qna_advisor_widget')
                 ->update(['portal_type' => 'customer_advisor_widget']);
 
-            collect($this->guards)->each(function (string $guard) {
+            collect($this->guards)->each(function (string $guard): void {
                 $this->renamePermissions($this->permissions, $guard);
             });
 
@@ -102,7 +102,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::rename('customer_advisor_categories', 'qna_advisor_categories');
             Schema::rename('customer_advisor_files', 'qna_advisor_files');
             Schema::rename('customer_advisor_links', 'qna_advisor_links');
@@ -111,7 +111,7 @@ return new class () extends Migration {
             Schema::rename('customer_advisor_threads', 'qna_advisor_threads');
             Schema::rename('customer_advisors', 'qna_advisors');
 
-            Schema::table('qna_advisor_categories', function (Blueprint $table) {
+            Schema::table('qna_advisor_categories', function (Blueprint $table): void {
                 $table->renameColumn('customer_advisor_id', 'qna_advisor_id');
             });
 
@@ -123,7 +123,7 @@ return new class () extends Migration {
                 ->where('portal_type', 'customer_advisor_widget')
                 ->update(['portal_type' => 'qna_advisor_widget']);
 
-            collect($this->guards)->each(function (string $guard) {
+            collect($this->guards)->each(function (string $guard): void {
                 $this->renamePermissions(array_flip($this->permissions), $guard);
             });
 

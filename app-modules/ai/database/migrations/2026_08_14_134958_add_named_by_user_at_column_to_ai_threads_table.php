@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_threads', function (Blueprint $table) {
+        Schema::table('ai_threads', function (Blueprint $table): void {
             $table->dateTime('named_by_user_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('ai_threads', function (Blueprint $table) {
+        Schema::table('ai_threads', function (Blueprint $table): void {
             $table->dropColumn('named_by_user_at');
         });
     }

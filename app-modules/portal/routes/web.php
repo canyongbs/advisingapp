@@ -47,14 +47,14 @@ Route::prefix('portals')
         'web',
         EnsureFrontendRequestsAreStateful::class,
     ])
-    ->group(function () {
+    ->group(function (): void {
         /**
          * Resource Hub Portal
          */
         Route::middleware([
             EnsureResourceHubPortalIsEnabled::class,
             EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
+        ])->group(function (): void {
             Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
                 ->middleware(['signed:relative', 'throttle:widget-authenticate', EnsureFrontendRequestsAreStateful::class])
                 ->name('resource-hub.authenticate');

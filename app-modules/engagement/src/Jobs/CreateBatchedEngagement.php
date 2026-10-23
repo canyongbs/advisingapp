@@ -104,7 +104,7 @@ class CreateBatchedEngagement implements ShouldQueue
             $engagement->dispatched_at = now();
         }
 
-        DB::transaction(function () use ($engagement) {
+        DB::transaction(function () use ($engagement): void {
             $engagement->save();
 
             if ($engagement->scheduled_at) {

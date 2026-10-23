@@ -49,7 +49,7 @@ class CreateStudent
 
     public function execute(CreateStudentData $data): Student
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data): Student {
             $student = new Student();
             $student->fill($data->except('emailAddresses')->toArray());
             $student->save();

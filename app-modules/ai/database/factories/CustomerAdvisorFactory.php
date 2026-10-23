@@ -58,7 +58,7 @@ class CustomerAdvisorFactory extends Factory
             'model' => $this->faker->randomElement(
                 array_filter(
                     AiModel::cases(),
-                    fn (AiModel $case) => $case !== AiModel::JinaDeepSearchV1
+                    fn (AiModel $case): bool => $case !== AiModel::JinaDeepSearchV1
                 )
             ),
         ];

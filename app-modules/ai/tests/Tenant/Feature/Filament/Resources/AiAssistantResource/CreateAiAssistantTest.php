@@ -65,7 +65,7 @@ $permissions = [
     'assistant_custom.create',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -74,7 +74,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses
     ));
@@ -83,7 +83,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('cannot render without proper features enabled', function () use ($licenses, $permissions) {
+it('cannot render without proper features enabled', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -93,7 +93,7 @@ it('cannot render without proper features enabled', function () use ($licenses, 
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -109,7 +109,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can create a record', function () use ($licenses, $permissions) {
+it('can create a record', function () use ($licenses, $permissions): void {
     Storage::fake('s3');
 
     actingAs(user(
@@ -152,7 +152,7 @@ it('can create a record', function () use ($licenses, $permissions) {
     );
 });
 
-it('validates the inputs', function (CreateAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions) {
+it('validates the inputs', function (CreateAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions): void {
     Storage::fake('s3');
 
     actingAs(user(
@@ -224,7 +224,7 @@ it('validates the inputs', function (CreateAiAssistantRequestFactory $data, arra
     ]
 );
 
-it('ai_assistant_confidential_users UserSelect does not show admin users in options by default on CreateAiAssistant', function () use ($licenses, $permissions) {
+it('ai_assistant_confidential_users UserSelect does not show admin users in options by default on CreateAiAssistant', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -246,7 +246,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
         });
 });
 
-it('ai_assistant_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on CreateAiAssistant', function () use ($licenses, $permissions) {
+it('ai_assistant_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on CreateAiAssistant', function () use ($licenses, $permissions): void {
     Config::set('app.filter_admins_from_selection', false);
 
     actingAs(user(

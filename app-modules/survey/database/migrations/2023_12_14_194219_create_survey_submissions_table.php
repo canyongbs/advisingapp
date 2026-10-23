@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('survey_submissions', function (Blueprint $table) {
+        Schema::create('survey_submissions', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('survey_id')->constrained('surveys')->cascadeOnDelete();

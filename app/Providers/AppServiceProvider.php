@@ -94,7 +94,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CreateXlsxFile::class, CreateXlsxFileOverride::class);
         $this->app->bind(ResetPassword::class, ResetPasswordNotification::class);
 
-        $this->app->scoped(StartSession::class, function ($app) {
+        $this->app->scoped(StartSession::class, function ($app): OverrideStartSession {
             return new OverrideStartSession($app->make(SessionManager::class), function () use ($app) {
                 return $app->make(CacheFactory::class);
             });
@@ -137,20 +137,20 @@ class AppServiceProvider extends ServiceProvider
             'tenant' => Tenant::class,
         ]);
 
-        Feature::resolveScopeUsing(fn ($driver) => null);
+        Feature::resolveScopeUsing(fn ($driver): null => null);
 
         if (config('app.force_https')) {
             URL::forceScheme('https');
             $this->app['request']->server->set('HTTPS', true);
         }
 
-        Queue::looping(function () {
+        Queue::looping(function (): void {
             configureScope(function (Scope $scope): void {
                 $scope->removeUser();
             });
         });
 
-        $this->app->singleton('current-commit', function ($app) {
+        $this->app->singleton('current-commit', function ($app): ?string {
             $commitProcess = Process::run('git log --pretty="%h" -n1 HEAD');
 
             if ($commitProcess->successful()) {
@@ -161,7 +161,7 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        $this->app->singleton('current-version', function ($app) {
+        $this->app->singleton('current-version', function ($app): ?string {
             $gitVersion = Process::run('git describe --tags $(git rev-list --tags --max-count=1)');
 
             if ($gitVersion->successful()) {

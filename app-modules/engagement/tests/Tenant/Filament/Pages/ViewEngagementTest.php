@@ -41,7 +41,7 @@ use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
 
-it('requires the unified inbox feature addon to access', function () {
+it('requires the unified inbox feature addon to access', function (): void {
     asSuperAdmin();
 
     $engagement = Engagement::factory()->create();

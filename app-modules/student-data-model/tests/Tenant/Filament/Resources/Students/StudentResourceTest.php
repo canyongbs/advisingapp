@@ -39,7 +39,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Tests\asSuperAdmin;
 
-it('excludes archived students from global search', function () {
+it('excludes archived students from global search', function (): void {
     asSuperAdmin();
 
     Student::factory()->state(['full_name' => 'Searchable Alpha'])->create();
@@ -53,8 +53,8 @@ it('excludes archived students from global search', function () {
         ->and($titles)->not->toContain('Searchable Beta');
 });
 
-describe('view url', function () {
-    it('links to an active student', function () {
+describe('view url', function (): void {
+    it('links to an active student', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -63,7 +63,7 @@ describe('view url', function () {
             ->toBe(StudentResource::getUrl('view', ['record' => $student]));
     });
 
-    it('does not link to an archived student', function () {
+    it('does not link to an archived student', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->dropColumn(['acad_plan', 'change_dt', 'declare_dt']);
         });
     }
 
     public function down(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->string('acad_plan')->nullable();
             $table->dateTimeTz('change_dt')->nullable();
             $table->dateTimeTz('declare_dt')->nullable();

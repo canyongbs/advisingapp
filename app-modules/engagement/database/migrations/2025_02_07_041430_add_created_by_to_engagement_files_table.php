@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('engagement_files', function (Blueprint $table) {
+        Schema::table('engagement_files', function (Blueprint $table): void {
             $table->nullableUuidMorphs('created_by');
         });
     }
 
     public function down(): void
     {
-        Schema::table('engagement_files', function (Blueprint $table) {
+        Schema::table('engagement_files', function (Blueprint $table): void {
             $table->dropMorphs('created_by');
         });
     }

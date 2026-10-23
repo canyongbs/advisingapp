@@ -43,7 +43,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
+        Schema::table('events', function (Blueprint $table): void {
             $table->foreignUuid('created_by_id')->constrained('users')->nullOnDelete();
             $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
         });
@@ -53,7 +53,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
+        Schema::table('events', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('created_by_id');
             $table->dropConstrainedForeignId('last_updated_by_id');
             $table->text('description')->nullable()->change();

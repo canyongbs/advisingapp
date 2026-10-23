@@ -38,13 +38,13 @@ use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use App\Features\TermAttributesFeature;
 use Filament\Actions\Imports\ImportColumn;
 
-describe('enrollment columns', function () {
-    it('includes the `sis_term_id` column', function () {
+describe('enrollment columns', function (): void {
+    it('includes the `sis_term_id` column', function (): void {
         expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))
             ->toContain('sis_term_id');
     });
 
-    it('does not include the `sis_term_id` column while `TermAttributesFeature` is inactive', function () {
+    it('does not include the `sis_term_id` column while `TermAttributesFeature` is inactive', function (): void {
         TermAttributesFeature::deactivate();
 
         expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))

@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('event_registration_form_steps', function (Blueprint $table) {
+        Schema::table('event_registration_form_steps', function (Blueprint $table): void {
             $table->text('description')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('event_registration_form_steps', function (Blueprint $table) {
+        Schema::table('event_registration_form_steps', function (Blueprint $table): void {
             $table->dropColumn('description');
         });
     }

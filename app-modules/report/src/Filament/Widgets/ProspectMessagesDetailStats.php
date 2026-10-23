@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -64,7 +65,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $emailsSentCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -72,7 +73,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Email)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('dispatched_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -87,7 +88,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $emailsReceivedCount = $shouldBypassCache
             ? EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -95,7 +96,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
                 })
                 ->where('type', EngagementResponseType::Email)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('sent_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -110,7 +111,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $smsSentCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -118,7 +119,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Sms)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('dispatched_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -133,7 +134,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $smsReceivedCount = $shouldBypassCache
             ? EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -141,7 +142,7 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
                 })
                 ->where('type', EngagementResponseType::Sms)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('sent_at', [$startDate, $endDate])
                 )
                 ->count()

@@ -36,7 +36,9 @@
 
 use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use Aws\Sns\MessageValidator;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\mock;
@@ -45,8 +47,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function Tests\loadFixtureFromModule;
 
-it('will abort the request if the request cannot be verified to have originated from AWS SNS', function () {
-    mock(MessageValidator::class, function (MockInterface $mock) {
+it('will abort the request if the request cannot be verified to have originated from AWS SNS', function (): void {
+    mock(MessageValidator::class, function (MockInterface $mock): void {
         $mock->shouldReceive('isValid')->andReturn(false);
     });
 
@@ -70,15 +72,15 @@ it('will abort the request if the request cannot be verified to have originated 
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('test');
     };
 
     (new VerifyAwsSnsRequest())->handle($request, $next);
 })->throws(exception: NotFoundHttpException::class);
 
-it('will process the request if the request can be verified to have originated from AWS SNS', function () {
-    mock(MessageValidator::class, function (MockInterface $mock) {
+it('will process the request if the request can be verified to have originated from AWS SNS', function (): void {
+    mock(MessageValidator::class, function (MockInterface $mock): void {
         $mock->shouldReceive('isValid')->andReturn(true);
     });
 
@@ -102,7 +104,7 @@ it('will process the request if the request can be verified to have originated f
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('test');
     };
 

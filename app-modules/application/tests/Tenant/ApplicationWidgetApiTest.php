@@ -56,7 +56,7 @@ use function Pest\Laravel\seed;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\asSuperAdmin;
 
-test('define is protected with proper feature access control', function () {
+test('define is protected with proper feature access control', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -89,7 +89,7 @@ test('define is protected with proper feature access control', function () {
         ->assertSuccessful();
 });
 
-test('request-authentication is protected with proper feature access control', function () {
+test('request-authentication is protected with proper feature access control', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -124,7 +124,7 @@ test('request-authentication is protected with proper feature access control', f
         ->assertSuccessful();
 });
 
-test('authenticate is protected with proper feature access control', function () {
+test('authenticate is protected with proper feature access control', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -164,7 +164,7 @@ test('authenticate is protected with proper feature access control', function ()
         ->assertSuccessful();
 });
 
-test('submit is protected with proper feature access control', function () {
+test('submit is protected with proper feature access control', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -207,7 +207,7 @@ test('submit is protected with proper feature access control', function () {
         ->assertSuccessful();
 });
 
-test('preview endpoint returns a populated schema for an application', function () {
+test('preview endpoint returns a populated schema for an application', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
@@ -228,7 +228,7 @@ test('preview endpoint returns a populated schema for an application', function 
     expect($response->json('schema.children'))->toBeArray()->not->toBeEmpty();
 });
 
-test('preview renders the application fields', function () {
+test('preview renders the application fields', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
@@ -282,7 +282,7 @@ test('preview renders the application fields', function () {
         ->assertJsonFragment(['label' => 'Tell us about yourself']);
 });
 
-test('authenticate locks out after too many invalid code attempts', function () {
+test('authenticate locks out after too many invalid code attempts', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -320,7 +320,7 @@ test('authenticate locks out after too many invalid code attempts', function () 
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
 });
 
-test('authenticate resets the attempt counter after a successful authentication', function () {
+test('authenticate resets the attempt counter after a successful authentication', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -358,7 +358,7 @@ test('authenticate resets the attempt counter after a successful authentication'
         ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
 });
 
-test('request-authentication throttles repeated code requests for the same target', function () {
+test('request-authentication throttles repeated code requests for the same target', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -384,7 +384,7 @@ test('request-authentication throttles repeated code requests for the same targe
         ->assertJsonValidationErrors(['email']);
 });
 
-test('request-authentication invalidates prior codes for the same target', function () {
+test('request-authentication invalidates prior codes for the same target', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -426,7 +426,7 @@ test('request-authentication invalidates prior codes for the same target', funct
     expect($records->first()->id)->not->toBe($firstId);
 });
 
-test('completing a requested submission fires ApplicationSubmissionCreated and reuses the pending record', function () {
+test('completing a requested submission fires ApplicationSubmissionCreated and reuses the pending record', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);

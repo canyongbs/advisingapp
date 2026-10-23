@@ -45,7 +45,7 @@ trait PerformsFeatureChecks
     public function hasFeatures(): FeatureAccessResponse | null | bool
     {
         return Gate::check(
-            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+            collect($this->requiredFeatures())->map(fn (Feature $feature): string => $feature->getGateName())
         )
             ? null
             : FeatureAccessResponse::deny();

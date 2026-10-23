@@ -95,7 +95,7 @@ class AutoImportEnrollmentSemesters implements ShouldQueue, TenantAware
             return;
         }
 
-        DB::transaction(function () use ($newSemesterNames) {
+        DB::transaction(function () use ($newSemesterNames): void {
             $newCount = $newSemesterNames->count();
 
             EnrollmentSemester::query()

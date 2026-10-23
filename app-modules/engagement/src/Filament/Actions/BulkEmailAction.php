@@ -63,7 +63,7 @@ class BulkEmailAction
             ->icon('heroicon-o-envelope')
             ->slideOver()
             ->modalHeading('Send Bulk Email')
-            ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to send email.")
+            ->modalDescription(fn (Collection $records): string => "You have selected {$records->count()} {$context} to send email.")
             ->model(EngagementBatch::class)
             ->steps([
                 Step::make('Engagement Details')
@@ -83,11 +83,11 @@ class BulkEmailAction
                         EngagementScheduledAtDateTimePicker::make(),
                     ]),
             ])
-            ->action(function (Collection $records, array $data, Schema $schema) {
+            ->action(function (Collection $records, array $data, Schema $schema): void {
                 /** @var Collection<int, CanBeNotified> $records */
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
-                    recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveEmail()),
+                    recipient: $records->filter(fn (CanBeNotified $record): bool => $record->canReceiveEmail()),
                     channel: NotificationChannel::Email,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,

@@ -73,7 +73,7 @@ class OutlookCalendarManager implements CalendarInterface
             ->execute();
 
         return collect($calendars)->filter(fn (MicrosoftGraphCalendar $item) => $item->getCanEdit())
-            ->mapWithKeys(fn (MicrosoftGraphCalendar $item) => [$item->getId() => $item->getName()])
+            ->mapWithKeys(fn (MicrosoftGraphCalendar $item): array => [$item->getId() => $item->getName()])
             ->toArray();
     }
 
@@ -251,7 +251,7 @@ class OutlookCalendarManager implements CalendarInterface
             ->keyBy('provider_id');
 
         $providerEvents
-            ->each(function (Event $providerEvent) use ($calendar, $existingEvents) {
+            ->each(function (Event $providerEvent) use ($calendar, $existingEvents): void {
                 $userEvent = $existingEvents->get($providerEvent->getId()) ?? $calendar->events()->make();
 
                 $userEvent->fill([
@@ -276,7 +276,7 @@ class OutlookCalendarManager implements CalendarInterface
 
         $calendar->events()
             ->whereNull('provider_id')
-            ->each(fn ($event) => $this->createEvent($event));
+            ->each(fn (CalendarEvent $event) => $this->createEvent($event));
 
         // Only delete orphaned events within the synced date range
         $calendar->events()
@@ -381,7 +381,7 @@ class OutlookCalendarManager implements CalendarInterface
             )
             ->setAttendees(
                 collect($event->attendees)
-                    ->reject(fn ($attendee) => $attendee === $event->calendar->provider_email)
+                    ->reject(fn ($attendee): bool => $attendee === $event->calendar->provider_email)
                     ->map(
                         fn ($attendee) => (new Attendee())
                             ->setEmailAddress(

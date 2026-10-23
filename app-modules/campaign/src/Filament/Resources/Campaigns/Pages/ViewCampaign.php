@@ -63,7 +63,7 @@ class ViewCampaign extends ViewRecord
                             ->boolean(),
                         IconEntry::make('execution_status')
                             ->label('Has Been Executed?')
-                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
+                            ->state(fn (Campaign $record): bool => $record->hasBeenExecuted())
                             ->boolean(),
                         TextEntry::make('createdBy.name')
                             ->label('Created By'),
@@ -76,7 +76,7 @@ class ViewCampaign extends ViewRecord
         return [
             ArchiveCampaignAction::make(),
             EditAction::make()
-                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
+                ->hidden(fn (Campaign $record): bool => $record->hasBeenExecuted() === true),
         ];
     }
 }

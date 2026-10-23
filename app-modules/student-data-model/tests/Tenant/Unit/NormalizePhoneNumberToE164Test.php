@@ -36,22 +36,22 @@
 
 use AdvisingApp\StudentDataModel\Actions\NormalizePhoneNumberToE164;
 
-it('returns an already-E.164 number unchanged', function () {
+it('returns an already-E.164 number unchanged', function (): void {
     expect((new NormalizePhoneNumberToE164())('+16502530000'))->toBe('+16502530000');
 });
 
-it('strips formatting characters from an E.164 number', function () {
+it('strips formatting characters from an E.164 number', function (): void {
     expect((new NormalizePhoneNumberToE164())('+1 (650) 253-0000'))->toBe('+16502530000');
 });
 
-it('throws when the number has no country code', function () {
+it('throws when the number has no country code', function (): void {
     (new NormalizePhoneNumberToE164())('6502530000');
 })->throws(InvalidArgumentException::class);
 
-it('throws when the number is not a valid phone number', function () {
+it('throws when the number is not a valid phone number', function (): void {
     (new NormalizePhoneNumberToE164())('+1123');
 })->throws(InvalidArgumentException::class);
 
-it('throws when the value is not a phone number at all', function () {
+it('throws when the value is not a phone number at all', function (): void {
     (new NormalizePhoneNumberToE164())('not a phone number');
 })->throws(InvalidArgumentException::class);

@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
 
-it('returns correct monthly institutional advisor usage data within the given date range', function () {
+it('returns correct monthly institutional advisor usage data within the given date range', function (): void {
     $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
@@ -128,7 +128,7 @@ it('returns correct monthly institutional advisor usage data within the given da
         ->and(array_sum($data['datasets'][2]['data']))->toBe(11); // 4 + 7 smart prompt uses
 });
 
-it('returns correct monthly institutional advisor usage data without date filters', function () {
+it('returns correct monthly institutional advisor usage data without date filters', function (): void {
     // Create institutional (default) advisor
     $institutionalAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
@@ -180,7 +180,7 @@ it('returns correct monthly institutional advisor usage data without date filter
         ->and(array_sum($data['datasets'][2]['data']))->toBe(5); // Smart prompt uses
 });
 
-it('returns empty data when no institutional advisor usage exists', function () {
+it('returns empty data when no institutional advisor usage exists', function (): void {
     // Create only employee advisor
     $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
 
@@ -210,7 +210,7 @@ it('returns empty data when no institutional advisor usage exists', function () 
         ->and(array_sum($data['datasets'][2]['data']))->toBe(0);
 });
 
-it('separates smart and custom prompt usage correctly', function () {
+it('separates smart and custom prompt usage correctly', function (): void {
     // Create prompts
     $smartPrompt1 = Prompt::factory()->create(['is_smart' => true]);
     $smartPrompt2 = Prompt::factory()->create(['is_smart' => true]);

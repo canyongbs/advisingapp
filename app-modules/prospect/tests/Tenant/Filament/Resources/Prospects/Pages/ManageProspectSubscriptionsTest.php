@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('serves the followers page at the followers URL', function () {
+it('serves the followers page at the followers URL', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();

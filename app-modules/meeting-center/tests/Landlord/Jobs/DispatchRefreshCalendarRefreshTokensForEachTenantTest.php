@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTe
 use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshTokens;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `RefreshCalendarRefreshTokens` for each eligible tenant', function () {
+it('dispatches `RefreshCalendarRefreshTokens` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchRefreshCalendarRefreshTokensForEachTenant())->handle();

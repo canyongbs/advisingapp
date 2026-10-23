@@ -42,7 +42,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::create('ai_assistants', function (Blueprint $table) {
+        Schema::create('ai_assistants', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('assistant_id')->nullable();
 
@@ -56,7 +56,7 @@ return new class () extends Migration {
             $table->softDeletes();
         });
 
-        Schema::table('assistant_chats', function (Blueprint $table) {
+        Schema::table('assistant_chats', function (Blueprint $table): void {
             $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
         });
     }
@@ -64,7 +64,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
+        Schema::table('assistant_chats', function (Blueprint $table): void {
             $table->dropColumn('ai_assistant_id');
         });
 

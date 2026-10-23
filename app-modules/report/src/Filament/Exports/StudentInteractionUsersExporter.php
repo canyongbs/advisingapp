@@ -86,7 +86,7 @@ class StudentInteractionUsersExporter extends Exporter
                 }),
             ExportColumn::make('total_interactions_percent')
                 ->label('Total %')
-                ->getStateUsing(function (User $record) {
+                ->getStateUsing(function (User $record): string {
                     $allInteractions = Interaction::whereHasMorph('interactable', Student::class)->count();
                     $userInteractionsCount = $record
                         ->interactions()
@@ -103,12 +103,12 @@ class StudentInteractionUsersExporter extends Exporter
                 }),
             ExportColumn::make('avg_interaction_duration')
                 ->label('Avg. Duration')
-                ->getStateUsing(function (User $record) {
+                ->getStateUsing(function (User $record): ?string {
                     $durations = $record
                         ->interactions()
                         ->whereHasMorph('interactable', Student::class)
                         ->get()
-                        ->map(function (Interaction $interaction) {
+                        ->map(function (Interaction $interaction): float {
                             return Carbon::parse($interaction->end_datetime)
                                 ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
                         })->filter();

@@ -82,7 +82,7 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
                     ->with([/** @phpstan-ignore argument.type */
                         'latestEmailMessage',
                         'latestSmsMessage',
-                        'recipient' => function (MorphTo $morphTo) {
+                        'recipient' => function (MorphTo $morphTo): void {
                             $morphTo->morphWith([
                                 Student::class => ['emailAddresses', 'phoneNumbers'],
                                 Prospect::class => ['emailAddresses', 'phoneNumbers'],
@@ -98,7 +98,7 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
                     ->badge(),
                 TextColumn::make('status')
                     ->badge()
-                    ->state(fn (Engagement $record) => EngagementDisplayStatus::getStatus($record)),
+                    ->state(fn (Engagement $record): EngagementDisplayStatus => EngagementDisplayStatus::getStatus($record)),
                 TextColumn::make('user.name')
                     ->label('From'),
                 TextColumn::make('recipient.full_name')
@@ -167,16 +167,16 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
                 SelectFilter::make('status')
                     ->multiple()
                     ->label('Status')
-                    ->options(collect(EngagementDisplayStatus::cases())->mapWithKeys(fn ($status) => [$status->name => $status->getLabel()]))
+                    ->options(collect(EngagementDisplayStatus::cases())->mapWithKeys(fn ($status): array => [$status->name => $status->getLabel()]))
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['values'])) {
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): Builder {
                             foreach ($data['values'] as $status) {
                                 $status = constant(EngagementDisplayStatus::class . '::' . $status);
-                                $query->orWhere(function (Builder $subQuery) use ($status) {
+                                $query->orWhere(function (Builder $subQuery) use ($status): void {
                                     if ($status === EngagementDisplayStatus::Scheduled) {
                                         $subQuery->whereNotNull('scheduled_at');
 
@@ -184,9 +184,9 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
                                     }
 
                                     // For Email channel
-                                    $subQuery->where(function (Builder $channelQuery) use ($status) {
+                                    $subQuery->where(function (Builder $channelQuery) use ($status): void {
                                         $channelQuery->where('channel', NotificationChannel::Email)
-                                            ->whereHas('latestEmailMessage.events', function (Builder $query) use ($status) {
+                                            ->whereHas('latestEmailMessage.events', function (Builder $query) use ($status): void {
                                                 match ($status) {
                                                     EngagementDisplayStatus::Pending => $query->where('type', EmailMessageEventType::Dispatched),
                                                     EngagementDisplayStatus::Sent => $query->where('type', EmailMessageEventType::Send),
@@ -205,7 +205,7 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
 
                                         // For SMS channel
                                         $channelQuery->orWhere('channel', NotificationChannel::Sms)
-                                            ->whereHas('latestSmsMessage.events', function (Builder $query) use ($status) {
+                                            ->whereHas('latestSmsMessage.events', function (Builder $query) use ($status): void {
                                                 match ($status) {
                                                     EngagementDisplayStatus::Pending => $query->where('type', SmsMessageEventType::Dispatched),
                                                     EngagementDisplayStatus::Sent => $query->where('type', SmsMessageEventType::Sent),

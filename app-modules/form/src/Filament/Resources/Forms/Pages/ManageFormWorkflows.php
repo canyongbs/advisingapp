@@ -80,7 +80,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
                 EditAction::make()
                     ->url(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
-                    ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
+                    ->modalHeading(fn (Workflow $record): string => 'Delete ' . $record->name),
             ])
             ->recordUrl(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record]));
     }
@@ -94,7 +94,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
             Action::make('create')
                 ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
                 ->label('Create New Workflow')
-                ->action(function () {
+                ->action(function (): void {
                     try {
                         DB::beginTransaction();
 

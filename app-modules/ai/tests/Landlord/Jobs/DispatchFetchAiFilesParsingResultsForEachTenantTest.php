@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Jobs\DispatchFetchAiFilesParsingResultsForEachTenant;
 use AdvisingApp\Ai\Jobs\FetchAiFilesParsingResults;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `FetchAiFilesParsingResults` for each eligible tenant', function () {
+it('dispatches `FetchAiFilesParsingResults` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchFetchAiFilesParsingResultsForEachTenant())->handle();

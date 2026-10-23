@@ -47,7 +47,7 @@ Route::prefix('landlord/api')
             ->after('https://')
             ->rtrim('/'),
     )
-    ->group(function () {
+    ->group(function (): void {
         Route::post('/inbound/webhook/awsses', AwsSesInboundWebhookController::class)
             ->middleware(
                 [

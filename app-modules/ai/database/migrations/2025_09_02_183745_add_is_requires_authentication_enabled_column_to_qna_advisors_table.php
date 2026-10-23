@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('qna_advisors', function (Blueprint $table): void {
                 $table->boolean('is_requires_authentication_enabled')->default(false);
             });
         });
@@ -51,8 +51,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('qna_advisors', function (Blueprint $table): void {
                 $table->dropColumn('is_requires_authentication_enabled');
             });
         });

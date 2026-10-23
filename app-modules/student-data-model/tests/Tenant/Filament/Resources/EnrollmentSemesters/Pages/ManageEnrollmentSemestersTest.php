@@ -48,7 +48,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-test('the page is gated with proper access control', function () {
+test('the page is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -64,7 +64,7 @@ test('the page is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('settings.view-any');
@@ -80,7 +80,7 @@ test('the delete bulk action is gated by the delete permission', function () {
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-test('it enables the sync button when appropriate', function () {
+test('it enables the sync button when appropriate', function (): void {
     asSuperAdmin();
 
     Livewire::test(ManageEnrollmentSemesters::class)
@@ -88,18 +88,18 @@ test('it enables the sync button when appropriate', function () {
 
     $count = random_int(1, 10);
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
+    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
 
     Livewire::test(ManageEnrollmentSemesters::class)
         ->assertActionEnabled('syncAll');
 });
 
-test('it can successfully sync all semesters', function () {
+test('it can successfully sync all semesters', function (): void {
     asSuperAdmin();
 
     $count = random_int(1, 10);
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
+    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
 
     assertDatabaseCount(EnrollmentSemester::class, 0);
 
@@ -111,14 +111,14 @@ test('it can successfully sync all semesters', function () {
     assertDatabaseCount(EnrollmentSemester::class, $count);
 });
 
-test('it will add new semesters without removing old ones', function () {
+test('it will add new semesters without removing old ones', function (): void {
     asSuperAdmin();
 
     $count = random_int(1, 10);
 
     EnrollmentSemester::factory(3)->create();
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
+    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
 
     Livewire::test(ManageEnrollmentSemesters::class)
         ->callAction('syncAll')
@@ -128,7 +128,7 @@ test('it will add new semesters without removing old ones', function () {
     assertDatabaseCount(EnrollmentSemester::class, $count + 3);
 });
 
-test('it will only add unique semesters', function () {
+test('it will only add unique semesters', function (): void {
     asSuperAdmin();
 
     Enrollment::factory(2, ['semester_name' => 'test semester'])->create();
@@ -141,7 +141,7 @@ test('it will only add unique semesters', function () {
     assertDatabaseCount(EnrollmentSemester::class, 1);
 });
 
-test('it will not add semesters that are already ordered', function () {
+test('it will not add semesters that are already ordered', function (): void {
     asSuperAdmin();
 
     EnrollmentSemester::factory(['name' => 'test semester'])->create();
@@ -161,7 +161,7 @@ test('it will not add semesters that are already ordered', function () {
     assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester 2']);
 });
 
-test('the mapping column shows mapped when an enrollment with a matching semester name exists', function () {
+test('the mapping column shows mapped when an enrollment with a matching semester name exists', function (): void {
     asSuperAdmin();
 
     $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
@@ -172,7 +172,7 @@ test('the mapping column shows mapped when an enrollment with a matching semeste
         ->assertTableColumnStateSet('is_mapped', true, record: $semester);
 });
 
-test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function () {
+test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function (): void {
     asSuperAdmin();
 
     $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
@@ -181,7 +181,7 @@ test('the mapping column shows unmapped when no enrollment with a matching semes
         ->assertTableColumnStateSet('is_mapped', false, record: $semester);
 });
 
-test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function () {
+test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function (): void {
     asSuperAdmin();
 
     $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();

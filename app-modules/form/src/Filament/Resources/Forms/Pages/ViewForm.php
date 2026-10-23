@@ -169,10 +169,10 @@ class ViewForm extends ViewRecord
             Action::make('preview')
                 ->label('Preview')
                 ->icon('heroicon-o-eye')
-                ->url(fn (Form $form) => route('forms.preview', $form))
+                ->url(fn (Form $form): string => route('forms.preview', $form))
                 ->openUrlInNewTab(),
             Action::make('view')
-                ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
+                ->url(fn (Form $form): string => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -201,7 +201,7 @@ class ViewForm extends ViewRecord
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Form $form) => ! $form->embed_enabled),
+                ->hidden(fn (Form $form): bool => ! $form->embed_enabled),
             ArchiveAction::make(),
         ];
     }

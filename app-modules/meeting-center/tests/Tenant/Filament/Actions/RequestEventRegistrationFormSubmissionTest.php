@@ -51,7 +51,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('requires event_id to submit the request', function () {
+it('requires event_id to submit the request', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -68,7 +68,7 @@ it('requires event_id to submit the request', function () {
         ->assertHasTableActionErrors(['event_id' => 'required']);
 });
 
-it('can request an event registration via email', function () {
+it('can request an event registration via email', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -104,7 +104,7 @@ it('can request an event registration via email', function () {
         ->and($submission->canceled_at)->toBeNull();
 });
 
-it('allows request_note to be optional', function () {
+it('allows request_note to be optional', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -130,7 +130,7 @@ it('allows request_note to be optional', function () {
     expect($attendee->submissions()->first()->request_note)->toBeNull();
 });
 
-it('reuses an existing attendee and requested submission for the same event instead of creating new ones', function () {
+it('reuses an existing attendee and requested submission for the same event instead of creating new ones', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -179,7 +179,7 @@ it('reuses an existing attendee and requested submission for the same event inst
         ->and($submission->requester_id)->toBe($user->id);
 });
 
-it('creates a new submission when the existing one is already submitted', function () {
+it('creates a new submission when the existing one is already submitted', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -213,7 +213,7 @@ it('creates a new submission when the existing one is already submitted', functi
     expect($attendee->submissions()->count())->toBe(2);
 });
 
-it('associates the current authenticated user as the requester', function () {
+it('associates the current authenticated user as the requester', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -242,7 +242,7 @@ it('associates the current authenticated user as the requester', function () {
         ->and($submission->requester->is($user))->toBeTrue();
 });
 
-it('dispatches the delivery job after creating the submission', function () {
+it('dispatches the delivery job after creating the submission', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -262,7 +262,7 @@ it('dispatches the delivery job after creating the submission', function () {
     Queue::assertPushed(DeliverEventRegistrationFormSubmissionRequestByEmail::class);
 });
 
-it('sends a success notification after the request is sent', function () {
+it('sends a success notification after the request is sent', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -281,7 +281,7 @@ it('sends a success notification after the request is sent', function () {
         ->assertNotified('Event registration request sent');
 });
 
-it('hides the request action from a user without the event_attendee.create ability', function () {
+it('hides the request action from a user without the event_attendee.create ability', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -298,7 +298,7 @@ it('hides the request action from a user without the event_attendee.create abili
         ->assertTableActionHidden('request');
 });
 
-it('allows a user with the event_attendee.create ability to request an event registration form submission', function () {
+it('allows a user with the event_attendee.create ability to request an event registration form submission', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();

@@ -250,7 +250,7 @@ class SendAdvisorMessage implements ShouldQueue
             rateLimitResetsAt: $finishChunk->rateLimitResetsAt,
         ));
 
-        DB::transaction(function () use ($message, $response) {
+        DB::transaction(function () use ($message, $response): void {
             $response->save();
             $this->thread->touch();
 
@@ -282,6 +282,6 @@ class SendAdvisorMessage implements ShouldQueue
             error: 'An error happened when sending your message.',
         ));
 
-        $exception && report($exception);
+        $exception instanceof Throwable && report($exception);
     }
 }

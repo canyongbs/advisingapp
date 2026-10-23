@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('qna_advisors', function (Blueprint $table) {
+        Schema::table('qna_advisors', function (Blueprint $table): void {
             $table->string('default_theme')->default('light');
         });
     }
 
     public function down(): void
     {
-        Schema::table('qna_advisors', function (Blueprint $table) {
+        Schema::table('qna_advisors', function (Blueprint $table): void {
             $table->dropColumn('default_theme');
         });
     }

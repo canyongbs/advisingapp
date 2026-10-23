@@ -86,12 +86,12 @@ $createSubmissionFieldWithMedia = function (string $fileName, string $collection
     return [$fieldWithPivot, $media];
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     Storage::fake('s3');
 });
 
-describe('SubmissionMediaDownloadController', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName) {
-    it('redirects to a temporary url whose content disposition is ASCII safe for a non-Latin-1 filename', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName) {
+describe('SubmissionMediaDownloadController', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
+    it('redirects to a temporary url whose content disposition is ASCII safe for a non-Latin-1 filename', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
         $captured = null;
 
         $disk = Storage::disk('s3');
@@ -120,7 +120,7 @@ describe('SubmissionMediaDownloadController', function () use ($createSubmission
             ->and($captured)->toContain("filename*=utf-8''");
     });
 
-    it('aborts unsigned requests', function () use ($createSubmissionFieldWithMedia) {
+    it('aborts unsigned requests', function () use ($createSubmissionFieldWithMedia): void {
         asSuperAdmin();
 
         [, $media] = $createSubmissionFieldWithMedia('report.png');
@@ -129,7 +129,7 @@ describe('SubmissionMediaDownloadController', function () use ($createSubmission
             ->assertForbidden();
     });
 
-    it('redirects a guest to login even with a valid signature', function () use ($createSubmissionFieldWithMedia) {
+    it('redirects a guest to login even with a valid signature', function () use ($createSubmissionFieldWithMedia): void {
         $downloaded = false;
 
         Storage::disk('s3')->buildTemporaryUrlsUsing(function () use (&$downloaded): string {
@@ -153,7 +153,7 @@ describe('SubmissionMediaDownloadController', function () use ($createSubmission
         expect($downloaded)->toBeFalse();
     });
 
-    it('aborts when the media is not in the files collection', function () use ($createSubmissionFieldWithMedia) {
+    it('aborts when the media is not in the files collection', function () use ($createSubmissionFieldWithMedia): void {
         Storage::disk('s3')->buildTemporaryUrlsUsing(fn (): string => 'https://s3.test/x');
 
         asSuperAdmin();
@@ -170,8 +170,8 @@ describe('SubmissionMediaDownloadController', function () use ($createSubmission
     });
 });
 
-describe('upload block submission state', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName) {
-    it('builds a sanitizer-safe signed download route instead of a raw storage url', function (string $block) use ($createSubmissionFieldWithMedia, $nonLatin1FileName) {
+describe('upload block submission state', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
+    it('builds a sanitizer-safe signed download route instead of a raw storage url', function (string $block) use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
         [$field, $media] = $createSubmissionFieldWithMedia($nonLatin1FileName());
 
         $state = $block::getSubmissionState($field, null);
@@ -199,7 +199,7 @@ describe('upload block submission state', function () use ($createSubmissionFiel
         'EducatableUploadFormFieldBlock' => [EducatableUploadFormFieldBlock::class],
     ]);
 
-    it('strips the raw storage url that the signed route replaces', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName) {
+    it('strips the raw storage url that the signed route replaces', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
         [, $media] = $createSubmissionFieldWithMedia($nonLatin1FileName());
 
         // Derive the URL from the real object key rather than building one by hand: the media

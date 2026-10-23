@@ -69,7 +69,7 @@ class ListPrompts extends ListRecords
                     ->searchable(),
                 TextColumn::make('type.title')
                     ->sortable()
-                    ->url(fn (Prompt $record) => PromptTypeResource::getUrl('view', ['record' => $record->type])),
+                    ->url(fn (Prompt $record): string => PromptTypeResource::getUrl('view', ['record' => $record->type])),
                 TextColumn::make('is_smart')
                     ->label('Kind')
                     ->state(fn (Prompt $record): string => $record->is_smart ? 'Smart' : 'Custom'),

@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
 
-it('returns correct total institutional advisor stats within the given date range', function () {
+it('returns correct total institutional advisor stats within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -129,7 +129,7 @@ it('returns correct total institutional advisor stats within the given date rang
         ->and($stats[2]->getValue())->toEqual($count * 2); // Smart prompt uses within date range
 });
 
-it('returns correct total institutional advisor stats without date filters', function () {
+it('returns correct total institutional advisor stats without date filters', function (): void {
     $count = random_int(1, 5);
 
     // Create institutional (default) advisor
@@ -177,7 +177,7 @@ it('returns correct total institutional advisor stats without date filters', fun
         ->and($stats[2]->getValue())->toEqual($count * 3); // All smart prompt uses
 });
 
-it('returns zero stats when no institutional advisor usage exists', function () {
+it('returns zero stats when no institutional advisor usage exists', function (): void {
     // Create only employee advisor
     $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
 
@@ -205,7 +205,7 @@ it('returns zero stats when no institutional advisor usage exists', function () 
         ->and($stats[2]->getValue())->toEqual('0');
 });
 
-it('correctly separates smart and custom prompt stats', function () {
+it('correctly separates smart and custom prompt stats', function (): void {
     // Create smart and custom prompts
     $smartPrompt1 = Prompt::factory()->create(['is_smart' => true]);
     $smartPrompt2 = Prompt::factory()->create(['is_smart' => true]);
@@ -250,7 +250,7 @@ it('correctly separates smart and custom prompt stats', function () {
         ->and($stats[2]->getValue())->toEqual(5); // 3 + 2 smart prompt uses
 });
 
-it('handles null dates correctly for caching', function () {
+it('handles null dates correctly for caching', function (): void {
     // Create institutional advisor and prompts
     $institutionalAdvisor = AiAssistant::factory()->create(['is_default' => true]);
     $smartPrompt = Prompt::factory()->create(['is_smart' => true]);

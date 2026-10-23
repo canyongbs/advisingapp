@@ -51,7 +51,7 @@ class ChannelManager extends BaseChannelManager
      *
      * @return void
      */
-    public function send($notifiables, $notification)
+    public function send($notifiables, $notification): void
     {
         if (property_exists($notification, 'queue')) {
             $notification->queue ??= config('queue.outbound_communication_queue');

@@ -74,9 +74,15 @@ class AiServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AiPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
 
-        $this->booting(function () {
+            $panel->plugin(new AiPlugin());
+        });
+
+        $this->booting(function (): void {
             foreach ($this->listen as $event => $listeners) {
                 foreach (array_unique($listeners, SORT_REGULAR) as $listener) {
                     Event::listen($event, $listener);

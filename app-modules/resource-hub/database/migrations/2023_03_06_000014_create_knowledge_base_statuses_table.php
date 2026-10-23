@@ -43,7 +43,7 @@ class CreateKnowledgeBaseStatusesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('knowledge_base_statuses', function (Blueprint $table) {
+        Schema::create('knowledge_base_statuses', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name');

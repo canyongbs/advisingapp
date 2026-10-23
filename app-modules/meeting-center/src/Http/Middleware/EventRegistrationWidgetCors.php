@@ -66,7 +66,7 @@ class EventRegistrationWidgetCors
 
         // Check if the requesting host is allowed in ANY Event's EventRegistrationForm
         $isAllowed = Event::query()
-            ->whereHas('eventRegistrationForm', function (Builder $query) use ($requestingUrlHost) {
+            ->whereHas('eventRegistrationForm', function (Builder $query) use ($requestingUrlHost): void {
                 $query->whereJsonContains('allowed_domains', $requestingUrlHost);
             })
             ->exists();

@@ -55,7 +55,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Tests\asSuperAdmin;
 
-test('Create Customer Advisor is gated with proper access control', function () {
+test('Create Customer Advisor is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -80,7 +80,7 @@ test('Create Customer Advisor is gated with proper access control', function () 
         )->assertSuccessful();
 });
 
-test('can create Customer Advisor', function () {
+test('can create Customer Advisor', function (): void {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);
@@ -124,7 +124,7 @@ test('can create Customer Advisor', function () {
     );
 });
 
-test('Create Customer Advisor validates the inputs', function (CustomerAdvisorRequestFactory $data, array $errors) {
+test('Create Customer Advisor validates the inputs', function (CustomerAdvisorRequestFactory $data, array $errors): void {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);

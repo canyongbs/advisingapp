@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
 
-it('completes the last response', function () {
+it('completes the last response', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -130,7 +130,7 @@ it('completes the last response', function () {
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('strips the appended ... when completing the last response', function () {
+it('strips the appended ... when completing the last response', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -184,7 +184,7 @@ it('strips the appended ... when completing the last response', function () {
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('throws an exception if the latest response does not exist', function () {
+it('throws an exception if the latest response does not exist', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([

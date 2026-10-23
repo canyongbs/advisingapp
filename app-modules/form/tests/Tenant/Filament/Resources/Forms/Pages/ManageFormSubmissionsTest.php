@@ -53,7 +53,7 @@ $manageFormSubmissionsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-test('archive action is visible when submission is not archived', function () {
+test('archive action is visible when submission is not archived', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -63,7 +63,7 @@ test('archive action is visible when submission is not archived', function () {
         ->assertTableActionVisible('archive', $submission);
 });
 
-test('archive action successfully archives a submission', function () {
+test('archive action successfully archives a submission', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -83,7 +83,7 @@ test('archive action successfully archives a submission', function () {
     expect($submission->fresh()->isArchived())->toBeTrue();
 });
 
-test('bulk archive action successfully archives multiple submissions', function () {
+test('bulk archive action successfully archives multiple submissions', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -102,7 +102,7 @@ test('bulk archive action successfully archives multiple submissions', function 
     });
 });
 
-test('archived submissions are hidden by default', function () {
+test('archived submissions are hidden by default', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -114,7 +114,7 @@ test('archived submissions are hidden by default', function () {
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
 
-test('archived submissions are visible when the withoutArchived filter is removed', function () {
+test('archived submissions are visible when the withoutArchived filter is removed', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();

@@ -63,7 +63,7 @@ class MigrateTenantDatabase implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        $this->tenant->executeWithLandlordJobFailureAndBatching(function () {
+        $this->tenant->executeWithLandlordJobFailureAndBatching(function (): void {
             Artisan::call(
                 command: 'migrate:fresh --force'
             );

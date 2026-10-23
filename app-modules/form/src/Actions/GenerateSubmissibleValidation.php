@@ -70,7 +70,7 @@ class GenerateSubmissibleValidation
     public function fields(array $blocks, Collection $fields): array
     {
         return $fields
-            ->mapWithKeys(function (SubmissibleField $field) use ($blocks) {
+            ->mapWithKeys(function (SubmissibleField $field) use ($blocks): array {
                 $rules = collect();
 
                 if ($field->is_required) {

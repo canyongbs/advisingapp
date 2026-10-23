@@ -56,7 +56,7 @@ class CalendarEventWidget extends FullCalendarWidget
         return $user->calendar
             ->events()
             ->get()
-            ->map(fn (CalendarEvent $event) => EventData::make()
+            ->map(fn (CalendarEvent $event): EventData => EventData::make()
                 ->id($event->id)
                 ->title($event->title)
                 ->start($event->starts_at)

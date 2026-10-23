@@ -42,7 +42,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('booking_groups', function (Blueprint $table) {
+        Schema::table('booking_groups', function (Blueprint $table): void {
             $table->string('slug')->nullable();
             $table->string('book_with')->default('all');
             $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
@@ -53,7 +53,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('booking_groups', function (Blueprint $table) {
+        Schema::table('booking_groups', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('meeting_owner_id');
             $table->dropColumn(['slug', 'book_with']);
         });

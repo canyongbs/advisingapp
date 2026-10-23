@@ -43,7 +43,7 @@ use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 
-it('returns the correct case given a particular Engagement', function (Engagement $engagement, EngagementDisplayStatus $expectedStatus) {
+it('returns the correct case given a particular Engagement', function (Engagement $engagement, EngagementDisplayStatus $expectedStatus): void {
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe($expectedStatus);
 })->with([
     'email | not scheduled' => [

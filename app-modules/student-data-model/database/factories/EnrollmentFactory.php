@@ -55,7 +55,7 @@ class EnrollmentFactory extends Factory
             'class_nbr' => $this->faker->numerify('19###'),
             'crse_grade_off' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'W']),
             'unt_taken' => $this->faker->numberBetween(1, 4),
-            'unt_earned' => function (array $attributes) {
+            'unt_earned' => function (array $attributes): int|float {
                 return $attributes['unt_taken'] - $this->faker->numberBetween(0, $attributes['unt_taken']);
             },
             'last_upd_dt_stmp' => $this->faker->dateTime(),

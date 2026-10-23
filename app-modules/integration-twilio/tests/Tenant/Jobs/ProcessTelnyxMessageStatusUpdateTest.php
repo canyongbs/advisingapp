@@ -45,7 +45,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
-it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType) {
+it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType): void {
     // Given that we have a sms message
     /** @var SmsMessage $smsMessage */
     $smsMessage = SmsMessage::factory()
@@ -71,7 +71,7 @@ it('will appropriately create a message event based on the payload received', fu
     ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
 ]);
 
-it('creates a BouncedPhoneNumber record when delivery fails with a bounce error code', function () {
+it('creates a BouncedPhoneNumber record when delivery fails with a bounce error code', function (): void {
     SmsMessage::factory()->create([
         'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
     ]);
@@ -92,7 +92,7 @@ it('creates a BouncedPhoneNumber record when delivery fails with a bounce error 
     ]);
 });
 
-it('does not create a BouncedPhoneNumber record when delivery fails with a non-bounce error code', function () {
+it('does not create a BouncedPhoneNumber record when delivery fails with a non-bounce error code', function (): void {
     SmsMessage::factory()->create([
         'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
     ]);
@@ -108,7 +108,7 @@ it('does not create a BouncedPhoneNumber record when delivery fails with a non-b
     ]);
 });
 
-it('does not create a duplicate BouncedPhoneNumber record when the same number fails delivery again', function () {
+it('does not create a duplicate BouncedPhoneNumber record when the same number fails delivery again', function (): void {
     SmsMessage::factory()->create([
         'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
     ]);
@@ -129,10 +129,10 @@ it('does not create a duplicate BouncedPhoneNumber record when the same number f
     assertDatabaseCount(BouncedPhoneNumber::class, 1);
 });
 
-it('logs a warning when delivery fails with an error code', function () {
+it('logs a warning when delivery fails with an error code', function (): void {
     Log::shouldReceive('warning')
         ->once()
-        ->withArgs(fn (string $message, array $context) => $message === 'Telnyx SMS delivery failure'
+        ->withArgs(fn (string $message, array $context): bool => $message === 'Telnyx SMS delivery failure'
             && $context['error_code'] === '40001');
 
     SmsMessage::factory()->create([

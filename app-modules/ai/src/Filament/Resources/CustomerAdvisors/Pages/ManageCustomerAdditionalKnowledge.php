@@ -111,7 +111,7 @@ class ManageCustomerAdditionalKnowledge extends EditRecord
                             ->hiddenLabel()
                             ->when(
                                 $user->isSuperAdmin(),
-                                fn (Repeater $repeater) => $repeater->schema([
+                                fn (Repeater $repeater): Repeater => $repeater->schema([
                                     TextInput::make('name')
                                         ->disabled(),
                                     Textarea::make('parsing_results')
@@ -119,7 +119,7 @@ class ManageCustomerAdditionalKnowledge extends EditRecord
                                         ->disabled()
                                         ->visible($user->isSuperAdmin()),
                                 ]),
-                                fn (Repeater $repeater) => $repeater->simple(
+                                fn (Repeater $repeater): Repeater => $repeater->simple(
                                     TextInput::make('name')
                                         ->disabled(),
                                 ),
@@ -127,7 +127,7 @@ class ManageCustomerAdditionalKnowledge extends EditRecord
                             ->addable(false)
                             ->visible(fn (CustomerAdvisor $record): bool => $record->files->isNotEmpty())
                             ->deleteAction(
-                                fn (Action $action) => $action->requiresConfirmation()
+                                fn (Action $action): Action => $action->requiresConfirmation()
                                     ->modalHeading('Are you sure you want to delete this file?')
                                     ->modalDescription('This file will be permanently removed from this Customer Advisor, and cannot be restored.')
                             ),
@@ -147,7 +147,7 @@ class ManageCustomerAdditionalKnowledge extends EditRecord
                                 return "You've reached the maximum file upload limit of 25 for this Customer Advisor. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(config('ai.file_size_limit_kb'))
-                            ->columnSpan(function (Get $get) {
+                            ->columnSpan(function (Get $get): string|int {
                                 $files = $get('files');
                                 $firstFile = reset($files);
 

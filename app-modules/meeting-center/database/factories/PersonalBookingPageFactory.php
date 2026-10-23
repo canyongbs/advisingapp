@@ -69,7 +69,7 @@ class PersonalBookingPageFactory extends Factory
      */
     public function enabled(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'is_enabled' => true,
         ]);
     }
@@ -79,7 +79,7 @@ class PersonalBookingPageFactory extends Factory
      */
     public function disabled(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'is_enabled' => false,
         ]);
     }

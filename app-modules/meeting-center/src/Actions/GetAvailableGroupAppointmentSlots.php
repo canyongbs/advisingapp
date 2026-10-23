@@ -189,7 +189,7 @@ class GetAvailableGroupAppointmentSlots
         // Shrink blocks by buffer so the frontend only offers slots with room for buffer
         if ($bufferBefore > 0 || $bufferAfter > 0) {
             $availableBlocks = collect($availableBlocks)
-                ->map(function (array $block) use ($bufferBefore, $bufferAfter) {
+                ->map(function (array $block) use ($bufferBefore, $bufferAfter): array {
                     return [
                         'start' => $block['start']->copy()->addMinutes($bufferBefore),
                         'end' => $block['end']->copy()->subMinutes($bufferAfter),
@@ -212,7 +212,7 @@ class GetAvailableGroupAppointmentSlots
                 fn (Collection $collection) => $collection
                     ->filter(fn (array $block) => $block['start']->lte($latestAllowed))
             )
-            ->map(function (array $block) use ($now, $latestAllowed) {
+            ->map(function (array $block) use ($now, $latestAllowed): array {
                 $start = $block['start']->isBefore($now) ? $now->copy() : $block['start'];
                 $end = ($latestAllowed !== null && $block['end']->isAfter($latestAllowed))
                     ? $latestAllowed->copy()
@@ -271,7 +271,7 @@ class GetAvailableGroupAppointmentSlots
     protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end): Collection
     {
         return $members
-            ->flatMap(fn (User $member) => $this->getBusyPeriodsFor($member, $start, $end))
+            ->flatMap(fn (User $member): Collection => $this->getBusyPeriodsFor($member, $start, $end))
             ->values();
     }
 
@@ -286,7 +286,7 @@ class GetAvailableGroupAppointmentSlots
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->get()
-            ->map(function (BookingGroupAppointment $appointment) {
+            ->map(function (BookingGroupAppointment $appointment): array {
                 return [
                     'start' => $appointment->starts_at->copy(),
                     'end' => $appointment->ends_at->copy(),
@@ -301,7 +301,7 @@ class GetAvailableGroupAppointmentSlots
     protected function getBusyPeriodsFor(User $user, Carbon $start, Carbon $end): Collection
     {
         return $this->getCalendarEventsFor($user, $start, $end)
-            ->map(fn (CalendarEvent $event) => [
+            ->map(fn (CalendarEvent $event): array => [
                 'start' => $event->starts_at,
                 'end' => $event->ends_at,
             ])
@@ -315,12 +315,12 @@ class GetAvailableGroupAppointmentSlots
     {
         return CalendarEvent::query()
             ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
-            ->where(function (Builder $query) use ($start, $end) {
+            ->where(function (Builder $query) use ($start, $end): void {
                 $query->whereBetween('starts_at', [$start, $end])
                     ->orWhereBetween('ends_at', [$start, $end])
                     ->orWhere(fn (Builder $subQuery) => $subQuery->where('starts_at', '<=', $start)->where('ends_at', '>=', $end));
             })
-            ->where(function (Builder $query) {
+            ->where(function (Builder $query): void {
                 $query->whereIn('transparency', [
                     EventTransparency::Busy->value,
                     EventTransparency::Tentative->value,
@@ -343,7 +343,7 @@ class GetAvailableGroupAppointmentSlots
         $busyEnd = $busy['end'];
 
         return collect($blocks)
-            ->flatMap(fn (array $block) => $this->splitBlockIfOverlaps($block, $busyStart, $busyEnd))
+            ->flatMap(fn (array $block): array => $this->splitBlockIfOverlaps($block, $busyStart, $busyEnd))
             ->all();
     }
 

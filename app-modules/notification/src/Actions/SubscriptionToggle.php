@@ -41,7 +41,7 @@ use App\Models\User;
 
 class SubscriptionToggle
 {
-    public function handle(User $user, Subscribable $subscribable)
+    public function handle(User $user, Subscribable $subscribable): void
     {
         $subscription = $user->subscriptions()->where([
             'subscribable_id' => $subscribable->getKey(),

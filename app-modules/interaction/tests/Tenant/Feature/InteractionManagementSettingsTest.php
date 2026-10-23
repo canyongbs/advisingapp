@@ -47,7 +47,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(InteractionManagementSettings::class);
     $settings->is_initiative_enabled = true;
     $settings->is_initiative_required = true;
@@ -64,7 +64,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-it('disables initiative setting from the initiatives list page', function () {
+it('disables initiative setting from the initiatives list page', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -86,7 +86,7 @@ it('disables initiative setting from the initiatives list page', function () {
     expect(app(InteractionManagementSettings::class)->is_initiative_enabled)->toBeFalse();
 });
 
-it('makes driver optional from the drivers list page', function () {
+it('makes driver optional from the drivers list page', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -104,7 +104,7 @@ it('makes driver optional from the drivers list page', function () {
     expect(app(InteractionManagementSettings::class)->is_driver_required)->toBeFalse();
 });
 
-it('persists settings across different list pages', function () {
+it('persists settings across different list pages', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -126,7 +126,7 @@ it('persists settings across different list pages', function () {
         ]);
 });
 
-it('initializes all interaction settings with correct defaults', function () {
+it('initializes all interaction settings with correct defaults', function (): void {
     $settings = new InteractionManagementSettings();
 
     expect($settings->is_initiative_enabled)->toBeTrue()
@@ -143,7 +143,7 @@ it('initializes all interaction settings with correct defaults', function () {
         ->and($settings->is_type_required)->toBeTrue();
 });
 
-it('persists updated interaction settings after save', function () {
+it('persists updated interaction settings after save', function (): void {
     $settings = app(InteractionManagementSettings::class);
     $settings->is_initiative_enabled = false;
     $settings->is_driver_required = false;
@@ -166,7 +166,7 @@ $fieldTypes = [
 ];
 
 foreach ($fieldTypes as $fieldType => $fieldName) {
-    it("hides {$fieldType} field in create form when {$fieldType} is disabled", function () use ($fieldType, $fieldName) {
+    it("hides {$fieldType} field in create form when {$fieldType} is disabled", function () use ($fieldType, $fieldName): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo([
             'interaction.view-any',
@@ -183,7 +183,7 @@ foreach ($fieldTypes as $fieldType => $fieldName) {
             ->assertFormFieldIsHidden($fieldName);
     });
 
-    it("allows saving interaction without {$fieldType} when {$fieldType} is not mandatory", function () use ($fieldType, $fieldName) {
+    it("allows saving interaction without {$fieldType} when {$fieldType} is not mandatory", function () use ($fieldType, $fieldName): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo([
             'interaction.view-any',

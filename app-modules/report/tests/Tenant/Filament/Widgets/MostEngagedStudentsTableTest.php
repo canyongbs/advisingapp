@@ -49,7 +49,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('returns top engaged students based on engagements within the given date range', function () {
+it('returns top engaged students based on engagements within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -94,7 +94,7 @@ it('returns top engaged students based on engagements within the given date rang
         ->assertCanNotSeeTableRecords(collect([$student3]));
 });
 
-it('returns top engaged students engagements based on group filter', function () {
+it('returns top engaged students engagements based on group filter', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -159,14 +159,14 @@ it('returns top engaged students engagements based on group filter', function ()
         ]));
 });
 
-it('has an export action', function () {
+it('has an export action', function (): void {
     Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-messages-overview',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export, sending a notification', function (): void {
     asSuperAdmin();
     Storage::fake('s3');
     $count = random_int(1, 5);
@@ -201,7 +201,7 @@ it('can start an export, sending a notification', function () {
         ->assertHasNoTableActionErrors();
 });
 
-it('does not list archived students', function () {
+it('does not list archived students', function (): void {
     $active = Student::factory()->count(2)->create();
     $archived = Student::factory()->create();
     $archived->archive();
@@ -216,7 +216,7 @@ it('does not list archived students', function () {
 
 // Archiving is not retroactive: a student engaged in March and archived in September was
 // genuinely part of the student body in March, so a report looking at March still lists them.
-it('lists a student archived after the reported period without linking to them', function () {
+it('lists a student archived after the reported period without linking to them', function (): void {
     $active = Student::factory()->create();
 
     $archived = Student::factory()->create();

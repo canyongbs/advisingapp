@@ -81,7 +81,7 @@ class ManageAzureSsoSettings extends SettingsPage
                     ->label('Enabled')
                     ->live(),
                 Toggle::make('is_expiration_notice_enabled')
-                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->visible(fn (Get $get): mixed => $get('is_enabled'))
                     ->label('Enable Expiration Notice')
                     ->hint('Get notified when these credentials are within 45 days of expiring. The Application type Application.Read.All permission is required for this feature.'),
                 Section::make()
@@ -89,26 +89,26 @@ class ManageAzureSsoSettings extends SettingsPage
                         TextInput::make('client_id')
                             ->label('Client ID')
                             ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         TextInput::make('client_secret')
                             ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         TextInput::make('tenant_id')
                             ->label('Tenant ID')
                             ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         Select::make('matching_property')
                             ->label('Matching Property')
                             ->options(AzureMatchingProperty::class)
                             ->enum(AzureMatchingProperty::class)
-                            ->required(fn (Get $get) => $get('is_enabled')),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
+                            ->required(fn (Get $get): mixed => $get('is_enabled')),
+                    ])->visible(fn (Get $get): mixed => $get('is_enabled')),
             ]);
     }
 }

@@ -44,7 +44,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-test('List Customer Advisors is gated with proper access control', function () {
+test('List Customer Advisors is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -66,7 +66,7 @@ test('List Customer Advisors is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-it('render Customer Advisors default to without archived', function () {
+it('render Customer Advisors default to without archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -92,7 +92,7 @@ it('render Customer Advisors default to without archived', function () {
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors);
 });
 
-it('filter Customer Advisors with archived', function () {
+it('filter Customer Advisors with archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

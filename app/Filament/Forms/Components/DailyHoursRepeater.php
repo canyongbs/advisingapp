@@ -77,22 +77,22 @@ class DailyHoursRepeater
                     ->placeholder('Select a time')
                     ->options($timeOptions)
                     ->optionsLimit(PHP_INT_MAX)
-                    ->required(fn (Get $get) => filled($get('ends_at')))
-                    ->hidden(fn (Get $get) => ! $get('is_enabled')),
+                    ->required(fn (Get $get): bool => filled($get('ends_at')))
+                    ->hidden(fn (Get $get): bool => ! $get('is_enabled')),
                 Select::make('ends_at')
                     ->validationAttribute('end time')
                     ->placeholder('Select a time')
                     ->options($timeOptions)
                     ->optionsLimit(PHP_INT_MAX)
-                    ->required(fn (Get $get) => filled($get('starts_at')))
-                    ->hidden(fn (Get $get) => ! $get('is_enabled')),
+                    ->required(fn (Get $get): bool => filled($get('starts_at')))
+                    ->hidden(fn (Get $get): bool => ! $get('is_enabled')),
             ])
             ->extraItemActions([
                 Action::make('copyTimesToOtherDays')
                     ->tooltip(fn (Action $action): string => $action->getLabel())
                     ->icon(Heroicon::Clipboard)
                     ->color('gray')
-                    ->action(fn (Repeater $component, array $arguments) => $component->rawState(
+                    ->action(fn (Repeater $component, array $arguments): Repeater => $component->rawState(
                         array_map(
                             fn (array $itemState): array => [
                                 ...$itemState,

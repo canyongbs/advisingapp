@@ -57,7 +57,7 @@ class SubscribeBulkAction
             ->label('Manage Followers')
             ->modalHeading('Add Followers')
             ->modalDescription(
-                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to follow.'
+                fn (Collection $records): string => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to follow.'
             )
             ->form([
                 Select::make('user_ids')
@@ -73,8 +73,8 @@ class SubscribeBulkAction
                     ->default(false)
                     ->hintIconTooltip('If checked, all prior followers will be removed.'),
             ])
-            ->action(function (array $data, Collection $records) use ($context) {
-                $records->each(function ($record) use ($data, $context) {
+            ->action(function (array $data, Collection $records) use ($context): void {
+                $records->each(function ($record) use ($data, $context): void {
                     throw_unless($record instanceof Student || $record instanceof Prospect, new Exception("Record must be of type {$context}."));
 
                     if (! is_null($record->deleted_at)) {

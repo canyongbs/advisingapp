@@ -41,7 +41,7 @@ use Livewire\Livewire;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('checks users with tracked_event_type unique-login count in line chart', function () {
+it('checks users with tracked_event_type unique-login count in line chart', function (): void {
     User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin, 'occurred_at' => now()->subMonths(1)])->create();
     User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin, 'occurred_at' => now()->subMonths(6)])->create();
 

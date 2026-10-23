@@ -42,7 +42,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::create('workflow_steps', function (Blueprint $table) {
+        Schema::create('workflow_steps', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->uuidMorphs('details');
@@ -53,7 +53,7 @@ return new class () extends Migration {
             $table->softDeletes();
         });
 
-        Schema::table('workflow_steps', function (Blueprint $table) {
+        Schema::table('workflow_steps', function (Blueprint $table): void {
             $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
         });
     }

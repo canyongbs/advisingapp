@@ -122,7 +122,7 @@ class ListInteractionOutcomes extends ListRecords
                                 Toggle::make('is_outcome_required')
                                     ->label('Required')
                                     ->live()
-                                    ->visible(fn (Get $get) => $get('is_outcome_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_outcome_enabled'))
                                     ->afterStateUpdated(function (bool $state): void {
                                         abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();

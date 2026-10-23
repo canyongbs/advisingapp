@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('The correct details are displayed on the ViewProspectStatus page', function () {
+test('The correct details are displayed on the ViewProspectStatus page', function (): void {
     $prospectStatus = ProspectStatus::factory()->create();
 
     $assertSeeText = [
@@ -67,7 +67,7 @@ test('The correct details are displayed on the ViewProspectStatus page', functio
 
 // Permission Tests
 
-test('ViewProspectStatus is gated with proper access control', function () {
+test('ViewProspectStatus is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectStatus = ProspectStatus::factory()->create();
@@ -90,7 +90,7 @@ test('ViewProspectStatus is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-it('displays the edit action and not the lock when the prospect status is not system protected', function () {
+it('displays the edit action and not the lock when the prospect status is not system protected', function (): void {
     $prospectStatus = ProspectStatus::factory()->create();
 
     asSuperAdmin();
@@ -103,7 +103,7 @@ it('displays the edit action and not the lock when the prospect status is not sy
         ->assertActionEnabled('edit');
 });
 
-it('displays the lock icon rather than the edit action when the prospect status is system protected', function () {
+it('displays the lock icon rather than the edit action when the prospect status is system protected', function (): void {
     $prospectStatus = ProspectStatus::factory()->create([
         'is_system_protected' => true,
     ]);

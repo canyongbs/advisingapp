@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('web')
     ->prefix('surveys')
     ->name('surveys.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{survey}/respond', RenderSurvey::class)
             ->name('show');
     });

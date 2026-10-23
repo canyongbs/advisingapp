@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('renders the change concern status action based on proper access', function () {
+it('renders the change concern status action based on proper access', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);

@@ -43,13 +43,13 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('Interaction model has applied global scope', function () {
+test('Interaction model has applied global scope', function (): void {
     Interaction::bootHasGlobalScopes();
 
     expect(Interaction::hasGlobalScope(InteractionConfidentialScope::class))->toBeTrue();
 });
 
-test('Interactions model with fetch data for created user', function () {
+test('Interactions model with fetch data for created user', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -80,7 +80,7 @@ test('Interactions model with fetch data for created user', function () {
         ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data for department user', function () {
+test('Interactions model with fetch data for department user', function (): void {
     $departmentUser = User::factory()->licensed(LicenseType::cases())->create();
 
     $department = Department::factory()->create();
@@ -118,7 +118,7 @@ test('Interactions model with fetch data for department user', function () {
         ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data for assigned user', function () {
+test('Interactions model with fetch data for assigned user', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -149,7 +149,7 @@ test('Interactions model with fetch data for assigned user', function () {
         ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data for superadmin user', function () {
+test('Interactions model with fetch data for superadmin user', function (): void {
     asSuperAdmin();
 
     $privateInteractions = Interaction::factory()->count(10)->create([

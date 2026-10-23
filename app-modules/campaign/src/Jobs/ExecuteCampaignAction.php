@@ -98,7 +98,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
                     1000,
                     $this->action->campaign->group->model->instance()->getKeyName(),
                 )
-                ->each(function (Model $educatable) {
+                ->each(function (Model $educatable): void {
                     try {
                         assert($educatable instanceof Educatable);
 

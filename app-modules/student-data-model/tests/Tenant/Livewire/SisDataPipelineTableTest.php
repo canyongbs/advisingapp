@@ -41,7 +41,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('The SIS data pipeline table can be rendered', function () {
+test('The SIS data pipeline table can be rendered', function (): void {
     asSuperAdmin();
 
     Http::fake([
@@ -52,7 +52,7 @@ test('The SIS data pipeline table can be rendered', function () {
         ->assertSuccessful();
 });
 
-test('The SIS data pipeline table displays empty state when no pipeline data exists', function () {
+test('The SIS data pipeline table displays empty state when no pipeline data exists', function (): void {
     asSuperAdmin();
 
     Http::fake([
@@ -64,7 +64,7 @@ test('The SIS data pipeline table displays empty state when no pipeline data exi
         ->assertSee('A sync has not been run yet');
 });
 
-test('The SIS data pipeline table displays correct success and failure counts', function () {
+test('The SIS data pipeline table displays correct success and failure counts', function (): void {
     asSuperAdmin();
 
     $totalStudents = random_int(100, 1000);
@@ -110,7 +110,7 @@ test('The SIS data pipeline table displays correct success and failure counts', 
     expect($expectedEnrollmentPercentage)->toBeLessThan(100.0);
 });
 
-test('The SIS data pipeline table displays term sync progress and includes it in the total', function () {
+test('The SIS data pipeline table displays term sync progress and includes it in the total', function (): void {
     asSuperAdmin();
 
     Http::fake([
@@ -138,7 +138,7 @@ test('The SIS data pipeline table displays term sync progress and includes it in
         ->assertTableColumnStateSet('total', new SisPipelineProgress(processed: 11, total: 11, successful: 8), record: 0);
 });
 
-test('The SIS data pipeline table leaves terms empty and the total unchanged for runs without term sync progress', function (array $termFields) {
+test('The SIS data pipeline table leaves terms empty and the total unchanged for runs without term sync progress', function (array $termFields): void {
     asSuperAdmin();
 
     Http::fake([
@@ -172,7 +172,7 @@ test('The SIS data pipeline table leaves terms empty and the total unchanged for
     ]],
 ]);
 
-test('The SIS data pipeline table calculates percentages correctly for the original bug scenario', function () {
+test('The SIS data pipeline table calculates percentages correctly for the original bug scenario', function (): void {
     asSuperAdmin();
 
     $totalStudents = 560;
@@ -208,7 +208,7 @@ test('The SIS data pipeline table calculates percentages correctly for the origi
     expect($expectedPercentage)->not->toBe(100.0);
 });
 
-test('The SIS data pipeline table handles API errors gracefully', function () {
+test('The SIS data pipeline table handles API errors gracefully', function (): void {
     asSuperAdmin();
 
     Http::fake([
@@ -220,7 +220,7 @@ test('The SIS data pipeline table handles API errors gracefully', function () {
         ->assertSee('A sync has not been run yet');
 });
 
-test('The SIS data pipeline table displays different pipeline types and triggers correctly', function () {
+test('The SIS data pipeline table displays different pipeline types and triggers correctly', function (): void {
     asSuperAdmin();
 
     $types = ['full', 'incremental'];
@@ -256,7 +256,7 @@ test('The SIS data pipeline table displays different pipeline types and triggers
     expect($selectedTrigger)->toBeIn($triggers);
 });
 
-test('The SIS data pipeline table handles multiple pipeline records with different statuses', function () {
+test('The SIS data pipeline table handles multiple pipeline records with different statuses', function (): void {
     asSuperAdmin();
 
     $completedTotalStudents = random_int(50, 200);

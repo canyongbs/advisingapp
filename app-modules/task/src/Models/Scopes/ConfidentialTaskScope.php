@@ -45,21 +45,21 @@ use Illuminate\Database\Eloquent\Scope;
  */
 class ConfidentialTaskScope implements Scope
 {
-    public function apply(Builder $builder, Model $model)
+    public function apply(Builder $builder, Model $model): void
     {
         if (auth()->user()?->isSuperAdmin()) {
             return;
         }
 
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
+        $builder->where('is_confidential', false)->orWhere(function (Builder $query): void {
             $query->where('is_confidential', true)
                 ->where('created_by', auth()->id())
-                ->orWhereHas('confidentialAccessDepartments', function (Builder $query) {
-                    $query->whereHas('users', function (Builder $query) {
+                ->orWhereHas('confidentialAccessDepartments', function (Builder $query): void {
+                    $query->whereHas('users', function (Builder $query): void {
                         $query->where('users.id', auth()->id());
                     });
                 })
-                ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
+                ->orWhereHas('confidentialAccessUsers', function (Builder $query): void {
                     $query->where('user_id', auth()->id());
                 });
         });

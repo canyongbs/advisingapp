@@ -54,7 +54,7 @@ class UploadFilesToVectorStores implements ShouldQueue
                 ->whereHas('files')
                 ->orWhereHas('links')
                 ->orWhere('has_resource_hub_knowledge', true))
-            ->eachById(function (AiAssistant $assistant) {
+            ->eachById(function (AiAssistant $assistant): void {
                 try {
                     dispatch(new UploadAssistantFilesToVectorStore($assistant));
                 } catch (Throwable $exception) {
@@ -67,7 +67,7 @@ class UploadFilesToVectorStores implements ShouldQueue
                 ->whereHas('files')
                 ->orWhereHas('links')
                 ->orWhere('has_resource_hub_knowledge', true))
-            ->eachById(function (CustomerAdvisor $advisor) {
+            ->eachById(function (CustomerAdvisor $advisor): void {
                 try {
                     dispatch(new UploadCustomerAdvisorFilesToVectorStore($advisor));
                 } catch (Throwable $exception) {

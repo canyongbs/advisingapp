@@ -91,7 +91,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
         $promptsByCategory = Cache::tags(["{{$this->cacheTag}}"])->remember('prompt_by_category_chart', now()->addHours(24), function (): Collection {
             $promptsByCategoryData = PromptType::withCount(['prompts'])->get(['id', 'title']);
 
-            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType) {
+            $promptsByCategoryData = $promptsByCategoryData->map(function (PromptType $promptType): PromptType {
                 $promptType['bg_color'] = $this->getRgbString();
 
                 return $promptType;

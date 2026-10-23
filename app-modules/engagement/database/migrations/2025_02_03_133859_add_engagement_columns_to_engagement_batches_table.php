@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('engagement_batches', function (Blueprint $table) {
+        Schema::table('engagement_batches', function (Blueprint $table): void {
             $table->string('channel')->nullable();
             $table->string('subject')->nullable();
             $table->jsonb('body')->nullable();
@@ -54,7 +54,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('engagement_batches', function (Blueprint $table) {
+        Schema::table('engagement_batches', function (Blueprint $table): void {
             $table->dropColumn('channel');
             $table->dropColumn('subject');
             $table->dropColumn('body');

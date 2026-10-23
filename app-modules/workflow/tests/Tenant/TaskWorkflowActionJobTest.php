@@ -43,11 +43,11 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Notification::fake();
 });
 
-it('executes email workflow step successfully', function () {
+it('executes email workflow step successfully', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 

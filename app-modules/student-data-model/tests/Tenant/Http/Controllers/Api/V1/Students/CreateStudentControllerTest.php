@@ -45,12 +45,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $createStudentRequestData = CreateStudentRequestFactory::new()->create();
 
     $user = SystemUser::factory()->create();
@@ -87,7 +87,7 @@ it('is gated with proper access control', function () {
         ->assertCreated();
 });
 
-it('creates a student', function () {
+it('creates a student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -186,7 +186,7 @@ it('creates a student', function () {
     ]);
 });
 
-it('creates student email addresses', function () {
+it('creates student email addresses', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -243,7 +243,7 @@ it('creates student email addresses', function () {
     }
 });
 
-it('creates student phone numbers', function () {
+it('creates student phone numbers', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -300,7 +300,7 @@ it('creates student phone numbers', function () {
     }
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -328,7 +328,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`sisid` is required' => [['sisid' => null], 'sisid', 'The sisid field is required.'],
     '`sisid` is max 255 characters' => [['sisid' => str_repeat('a', 256)], 'sisid', 'The sisid may not be greater than 255 characters.'],
     '`sisid` is alpha dash' => [['sisid' => 'invalid sisid!'], 'sisid', 'The sisid may only contain letters, numbers, and dashes.'],
-    '`sisid` is unique' => [['sisid' => 'existing-sisid'], 'sisid', 'The sisid has already been taken.', function () {
+    '`sisid` is unique' => [['sisid' => 'existing-sisid'], 'sisid', 'The sisid has already been taken.', function (): void {
         Student::factory()->create(['sisid' => 'existing-sisid']);
     }],
     '`otherid` is max 255 characters' => [['otherid' => str_repeat('a', 256)], 'otherid', 'The otherid may not be greater than 255 characters.'],
@@ -367,7 +367,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`phone_numbers.*.ext` is a valid integer' => [['phone_numbers' => [['number' => '123456789', 'ext' => 'not-integer']]], 'phone_numbers.0.ext', 'The phone_numbers.0.ext must be an integer.'],
 ]);
 
-it('can include related student relationships', function (string $relationship, string $responseKey) {
+it('can include related student relationships', function (string $relationship, string $responseKey): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

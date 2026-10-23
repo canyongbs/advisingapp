@@ -100,7 +100,7 @@ class DraftWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, Page $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page $livewire): void {
                 $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;

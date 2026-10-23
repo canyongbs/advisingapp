@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('View Customer Advisor is gated with proper access control', function () {
+test('View Customer Advisor is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -75,7 +75,7 @@ test('View Customer Advisor is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('archive action visible when Customer Advisor is not archived', function () {
+test('archive action visible when Customer Advisor is not archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -100,7 +100,7 @@ test('archive action visible when Customer Advisor is not archived', function ()
         ->assertActionHidden('restore');
 });
 
-test('restore action visible when Customer Advisor is archived', function () {
+test('restore action visible when Customer Advisor is archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -127,7 +127,7 @@ test('restore action visible when Customer Advisor is archived', function () {
         ->assertActionHidden('archive');
 });
 
-test('generated instructions are escaped to prevent XSS', function () {
+test('generated instructions are escaped to prevent XSS', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

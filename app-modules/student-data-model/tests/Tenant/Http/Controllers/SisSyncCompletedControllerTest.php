@@ -41,12 +41,12 @@ use Illuminate\Support\Facades\Event;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withoutMiddleware;
 
-it('rejects requests without a valid Olympus key', function () {
+it('rejects requests without a valid Olympus key', function (): void {
     postJson(route('sis-sync-completed'))
         ->assertForbidden();
 });
 
-it('dispatches the SisSyncCompleted event and returns 202', function () {
+it('dispatches the SisSyncCompleted event and returns 202', function (): void {
     Event::fake([SisSyncCompleted::class]);
 
     withoutMiddleware(CheckOlympusKey::class)

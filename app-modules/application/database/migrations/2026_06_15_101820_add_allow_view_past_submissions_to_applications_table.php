@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->boolean('allow_view_past_submissions')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->dropColumn('allow_view_past_submissions');
         });
     }

@@ -45,7 +45,7 @@ class GeneratePortalEmbedCode
     public function handle(PortalType $portal): string
     {
         return match ($portal) {
-            PortalType::ResourceHub => (function () {
+            PortalType::ResourceHub => (function (): string {
                 $manifestPath = Storage::disk('public')->get('portals/resource-hub/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {

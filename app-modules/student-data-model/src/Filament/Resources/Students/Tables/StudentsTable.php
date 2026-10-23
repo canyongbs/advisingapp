@@ -105,7 +105,7 @@ class StudentsTable
             ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
-                    ->url(fn (Student $record) => StudentResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record])),
             ]);
     }
 
@@ -505,7 +505,7 @@ class StudentsTable
 
                 return Student::query()
                     ->tap(new WithoutArchivedStudents())
-                    ->join('enrollments', function (JoinClause $join) use ($relationship) {
+                    ->join('enrollments', function (JoinClause $join) use ($relationship): void {
                         $join->on('students.sisid', '=', 'enrollments.sisid');
 
                         if ($relationship === 'firstEnrollmentTerm') {

@@ -45,11 +45,11 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Notification::fake();
 });
 
-it('executes sms workflow step successfully', function () {
+it('executes sms workflow step successfully', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 
@@ -95,7 +95,7 @@ it('executes sms workflow step successfully', function () {
     Notification::assertSentTo(
         $student,
         EngagementNotification::class,
-        function (EngagementNotification $notification) {
+        function (EngagementNotification $notification): bool {
             return $notification->engagement->channel === NotificationChannel::Sms;
         }
     );
@@ -104,7 +104,7 @@ it('executes sms workflow step successfully', function () {
     expect($workflowRunStep->succeeded_at)->not->toBeNull();
 });
 
-it('throws exception for non-sms channel', function () {
+it('throws exception for non-sms channel', function (): void {
     $user = User::factory()->create();
     $student = Student::factory()->create();
 

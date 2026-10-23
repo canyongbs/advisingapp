@@ -55,6 +55,8 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Vite;
 
@@ -69,7 +71,7 @@ class DraftInteractionWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->slideOver()
-            ->modalContent(function (Get $get, Page | RelationManager $livewire) {
+            ->modalContent(function (Get $get, Page | RelationManager $livewire): Factory|View {
                 $interactable = $this->resolveInteractable($get, $livewire);
 
                 return view('interaction::filament.actions.draft-with-ai-modal-content', [
@@ -86,7 +88,7 @@ class DraftInteractionWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, Page | RelationManager $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page | RelationManager $livewire): void {
                 $aiModel = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;

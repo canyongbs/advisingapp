@@ -46,32 +46,32 @@ $numericEditorRows = [
     ['key' => '1', 'value' => 'Yes'],
 ];
 
-it('normalizes legacy numeric maps into label and value rows', function () use ($numericRows) {
+it('normalizes legacy numeric maps into label and value rows', function () use ($numericRows): void {
     expect((new OptionsStateCast())->get([0 => 'No', 1 => 'Yes']))->toBe($numericRows);
 });
 
-it('normalizes legacy string maps into label and value rows', function () {
+it('normalizes legacy string maps into label and value rows', function (): void {
     expect((new OptionsStateCast())->get(['us' => 'United States']))->toBe([['label' => 'United States', 'value' => 'us']]);
 });
 
-it('hydrates a map into editor rows', function () {
+it('hydrates a map into editor rows', function (): void {
     expect((new OptionsStateCast())->set(['us' => 'United States']))->toBe([['key' => 'us', 'value' => 'United States']]);
 });
 
-it('hydrates label and value rows into editor rows', function () use ($numericRows, $numericEditorRows) {
+it('hydrates label and value rows into editor rows', function () use ($numericRows, $numericEditorRows): void {
     expect((new OptionsStateCast())->set($numericRows))->toBe($numericEditorRows);
 });
 
-it('stores editor rows as explicit label and value rows', function () use ($numericRows, $numericEditorRows) {
+it('stores editor rows as explicit label and value rows', function () use ($numericRows, $numericEditorRows): void {
     expect((new OptionsStateCast())->get($numericEditorRows))->toBe($numericRows);
 });
 
-it('ignores rows without a value', function () {
+it('ignores rows without a value', function (): void {
     expect((new OptionsStateCast())->get([['key' => '', 'value' => 'Blank'], ['key' => 'a', 'value' => 'A']]))
         ->toBe([['label' => 'A', 'value' => 'a']]);
 });
 
-it('round trips numeric values', function () use ($numericRows) {
+it('round trips numeric values', function () use ($numericRows): void {
     $cast = new OptionsStateCast();
 
     expect($cast->get($cast->set($numericRows)))->toBe($numericRows);

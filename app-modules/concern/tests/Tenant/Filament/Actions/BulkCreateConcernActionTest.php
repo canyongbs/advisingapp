@@ -47,7 +47,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\asSuperAdmin;
 
-it('shows the form and validation', function (BulkCreateConcernActionRequestFactory $data, array $errors) {
+it('shows the form and validation', function (BulkCreateConcernActionRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -92,7 +92,7 @@ it('shows the form and validation', function (BulkCreateConcernActionRequestFact
     ],
 ]);
 
-it('can successfully create bulk concern with student', function () {
+it('can successfully create bulk concern with student', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -118,7 +118,7 @@ it('can successfully create bulk concern with student', function () {
     ]);
 });
 
-it('can successfully create bulk concern with prospect', function () {
+it('can successfully create bulk concern with prospect', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();

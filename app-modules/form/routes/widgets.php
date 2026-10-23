@@ -50,7 +50,7 @@ Route::middleware([
 ])
     ->prefix('widgets/forms')
     ->name('widgets.forms.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
             ->name('form-upload-url');
 
@@ -59,7 +59,7 @@ Route::middleware([
             ->middleware([
                 EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
             ])
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [FormWidgetController::class, 'assets'])
                     ->name('assets');
 
@@ -106,7 +106,7 @@ Route::prefix('api')
         'auth',
         EnsureFormsFeatureIsActive::class,
     ])
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/forms/{form}/preview', [FormWidgetController::class, 'preview'])
             ->name('forms.api.preview');
     });

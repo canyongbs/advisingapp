@@ -61,7 +61,7 @@ Route::middleware([
 ])
     ->prefix('portals')
     ->name('portals.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/user', ResourceHubPortalUserController::class)
             ->name('user.auth-check');
 
@@ -75,13 +75,13 @@ Route::middleware([
 
         Route::prefix('resource-hub')
             ->name('resource-hub.')
-            ->group(function () {
+            ->group(function (): void {
                 Route::middleware([
                     EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
                 ])
                     ->prefix('api')
                     ->name('api.')
-                    ->group(function () {
+                    ->group(function (): void {
                         Route::get('/', [ResourceHubPortalController::class, 'assets'])
                             ->name('assets');
 
@@ -90,7 +90,7 @@ Route::middleware([
                             ->name('entry');
 
                         Route::middleware([AuthenticateIfRequiredByPortalDefinition::class])
-                            ->group(function () {
+                            ->group(function (): void {
                                 Route::post('/authenticate/logout', ResourceHubPortalLogoutController::class)
                                     ->name('logout');
 

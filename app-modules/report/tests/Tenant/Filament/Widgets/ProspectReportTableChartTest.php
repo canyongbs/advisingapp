@@ -42,7 +42,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('displays only prospects added within the selected date range', function () {
+it('displays only prospects added within the selected date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -74,14 +74,14 @@ it('displays only prospects added within the selected date range', function () {
         ->assertCanNotSeeTableRecords(collect([$prospectOutsideRange]));
 });
 
-it('has an export action', function () {
+it('has an export action', function (): void {
     Livewire::test(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export, sending a notification', function (): void {
     $count = random_int(1, 5);
     Storage::fake('s3');
 

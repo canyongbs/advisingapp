@@ -44,7 +44,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('can load edit page for a submission state', function () {
+test('can load edit page for a submission state', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -55,7 +55,7 @@ test('can load edit page for a submission state', function () {
         ->assertSuccessful();
 });
 
-test('view action is available on edit page', function () {
+test('view action is available on edit page', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -66,7 +66,7 @@ test('view action is available on edit page', function () {
         ->assertActionExists('view');
 });
 
-test('archive action is visible on edit page when state is not archived', function () {
+test('archive action is visible on edit page when state is not archived', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -77,7 +77,7 @@ test('archive action is visible on edit page when state is not archived', functi
         ->assertActionVisible('archive');
 });
 
-test('archive action is hidden on edit page when state is already archived', function () {
+test('archive action is hidden on edit page when state is already archived', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -91,7 +91,7 @@ test('archive action is hidden on edit page when state is already archived', fun
         ->assertActionHidden('archive');
 });
 
-test('archive action archives the state and redirects to index', function () {
+test('archive action archives the state and redirects to index', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -104,7 +104,7 @@ test('archive action archives the state and redirects to index', function () {
     expect($state->fresh()->isArchived())->toBeTrue();
 });
 
-test('delete action is visible when state has no associated submissions', function () {
+test('delete action is visible when state has no associated submissions', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -115,7 +115,7 @@ test('delete action is visible when state has no associated submissions', functi
         ->assertActionVisible(DeleteAction::class);
 });
 
-test('delete action is hidden when state has associated submissions', function () {
+test('delete action is hidden when state has associated submissions', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -128,7 +128,7 @@ test('delete action is hidden when state has associated submissions', function (
         ->assertActionHidden(DeleteAction::class);
 });
 
-test('archive policy requires settings delete permission', function () {
+test('archive policy requires settings delete permission', function (): void {
     $user = User::factory()->create();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -142,7 +142,7 @@ test('archive policy requires settings delete permission', function () {
     expect($user->can('archive', $state))->toBeTrue();
 });
 
-test('delete policy denies when state has submissions', function () {
+test('delete policy denies when state has submissions', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.*.delete');
 
@@ -155,7 +155,7 @@ test('delete policy denies when state has submissions', function () {
     expect($user->can('delete', $state))->toBeFalse();
 });
 
-test('delete policy allows when state has no submissions', function () {
+test('delete policy allows when state has no submissions', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.*.delete');
 

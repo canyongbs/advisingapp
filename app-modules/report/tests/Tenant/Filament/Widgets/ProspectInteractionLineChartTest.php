@@ -42,7 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('checks prospect interactions monthly line chart', function () {
+it('checks prospect interactions monthly line chart', function (): void {
     $prospectCount = 5;
 
     Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
@@ -58,7 +58,7 @@ it('checks prospect interactions monthly line chart', function () {
     expect(array_values($widgetInstance->getData()['datasets'][0]['data']))->toMatchSnapshot();
 });
 
-it('returns correct data for prospect interactions within the given date range', function () {
+it('returns correct data for prospect interactions within the given date range', function (): void {
     $interactionStartDate = now()->subMonthsNoOverflow(5)->startOfMonth();
     $interactionEndDate = now()->subMonthsNoOverflow(3)->endOfMonth();
 
@@ -90,7 +90,7 @@ it('returns correct data for prospect interactions within the given date range',
     expect(array_values($widgetInstance->getData()['datasets'][0]['data']))->toMatchSnapshot();
 });
 
-it('returns correct data for prospect interactions based on group filter', function () {
+it('returns correct data for prospect interactions based on group filter', function (): void {
     $interactionStartDate = now()->subMonths(3)->startOfMonth()->addDays(10);
     $interactionEndDate = now()->subDays(5);
 

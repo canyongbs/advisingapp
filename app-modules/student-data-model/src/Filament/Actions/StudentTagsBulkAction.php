@@ -55,7 +55,7 @@ class StudentTagsBulkAction
             ->modalHeading('Bulk assign student tags')
             ->label('Manage Tags')
             ->modalDescription(
-                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('student', $records->count()) . ' to apply tags.'
+                fn (Collection $records): string => "You have selected {$records->count()} " . Str::plural('student', $records->count()) . ' to apply tags.'
             )
             ->form([
                 Select::make('tag_ids')
@@ -75,8 +75,8 @@ class StudentTagsBulkAction
                     ->default(false)
                     ->hintIconTooltip('If checked, all prior tags assignments will be removed.'),
             ])
-            ->action(function (array $data, Collection $records) {
-                $records->each(function (Student $record) use ($data) {
+            ->action(function (array $data, Collection $records): void {
+                $records->each(function (Student $record) use ($data): void {
                     if (! empty($data['tag_ids'])) {
                         $record->tags()
                             ->sync(

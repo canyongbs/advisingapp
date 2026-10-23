@@ -59,7 +59,7 @@ class UpdateCurrentAiAssistantLinks implements ShouldQueue, TenantAware
         AiAssistantLink::query()
             ->select('id')
             ->where('is_keep_current_enabled', true)
-            ->eachById(function (AiAssistantLink $link) {
+            ->eachById(function (AiAssistantLink $link): void {
                 dispatch(new FetchAiAssistantLinkParsingResults($link, refreshExistingParsingResults: true));
             });
     }

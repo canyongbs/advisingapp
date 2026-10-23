@@ -38,7 +38,7 @@ use AdvisingApp\Report\Filament\Widgets\UsersStats;
 use AdvisingApp\Report\Jobs\RecordUserUniqueLoginTrackedEvent;
 use App\Models\User;
 
-it('Check total users', function () {
+it('Check total users', function (): void {
     $userCount = rand(1, 10);
     $usersStats = new UsersStats();
     $usersStats->cacheTag = 'users_stats';
@@ -49,7 +49,7 @@ it('Check total users', function () {
     expect($totalUsersStat->getValue())->toEqual($userCount);
 });
 
-it('Check new users who were created within one month', function () {
+it('Check new users who were created within one month', function (): void {
     $usersStats = new UsersStats();
     $usersStats->cacheTag = 'users_stats';
 
@@ -65,13 +65,13 @@ it('Check new users who were created within one month', function () {
     expect($newUsersStat->getValue())->toEqual(3);
 });
 
-it('Check total users with unique login event type', function () {
+it('Check total users with unique login event type', function (): void {
     $userCount = rand(1, 10);
     $usersStats = new UsersStats();
     $usersStats->cacheTag = 'users_stats';
     $logins = 0;
 
-    User::factory()->count($userCount)->create()->each(function ($user) use (&$logins) {
+    User::factory()->count($userCount)->create()->each(function ($user) use (&$logins): void {
         $randomLogins = rand(1, 10);
 
         for ($index = 0; $index < $randomLogins; $index++) {

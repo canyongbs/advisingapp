@@ -44,11 +44,11 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     DB::statement('DROP VIEW IF EXISTS student_alerts');
 });
 
-it('filters students who have a specific alert when status is true', function () {
+it('filters students who have a specific alert when status is true', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -79,7 +79,7 @@ it('filters students who have a specific alert when status is true', function ()
         ->toEqual($alertedStudents->pluck('sisid')->sort()->values()->toArray());
 });
 
-it('filters students who do not have a specific alert when status is false', function () {
+it('filters students who do not have a specific alert when status is false', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -110,7 +110,7 @@ it('filters students who do not have a specific alert when status is false', fun
         ->toEqual($nonAlertedStudents->pluck('sisid')->sort()->values()->toArray());
 });
 
-it('returns no students when no alerts are active and status is true', function () {
+it('returns no students when no alerts are active and status is true', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->disabled()
@@ -135,7 +135,7 @@ it('returns no students when no alerts are active and status is true', function 
     expect($filteredStudents)->toHaveCount(0);
 });
 
-it('can filter by different alert types independently', function () {
+it('can filter by different alert types independently', function (): void {
     $dorfConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()

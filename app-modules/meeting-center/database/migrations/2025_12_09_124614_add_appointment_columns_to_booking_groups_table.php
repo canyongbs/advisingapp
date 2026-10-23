@@ -42,10 +42,10 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::table('booking_groups')->delete();
 
-            Schema::table('booking_groups', function (Blueprint $table) {
+            Schema::table('booking_groups', function (Blueprint $table): void {
                 $table->unsignedInteger('default_appointment_duration');
                 $table->boolean('is_default_appointment_buffer_enabled')->default(false);
                 $table->unsignedInteger('default_appointment_buffer_before_duration')->default(0);
@@ -57,7 +57,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('booking_groups', function (Blueprint $table) {
+        Schema::table('booking_groups', function (Blueprint $table): void {
             $table->dropColumn('default_appointment_duration');
             $table->dropColumn('is_default_appointment_buffer_enabled');
             $table->dropColumn('default_appointment_buffer_before_duration');

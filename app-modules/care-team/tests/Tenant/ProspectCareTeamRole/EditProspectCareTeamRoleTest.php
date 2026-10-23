@@ -48,7 +48,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
-test('EditProspectCareTeamRole is gated with proper access control', function () {
+test('EditProspectCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
@@ -97,7 +97,7 @@ test('EditProspectCareTeamRole is gated with proper access control', function ()
         ->assertSuccessful();
 });
 
-test('A successful action on the EditProspectCareTeamRole page', function () {
+test('A successful action on the EditProspectCareTeamRole page', function (): void {
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
 
     asSuperAdmin()
@@ -120,7 +120,7 @@ test('A successful action on the EditProspectCareTeamRole page', function () {
     assertEquals($editRequest['name'], $careTeamRole->fresh()->name);
 });
 
-test('EditProspectCareTeamRole requires valid data', function (EditCareTeamRoleRequestFactory $data, array $errors) {
+test('EditProspectCareTeamRole requires valid data', function (EditCareTeamRoleRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);

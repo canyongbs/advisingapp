@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -55,14 +56,14 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
 
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
-                ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -80,7 +81,7 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
                     'interactions',
                     function (Builder $query) use ($startDate, $endDate): Builder {
                         return $query->when(
-                            $startDate && $endDate,
+                            $startDate instanceof Carbon && $endDate instanceof Carbon,
                             fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                         );
                     }

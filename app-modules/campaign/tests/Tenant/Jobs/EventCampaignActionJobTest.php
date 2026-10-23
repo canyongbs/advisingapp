@@ -57,7 +57,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable): void {
     Bus::fake();
     Notification::fake();
 
@@ -139,7 +139,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
         ],
     ]);
 
-it('will not duplicate an invite if the group educatable was already invited', function (Educatable $educatable) {
+it('will not duplicate an invite if the group educatable was already invited', function (Educatable $educatable): void {
     Bus::fake();
     Notification::fake();
 

@@ -60,7 +60,7 @@ class InviteEventAttendeesAction extends Action
                     ->required(),
             ])
             ->authorize('create', EventAttendee::class)
-            ->action(function (array $data, RelationManager $livewire) {
+            ->action(function (array $data, RelationManager $livewire): void {
                 $record = $livewire->getOwnerRecord();
                 assert($record instanceof Event);
 

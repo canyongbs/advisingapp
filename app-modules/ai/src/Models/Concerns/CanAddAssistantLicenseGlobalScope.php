@@ -44,7 +44,7 @@ trait CanAddAssistantLicenseGlobalScope
 {
     protected static function addAssistantLicenseGlobalScope(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! auth()->guard('web')->check()) {
                 return;
             }

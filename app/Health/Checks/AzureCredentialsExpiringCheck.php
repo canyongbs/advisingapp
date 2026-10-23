@@ -81,7 +81,7 @@ class AzureCredentialsExpiringCheck extends Check
                 throw new NoMatchingAzureCredentialsException();
             }
 
-            $endDateTime = Carbon::parse($credentials->sortBy(fn (stdClass $item) => Carbon::parse($item->endDateTime))->first()->endDateTime);
+            $endDateTime = Carbon::parse($credentials->sortBy(fn (stdClass $item): Carbon => Carbon::parse($item->endDateTime))->first()->endDateTime);
 
             if ($endDateTime->isPast()) {
                 return Result::make()->failed();

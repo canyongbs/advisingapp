@@ -53,7 +53,7 @@ class UpdateCurrentCustomerAdvisorLinks implements ShouldQueue, TenantAware
     {
         CustomerAdvisorLink::query()
             ->where('is_keep_current_enabled', true)
-            ->each(function (CustomerAdvisorLink $link) {
+            ->each(function (CustomerAdvisorLink $link): void {
                 dispatch(new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
             });
     }

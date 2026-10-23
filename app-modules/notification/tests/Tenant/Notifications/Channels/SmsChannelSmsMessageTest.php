@@ -58,7 +58,7 @@ use Twilio\Rest\Api\V2010\Account\MessageList;
 use Twilio\Rest\Client;
 use Twilio\Rest\MessagingBase;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app()->make(TwilioSettings::class);
 
     $settings->account_sid = 'abc123';
@@ -89,14 +89,14 @@ beforeEach(function () {
         )
     );
 
-    app()->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn (): ClientMock => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,
     ));
 });
 
-it('will create an SmsMessage for the notification', function () {
+it('will create an SmsMessage for the notification', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $notification = new TestSmsNotification();
@@ -110,7 +110,7 @@ it('will create an SmsMessage for the notification', function () {
     expect($smsMessages->first()->events->first()->type)->toBe(SmsMessageEventType::Dispatched);
 });
 
-it('will not send an SMS if recipient phone number has previously bounced', function () {
+it('will not send an SMS if recipient phone number has previously bounced', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -135,7 +135,7 @@ it('will not send an SMS if recipient phone number has previously bounced', func
     }
 });
 
-it('creates an SmsOptOutPhoneNumber and records a FailedDispatch event when Telnyx returns error 40300, without rethrowing', function () {
+it('creates an SmsOptOutPhoneNumber and records a FailedDispatch event when Telnyx returns error 40300, without rethrowing', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -173,7 +173,7 @@ it('creates an SmsOptOutPhoneNumber and records a FailedDispatch event when Teln
         ->and($event->payload['error_code'])->toBe('40300');
 });
 
-it('creates a BouncedPhoneNumber and records a FailedDispatch event when Telnyx returns error 40310, without rethrowing', function () {
+it('creates a BouncedPhoneNumber and records a FailedDispatch event when Telnyx returns error 40310, without rethrowing', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -216,7 +216,7 @@ it('creates a BouncedPhoneNumber and records a FailedDispatch event when Telnyx 
         ->and($event->payload['error_code'])->toBe('40310');
 });
 
-it('records a FailedDispatch event without creating opt-out or bounce records for other Telnyx error codes', function (string $errorCode) {
+it('records a FailedDispatch event without creating opt-out or bounce records for other Telnyx error codes', function (string $errorCode): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -276,7 +276,7 @@ it('records a FailedDispatch event without creating opt-out or bounce records fo
     '40333',
 ]);
 
-it('short-circuits with BouncedSmsException before the API call when the number is already bounced', function () {
+it('short-circuits with BouncedSmsException before the API call when the number is already bounced', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -309,7 +309,7 @@ it('short-circuits with BouncedSmsException before the API call when the number 
         ->and($event->payload['error'])->toBe('Recipient phone number has previously bounced.');
 });
 
-it('short-circuits with SmsOptOutException before the API call when the number is already opted out', function () {
+it('short-circuits with SmsOptOutException before the API call when the number is already opted out', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
@@ -341,7 +341,7 @@ it('short-circuits with SmsOptOutException before the API call when the number i
         ->and($event->payload['error'])->toBe('Recipient phone number has opted out of SMS messages.');
 });
 
-it('records a BlockedByDemoMode event and sets an external_reference_id when demo mode is enabled with the Telnyx provider', function () {
+it('records a BlockedByDemoMode event and sets an external_reference_id when demo mode is enabled with the Telnyx provider', function (): void {
     $notifiable = Prospect::factory()->create();
 
     $phoneNumber = $notifiable->phoneNumbers()->create([

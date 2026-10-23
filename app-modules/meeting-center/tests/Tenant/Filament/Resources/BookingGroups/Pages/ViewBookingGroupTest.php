@@ -43,7 +43,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('can render with proper permission', function () {
+it('can render with proper permission', function (): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -71,7 +71,7 @@ it('can render with proper permission', function () {
         ->assertSuccessful();
 });
 
-it('displays booking group basic information', function () {
+it('displays booking group basic information', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -92,7 +92,7 @@ it('displays booking group basic information', function () {
         ->assertHasNoErrors();
 });
 
-it('displays booking group with both users and departments', function () {
+it('displays booking group with both users and departments', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');

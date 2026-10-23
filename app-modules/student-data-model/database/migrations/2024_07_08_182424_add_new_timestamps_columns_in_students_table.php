@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->timestamps();
             $table->timestamp('created_at_source')->nullable();
             $table->timestamp('updated_at_source')->nullable();
@@ -50,7 +50,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->dropTimestamps();
             $table->dropColumn('created_at_source');
             $table->dropColumn('updated_at_source');

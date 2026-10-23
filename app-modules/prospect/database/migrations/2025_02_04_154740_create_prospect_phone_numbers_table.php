@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('prospect_phone_numbers', function (Blueprint $table) {
+        Schema::create('prospect_phone_numbers', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('prospect_id')->constrained('prospects')->onDelete('cascade');
             $table->string('number');

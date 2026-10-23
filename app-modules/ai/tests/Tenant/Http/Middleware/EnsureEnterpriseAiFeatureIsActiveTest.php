@@ -54,13 +54,13 @@ $handleEnterpriseAiRequest = function (Request $request): Response {
     );
 };
 
-it('lets the request through while Enterprise AI is enabled', function () use ($handleEnterpriseAiRequest) {
+it('lets the request through while Enterprise AI is enabled', function () use ($handleEnterpriseAiRequest): void {
     $response = $handleEnterpriseAiRequest(Request::create('/', 'GET'));
 
     expect($response->getStatusCode())->toBe(200);
 });
 
-it('returns a JSON forbidden response to JSON requests while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest) {
+it('returns a JSON forbidden response to JSON requests while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest): void {
     setEnterpriseAiEnabled(false);
 
     $request = Request::create('/', 'POST');
@@ -73,7 +73,7 @@ it('returns a JSON forbidden response to JSON requests while Enterprise AI is di
         ->toBe(['error' => 'Enterprise AI is not enabled.']);
 });
 
-it('aborts other requests with forbidden while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest) {
+it('aborts other requests with forbidden while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest): void {
     setEnterpriseAiEnabled(false);
 
     $thrownException = null;
@@ -88,8 +88,8 @@ it('aborts other requests with forbidden while Enterprise AI is disabled', funct
         ->and($thrownException?->getStatusCode())->toBe(403);
 });
 
-describe('customer advisor widget routes', function () {
-    it('blocks the customer advisor widget api while Enterprise AI is disabled', function (string $routeName) {
+describe('customer advisor widget routes', function (): void {
+    it('blocks the customer advisor widget api while Enterprise AI is disabled', function (string $routeName): void {
         $advisor = CustomerAdvisor::factory()->create(['is_embed_enabled' => true]);
 
         setEnterpriseAiEnabled(false);
@@ -102,7 +102,7 @@ describe('customer advisor widget routes', function () {
         'legacy' => 'widgets.ai.qna-advisors.api.entry',
     ]);
 
-    it('blocks the customer advisor widget assets while Enterprise AI is disabled', function () {
+    it('blocks the customer advisor widget assets while Enterprise AI is disabled', function (): void {
         setEnterpriseAiEnabled(false);
 
         get(route('widgets.ai.customer-advisors.asset', ['file' => 'widget.js']))
@@ -110,8 +110,8 @@ describe('customer advisor widget routes', function () {
     });
 });
 
-describe('advisor routes', function () {
-    it('protects the authenticated advisor routes', function (string $routeName) {
+describe('advisor routes', function (): void {
+    it('protects the authenticated advisor routes', function (string $routeName): void {
         expect(Route::getRoutes()->getByName($routeName)->gatherMiddleware())
             ->toContain(EnsureEnterpriseAiFeatureIsActive::class);
     })->with([

@@ -59,10 +59,10 @@ $officeHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-beforeEach(function () {
+beforeEach(function (): void {
     $mockDriver = Mockery::mock(CalendarInterface::class);
     /** @phpstan-ignore method.notFound */
-    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event): void {
         $event->updateQuietly([
             'provider_id' => 'mock-provider-id',
             'provider_uid' => 'mock-provider-uid',
@@ -71,7 +71,7 @@ beforeEach(function () {
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
-    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver): void {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
     });
 
@@ -80,7 +80,7 @@ beforeEach(function () {
 
 // Minimum Lead Time - Available Slots Tests
 
-it('filters available slots within lead time window', function () use ($officeHours) {
+it('filters available slots within lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $user = User::factory()
@@ -109,7 +109,7 @@ it('filters available slots within lead time window', function () use ($officeHo
     $blocks = collect($blocksData);
 
     // With 24h lead time from Monday 08:00, earliest slot should be Tuesday 08:00+
-    $blocksBeforeLeadTime = $blocks->filter(function (array $block) {
+    $blocksBeforeLeadTime = $blocks->filter(function (array $block): bool {
         return Carbon::parse($block['start'])->isBefore(Carbon::parse('2026-04-07 08:00:00', 'UTC'));
     });
 
@@ -118,7 +118,7 @@ it('filters available slots within lead time window', function () use ($officeHo
 
 // Minimum Lead Time - Booking Validation Tests
 
-it('rejects booking within minimum lead time window', function () use ($officeHours) {
+it('rejects booking within minimum lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -152,7 +152,7 @@ it('rejects booking within minimum lead time window', function () use ($officeHo
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside minimum lead time window', function () use ($officeHours) {
+it('allows booking outside minimum lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -187,7 +187,7 @@ it('allows booking outside minimum lead time window', function () use ($officeHo
 
 // Maximum Lead Time Tests
 
-it('rejects booking beyond maximum lead time window', function () use ($officeHours) {
+it('rejects booking beyond maximum lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -221,7 +221,7 @@ it('rejects booking beyond maximum lead time window', function () use ($officeHo
     expect($response->json('message'))->toContain('30 days in advance');
 });
 
-it('allows booking within maximum lead time window', function () use ($officeHours) {
+it('allows booking within maximum lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -262,7 +262,7 @@ it('allows booking within maximum lead time window', function () use ($officeHou
 
 // Out of Office Tests
 
-it('excludes days within out of office period from available slots', function () use ($officeHours) {
+it('excludes days within out of office period from available slots', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $user = User::factory()
@@ -292,7 +292,7 @@ it('excludes days within out of office period from available slots', function ()
     assert(is_array($blocksData));
     $blocks = collect($blocksData);
 
-    $oooBlocks = $blocks->filter(function (array $block) {
+    $oooBlocks = $blocks->filter(function (array $block): bool {
         $start = Carbon::parse($block['start']);
 
         return $start->between(
@@ -303,7 +303,7 @@ it('excludes days within out of office period from available slots', function ()
 
     expect($oooBlocks)->toBeEmpty();
 
-    $nonOooBlocks = $blocks->filter(function (array $block) {
+    $nonOooBlocks = $blocks->filter(function (array $block): bool {
         $start = Carbon::parse($block['start']);
 
         return $start->isAfter(Carbon::parse('2026-04-09 23:59:59', 'UTC'));
@@ -312,7 +312,7 @@ it('excludes days within out of office period from available slots', function ()
     expect($nonOooBlocks)->not->toBeEmpty();
 });
 
-it('rejects booking when user is out of office', function () use ($officeHours) {
+it('rejects booking when user is out of office', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -345,7 +345,7 @@ it('rejects booking when user is out of office', function () use ($officeHours) 
     expect($response->json('message'))->toContain('out of office');
 });
 
-it('allows booking when user out of office is disabled', function () use ($officeHours) {
+it('allows booking when user out of office is disabled', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -377,7 +377,7 @@ it('allows booking when user out of office is disabled', function () use ($offic
     $response->assertJsonFragment(['success' => true]);
 });
 
-it('allows booking outside the out of office window', function () use ($officeHours) {
+it('allows booking outside the out of office window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -411,7 +411,7 @@ it('allows booking outside the out of office window', function () use ($officeHo
 
 // Office Hours Booking Validation Tests
 
-it('rejects booking on a day with office hours disabled', function () use ($officeHours) {
+it('rejects booking on a day with office hours disabled', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -441,7 +441,7 @@ it('rejects booking on a day with office hours disabled', function () use ($offi
     expect($response->json('message'))->toContain('The selected time is outside available booking hours');
 });
 
-it('rejects booking outside office hours on an enabled day', function () use ($officeHours) {
+it('rejects booking outside office hours on an enabled day', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -471,7 +471,7 @@ it('rejects booking outside office hours on an enabled day', function () use ($o
     expect($response->json('message'))->toContain('outside available booking hours');
 });
 
-it('rejects booking that extends past office hours end time', function () use ($officeHours) {
+it('rejects booking that extends past office hours end time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -501,7 +501,7 @@ it('rejects booking that extends past office hours end time', function () use ($
     expect($response->json('message'))->toContain('outside available booking hours');
 });
 
-it('allows booking within office hours', function () use ($officeHours) {
+it('allows booking within office hours', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -532,7 +532,7 @@ it('allows booking within office hours', function () use ($officeHours) {
 
 // Calendar Event Transparency Tests
 
-it('rejects booking when a busy calendar event overlaps', function () use ($officeHours) {
+it('rejects booking when a busy calendar event overlaps', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -569,7 +569,7 @@ it('rejects booking when a busy calendar event overlaps', function () use ($offi
     expect($response->json('message'))->toContain('The selected time is outside available booking hours');
 });
 
-it('allows booking when only a free calendar event overlaps', function () use ($officeHours) {
+it('allows booking when only a free calendar event overlaps', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -605,7 +605,7 @@ it('allows booking when only a free calendar event overlaps', function () use ($
     $response->assertJsonFragment(['success' => true]);
 });
 
-it('rejects booking when an out of office calendar event overlaps', function () use ($officeHours) {
+it('rejects booking when an out of office calendar event overlaps', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -664,7 +664,7 @@ $hstOfficeHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-it('produces available slots when office hours cross midnight UTC (BST positive offset)', function () use ($bstOfficeHours) {
+it('produces available slots when office hours cross midnight UTC (BST positive offset)', function () use ($bstOfficeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $user = User::factory()
@@ -694,12 +694,12 @@ it('produces available slots when office hours cross midnight UTC (BST positive 
     expect($blocks)->not->toBeEmpty();
 
     // Monday Apr 6: hours cross midnight, should produce Sun Apr 5 23:00 to Mon Apr 6 07:00
-    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-05T23:00'));
+    $mondayBlock = $blocks->first(fn (array $block): bool => str_contains($block['start'], '2026-04-05T23:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
 });
 
-it('produces available slots when office hours cross midnight UTC (HST negative offset)', function () use ($hstOfficeHours) {
+it('produces available slots when office hours cross midnight UTC (HST negative offset)', function () use ($hstOfficeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $user = User::factory()
@@ -729,12 +729,12 @@ it('produces available slots when office hours cross midnight UTC (HST negative 
     expect($blocks)->not->toBeEmpty();
 
     // Monday Apr 6: hours 18:00 to 03:00 next day
-    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-06T18:00'));
+    $mondayBlock = $blocks->first(fn (array $block): bool => str_contains($block['start'], '2026-04-06T18:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-07T03:00:00+00:00');
 });
 
-it('does not produce Saturday slots when Saturday is disabled with midnight-crossing hours', function () use ($bstOfficeHours) {
+it('does not produce Saturday slots when Saturday is disabled with midnight-crossing hours', function () use ($bstOfficeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $user = User::factory()
@@ -762,7 +762,7 @@ it('does not produce Saturday slots when Saturday is disabled with midnight-cros
     $blocks = collect($blocksData);
 
     // Saturday is disabled, so no block should represent Saturday (Fri 23:00 to Sat 07:00)
-    $saturdayBlocks = $blocks->filter(function (array $block) {
+    $saturdayBlocks = $blocks->filter(function (array $block): bool {
         $end = Carbon::parse($block['end']);
 
         return $end->isSaturday() && $end->hour === 7;
@@ -771,7 +771,7 @@ it('does not produce Saturday slots when Saturday is disabled with midnight-cros
     expect($saturdayBlocks)->toBeEmpty();
 });
 
-it('allows booking within midnight-crossing office hours', function () use ($bstOfficeHours) {
+it('allows booking within midnight-crossing office hours', function () use ($bstOfficeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $user = User::factory()
@@ -805,7 +805,7 @@ it('allows booking within midnight-crossing office hours', function () use ($bst
 
 // Existing Student Restriction Tests
 
-it('allows booking for an existing student when bookings are restricted to existing students', function () use ($officeHours) {
+it('allows booking for an existing student when bookings are restricted to existing students', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $student = Student::factory()->create();
@@ -838,7 +838,7 @@ it('allows booking for an existing student when bookings are restricted to exist
     )->assertStatus(201);
 });
 
-it('rejects booking for an archived student when bookings are restricted to existing students', function () use ($officeHours) {
+it('rejects booking for an archived student when bookings are restricted to existing students', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $student = Student::factory()->create();

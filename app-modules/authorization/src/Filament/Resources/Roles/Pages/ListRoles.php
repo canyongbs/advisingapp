@@ -71,7 +71,7 @@ class ListRoles extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): void {
                 $user = auth()->user();
 
                 assert($user instanceof Authenticatable);
@@ -117,7 +117,7 @@ class ListRoles extends ListRecords
                             ->unique(
                                 table: 'roles',
                                 column: 'name',
-                                modifyRuleUsing: function (Unique $rule, Role $record) {
+                                modifyRuleUsing: function (Unique $rule, Role $record): void {
                                     $rule->where('guard_name', $record->guard_name);
                                 }
                             ),

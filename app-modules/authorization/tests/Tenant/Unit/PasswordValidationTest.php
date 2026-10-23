@@ -42,7 +42,7 @@ use Illuminate\Validation\Rules\Password;
 
 use function Pest\Laravel\actingAs;
 
-test('passwords can be validated based on the configured settings', function (string $password, ?string $expectedMessage = null) {
+test('passwords can be validated based on the configured settings', function (string $password, ?string $expectedMessage = null): void {
     $settings = app(LocalPasswordSettings::class);
     $settings->minPasswordLength = 12;
     $settings->maxPasswordLength = 48;

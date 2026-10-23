@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('web')
     ->prefix('applications')
     ->name('applications.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{application}/respond', RenderApplication::class)
             ->name('show');
 

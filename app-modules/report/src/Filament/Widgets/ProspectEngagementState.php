@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -64,7 +65,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
         $prospectsCount = $shouldBypassCache
             ? Prospect::query()
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->when(
@@ -80,7 +81,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $emailsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -88,7 +89,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Email)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -103,7 +104,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $textsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -111,7 +112,7 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                 })
                 ->where('channel', NotificationChannel::Sms)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -125,14 +126,14 @@ class ProspectEngagementState extends StatsOverviewReportWidget
             );
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate, $groupId): void {
-            $query->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
+            $query->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId): void {
                 $query->when(
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)
                 );
             })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 );
         };

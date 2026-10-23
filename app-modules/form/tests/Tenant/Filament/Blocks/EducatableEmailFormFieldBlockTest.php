@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
 use function Tests\asSuperAdmin;
 
-it('identifies and links a student author from their email address', function () {
+it('identifies and links a student author from their email address', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -55,10 +55,10 @@ it('identifies and links a student author from their email address', function ()
         ->and($state['authorUrl'])->toBe(StudentResource::getUrl('view', ['record' => $student]));
 });
 
-describe('archiving', function () {
+describe('archiving', function (): void {
     // The submission still belongs to the student, so they must be identified as its author,
     // but their page no longer resolves, so there is nothing to link to.
-    it('still identifies an archived student author but does not link to them', function () {
+    it('still identifies an archived student author but does not link to them', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

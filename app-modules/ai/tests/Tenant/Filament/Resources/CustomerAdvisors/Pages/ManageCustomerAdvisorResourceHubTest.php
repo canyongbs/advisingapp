@@ -50,7 +50,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -58,7 +58,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-test('Manage Customer Advisor Resource Hub is gated with proper access control', function () {
+test('Manage Customer Advisor Resource Hub is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -85,7 +85,7 @@ test('Manage Customer Advisor Resource Hub is gated with proper access control',
         )->assertSuccessful();
 });
 
-test('can enable resource hub knowledge with an article access level and categories', function () {
+test('can enable resource hub knowledge with an article access level and categories', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -131,7 +131,7 @@ test('can enable resource hub knowledge with an article access level and categor
     Queue::assertPushed(UploadCustomerAdvisorFilesToVectorStore::class);
 });
 
-test('attaching a resource hub category dispatches the vector store upload job', function () {
+test('attaching a resource hub category dispatches the vector store upload job', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -169,7 +169,7 @@ test('attaching a resource hub category dispatches the vector store upload job',
     Queue::assertPushed(UploadCustomerAdvisorFilesToVectorStore::class);
 });
 
-test('detaching a resource hub category dispatches the vector store upload job', function () {
+test('detaching a resource hub category dispatches the vector store upload job', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -209,7 +209,7 @@ test('detaching a resource hub category dispatches the vector store upload job',
     Queue::assertPushed(UploadCustomerAdvisorFilesToVectorStore::class);
 });
 
-test('disabling resource hub knowledge clears the article access level', function () {
+test('disabling resource hub knowledge clears the article access level', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -239,7 +239,7 @@ test('disabling resource hub knowledge clears the article access level', functio
     ]);
 });
 
-test('the article access and categories fields are hidden until resource hub knowledge is enabled', function () {
+test('the article access and categories fields are hidden until resource hub knowledge is enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 

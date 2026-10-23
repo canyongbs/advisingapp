@@ -69,7 +69,7 @@ class ViewEngagementResponse extends ViewRecord
                                     Prospect::class => "{$sender->full} (Prospect)",
                                 };
                             })
-                            ->url(function (EngagementResponse $record) {
+                            ->url(function (EngagementResponse $record): ?string {
                                 /** @var Student|Prospect $sender */
                                 $sender = $record->sender;
 

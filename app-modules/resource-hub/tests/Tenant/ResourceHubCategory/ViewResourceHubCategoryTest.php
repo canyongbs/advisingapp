@@ -47,7 +47,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('ViewResourceHubCategory is gated with proper access control', function () {
+test('ViewResourceHubCategory is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $resourceHubCategory = ResourceHubCategory::factory()->create();
@@ -70,7 +70,7 @@ test('ViewResourceHubCategory is gated with proper access control', function () 
         )->assertSuccessful();
 });
 
-test('ViewResourceHubCategory is gated with proper feature access control', function () {
+test('ViewResourceHubCategory is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;

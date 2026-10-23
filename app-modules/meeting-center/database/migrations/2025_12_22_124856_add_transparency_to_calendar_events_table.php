@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('calendar_events', function (Blueprint $table) {
+        Schema::table('calendar_events', function (Blueprint $table): void {
             $table->string('transparency')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('calendar_events', function (Blueprint $table) {
+        Schema::table('calendar_events', function (Blueprint $table): void {
             $table->dropColumn('transparency');
         });
     }

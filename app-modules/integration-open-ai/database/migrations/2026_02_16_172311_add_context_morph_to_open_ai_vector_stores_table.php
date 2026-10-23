@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('open_ai_vector_stores', function (Blueprint $table) {
+        Schema::table('open_ai_vector_stores', function (Blueprint $table): void {
             $table->nullableUuidMorphs('context');
         });
     }
 
     public function down(): void
     {
-        Schema::table('open_ai_vector_stores', function (Blueprint $table) {
+        Schema::table('open_ai_vector_stores', function (Blueprint $table): void {
             $table->dropMorphs('context');
         });
     }

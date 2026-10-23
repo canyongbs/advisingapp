@@ -46,7 +46,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('ListAudits is gated with proper access control', function () {
+test('ListAudits is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)

@@ -145,7 +145,7 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
      */
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
-        $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media) => [
+        $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media): array => [
             'id' => $media->id,
             'name' => $media->file_name,
             'temporary_url' => URL::temporarySignedRoute(

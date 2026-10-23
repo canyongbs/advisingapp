@@ -51,7 +51,7 @@ class ResourceHubPortalCategoryController extends Controller
             ResourceHubCategoryData::collect(
                 ResourceHubCategory::query()
                     ->get()
-                    ->map(function (ResourceHubCategory $category) {
+                    ->map(function (ResourceHubCategory $category): array {
                         return [
                             'id' => $category->getKey(),
                             'name' => $category->name,
@@ -66,7 +66,7 @@ class ResourceHubPortalCategoryController extends Controller
 
     public function show(Request $request, ResourceHubCategory $category): JsonResponse
     {
-        $mapArticle = function (ResourceHubArticle $article) {
+        $mapArticle = function (ResourceHubArticle $article): ResourceHubArticle {
             $article->name = $article->title;
             $article->categoryId = $article->category_id;
             $article->id = $article->getKey();

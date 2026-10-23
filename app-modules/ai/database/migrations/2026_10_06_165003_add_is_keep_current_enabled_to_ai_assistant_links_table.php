@@ -43,8 +43,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistant_links', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('ai_assistant_links', function (Blueprint $table): void {
                 $table->boolean('is_keep_current_enabled')->default(false);
             });
 
@@ -54,10 +54,10 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             AiAssistantKeepCurrentFeature::deactivate();
 
-            Schema::table('ai_assistant_links', function (Blueprint $table) {
+            Schema::table('ai_assistant_links', function (Blueprint $table): void {
                 $table->dropColumn('is_keep_current_enabled');
             });
         });

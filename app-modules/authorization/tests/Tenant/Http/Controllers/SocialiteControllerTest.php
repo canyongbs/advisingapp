@@ -62,7 +62,7 @@ $fakeAzureSocialiteDriver = function (string $email): void {
     Socialite::shouldReceive('driver')->andReturn($driver);
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(AzureSsoSettings::class);
     $settings->matching_property = AzureMatchingProperty::UserPrincipalName;
     $settings->save();
@@ -70,7 +70,7 @@ beforeEach(function () {
     Sleep::fake();
 });
 
-it('does not report an error when the user has no Azure profile photo', function () use ($fakeAzureSocialiteDriver) {
+it('does not report an error when the user has no Azure profile photo', function () use ($fakeAzureSocialiteDriver): void {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
@@ -98,7 +98,7 @@ it('does not report an error when the user has no Azure profile photo', function
     expect($user->refresh()->getFirstMedia('avatar'))->toBeNull();
 });
 
-it('retries and reports transient Azure failures', function (int $status) use ($fakeAzureSocialiteDriver) {
+it('retries and reports transient Azure failures', function (int $status) use ($fakeAzureSocialiteDriver): void {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
@@ -122,7 +122,7 @@ it('retries and reports transient Azure failures', function (int $status) use ($
     'rate limit' => [429],
 ]);
 
-it('does not report when Azure returns a non-error response that is not successful', function () use ($fakeAzureSocialiteDriver) {
+it('does not report when Azure returns a non-error response that is not successful', function () use ($fakeAzureSocialiteDriver): void {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
@@ -143,7 +143,7 @@ it('does not report when Azure returns a non-error response that is not successf
     Exceptions::assertNothingReported();
 });
 
-it('still logs the user in and reports the error when the Azure photo request fails to connect', function () use ($fakeAzureSocialiteDriver) {
+it('still logs the user in and reports the error when the Azure photo request fails to connect', function () use ($fakeAzureSocialiteDriver): void {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();

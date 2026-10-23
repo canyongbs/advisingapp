@@ -88,7 +88,7 @@ class ListCampaigns extends ListRecords
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
                 TextColumn::make('execution_status')
                     ->label('Completed')
-                    ->state(fn (Campaign $record) => $record->hasBeenExecuted())
+                    ->state(fn (Campaign $record): bool => $record->hasBeenExecuted())
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
@@ -102,7 +102,7 @@ class ListCampaigns extends ListRecords
                     ->sortable(),
             ])
             // @phpstan-ignore argument.templateType
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): Builder {
                 /** @var Builder<Campaign> $query */
                 $query->withoutArchived()
                     ->with('group');
@@ -130,7 +130,7 @@ class ListCampaigns extends ListRecords
                     ->queries(
                         true: fn (Builder $query) => $query->where('enabled', true),
                         false: fn (Builder $query) => $query->where('enabled', false),
-                        blank: fn (Builder $query) => $query
+                        blank: fn (Builder $query): Builder => $query
                     ),
 
                 TernaryFilter::make('Completed')
@@ -139,16 +139,16 @@ class ListCampaigns extends ListRecords
                     ->falseLabel('In Progress')
                     ->queries(
                         true: function (Builder $query): Builder {
-                            return $query->whereDoesntHave('actions', function (Builder $query) {
+                            return $query->whereDoesntHave('actions', function (Builder $query): void {
                                 $query->whereNull('execution_finished_at');
                             });
                         },
                         false: function (Builder $query): Builder {
-                            return $query->whereHas('actions', function (Builder $query) {
+                            return $query->whereHas('actions', function (Builder $query): void {
                                 $query->whereNull('execution_finished_at');
                             });
                         },
-                        blank: fn (Builder $query) => $query
+                        blank: fn (Builder $query): Builder => $query
                     ),
             ]);
     }

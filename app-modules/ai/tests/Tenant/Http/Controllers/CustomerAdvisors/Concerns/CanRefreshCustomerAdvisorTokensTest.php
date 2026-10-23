@@ -66,7 +66,7 @@ $refreshCustomerAdvisorTokensFor = function (Student $student): ?array {
     return $refresher->refresh($request);
 };
 
-it('issues new tokens for an active student', function () use ($refreshCustomerAdvisorTokensFor) {
+it('issues new tokens for an active student', function () use ($refreshCustomerAdvisorTokensFor): void {
     $student = Student::factory()->create();
 
     expect($refreshCustomerAdvisorTokensFor($student))->toBeArray();
@@ -74,7 +74,7 @@ it('issues new tokens for an active student', function () use ($refreshCustomerA
 
 // The refresh endpoint is not behind the authorization middleware, so without this check an
 // archived student could keep minting access tokens for as long as the cookie lives.
-it('does not refresh tokens for an archived student', function () use ($refreshCustomerAdvisorTokensFor) {
+it('does not refresh tokens for an archived student', function () use ($refreshCustomerAdvisorTokensFor): void {
     $student = Student::factory()->create();
     $student->archive();
 

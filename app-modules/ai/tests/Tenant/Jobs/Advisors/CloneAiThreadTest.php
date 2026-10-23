@@ -46,7 +46,7 @@ use App\Models\User;
 use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 
-it('can clone a thread and its messages', function () {
+it('can clone a thread and its messages', function (): void {
     Notification::fake();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();
@@ -104,7 +104,7 @@ it('can clone a thread and its messages', function () {
     Notification::assertSentTo($recipient, DatabaseNotification::class);
 });
 
-it('does not carry over the named_by_user_at state when cloning a thread', function () {
+it('does not carry over the named_by_user_at state when cloning a thread', function (): void {
     Notification::fake();
 
     $sender = User::factory()->licensed(LicenseType::cases())->create();

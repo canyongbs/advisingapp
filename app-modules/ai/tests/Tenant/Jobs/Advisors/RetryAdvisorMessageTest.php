@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
 
-it('retries a message', function () {
+it('retries a message', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -96,7 +96,7 @@ it('retries a message', function () {
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('does not create a new message if the most recent one has the same content', function () {
+it('does not create a new message if the most recent one has the same content', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -146,7 +146,7 @@ it('does not create a new message if the most recent one has the same content', 
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('does not match messages with the same content sent by other users in the same thread', function () {
+it('does not match messages with the same content sent by other users in the same thread', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -184,7 +184,7 @@ it('does not match messages with the same content sent by other users in the sam
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('does not match messages with the same content belonging to other threads', function () {
+it('does not match messages with the same content belonging to other threads', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -227,7 +227,7 @@ it('does not match messages with the same content belonging to other threads', f
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('does not match messages with different content', function () {
+it('does not match messages with different content', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -261,7 +261,7 @@ it('does not match messages with different content', function () {
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('dispatches GenerateAiThreadName when a retry completes the third user message', function () {
+it('dispatches GenerateAiThreadName when a retry completes the third user message', function (): void {
     Bus::fake([GenerateAiThreadName::class]);
 
     Event::fake([
@@ -290,7 +290,7 @@ it('dispatches GenerateAiThreadName when a retry completes the third user messag
     Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
 });
 
-it('does not dispatch GenerateAiThreadName again for a fourth user message after a retry named the thread', function () {
+it('does not dispatch GenerateAiThreadName again for a fourth user message after a retry named the thread', function (): void {
     Bus::fake([GenerateAiThreadName::class]);
 
     Event::fake([
@@ -319,7 +319,7 @@ it('does not dispatch GenerateAiThreadName again for a fourth user message after
     Bus::assertNotDispatched(GenerateAiThreadName::class);
 });
 
-it('does not dispatch GenerateAiThreadName from a retry when the thread has already been renamed by the user', function () {
+it('does not dispatch GenerateAiThreadName from a retry when the thread has already been renamed by the user', function (): void {
     Bus::fake([GenerateAiThreadName::class]);
 
     Event::fake([

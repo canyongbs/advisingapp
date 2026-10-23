@@ -74,7 +74,7 @@ class SyncTenantSmartPrompts
      */
     private function sync(SyncTenantRequest $request, ?array $smartPrompts): void
     {
-        DB::transaction(function () use ($request, $smartPrompts) {
+        DB::transaction(function () use ($request, $smartPrompts): void {
             $this->syncInstructions($request);
 
             if (is_null($smartPrompts)) {

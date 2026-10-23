@@ -45,7 +45,7 @@ return new class () extends SettingsMigration {
         $this->updateSettings(
             group: 'license',
             name: 'data',
-            modifyPayload: function (array $data) {
+            modifyPayload: function (array $data): array {
                 if (array_key_exists('knowledgeManagement', $data['addons'] ?? [])) {
                     $data['addons']['resourceHub'] = $data['addons']['knowledgeManagement'];
                     unset($data['addons']['knowledgeManagement']);
@@ -67,7 +67,7 @@ return new class () extends SettingsMigration {
         $this->updateSettings(
             group: 'license',
             name: 'data',
-            modifyPayload: function (array $data) {
+            modifyPayload: function (array $data): array {
                 if (array_key_exists('resourceHub', $data['addons'] ?? [])) {
                     $data['addons']['knowledgeManagement'] = $data['addons']['resourceHub'];
                     unset($data['addons']['resourceHub']);

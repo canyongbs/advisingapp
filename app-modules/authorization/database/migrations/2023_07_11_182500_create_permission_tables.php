@@ -59,7 +59,7 @@ return new class () extends Migration {
             throw new Exception('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
 
-        Schema::create($tableNames['permissions'], function (Blueprint $table) {
+        Schema::create($tableNames['permissions'], function (Blueprint $table): void {
             //$table->engine('InnoDB');
             $table->uuid('id')->primary(); // permission id
             $table->string('name');       // For MyISAM use string('name', 225); // (or 166 for InnoDB with Redundant/Compact row format)
@@ -69,7 +69,7 @@ return new class () extends Migration {
             $table->unique(['name', 'guard_name']);
         });
 
-        Schema::create($tableNames['roles'], function (Blueprint $table) use ($teams, $columnNames) {
+        Schema::create($tableNames['roles'], function (Blueprint $table) use ($teams, $columnNames): void {
             //$table->engine('InnoDB');
             $table->uuid('id')->primary(); // role id
 
@@ -88,7 +88,7 @@ return new class () extends Migration {
             }
         });
 
-        Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission, $teams) {
+        Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission, $teams): void {
             $table->uuid($pivotPermission);
 
             $table->string('model_type');
@@ -116,7 +116,7 @@ return new class () extends Migration {
             }
         });
 
-        Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole, $teams) {
+        Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole, $teams): void {
             $table->uuid($pivotRole);
 
             $table->string('model_type');
@@ -145,7 +145,7 @@ return new class () extends Migration {
             }
         });
 
-        Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames, $pivotRole, $pivotPermission) {
+        Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames, $pivotRole, $pivotPermission): void {
             $table->uuid($pivotPermission);
             $table->uuid($pivotRole);
 

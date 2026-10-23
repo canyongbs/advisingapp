@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Queue;
 use function Pest\Laravel\post;
 use function Tests\asSuperAdmin;
 
-it('sends a message to a thread', function () {
+it('sends a message to a thread', function (): void {
     Queue::fake([
         SendAdvisorMessage::class,
     ]);
@@ -71,7 +71,7 @@ it('sends a message to a thread', function () {
     Queue::assertPushed(SendAdvisorMessage::class);
 });
 
-it('returns a message if the thread is locked', function () {
+it('returns a message if the thread is locked', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -96,7 +96,7 @@ it('returns a message if the thread is locked', function () {
         ]);
 });
 
-it('returns a message if the assistant is archived', function () {
+it('returns a message if the assistant is archived', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -119,7 +119,7 @@ it('returns a message if the assistant is archived', function () {
         ]);
 });
 
-it('prevents users who do not own the thread from sending messages to it', function () {
+it('prevents users who do not own the thread from sending messages to it', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()

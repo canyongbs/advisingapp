@@ -55,6 +55,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -110,7 +111,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
+                    ->modalHeading(fn (SurveySubmission $record): string => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->schema(function (SurveySubmission $record): ?array {
                         assert($record->submissible instanceof Survey);
 
@@ -125,7 +126,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                                 ->columns(2),
                         ] : null;
                     })
-                    ->modalContent(fn (SurveySubmission $record) => view('survey::submission', ['submission' => $record]))
+                    ->modalContent(fn (SurveySubmission $record): Factory|\Illuminate\Contracts\View\View => view('survey::submission', ['submission' => $record]))
                     ->visible(fn (SurveySubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
             ])

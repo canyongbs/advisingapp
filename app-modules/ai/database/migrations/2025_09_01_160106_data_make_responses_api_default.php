@@ -43,7 +43,7 @@ return new class () extends SettingsMigration {
 
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_responses_api_enabled');
             $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_mini_responses_api_enabled');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_o1_mini_model_name');

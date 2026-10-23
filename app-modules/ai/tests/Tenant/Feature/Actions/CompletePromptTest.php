@@ -43,7 +43,7 @@ use Mockery\MockInterface;
 
 use function Tests\asSuperAdmin;
 
-it('calls the passed AI Models service class complete method', function () {
+it('calls the passed AI Models service class complete method', function (): void {
     asSuperAdmin();
 
     $aiModel = AiModel::Test;
@@ -65,7 +65,7 @@ it('calls the passed AI Models service class complete method', function () {
     expect($completion)->toBe('test-completion');
 });
 
-it('creates a new AI message log', function () {
+it('creates a new AI message log', function (): void {
     asSuperAdmin();
 
     $aiModel = AiModel::Test;

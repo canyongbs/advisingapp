@@ -42,11 +42,11 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStatusPolarAreaChart;
 
-beforeEach(function () {
+beforeEach(function (): void {
     InteractionStatus::query()->forceDelete();
 });
 
-it('checks prospect interaction status polar area chart', function () {
+it('checks prospect interaction status polar area chart', function (): void {
     $interactionsCount = rand(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
@@ -73,7 +73,7 @@ it('checks prospect interaction status polar area chart', function () {
         ->and($stats[$thirdIndex])->toEqual($interactionsCount);
 });
 
-it('returns correct interaction counts by status for prospects within the selected date range', function () {
+it('returns correct interaction counts by status for prospects within the selected date range', function (): void {
     $interactionsCount = rand(1, 10);
 
     $interactionStartDate = now()->subDays(90);
@@ -145,7 +145,7 @@ it('returns correct interaction counts by status for prospects within the select
         ->and($stats[$thirdIndex])->toEqual(0);
 });
 
-it('returns correct interaction counts by status for prospects based on group filter', function () {
+it('returns correct interaction counts by status for prospects based on group filter', function (): void {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 

@@ -67,7 +67,7 @@ $tiptapMergeTag = function (string $id): array {
     return ['type' => 'mergeTag', 'attrs' => ['id' => $id]];
 };
 
-it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([
@@ -84,7 +84,7 @@ it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapPara
         ->toBe('Welcome to the program');
 });
 
-it('returns null for an empty subject', function () use ($tiptapDoc, $tiptapParagraph) {
+it('returns null for an empty subject', function () use ($tiptapDoc, $tiptapParagraph): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([]),
@@ -94,7 +94,7 @@ it('returns null for an empty subject', function () use ($tiptapDoc, $tiptapPara
     expect($engagement->getSubject())->toBeNull();
 });
 
-it('returns the body as html', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('returns the body as html', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'body' => $tiptapDoc([
             $tiptapParagraph([
@@ -111,7 +111,7 @@ it('returns the body as html', function () use ($tiptapDoc, $tiptapParagraph, $t
         ->toBe('<p>Hello world</p>');
 });
 
-it('returns the body as plain text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('returns the body as plain text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->sms()->create([
         'body' => $tiptapDoc([
             $tiptapParagraph([
@@ -124,7 +124,7 @@ it('returns the body as plain text', function () use ($tiptapDoc, $tiptapParagra
         ->toBe('Hello world');
 });
 
-it('decodes html entities in body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('decodes html entities in body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->sms()->create([
         'body' => $tiptapDoc([
             $tiptapParagraph([
@@ -137,7 +137,7 @@ it('decodes html entities in body text', function () use ($tiptapDoc, $tiptapPar
         ->toBe('Tom & Jerry\'s "adventure" <today>');
 });
 
-it('decodes html entities in subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('decodes html entities in subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([
@@ -150,7 +150,7 @@ it('decodes html entities in subject', function () use ($tiptapDoc, $tiptapParag
         ->toBe('Q&A session: "What\'s next?"');
 });
 
-it('resolves merge tags in the subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag) {
+it('resolves merge tags in the subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag): void {
     $student = Student::factory()->create([
         'first' => 'Jane',
     ]);
@@ -170,7 +170,7 @@ it('resolves merge tags in the subject', function () use ($tiptapDoc, $tiptapPar
         ->toBe('Hello Jane');
 });
 
-it('resolves merge tags in the body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag) {
+it('resolves merge tags in the body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag): void {
     $student = Student::factory()->create([
         'full_name' => 'Jane Doe',
     ]);
@@ -191,7 +191,7 @@ it('resolves merge tags in the body text', function () use ($tiptapDoc, $tiptapP
         ->toBe('Dear Jane Doe, your appointment is confirmed.');
 });
 
-it('resolves merge tags in the body html', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag) {
+it('resolves merge tags in the body html', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag): void {
     $student = Student::factory()->create([
         'full_name' => 'Jane Doe',
     ]);
@@ -212,7 +212,7 @@ it('resolves merge tags in the body html', function () use ($tiptapDoc, $tiptapP
         ->toBe('<p>Dear <span data-type="mergeTag" data-id="recipient full name">Jane Doe</span>, welcome!</p>');
 });
 
-it('resolves user merge tags', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag) {
+it('resolves user merge tags', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText, $tiptapMergeTag): void {
     $user = User::factory()->create([
         'name' => 'John Smith',
         'email' => 'john@example.com',
@@ -235,7 +235,7 @@ it('resolves user merge tags', function () use ($tiptapDoc, $tiptapParagraph, $t
         ->toBe('From: John Smith (john@example.com)');
 });
 
-it('returns body markdown', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('returns body markdown', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'body' => $tiptapDoc([
             $tiptapParagraph([
@@ -248,7 +248,7 @@ it('returns body markdown', function () use ($tiptapDoc, $tiptapParagraph, $tipt
         ->toBe('Hello world');
 });
 
-it('returns subject markdown', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('returns subject markdown', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([
@@ -261,7 +261,7 @@ it('returns subject markdown', function () use ($tiptapDoc, $tiptapParagraph, $t
         ->toBe('Test subject');
 });
 
-it('returns null for subject markdown when subject is empty', function () use ($tiptapDoc, $tiptapParagraph) {
+it('returns null for subject markdown when subject is empty', function () use ($tiptapDoc, $tiptapParagraph): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([]),
@@ -271,7 +271,7 @@ it('returns null for subject markdown when subject is empty', function () use ($
     expect($engagement->getSubjectMarkdown())->toBeNull();
 });
 
-it('collapses whitespace in subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('collapses whitespace in subject', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->email()->create([
         'subject' => $tiptapDoc([
             $tiptapParagraph([
@@ -284,7 +284,7 @@ it('collapses whitespace in subject', function () use ($tiptapDoc, $tiptapParagr
         ->toBe('Hello world');
 });
 
-it('collapses multiple paragraphs in body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText) {
+it('collapses multiple paragraphs in body text', function () use ($tiptapDoc, $tiptapParagraph, $tiptapText): void {
     $engagement = Engagement::factory()->forStudent()->sms()->create([
         'body' => $tiptapDoc([
             $tiptapParagraph([

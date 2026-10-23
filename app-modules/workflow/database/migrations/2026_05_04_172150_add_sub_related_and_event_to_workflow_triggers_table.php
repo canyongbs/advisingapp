@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('workflow_triggers', function (Blueprint $table) {
+        Schema::table('workflow_triggers', function (Blueprint $table): void {
             $table->string('sub_related_type')->nullable();
             $table->uuid('sub_related_id')->nullable();
             $table->string('event')->nullable();
@@ -53,7 +53,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('workflow_triggers', function (Blueprint $table) {
+        Schema::table('workflow_triggers', function (Blueprint $table): void {
             $table->dropIndex(['sub_related_type', 'sub_related_id', 'event']);
             $table->dropIndex(['sub_related_type', 'sub_related_id']);
             $table->dropColumn(['sub_related_type', 'sub_related_id', 'event']);

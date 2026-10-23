@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('qna_advisor_categories', function (Blueprint $table) {
+        Schema::table('qna_advisor_categories', function (Blueprint $table): void {
             $table->text('description')->change();
         });
     }
 
     public function down(): void
     {
-        Schema::table('qna_advisor_categories', function (Blueprint $table) {
+        Schema::table('qna_advisor_categories', function (Blueprint $table): void {
             $table->string('description')->change();
         });
     }
