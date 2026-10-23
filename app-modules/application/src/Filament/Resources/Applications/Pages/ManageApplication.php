@@ -256,7 +256,7 @@ class ManageApplication extends EditRecord
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->hidden(fn (Application $application): bool => ! $application->embed_enabled),
-            ArchiveAction::make(),    
+            ArchiveAction::make(),
         ];
     }
 
