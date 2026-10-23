@@ -95,7 +95,7 @@ $getRenderedFormIds = function (Testable $component): array {
 
 $archiveAction = fn (): TestAction => TestAction::make('archive');
 
-it('can render the manage form page', function () {
+it('can render the manage form page', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -104,7 +104,7 @@ it('can render the manage form page', function () {
         ->assertSuccessful();
 });
 
-it('displays the form data on the view tab', function () {
+it('displays the form data on the view tab', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -117,8 +117,8 @@ it('displays the form data on the view tab', function () {
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds) {
-    it('renders a relation manager only on its own tab', function (string $tab, string $relationManager, string $otherRelationManager) {
+describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds): void {
+    it('renders a relation manager only on its own tab', function (string $tab, string $relationManager, string $otherRelationManager): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -134,7 +134,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'submissions' => ['submissions', SubmissionsRelationManager::class, WorkflowsRelationManager::class],
     ]);
 
-    it('keeps unsaved edits when switching tabs', function () {
+    it('keeps unsaved edits when switching tabs', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -149,7 +149,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->assertSchemaStateSet(['notify_via_email' => true], 'notificationsForm');
     });
 
-    it('shows the number of submissions on the submissions tab', function () use ($getTabLabels) {
+    it('shows the number of submissions on the submissions tab', function () use ($getTabLabels): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -160,7 +160,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getTabLabels($component))->toContain('Submissions 2');
     });
 
-    it('only lists the tabs the user can access', function (array $permissions, bool $isAuthenticated, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels) {
+    it('only lists the tabs the user can access', function (array $permissions, bool $isAuthenticated, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels): void {
         $actingAsUserWithPermissions(...$permissions);
 
         $form = Form::factory()->create(['is_authenticated' => $isAuthenticated]);
@@ -174,7 +174,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'update on an authenticated form' => [['form.*.view', 'form.*.update'], true, ['View', 'Edit', 'On-Screen Response', 'Workflows', 'Submissions 0', 'Email Auto Reply', 'Notifications']],
     ]);
 
-    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds) {
+    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => true]);
@@ -191,7 +191,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'notifications' => ['notifications', ['notificationsForm']],
     ]);
 
-    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds) {
+    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
         $actingAsUserWithPermissions('form.*.view');
 
         $form = Form::factory()->create(['is_authenticated' => true]);
@@ -202,7 +202,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getRenderedFormIds($component))->toBe([]);
     })->with(['edit', 'on-screen-response', 'email-auto-reply', 'notifications']);
 
-    it('does not render the email auto reply tab for a form that is not authenticated', function () use ($getRenderedFormIds, $getTabLabels) {
+    it('does not render the email auto reply tab for a form that is not authenticated', function () use ($getRenderedFormIds, $getTabLabels): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => false]);
@@ -215,8 +215,8 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
     });
 });
 
-describe('edit tab', function () use ($archiveAction) {
-    it('shows the `Archive` action whether or not the form has submissions', function (bool $hasSubmissions) use ($archiveAction) {
+describe('edit tab', function () use ($archiveAction): void {
+    it('shows the `Archive` action whether or not the form has submissions', function (bool $hasSubmissions) use ($archiveAction): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -236,7 +236,7 @@ describe('edit tab', function () use ($archiveAction) {
         'without submissions' => false,
     ]);
 
-    it('archives the form and redirects to the index when the form has submissions', function () use ($archiveAction) {
+    it('archives the form and redirects to the index when the form has submissions', function () use ($archiveAction): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -253,7 +253,7 @@ describe('edit tab', function () use ($archiveAction) {
         expect($form->fresh()->isArchived())->toBeTrue();
     });
 
-    it('redirects to the edit tab of the new version after saving', function () {
+    it('redirects to the edit tab of the new version after saving', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -272,7 +272,7 @@ describe('edit tab', function () use ($archiveAction) {
     });
 });
 
-it('does not allow updating a form to a name matching another non-archived form case-insensitively', function () {
+it('does not allow updating a form to a name matching another non-archived form case-insensitively', function (): void {
     asSuperAdmin();
 
     Form::factory()->create(['name' => 'Other Form']);
@@ -284,7 +284,7 @@ it('does not allow updating a form to a name matching another non-archived form 
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows updating a form to a name freed up by an archived form case-insensitively', function () {
+it('allows updating a form to a name freed up by an archived form case-insensitively', function (): void {
     asSuperAdmin();
 
     $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
@@ -298,7 +298,7 @@ it('allows updating a form to a name freed up by an archived form case-insensiti
         ->assertHasNoFormErrors();
 });
 
-it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -308,7 +308,7 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-it('persists edits to an existing wizard step\'s description onto the new form version', function () {
+it('persists edits to an existing wizard step\'s description onto the new form version', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_wizard' => true]);
@@ -341,8 +341,8 @@ it('persists edits to an existing wizard step\'s description onto the new form v
         ->description->toBe('Updated description');
 });
 
-describe('on-screen response tab', function () {
-    it('can save the on-screen response without creating a new form version', function () {
+describe('on-screen response tab', function (): void {
+    it('can save the on-screen response without creating a new form version', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['on_screen_response' => null]);
@@ -358,13 +358,13 @@ describe('on-screen response tab', function () {
     });
 });
 
-describe('email auto reply tab', function () {
+describe('email auto reply tab', function (): void {
     $paragraph = fn (string $text): array => [
         'type' => 'doc',
         'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
     ];
 
-    it('can save the email auto reply of an authenticated form', function () use ($paragraph) {
+    it('can save the email auto reply of an authenticated form', function () use ($paragraph): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => true]);
@@ -393,7 +393,7 @@ describe('email auto reply tab', function () {
             ->and(Form::query()->where('root_id', $form->root_id)->count())->toBe(1);
     });
 
-    it('cannot be saved for a form that is not authenticated', function () {
+    it('cannot be saved for a form that is not authenticated', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => false]);
@@ -407,8 +407,8 @@ describe('email auto reply tab', function () {
     });
 });
 
-describe('notifications tab', function () {
-    it('can save the users to notify', function () {
+describe('notifications tab', function (): void {
+    it('can save the users to notify', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -425,7 +425,7 @@ describe('notifications tab', function () {
         expect($form->fresh()->notificationUsers->modelKeys())->toBe([$userToNotify->getKey()]);
     });
 
-    it('can enable a notification setting', function (string $setting) {
+    it('can enable a notification setting', function (string $setting): void {
         asSuperAdmin();
 
         $form = Form::factory()->create([$setting => false, 'is_authenticated' => true]);
@@ -438,7 +438,7 @@ describe('notifications tab', function () {
         expect($form->fresh()->{$setting})->toBeTrue();
     })->with(['notify_to_care_team', 'notify_to_subscribers', 'notify_via_app', 'notify_via_email']);
 
-    it('only shows the care team and subscriber toggles for an authenticated form', function (bool $isAuthenticated) {
+    it('only shows the care team and subscriber toggles for an authenticated form', function (bool $isAuthenticated): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => $isAuthenticated]);
@@ -455,7 +455,7 @@ describe('notifications tab', function () {
         'not authenticated' => false,
     ]);
 
-    it('does not create a new form version', function () {
+    it('does not create a new form version', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -469,8 +469,8 @@ describe('notifications tab', function () {
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction) {
-    it('denies access to the manage form page without the `form.view-any` permission', function () {
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+    it('denies access to the manage form page without the `form.view-any` permission', function (): void {
         $settings = app(LicenseSettings::class);
         $settings->data->addons->onlineForms = true;
         $settings->save();
@@ -483,7 +483,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('denies access to the manage form page without a license', function () {
+    it('denies access to the manage form page without a license', function (): void {
         $user = User::factory()->create();
         $user->givePermissionTo('form.view-any', 'form.*.view', 'form.*.update');
         actingAs($user);
@@ -494,7 +494,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('denies access to the manage form page when online forms are unavailable', function () use ($actingAsUserWithPermissions) {
+    it('denies access to the manage form page when online forms are unavailable', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.view', 'form.*.update');
 
         $form = Form::factory()->create();
@@ -507,7 +507,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('allows access to the manage form page with the `form.*.view` permission', function () use ($actingAsUserWithPermissions) {
+    it('allows access to the manage form page with the `form.*.view` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.view');
 
         $form = Form::factory()->create();
@@ -516,7 +516,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSuccessful();
     });
 
-    it('does not load the editable forms without the `form.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('does not load the editable forms without the `form.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.view');
 
         $form = Form::factory()->create(['is_authenticated' => true]);
@@ -528,7 +528,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSet('notificationsData', []);
     });
 
-    it('does not save without the `form.*.update` permission', function (string $method) use ($actingAsUserWithPermissions) {
+    it('does not save without the `form.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
         $user = $actingAsUserWithPermissions('form.*.view', 'form.*.update');
 
         $form = Form::factory()->create([
@@ -555,7 +555,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->and($form->fresh()->emailAutoReply->is_enabled)->toBeFalse();
     })->with(['save', 'saveOnScreenResponse', 'saveEmailAutoReply', 'saveNotifications']);
 
-    it('does not save a single form component without the `form.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('does not save a single form component without the `form.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $user = $actingAsUserWithPermissions('form.*.view', 'form.*.update');
 
         $form = Form::factory()->create();
@@ -570,7 +570,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         expect($form->fresh()->name)->not->toBe('Renamed');
     });
 
-    it('allows saving with the `form.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('allows saving with the `form.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.view', 'form.*.update');
 
         $paragraph = fn (string $text): array => [
@@ -609,7 +609,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->and($newVersion->emailAutoReply->is_enabled)->toBeTrue();
     });
 
-    it('hides the `Archive` action without the `form.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction) {
+    it('hides the `Archive` action without the `form.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('form.*.view', 'form.*.update');
 
         $form = Form::factory()->create();
@@ -618,7 +618,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertActionHidden($archiveAction());
     });
 
-    it('hides the header actions without the `form.*.view` permission', function (string $action) use ($actingAsUserWithPermissions) {
+    it('hides the header actions without the `form.*.view` permission', function (string $action) use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.update');
 
         $form = Form::factory()->create(['embed_enabled' => true]);
@@ -627,7 +627,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertActionHidden($action);
     })->with(['preview', 'view', 'embed_snippet']);
 
-    it('hides the `Archive` action without the `form.*.update` permission even when the user can delete', function () use ($actingAsUserWithPermissions, $archiveAction) {
+    it('hides the `Archive` action without the `form.*.update` permission even when the user can delete', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('form.*.view', 'form.*.delete');
 
         $form = Form::factory()->create();
@@ -636,7 +636,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertActionHidden($archiveAction());
     });
 
-    it('does not archive a form through direct invocation without both update and delete permissions', function (string $permission) use ($actingAsUserWithPermissions) {
+    it('does not archive a form through direct invocation without both update and delete permissions', function (string $permission) use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('form.*.view', $permission);
 
         $form = Form::factory()->create();
@@ -654,7 +654,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         'delete only' => 'form.*.delete',
     ]);
 
-    it('allows archiving a form with both update and delete permissions', function () use ($actingAsUserWithPermissions, $archiveAction) {
+    it('allows archiving a form with both update and delete permissions', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('form.*.view', 'form.*.update', 'form.*.delete');
 
         $form = Form::factory()->create();

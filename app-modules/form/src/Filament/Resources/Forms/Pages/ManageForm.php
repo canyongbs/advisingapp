@@ -291,11 +291,11 @@ class ManageForm extends EditRecord
             Action::make('preview')
                 ->label('Preview')
                 ->icon(Heroicon::OutlinedEye)
-                ->url(fn (Form $form) => route('forms.preview', $form))
+                ->url(fn (Form $form): string => route('forms.preview', $form))
                 ->visible(fn (): bool => FormResource::canView($this->getRecord()))
                 ->openUrlInNewTab(),
             Action::make('view')
-                ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
+                ->url(fn (Form $form): string => route('forms.show', ['form' => $form]))
                 ->icon(Heroicon::ArrowTopRightOnSquare)
                 ->visible(fn (): bool => FormResource::canView($this->getRecord()))
                 ->openUrlInNewTab(),
@@ -323,7 +323,7 @@ class ManageForm extends EditRecord
                 ])
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Form $form) => (! FormResource::canView($form)) || (! $form->embed_enabled)),
+                ->hidden(fn (Form $form): bool => (! FormResource::canView($form)) || (! $form->embed_enabled)),
             ArchiveAction::make()
                 ->authorize(fn (Form $record): bool => FormResource::canEdit($record) && FormResource::canDelete($record)),
         ];
@@ -363,7 +363,7 @@ class ManageForm extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save'),
             $this->getCancelFormAction()
-                ->url(fn () => FormResource::getUrl('view', ['record' => $this->getRecord()])),
+                ->url(fn (): string => FormResource::getUrl('view', ['record' => $this->getRecord()])),
         ];
     }
 }

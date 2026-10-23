@@ -61,7 +61,7 @@ $testSubmissions = fn (Form $form): Testable => Livewire::test(SubmissionsRelati
     'pageClass' => ManageForm::class,
 ]);
 
-test('archive action is visible when submission is not archived', function () use ($testSubmissions) {
+test('archive action is visible when submission is not archived', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -71,7 +71,7 @@ test('archive action is visible when submission is not archived', function () us
         ->assertTableActionVisible('archive', $submission);
 });
 
-test('archive action successfully archives a submission', function () use ($testSubmissions) {
+test('archive action successfully archives a submission', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -91,7 +91,7 @@ test('archive action successfully archives a submission', function () use ($test
     expect($submission->fresh()->isArchived())->toBeTrue();
 });
 
-test('bulk archive action successfully archives multiple submissions', function () use ($testSubmissions) {
+test('bulk archive action successfully archives multiple submissions', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -110,7 +110,7 @@ test('bulk archive action successfully archives multiple submissions', function 
     });
 });
 
-test('archived submissions are hidden by default', function () use ($testSubmissions) {
+test('archived submissions are hidden by default', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -122,7 +122,7 @@ test('archived submissions are hidden by default', function () use ($testSubmiss
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
 
-test('archived submissions are visible when the withoutArchived filter is removed', function () use ($testSubmissions) {
+test('archived submissions are visible when the withoutArchived filter is removed', function () use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -134,7 +134,7 @@ test('archived submissions are visible when the withoutArchived filter is remove
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
 });
 
-test('archiving submissions refreshes the page so the tab badge updates', function (bool $isBulk) use ($testSubmissions) {
+test('archiving submissions refreshes the page so the tab badge updates', function (bool $isBulk) use ($testSubmissions): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -152,7 +152,7 @@ test('archiving submissions refreshes the page so the tab badge updates', functi
     'bulk' => true,
 ]);
 
-describe('submission links', function () {
+describe('submission links', function (): void {
     $linkTo = fn (FormSubmission $submission, array $query = []): array => [
         'actionComponent' => 'submissions',
         'tableAction' => 'view',
@@ -160,7 +160,7 @@ describe('submission links', function () {
         ...$query,
     ];
 
-    it('opens the linked submission and removes the link once it is open', function () use ($linkTo) {
+    it('opens the linked submission and removes the link once it is open', function () use ($linkTo): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -176,7 +176,7 @@ describe('submission links', function () {
             ->assertSet('defaultTableActionRecord', null);
     });
 
-    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo) {
+    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -191,7 +191,7 @@ describe('submission links', function () {
         'page' => 'page',
     ]);
 
-    it('does not open a submission from another form', function () use ($linkTo) {
+    it('does not open a submission from another form', function () use ($linkTo): void {
         asSuperAdmin();
 
         $form = Form::factory()->create();
@@ -204,14 +204,14 @@ describe('submission links', function () {
     });
 });
 
-describe('authorization', function () use ($testSubmissions, $manageFormSubmissionsTestUser) {
-    it('denies access to the submissions without the `form.view-any` permission', function () use ($testSubmissions, $manageFormSubmissionsTestUser) {
+describe('authorization', function () use ($testSubmissions, $manageFormSubmissionsTestUser): void {
+    it('denies access to the submissions without the `form.view-any` permission', function () use ($testSubmissions, $manageFormSubmissionsTestUser): void {
         actingAs($manageFormSubmissionsTestUser());
 
         $testSubmissions(Form::factory()->create())->assertForbidden();
     });
 
-    it('does not archive submissions without the `form.*.update` permission', function (bool $isBulk) use ($testSubmissions, $manageFormSubmissionsTestUser) {
+    it('does not archive submissions without the `form.*.update` permission', function (bool $isBulk) use ($testSubmissions, $manageFormSubmissionsTestUser): void {
         $user = $manageFormSubmissionsTestUser();
         $user->givePermissionTo('form.view-any', 'form.*.view');
         actingAs($user);
@@ -235,7 +235,7 @@ describe('authorization', function () use ($testSubmissions, $manageFormSubmissi
         'bulk' => true,
     ]);
 
-    it('archives submissions with the `form.*.update` permission', function () use ($testSubmissions, $manageFormSubmissionsTestUser) {
+    it('archives submissions with the `form.*.update` permission', function () use ($testSubmissions, $manageFormSubmissionsTestUser): void {
         $user = $manageFormSubmissionsTestUser();
         $user->givePermissionTo('form.view-any', 'form.*.view', 'form.*.update');
         actingAs($user);

@@ -367,14 +367,14 @@ test('manage form workflows page links to nested workflow edit route', function 
         ->assertActionHasUrl(TestAction::make('edit')->table($workflow), $nestedEditUrl);
 });
 
-test('the workflows index url points at the workflows tab of the form', function () {
+test('the workflows index url points at the workflows tab of the form', function (): void {
     $form = Form::factory()->create();
 
     expect(FormWorkflowResource::getIndexUrl(['form' => $form]))
         ->toBe(FormResource::getUrl('view', ['record' => $form, 'tab' => 'workflows']));
 });
 
-test('the workflows tab is only rendered on its own tab', function () {
+test('the workflows tab is only rendered on its own tab', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();

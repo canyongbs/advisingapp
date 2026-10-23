@@ -44,7 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('redirects a legacy URL to its tab', function (string $page, string $tab) {
+it('redirects a legacy URL to its tab', function (string $page, string $tab): void {
     asSuperAdmin();
     $form = Form::factory()->create();
 
@@ -59,7 +59,7 @@ it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     ['manage-notifications', 'notifications'],
 ]);
 
-it('keeps the query string and targets the submissions table when redirecting a submission link', function () {
+it('keeps the query string and targets the submissions table when redirecting a submission link', function (): void {
     asSuperAdmin();
     $form = Form::factory()->create();
     $submission = FormSubmission::factory()->create(['form_id' => $form->id]);
@@ -69,8 +69,8 @@ it('keeps the query string and targets the submissions table when redirecting a 
         ->assertRedirect(FormResource::getUrl('view', [...$parameters, 'tab' => 'submissions', 'actionComponent' => 'submissions']));
 });
 
-describe('authorization', function () {
-    it('denies access to a legacy URL without the `form.view-any` permission', function () {
+describe('authorization', function (): void {
+    it('denies access to a legacy URL without the `form.view-any` permission', function (): void {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
         $form = Form::factory()->create();
 

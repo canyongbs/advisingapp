@@ -94,7 +94,7 @@ class WorkflowsRelationManager extends RelationManager
         return Action::make('create')
             ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
             ->label('Create New Workflow')
-            ->action(function ():void {
+            ->action(function (): void {
                 try {
                     DB::beginTransaction();
 
