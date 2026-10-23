@@ -124,7 +124,7 @@
 <template>
     <div v-show="visible" class="pointer-events-none fixed inset-x-0 top-0 z-9999 h-0.5" aria-hidden="true">
         <div
-            class="h-full bg-[rgb(var(--primary-500))] shadow-[0_0_10px_rgba(var(--primary-500),0.5)] transition-[width,opacity] duration-300 ease-out"
+            class="h-full bg-brand-500 shadow-[0_0_10px_rgba(var(--primary-500),0.5)] transition-[width,opacity] duration-300 ease-out"
             :class="progress >= 100 ? 'opacity-0' : 'opacity-100'"
             :style="{ width: progress + '%' }"
         ></div>
