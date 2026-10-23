@@ -34,15 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
-use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
 use CanyonGBS\Common\Enums\Color as ColorEnum;
-use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
@@ -50,21 +46,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 
-class ViewForm extends ViewRecord
+class FormInfolist
 {
-    protected static string $resource = FormResource::class;
-
-    /**
-     * @return Schema
-     */
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->disabled()
             ->components([
                 Section::make()
                     ->columns()
@@ -101,52 +92,22 @@ class ViewForm extends ViewRecord
                     ]),
                 Section::make('Fields')
                     ->schema([
-                        RichEditor::make('content')
-                            ->json()
-                            ->customBlocks(FormFieldBlockRegistry::get())
-                            ->toolbarButtons([])
-                            ->placeholder('Drag blocks here to build your form')
-                            ->hiddenLabel()
-                            ->dehydrated(false)
-                            ->columnSpanFull()
-                            ->extraInputAttributes([
-                                'style' => 'min-height: 12rem;',
-                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
-                            ]),
+                        static::fieldsViewer(),
                     ])
-                    ->hidden(fn (Form $record) => $record->is_wizard)
-                    ->disabled(),
+                    ->hidden(fn (Form $record) => $record->is_wizard),
                 Repeater::make('steps')
                     ->schema([
                         TextInput::make('label')
                             ->label('Step Title')
-                            ->required()
-                            ->string()
-                            ->maxLength(255)
-                            ->autocomplete(false)
-                            ->columnSpanFull()
-                            ->lazy(),
+                            ->columnSpanFull(),
                         Textarea::make('description')
                             ->label('Step Description')
-                            ->string()
                             ->columnSpanFull(),
-                        RichEditor::make('content')
-                            ->json()
-                            ->customBlocks(FormFieldBlockRegistry::get())
-                            ->toolbarButtons([])
-                            ->placeholder('Drag blocks here to build your form')
-                            ->hiddenLabel()
-                            ->dehydrated(false)
-                            ->columnSpanFull()
-                            ->extraInputAttributes([
-                                'style' => 'min-height: 12rem;',
-                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
-                            ]),
+                        static::fieldsViewer(),
                     ])
                     ->addActionLabel('New step')
                     ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                     ->visible(fn (Form $record) => $record->is_wizard)
-                    ->disabled()
                     ->relationship()
                     ->orderColumn('sort')
                     ->columnSpanFull(),
@@ -163,46 +124,19 @@ class ViewForm extends ViewRecord
             ]);
     }
 
-    protected function getHeaderActions(): array
+    protected static function fieldsViewer(): RichEditor
     {
-        return [
-            Action::make('preview')
-                ->label('Preview')
-                ->icon('heroicon-o-eye')
-                ->url(fn (Form $form): string => route('forms.preview', $form))
-                ->openUrlInNewTab(),
-            Action::make('view')
-                ->url(fn (Form $form): string => route('forms.show', ['form' => $form]))
-                ->icon('heroicon-m-arrow-top-right-on-square')
-                ->openUrlInNewTab(),
-            Action::make('embed_snippet')
-                ->label('Embed Snippet')
-                ->schema(
-                    [
-                        TextEntry::make('snippet')
-                            ->label('Click to Copy')
-                            ->state(function (Form $form) {
-                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($form);
-
-                                $state = <<<EOD
-                                ```
-                                {$code}
-                                ```
-                                EOD;
-
-                                return str($state)->markdown()->toHtmlString();
-                            })
-                            ->copyable()
-                            ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
-                            ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500)
-                            ->extraAttributes(['class' => 'embed-code-snippet']),
-                    ]
-                )
-                ->modalSubmitAction(false)
-                ->modalCancelActionLabel('Close')
-                ->hidden(fn (Form $form): bool => ! $form->embed_enabled),
-            ArchiveAction::make(),
-        ];
+        return RichEditor::make('content')
+            ->json()
+            ->customBlocks(FormFieldBlockRegistry::get())
+            ->toolbarButtons([])
+            ->placeholder('Drag blocks here to build your form')
+            ->hiddenLabel()
+            ->dehydrated(false)
+            ->columnSpanFull()
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 }

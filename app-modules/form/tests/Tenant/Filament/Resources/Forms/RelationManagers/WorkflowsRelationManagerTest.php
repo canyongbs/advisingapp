@@ -36,7 +36,8 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageForm;
+use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages\EditWorkflow as FormNestedEditWorkflow;
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
 use AdvisingApp\Form\Models\Form;
@@ -45,6 +46,8 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\Testing\TestAction;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -52,15 +55,20 @@ use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-test('can successfully create a new workflow for a form through manage workflows page', function (): void {
+$testWorkflows = fn (Form $form): Testable => Livewire::test(WorkflowsRelationManager::class, [
+    'ownerRecord' => $form,
+    'pageClass' => ManageForm::class,
+]);
+
+test('can successfully create a new workflow for a form through manage workflows page', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
-        ->callAction('create');
+    $testWorkflows($form)
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
     expect(WorkflowTrigger::count())->toBe(1);
@@ -79,20 +87,20 @@ test('can successfully create a new workflow for a form through manage workflows
     expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
 });
 
-test('creates multiple workflows for the same form without conflicts', function (): void {
+test('creates multiple workflows for the same form without conflicts', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
 
     expect(Workflow::count())->toBe(0);
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
-        ->callAction('create');
+    $testWorkflows($form)
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
-        ->callAction('create');
+    $testWorkflows($form)
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(2);
 
@@ -110,13 +118,13 @@ test('creates multiple workflows for the same form without conflicts', function 
     }
 });
 
-test('form workflow creation is gated with proper access control', function (): void {
+test('form workflow creation is gated with proper access control', function () use ($testWorkflows): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $form = Form::factory()->create();
 
     actingAs($user);
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    $testWorkflows($form)
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
@@ -125,8 +133,8 @@ test('form workflow creation is gated with proper access control', function (): 
     $user->givePermissionTo('form.view-any');
     $user->givePermissionTo('form.*.update');
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
-        ->callAction('create');
+    $testWorkflows($form)
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
     expect(WorkflowTrigger::count())->toBe(1);
@@ -136,13 +144,13 @@ test('form workflow creation is gated with proper access control', function (): 
     expect($workflowTrigger->related_id)->toBe($form->id);
 });
 
-test('creates workflow in disabled state by default for safety', function (): void {
+test('creates workflow in disabled state by default for safety', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
 
-    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
-        ->callAction('create');
+    $testWorkflows($form)
+        ->callTableAction('create');
 
     $workflow = Workflow::first();
 
@@ -337,7 +345,7 @@ test('form workflow deletion succeeds with proper permissions', function (): voi
     expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
 });
 
-test('manage form workflows page links to nested workflow edit route', function (): void {
+test('manage form workflows page links to nested workflow edit route', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -355,9 +363,27 @@ test('manage form workflows page links to nested workflow edit route', function 
         'record' => $workflow,
     ]);
 
-    get(FormResource::getUrl('manage-form-workflows', ['record' => $form]))
-        ->assertOk()
-        ->assertSee($nestedEditUrl, false);
+    $testWorkflows($form)
+        ->assertActionHasUrl(TestAction::make('edit')->table($workflow), $nestedEditUrl);
+});
+
+test('the workflows index url points at the workflows tab of the form', function (): void {
+    $form = Form::factory()->create();
+
+    expect(FormWorkflowResource::getIndexUrl(['form' => $form]))
+        ->toBe(FormResource::getUrl('view', ['record' => $form, 'tab' => 'workflows']));
+});
+
+test('the workflows tab is only rendered on its own tab', function (): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    get(FormResource::getUrl('view', ['record' => $form]))
+        ->assertDontSeeLivewire(WorkflowsRelationManager::class);
+
+    get(FormResource::getUrl('view', ['record' => $form, 'tab' => 'workflows']))
+        ->assertSeeLivewire(WorkflowsRelationManager::class);
 });
 
 test('nested form workflow edit route is scoped to owner form', function (): void {

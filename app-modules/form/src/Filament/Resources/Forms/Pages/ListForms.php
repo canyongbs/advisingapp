@@ -88,7 +88,8 @@ class ListForms extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn (Form $record): string => FormResource::getUrl('view', ['record' => $record, 'tab' => 'edit'])),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
                     ->excludeAttributes(['submissions_count'])

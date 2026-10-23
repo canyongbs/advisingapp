@@ -109,13 +109,15 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
     {
         $this->formSubmission->loadMissing(['author', 'fields']);
 
-        $submissionUrl = FormResource::getUrl('manage-submissions', [
+        $submissionUrl = FormResource::getUrl('view', [
             'record' => $this->form,
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
             'tableAction' => 'view',
             'tableActionRecord' => $this->formSubmission->id,
         ]);
 
-        $formUrl = FormResource::getUrl('edit', ['record' => $this->form]);
+        $formUrl = FormResource::getUrl('view', ['record' => $this->form, 'tab' => 'edit']);
 
         $timestamp = now()->tz($notifiable->timezone ?? 'UTC')->format('M j, Y g:i a (T)');
 
