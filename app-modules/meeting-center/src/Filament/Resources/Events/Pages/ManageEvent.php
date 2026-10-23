@@ -215,6 +215,7 @@ class ManageEvent extends EditRecord
                 ->url(fn (Event $record): string => route('event-registration.show', ['event' => $record]))
                 ->icon(Heroicon::ArrowTopRightOnSquare)
                 ->openUrlInNewTab(),
+            ArchiveAction::make(),
         ];
     }
 
@@ -223,7 +224,6 @@ class ManageEvent extends EditRecord
         return [
             $this->getSaveFormAction()
                 ->label('Save'),
-            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn (): string => EventResource::getUrl('view', ['record' => $this->getRecord()])),
         ];

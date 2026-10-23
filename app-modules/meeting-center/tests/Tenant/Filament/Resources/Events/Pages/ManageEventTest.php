@@ -100,7 +100,7 @@ $getRenderedFormIds = function (Testable $component): array {
     return $ids;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.details.form-actions', schema: 'content');
+$archiveAction = fn (): TestAction => TestAction::make('archive');
 
 $getNewRegistrationFormVersion = fn (EventRegistrationForm $form): EventRegistrationForm => EventRegistrationForm::withoutGlobalScopes()
     ->where('root_id', $form->root_id)
@@ -601,6 +601,6 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         $event = Event::factory()->create();
 
         Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->assertActionDoesNotExist($archiveAction());
+            ->assertActionHidden($archiveAction());
     });
 });
