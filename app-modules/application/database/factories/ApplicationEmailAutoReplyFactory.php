@@ -63,9 +63,4 @@ class ApplicationEmailAutoReplyFactory extends Factory
             ],
         ];
     }
-
-    public function enabled(): static
-    {
-        return $this->state(['is_enabled' => true]);
-    }
 }

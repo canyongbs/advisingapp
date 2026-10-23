@@ -318,6 +318,28 @@ describe('edit tab', function () use ($archiveAction): void {
             ->and($application->fresh()->emailAutoReply)->toBeNull();
     });
 
+    it('does not move the email auto reply onto the new application version when the feature is inactive', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['name' => 'Renamed'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $newVersion = Application::query()
+            ->where('root_id', $application->root_id)
+            ->whereKeyNot($application->getKey())
+            ->firstOrFail();
+
+        expect($newVersion->emailAutoReply()->exists())->toBeFalse()
+            ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
+    });
+
     it('saves uploaded rich editor images onto the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false): void {
         asSuperAdmin();
         $disk = Storage::fake('s3-public');
