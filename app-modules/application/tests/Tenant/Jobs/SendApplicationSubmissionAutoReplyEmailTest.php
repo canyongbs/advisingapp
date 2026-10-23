@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\seed;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     // Run the job by hand in each test rather than through the submission event.
@@ -62,7 +62,7 @@ $createSubmission = function (Application $application, ?Student $author): Appli
     ]);
 };
 
-it('sends the email auto reply to the author when it is enabled', function () use ($createSubmission) {
+it('sends the email auto reply to the author when it is enabled', function () use ($createSubmission): void {
     Notification::fake();
 
     $student = Student::factory()->create();
@@ -78,7 +78,7 @@ it('sends the email auto reply to the author when it is enabled', function () us
     Notification::assertSentToTimes($student, ApplicationSubmissionAutoReplyNotification::class, 1);
 });
 
-it('does not send the email auto reply when it is disabled', function () use ($createSubmission) {
+it('does not send the email auto reply when it is disabled', function () use ($createSubmission): void {
     Notification::fake();
 
     $student = Student::factory()->create();
@@ -91,7 +91,7 @@ it('does not send the email auto reply when it is disabled', function () use ($c
     Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
 });
 
-it('does not send the email auto reply when the submission has no author', function () use ($createSubmission) {
+it('does not send the email auto reply when the submission has no author', function () use ($createSubmission): void {
     Notification::fake();
 
     $application = Application::factory()->create();
@@ -104,7 +104,7 @@ it('does not send the email auto reply when the submission has no author', funct
     Notification::assertNothingSent();
 });
 
-it('does not send the email auto reply when the author cannot receive email', function () use ($createSubmission) {
+it('does not send the email auto reply when the author cannot receive email', function () use ($createSubmission): void {
     Notification::fake();
 
     $student = Student::factory()->create();
@@ -122,7 +122,7 @@ it('does not send the email auto reply when the author cannot receive email', fu
     Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
 });
 
-it('uses the email auto reply of the latest application version', function () use ($createSubmission) {
+it('uses the email auto reply of the latest application version', function () use ($createSubmission): void {
     Notification::fake();
 
     $student = Student::factory()->create();

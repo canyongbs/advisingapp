@@ -57,7 +57,7 @@ $tiptapMergeTag = function (string $id): array {
     return ['type' => 'mergeTag', 'attrs' => ['id' => $id]];
 };
 
-it('fills the recipient merge tags from the author', function (Student|Prospect $author) use ($tiptapDoc, $tiptapText, $tiptapMergeTag) {
+it('fills the recipient merge tags from the author', function (Student|Prospect $author) use ($tiptapDoc, $tiptapText, $tiptapMergeTag): void {
     $emailAutoReply = ApplicationEmailAutoReply::factory()->make([
         'application_id' => null,
         'subject' => $tiptapDoc([
@@ -95,7 +95,7 @@ it('fills the recipient merge tags from the author', function (Student|Prospect 
     ]),
 ]);
 
-it('leaves the recipient merge tags empty when there is no author', function () use ($tiptapDoc, $tiptapText, $tiptapMergeTag) {
+it('leaves the recipient merge tags empty when there is no author', function () use ($tiptapDoc, $tiptapText, $tiptapMergeTag): void {
     $emailAutoReply = ApplicationEmailAutoReply::factory()->make([
         'application_id' => null,
         'subject' => $tiptapDoc([
@@ -112,7 +112,7 @@ it('leaves the recipient merge tags empty when there is no author', function () 
         ->and($emailAutoReply->getBody(null))->toContain('Thanks');
 });
 
-it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapText) {
+it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapText): void {
     $emailAutoReply = ApplicationEmailAutoReply::factory()->make([
         'application_id' => null,
         'subject' => $tiptapDoc([
@@ -124,7 +124,7 @@ it('returns the subject as plain text', function () use ($tiptapDoc, $tiptapText
     expect($emailAutoReply->getSubject(null))->toBe('Fish & Chips extra spaces');
 });
 
-it('returns empty strings when the subject and body are empty', function () {
+it('returns empty strings when the subject and body are empty', function (): void {
     $emailAutoReply = ApplicationEmailAutoReply::factory()->make([
         'application_id' => null,
         'subject' => null,

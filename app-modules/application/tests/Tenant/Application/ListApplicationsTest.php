@@ -334,7 +334,7 @@ describe('duplication', function (): void {
         Storage::disk('s3-public')->assertExists($duplicatedStepImage->getPathRelativeToRoot());
     });
 
-    it('copies the email auto reply to the duplicated application', function () {
+    it('copies the email auto reply to the duplicated application', function (): void {
         $application = Application::factory()->create();
 
         $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for applying']]]]];
@@ -362,7 +362,7 @@ describe('duplication', function (): void {
             ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
     });
 
-    it('copies the email auto reply body images to the duplicated application', function () {
+    it('copies the email auto reply body images to the duplicated application', function (): void {
         Storage::fake('s3-public');
 
         $application = Application::factory()->create();
