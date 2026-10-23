@@ -60,6 +60,7 @@
         currentStep,
         totalSteps,
         percentComplete,
+        isAttendanceQuestionRequired: true,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
@@ -242,6 +243,7 @@
                         return;
                     }
 
+                    data.isAttendanceQuestionRequired = json.is_attendance_question_required ?? true;
                     formSubmissionUrl.value = json.submission_url;
                 })
                 .catch((error) => {
