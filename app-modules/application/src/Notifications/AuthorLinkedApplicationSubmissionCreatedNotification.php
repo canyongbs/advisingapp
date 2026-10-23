@@ -57,6 +57,9 @@ class AuthorLinkedApplicationSubmissionCreatedNotification extends Notification
         return ['database'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toDatabase(object $notifiable): array
     {
         $author = $this->submission->author;

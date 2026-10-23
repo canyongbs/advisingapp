@@ -44,6 +44,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 
 class EngagementBatchSmsBlock extends CampaignActionBlock
 {
@@ -58,6 +59,9 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         return [

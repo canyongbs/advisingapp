@@ -54,6 +54,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,6 +76,9 @@ class InteractionBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         $settings = app(InteractionManagementSettings::class);

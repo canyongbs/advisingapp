@@ -269,6 +269,9 @@ class Login extends \Filament\Auth\Pages\Login
         return app(MultifactorService::class)->verify(code: $code, user: $user);
     }
 
+    /**
+     * @return array<int, Action>
+     */
     protected function getSsoFormActions(): array
     {
         $ssoActions = [];
