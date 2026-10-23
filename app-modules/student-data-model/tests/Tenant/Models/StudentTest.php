@@ -114,4 +114,36 @@ describe('archiving', function (): void {
         expect($sisids)->toContain($active->getKey())
             ->and($sisids)->not->toContain($archived->getKey());
     });
+
+    it('records one archived audit and no updated audit when a student is archived', function (): void {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        // The factory records its own updated audit when it links primary contact records.
+        $updatedAuditCount = $student->audits()->where('event', 'updated')->count();
+
+        expect($student->audits()->where('event', 'archived')->exists())->toBeFalse();
+
+        $student->archive();
+
+        expect($student->audits()->where('event', 'archived')->count())->toBe(1)
+            ->and($student->audits()->where('event', 'updated')->count())->toBe($updatedAuditCount);
+    });
+
+    it('records one unarchived audit and no updated audit when a student is unarchived', function (): void {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $student->archive();
+
+        $updatedAuditCount = $student->audits()->where('event', 'updated')->count();
+
+        expect($student->audits()->where('event', 'unarchived')->exists())->toBeFalse();
+
+        $student->unarchive();
+
+        expect($student->audits()->where('event', 'unarchived')->count())->toBe(1)
+            ->and($student->audits()->where('event', 'updated')->count())->toBe($updatedAuditCount);
+    });
 });
