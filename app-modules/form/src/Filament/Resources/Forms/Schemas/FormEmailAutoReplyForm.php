@@ -36,17 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
-use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class FormEmailAutoReplyForm
@@ -55,119 +44,8 @@ class FormEmailAutoReplyForm
     {
         return $schema
             ->components([
-                Section::make()
-                    ->relationship('emailAutoReply')
-                    ->schema([
-                        Toggle::make('is_enabled')
-                            ->label('Enabled')
-                            ->live(),
-                        RichEditor::make('subject')
-                            ->toolbarButtons([])
-                            ->json()
-                            ->required(fn (Get $get): mixed => $get('is_enabled'))
-                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                            ->columnSpanFull()
-                            ->placeholder('Enter the email subject here...'),
-                        RichEditor::make('body')
-                            ->fileAttachmentsDisk('s3-public')
-                            ->toolbarButtons([
-                                ['bold', 'italic', 'link'],
-                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
-                                ['small', 'textColor'],
-                                ['attachFiles'],
-                                ['clearFormatting'],
-                                ['mergeTags'],
-                            ])
-                            ->resizableImages()
-                            ->activePanel('mergeTags')
-                            ->json()
-                            ->required(fn (Get $get): mixed => $get('is_enabled'))
-                            ->hintAction(fn (RichEditor $component): Action => Action::make('loadEmailTemplate')
-                                ->schema([
-                                    Select::make('emailTemplate')
-                                        ->searchable()
-                                        ->options(function (Get $get): array {
-                                            /** @var User $user */
-                                            $user = auth()->user();
-
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo($user)
-                                                )
-                                                ->orderBy('name')
-                                                ->limit(50)
-                                                ->pluck('name', 'id')
-                                                ->toArray();
-                                        })
-                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                            /** @var User $user */
-                                            $user = auth()->user();
-
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo($user)
-                                                )
-                                                ->when(
-                                                    $get('onlyMyDepartmentTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', $user->department->users->pluck('id'))
-                                                )
-                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                                ->orderBy('name')
-                                                ->limit(50)
-                                                ->pluck('name', 'id')
-                                                ->toArray();
-                                        })
-                                        ->getOptionLabelUsing(function (Get $get, mixed $value): ?string {
-                                            if (blank($value)) {
-                                                return null;
-                                            }
-
-                                            /** @var User $user */
-                                            $user = auth()->user();
-
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo($user)
-                                                )
-                                                ->when(
-                                                    $get('onlyMyDepartmentTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', $user->department->users->pluck('id'))
-                                                )
-                                                ->whereKey($value)
-                                                ->value('name');
-                                        }),
-                                    Checkbox::make('onlyMyTemplates')
-                                        ->label('Only show my templates')
-                                        ->live()
-                                        ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
-                                    Checkbox::make('onlyMyDepartmentTemplates')
-                                        ->label("Only show my department's templates")
-                                        ->live()
-                                        ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
-                                ])
-                                ->action(function (array $data) use ($component): void {
-                                    $template = EmailTemplate::find($data['emailTemplate']);
-
-                                    if (! $template) {
-                                        return;
-                                    }
-
-                                    $component->state($template->content);
-                                }))
-                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
-                                return Media::query()
-                                    ->where('uuid', $file)
-                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
-                                    ->first()
-                                    ?->getUrl();
-                            })
-                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                            ->columnSpanFull()
-                            ->live(),
-                    ]),
+                EmailAutoReplySection::make()
+                    ->relationship('emailAutoReply'),
             ]);
     }
 }

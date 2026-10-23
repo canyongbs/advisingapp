@@ -50,7 +50,7 @@ $richText = fn (string $text): array => [
     'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
 ];
 
-it('can render the manage form email auto reply page', function () {
+it('can render the manage form email auto reply page', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -59,7 +59,7 @@ it('can render the manage form email auto reply page', function () {
         ->assertSuccessful();
 });
 
-it('displays the email auto reply data', function () {
+it('displays the email auto reply data', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -71,7 +71,7 @@ it('displays the email auto reply data', function () {
         ]);
 });
 
-it('can update the email auto reply', function () use ($richText) {
+it('can update the email auto reply', function () use ($richText): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -96,7 +96,7 @@ it('can update the email auto reply', function () use ($richText) {
         ->and($emailAutoReply->getBody(null))->toContain('We have received your form.');
 });
 
-it('validates the inputs', function (array $data, array $errors) use ($richText) {
+it('validates the inputs', function (array $data, array $errors) use ($richText): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -117,7 +117,7 @@ it('validates the inputs', function (array $data, array $errors) use ($richText)
     'body required' => [['body' => null], ['emailAutoReply.body' => 'The body field is required.']],
 ]);
 
-it('does not require the subject and body when the email auto reply is disabled', function () {
+it('does not require the subject and body when the email auto reply is disabled', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -136,8 +136,8 @@ it('does not require the subject and body when the email auto reply is disabled'
     expect($form->emailAutoReply()->firstOrFail()->is_enabled)->toBeFalse();
 });
 
-describe('authorization', function () {
-    it('denies access to the page for a form without authentication enabled', function () {
+describe('authorization', function (): void {
+    it('denies access to the page for a form without authentication enabled', function (): void {
         asSuperAdmin();
 
         $form = Form::factory()->create(['is_authenticated' => false]);
@@ -146,7 +146,7 @@ describe('authorization', function () {
             ->assertForbidden();
     });
 
-    it('denies access to the page without the `form.*.update` permission', function () {
+    it('denies access to the page without the `form.*.update` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('form.view-any');
 
@@ -158,7 +158,7 @@ describe('authorization', function () {
             ->assertForbidden();
     });
 
-    it('allows access to the page with the `form.*.update` permission', function () {
+    it('allows access to the page with the `form.*.update` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('form.view-any');
         $user->givePermissionTo('form.*.update');
