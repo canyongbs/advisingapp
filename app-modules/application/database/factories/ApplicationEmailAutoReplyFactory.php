@@ -63,4 +63,14 @@ class ApplicationEmailAutoReplyFactory extends Factory
             ],
         ];
     }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (ApplicationEmailAutoReply $emailAutoReply): void {
+            ApplicationEmailAutoReply::query()
+                ->where('application_id', $emailAutoReply->application_id)
+                ->whereKeyNot($emailAutoReply->getKey())
+                ->forceDelete();
+        });
+    }
 }
