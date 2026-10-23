@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Illuminate\Support\Facades\Bus;
 
-it('is dispatched when a SIS sync completes', function () {
+it('is dispatched when a SIS sync completes', function (): void {
     Bus::fake([AutoImportEnrollmentSemesters::class]);
 
     SisSyncCompleted::dispatch();
@@ -50,7 +50,7 @@ it('is dispatched when a SIS sync completes', function () {
     Bus::assertDispatched(AutoImportEnrollmentSemesters::class);
 });
 
-it('does not run when auto import is disabled', function () {
+it('does not run when auto import is disabled', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = false;
     $settings->save();
@@ -62,7 +62,7 @@ it('does not run when auto import is disabled', function () {
     expect(EnrollmentSemester::count())->toBe(0);
 });
 
-it('does nothing when there are no unsynced semesters', function () {
+it('does nothing when there are no unsynced semesters', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->save();
@@ -75,7 +75,7 @@ it('does nothing when there are no unsynced semesters', function () {
     expect(EnrollmentSemester::count())->toBe(1);
 });
 
-it('imports unsynced semesters with order first placing them at the top', function () {
+it('imports unsynced semesters with order first placing them at the top', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
@@ -102,7 +102,7 @@ it('imports unsynced semesters with order first placing them at the top', functi
     expect($spring2024->order)->toBe(1);
 });
 
-it('imports unsynced semesters with order last placing them at the bottom', function () {
+it('imports unsynced semesters with order last placing them at the bottom', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::Last;
@@ -129,7 +129,7 @@ it('imports unsynced semesters with order last placing them at the bottom', func
     expect($spring2024->order)->toBeGreaterThan($fall2025->order);
 });
 
-it('preserves relative order of existing semesters when placing new ones last', function () {
+it('preserves relative order of existing semesters when placing new ones last', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::Last;
@@ -153,7 +153,7 @@ it('preserves relative order of existing semesters when placing new ones last', 
     expect($spring2024->order)->toBeGreaterThan($spring2025->order);
 });
 
-it('skips enrollments with null semester name', function () {
+it('skips enrollments with null semester name', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->save();
@@ -167,7 +167,7 @@ it('skips enrollments with null semester name', function () {
     expect(EnrollmentSemester::first()->name)->toBe('Fall 2024');
 });
 
-it('does not duplicate already synced semesters', function () {
+it('does not duplicate already synced semesters', function (): void {
     $settings = app(StudentInformationSystemSettings::class);
     $settings->is_enrollment_semester_auto_import_enabled = true;
     $settings->save();

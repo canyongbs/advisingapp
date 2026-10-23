@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['web', 'auth'])
     ->name('calendar.')
     ->prefix('/calendar')
-    ->group(function () {
+    ->group(function (): void {
         provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
         provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
     });
@@ -54,7 +54,7 @@ Route::middleware(['web', 'auth'])
 Route::middleware('web')
     ->prefix('event-registration')
     ->name('event-registration.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{event}/respond', RenderEventRegistrationForm::class)
             ->name('show');
         Route::get('/{event}/form-modal', EventRegistrationFormModalController::class)
@@ -64,7 +64,7 @@ Route::middleware('web')
 Route::middleware('web')
     ->prefix('direct-booking')
     ->name('direct-booking.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{slug}', PersonalBookingPageViewController::class)
             ->name('show');
     });
@@ -72,7 +72,7 @@ Route::middleware('web')
 Route::middleware('web')
     ->prefix('group-booking')
     ->name('group-booking.')
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/{slug}', GroupBookingPageViewController::class)
             ->name('show');
     });

@@ -60,7 +60,7 @@ class BulkTextAction
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Bulk Text')
             ->model(EngagementBatch::class)
-            ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to text.")
+            ->modalDescription(fn (Collection $records): string => "You have selected {$records->count()} {$context} to text.")
             ->steps([
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
@@ -74,11 +74,11 @@ class BulkTextAction
                         EngagementScheduledAtDateTimePicker::make(),
                     ]),
             ])
-            ->action(function (Collection $records, array $data, Schema $schema) {
+            ->action(function (Collection $records, array $data, Schema $schema): void {
                 /** @var Collection<int, CanBeNotified> $records */
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
-                    recipient: $records->filter(fn (CanBeNotified $record) => $record->canReceiveSms()),
+                    recipient: $records->filter(fn (CanBeNotified $record): bool => $record->canReceiveSms()),
                     channel: NotificationChannel::Sms,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,

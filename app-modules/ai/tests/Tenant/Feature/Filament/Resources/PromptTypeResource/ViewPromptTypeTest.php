@@ -56,7 +56,7 @@ $permissions = [
     'settings.*.view',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -69,7 +69,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses,
     ));
@@ -82,7 +82,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -96,7 +96,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can view a record', function () use ($licenses, $permissions) {
+it('can view a record', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions

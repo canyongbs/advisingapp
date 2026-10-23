@@ -43,11 +43,11 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\patchJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
     $studentPhoneNumber = StudentPhoneNumber::factory()
         ->for($student)
@@ -84,7 +84,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('updates a student', function () {
+it('updates a student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -121,7 +121,7 @@ it('updates a student', function () {
     }
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

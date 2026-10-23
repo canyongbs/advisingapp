@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table): void {
             $table->string('feature')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('assistant_chat_message_logs', function (Blueprint $table) {
+        Schema::table('assistant_chat_message_logs', function (Blueprint $table): void {
             $table->dropColumn('feature');
         });
     }

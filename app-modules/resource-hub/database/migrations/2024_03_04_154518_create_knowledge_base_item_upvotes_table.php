@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('knowledge_base_item_upvotes', function (Blueprint $table) {
+        Schema::create('knowledge_base_item_upvotes', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('knowledge_base_item_id')->constrained('knowledge_base_articles')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();

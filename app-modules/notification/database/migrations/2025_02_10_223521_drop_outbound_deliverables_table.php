@@ -46,7 +46,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::create('outbound_deliverables', function (Blueprint $table) {
+        Schema::create('outbound_deliverables', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('channel');

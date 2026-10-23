@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('can bulk assign tags to prospects without remove the prior tags', function () {
+it('can bulk assign tags to prospects without remove the prior tags', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -56,7 +56,7 @@ it('can bulk assign tags to prospects without remove the prior tags', function (
 
     $prospects = Prospect::factory()->hasAttached($tag)->count(5)->create();
 
-    $prospects->each(function (Prospect $prospect) use ($tag) {
+    $prospects->each(function (Prospect $prospect) use ($tag): void {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 
@@ -69,13 +69,13 @@ it('can bulk assign tags to prospects without remove the prior tags', function (
         ])
         ->assertSuccessful();
 
-    $prospects->each(function (Prospect $prospect) use ($tag, $newTag) {
+    $prospects->each(function (Prospect $prospect) use ($tag, $newTag): void {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
         expect($prospect->tags()->where('tag_id', $newTag->getKey())->exists())->toBeTrue();
     });
 });
 
-it('can bulk assign tags to prospects and remove the prior tags', function () {
+it('can bulk assign tags to prospects and remove the prior tags', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -88,7 +88,7 @@ it('can bulk assign tags to prospects and remove the prior tags', function () {
 
     $prospects = Prospect::factory()->hasAttached($tag)->count(5)->create();
 
-    $prospects->each(function (Prospect $prospect) use ($tag) {
+    $prospects->each(function (Prospect $prospect) use ($tag): void {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeTrue();
     });
 
@@ -101,7 +101,7 @@ it('can bulk assign tags to prospects and remove the prior tags', function () {
         ])
         ->assertSuccessful();
 
-    $prospects->each(function (Prospect $prospect) use ($tag, $newTag) {
+    $prospects->each(function (Prospect $prospect) use ($tag, $newTag): void {
         expect($prospect->tags()->where('tag_id', $tag->getKey())->exists())->toBeFalse();
         expect($prospect->tags()->where('tag_id', $newTag->getKey())->exists())->toBeTrue();
     });

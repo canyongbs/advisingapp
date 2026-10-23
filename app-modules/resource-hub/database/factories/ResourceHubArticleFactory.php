@@ -62,7 +62,7 @@ class ResourceHubArticleFactory extends Factory
 
     public function public(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'public' => true,
         ]);
     }

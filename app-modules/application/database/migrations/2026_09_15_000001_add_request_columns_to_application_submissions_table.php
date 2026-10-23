@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('application_submissions', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('application_submissions', function (Blueprint $table): void {
                 $table->timestamp('submitted_at')->nullable();
                 $table->timestamp('canceled_at')->nullable();
                 $table->string('request_method')->nullable();
@@ -60,8 +60,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('application_submissions', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('application_submissions', function (Blueprint $table): void {
                 $table->dropConstrainedForeignId('requester_id');
                 $table->dropColumn(['submitted_at', 'canceled_at', 'request_method', 'request_note']);
             });

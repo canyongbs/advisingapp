@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 
-it('GET with a valid signed URL returns 200 and shows the unsubscribe confirmation page', function () {
+it('GET with a valid signed URL returns 200 and shows the unsubscribe confirmation page', function (): void {
     $email = 'user@example.com';
 
     $url = URL::signedRoute('unsubscribe', ['email' => $email]);
@@ -53,12 +53,12 @@ it('GET with a valid signed URL returns 200 and shows the unsubscribe confirmati
         ->assertSee('Would you like to opt out of future similar messages');
 });
 
-it('GET with a missing or invalid signature returns 403', function () {
+it('GET with a missing or invalid signature returns 403', function (): void {
     get('/unsubscribe?email=user@example.com')
         ->assertStatus(403);
 });
 
-it('POST with a valid signed URL creates an EmailAddressOptInOptOut record with OptedOut status and shows success page', function () {
+it('POST with a valid signed URL creates an EmailAddressOptInOptOut record with OptedOut status and shows success page', function (): void {
     $email = 'user@example.com';
 
     $url = URL::signedRoute('unsubscribe.store', ['email' => $email]);
@@ -73,7 +73,7 @@ it('POST with a valid signed URL creates an EmailAddressOptInOptOut record with 
         ->and($record->status)->toBe(EmailAddressOptInOptOutStatus::OptedOut);
 });
 
-it('POST is idempotent and does not error on double submission leaving only one record', function () {
+it('POST is idempotent and does not error on double submission leaving only one record', function (): void {
     $email = 'user@example.com';
 
     $url = URL::signedRoute('unsubscribe.store', ['email' => $email]);
@@ -85,7 +85,7 @@ it('POST is idempotent and does not error on double submission leaving only one 
         ->and(EmailAddressOptInOptOut::where('address', $email)->first()->status)->toBe(EmailAddressOptInOptOutStatus::OptedOut);
 });
 
-it('store method returns 204 for HEAD request for bot protection without creating a record', function () {
+it('store method returns 204 for HEAD request for bot protection without creating a record', function (): void {
     $email = 'user@example.com';
 
     $request = Request::create('/unsubscribe?email=' . $email, 'HEAD');
@@ -97,7 +97,7 @@ it('store method returns 204 for HEAD request for bot protection without creatin
         ->and(EmailAddressOptInOptOut::where('address', $email)->exists())->toBeFalse();
 });
 
-it('POST with a missing or invalid signature returns 403', function () {
+it('POST with a missing or invalid signature returns 403', function (): void {
     post('/unsubscribe?email=user@example.com')
         ->assertStatus(403);
 });

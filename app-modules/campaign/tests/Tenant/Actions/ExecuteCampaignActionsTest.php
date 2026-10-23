@@ -39,7 +39,7 @@ use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Support\Facades\Queue;
 
-it('will only dispatch jobs for actions that are scheduled and have not yet been executed', function () {
+it('will only dispatch jobs for actions that are scheduled and have not yet been executed', function (): void {
     $actionToBeExecuted = CampaignAction::factory()->create([
         'execute_at' => now()->subMinute(),
     ]);
@@ -57,7 +57,7 @@ it('will only dispatch jobs for actions that are scheduled and have not yet been
     });
 });
 
-it('will not dispatch jobs for scheduled and unexecuted actions with a disabled campaign', function () {
+it('will not dispatch jobs for scheduled and unexecuted actions with a disabled campaign', function (): void {
     CampaignAction::factory()
         ->campaignDisabled()
         ->create([

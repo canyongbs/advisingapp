@@ -122,7 +122,7 @@ class ListInteractionRelations extends ListRecords
                                 Toggle::make('is_relation_required')
                                     ->label('Required')
                                     ->live()
-                                    ->visible(fn (Get $get) => $get('is_relation_enabled'))
+                                    ->visible(fn (Get $get): mixed => $get('is_relation_enabled'))
                                     ->afterStateUpdated(function (bool $state): void {
                                         abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();

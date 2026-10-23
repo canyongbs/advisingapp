@@ -51,6 +51,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -97,7 +98,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")
+                    ->modalHeading(fn (ApplicationSubmission $record): string => "Submission Details: {$record->created_at}")
                     ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
                             ->label('State')
@@ -122,7 +123,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                             ->columnSpanFull(),
                     ])
                     ->modalContent(
-                        fn (ApplicationSubmission $record) => view('application::submission', ['submission' => $record])
+                        fn (ApplicationSubmission $record): Factory|\Illuminate\Contracts\View\View => view('application::submission', ['submission' => $record])
                     ),
                 DeleteAction::make(),
             ])

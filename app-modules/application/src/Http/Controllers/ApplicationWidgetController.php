@@ -108,7 +108,7 @@ class ApplicationWidgetController extends Controller
         abort_if(is_null($stream), 404, 'File not found.');
 
         return response()->streamDownload(
-            function () use ($stream) {
+            function () use ($stream): void {
                 fpassthru($stream);
                 fclose($stream);
             },
@@ -489,7 +489,7 @@ class ApplicationWidgetController extends Controller
             ->orderByDesc('created_at')
             ->paginate(min((int) $request->query('per_page', 10), 50));
 
-        $items = $pastSubmissions->map(fn (ApplicationSubmission $submission) => [
+        $items = $pastSubmissions->map(fn (ApplicationSubmission $submission): array => [
             'id' => $submission->getKey(),
             'submitted_at' => $submission->created_at->toIso8601String(),
             'view_url' => URL::signedRoute(

@@ -117,14 +117,14 @@ class InteractionForm
                                 ->label('Users')
                                 ->multiple()
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                             Select::make('interaction_confidential_departments')
                                 ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
                                 ->label('Departments')
                                 ->multiple()
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         ]),
                 ]),
             Step::make('Details')
@@ -238,7 +238,7 @@ class InteractionForm
                     DateTimePicker::make('start_datetime')
                         ->label('Start Date and Time')
                         ->seconds(false)
-                        ->default(fn () => now()->toDateTimeString())
+                        ->default(fn (): string => now()->toDateTimeString())
                         ->required()
                         ->live(onBlur: true)
                         ->afterStateUpdated(static::calculateEndDateTime(...)),

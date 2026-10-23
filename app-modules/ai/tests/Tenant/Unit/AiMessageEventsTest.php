@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Listeners\CreateAiMessageLog;
 use AdvisingApp\Ai\Models\AiMessage;
 use Illuminate\Support\Facades\Event;
 
-it('dispatches the AiMessageCreated event when an AiMessage is created', function () {
+it('dispatches the AiMessageCreated event when an AiMessage is created', function (): void {
     Event::fake();
 
     AiMessage::factory()->create();
@@ -54,14 +54,14 @@ it('dispatches the AiMessageCreated event when an AiMessage is created', functio
     );
 });
 
-it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function () {
+it('dispatches the AiMessageTrashed event when an AiMessage is deleted', function (): void {
     $aiMessage = AiMessage::factory()->create();
 
     Event::fake();
 
     $aiMessage->delete();
 
-    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage) {
+    Event::assertDispatched(AiMessageTrashed::class, function (AiMessageTrashed $event) use ($aiMessage): bool {
         return $event->aiMessage->is($aiMessage) && $event->aiMessage->trashed();
     });
 

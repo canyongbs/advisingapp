@@ -57,7 +57,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable, NotificationChannel $channel) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable, NotificationChannel $channel): void {
     Bus::fake();
     Notification::fake();
 
@@ -143,14 +143,14 @@ it('will execute appropriately on each educatable in the group', function (Educa
     ])
     ->with([
         'email' => [
-            fn () => NotificationChannel::Email,
+            fn (): NotificationChannel => NotificationChannel::Email,
         ],
         'sms' => [
-            fn () => NotificationChannel::Sms,
+            fn (): NotificationChannel => NotificationChannel::Sms,
         ],
     ]);
 
-it('will throw an exception if a canRecieve check fails', function (Educatable $educatable, NotificationChannel $channel) {
+it('will throw an exception if a canRecieve check fails', function (Educatable $educatable, NotificationChannel $channel): void {
     Bus::fake();
     Notification::fake();
 
@@ -238,10 +238,10 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
     ])
     ->with([
         'email' => [
-            fn () => NotificationChannel::Email,
+            fn (): NotificationChannel => NotificationChannel::Email,
         ],
         'sms' => [
-            fn () => NotificationChannel::Sms,
+            fn (): NotificationChannel => NotificationChannel::Sms,
         ],
     ])
     ->throws(
@@ -249,7 +249,7 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
         'The educatable cannot receive notifications on this channel.'
     );
 
-it('creates an engagement with the correct email_type when email_type is present in action data', function () {
+it('creates an engagement with the correct email_type when email_type is present in action data', function (): void {
     Notification::fake();
 
     $prospect = Prospect::factory()->create();
@@ -297,7 +297,7 @@ it('creates an engagement with the correct email_type when email_type is present
         ->and($engagement->email_type)->toBe(EmailType::Marketing);
 });
 
-it('defaults engagement email_type to transactional when email_type is absent from action data', function () {
+it('defaults engagement email_type to transactional when email_type is absent from action data', function (): void {
     Notification::fake();
 
     $prospect = Prospect::factory()->create();

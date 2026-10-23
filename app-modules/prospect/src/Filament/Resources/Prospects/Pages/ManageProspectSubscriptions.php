@@ -83,7 +83,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
-                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                    ->url(fn ($record): string => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('pivot.created_at')
                     ->dateTime()
@@ -93,7 +93,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                 AttachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('create', Subscription::class))
                     ->label('New')
-                    ->modalHeading(function () {
+                    ->modalHeading(function (): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
@@ -103,14 +103,14 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
-                        fn (Select $select) => $select->placeholder('Select a User'),
+                        fn (Select $select): Select => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
                         fn (Builder $query) => $query
                             ->tap(new HasLicense(Prospect::getLicenseType()))
                             ->tap(new WithoutAnyAdmin()),
                     )
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
@@ -121,14 +121,14 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                     ->label('Remove')
-                    ->modalHeading(function (User $record) {
+                    ->modalHeading(function (User $record): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
                         return "Remove {$record->name} as a follower of {$prospect->display_name}";
                     })
                     ->modalSubmitActionLabel('Remove')
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
@@ -140,14 +140,14 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                         ->label('Remove selected')
-                        ->modalHeading(function () {
+                        ->modalHeading(function (): string {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
                             return "Remove selected followers from {$prospect->display_name}";
                         })
                         ->modalSubmitActionLabel('Remove')
-                        ->successNotificationTitle(function () {
+                        ->successNotificationTitle(function (): string {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 

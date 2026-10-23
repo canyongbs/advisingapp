@@ -125,16 +125,16 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         }
 
         $responseArray = is_array($response) ? $response : [];
-        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
+        $optionKeysLower = $options->keys()->map(fn ($key): string => strtolower($key));
 
         $result = $options
-            ->mapWithKeys(fn ($label, $key) => [
-                $label => collect($responseArray)->contains(fn ($val) => strcasecmp($val, $key) === 0),
+            ->mapWithKeys(fn ($label, $key): array => [
+                $label => collect($responseArray)->contains(fn ($val): bool => strcasecmp($val, $key) === 0),
             ])
             ->toArray();
 
         if ($hasOtherOption && is_array($response)) {
-            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val)));
+            $otherValues = array_filter($response, fn ($val): bool => ! $optionKeysLower->contains(strtolower($val)));
 
             foreach ($otherValues as $otherValue) {
                 $result['Other: ' . $otherValue] = true;

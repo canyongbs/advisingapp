@@ -59,8 +59,8 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        DB::transaction(function () {
-            collect($this->guards)->each(function (string $guard) {
+        DB::transaction(function (): void {
+            collect($this->guards)->each(function (string $guard): void {
                 $this->renamePermissions($this->permissions, $guard);
             });
         });
@@ -68,8 +68,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            collect($this->guards)->each(function (string $guard) {
+        DB::transaction(function (): void {
+            collect($this->guards)->each(function (string $guard): void {
                 $this->renamePermissions(array_flip($this->permissions), $guard);
             });
         });

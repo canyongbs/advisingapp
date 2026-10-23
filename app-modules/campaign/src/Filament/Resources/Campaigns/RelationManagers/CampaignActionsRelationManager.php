@@ -89,9 +89,9 @@ class CampaignActionsRelationManager extends RelationManager
                 TextColumn::make('type')->label('Step Type'),
                 TextColumn::make('cancelled_at')
                     ->label('')
-                    ->formatStateUsing(fn () => 'Cancelled')
+                    ->formatStateUsing(fn (): string => 'Cancelled')
                     ->color('danger')
-                    ->hidden(fn (?CampaignAction $record) => $record?->cancelled_at !== null)
+                    ->hidden(fn (?CampaignAction $record): bool => $record?->cancelled_at !== null)
                     ->badge(),
                 TextColumn::make('execute_at')->label('Schedule')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
@@ -109,7 +109,7 @@ class CampaignActionsRelationManager extends RelationManager
                             ->blocks(CampaignActionType::blocks())
                             ->dehydrated(false)
                             ->model($this->getOwnerRecord())
-                            ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
+                            ->saveRelationshipsUsing(function (Builder $component, Campaign $record): void {
                                 foreach ($component->getChildComponentContainers() as $item) {
                                     /** @var CampaignActionBlock $block */
                                     $block = $item->getParentComponent();
@@ -128,8 +128,8 @@ class CampaignActionsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn () => null)
-                    ->hidden(fn () => $campaign->hasBeenExecuted() === true),
+                    ->action(fn (): null => null)
+                    ->hidden(fn (): bool => $campaign->hasBeenExecuted() === true),
             ])
             ->recordActions([
                 Action::make('cancel')
@@ -140,8 +140,8 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalDescription('Are you sure you wish to cancel this journey step? This action cannot be reversed.')
                     ->modalSubmitActionLabel('Cancel Step')
                     ->modalCancelActionLabel('Go Back')
-                    ->hidden(fn (CampaignAction $record) => $record->cancelled_at !== null || $record->hasBeenExecuted())
-                    ->action(function (CampaignAction $record) {
+                    ->hidden(fn (CampaignAction $record): bool => $record->cancelled_at !== null || $record->hasBeenExecuted())
+                    ->action(function (CampaignAction $record): void {
                         $record->cancelled_at = now();
                         $record->save();
 
@@ -154,8 +154,8 @@ class CampaignActionsRelationManager extends RelationManager
                     ->databaseTransaction(),
                 EditAction::make()
                     ->slideOver()
-                    ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
-                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null)
+                    ->modalHeading(fn (CampaignAction $action): string => 'Edit ' . $action->type->getLabel())
+                    ->hidden(fn (CampaignAction $record): bool => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null)
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['data']['execute_at'] ??= $data['execute_at'] ?? null;
                         unset($data['execute_at']);
@@ -170,15 +170,15 @@ class CampaignActionsRelationManager extends RelationManager
                     })
                     ->databaseTransaction(),
                 DeleteAction::make()
-                    ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
-                    ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
+                    ->modalHeading(fn (CampaignAction $action): string => 'Delete ' . $action->type->getLabel())
+                    ->hidden(fn (CampaignAction $record): bool => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->authorizeIndividualRecords('delete'),
                 ])
-                    ->hidden(fn () => $campaign->hasBeenExecuted() === true),
+                    ->hidden(fn (): bool => $campaign->hasBeenExecuted() === true),
             ]);
     }
 }

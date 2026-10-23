@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use App\Settings\DisplaySettings;
+use Carbon\CarbonInterface;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
@@ -58,14 +59,14 @@ class RefreshWidget extends StatsOverviewReportWidget
             Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'updated-time',
                 now()->addHours(24),
-                fn () => now()
+                fn (): CarbonInterface => now()
             )
         )->setTimezone($timezone);
 
         return parent::render();
     }
 
-    public function removeWidgetCache()
+    public function removeWidgetCache(): void
     {
         Cache::tags(["{{$this->cacheTag}}"])->flush();
 

@@ -42,13 +42,13 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('engagements', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('engagements', function (Blueprint $table): void {
                 $table->dropForeign(['campaign_action_id']);
                 $table->renameColumn('campaign_action_id', 'source_id');
             });
 
-            Schema::table('engagements', function (Blueprint $table) {
+            Schema::table('engagements', function (Blueprint $table): void {
                 $table->string('source_type')->nullable();
             });
 
@@ -56,7 +56,7 @@ return new class () extends Migration {
                 ->whereNotNull('source_id')
                 ->update(['source_type' => 'campaign_action']);
 
-            Schema::table('engagements', function (Blueprint $table) {
+            Schema::table('engagements', function (Blueprint $table): void {
                 $table->index(['source_type', 'source_id']);
             });
         });
@@ -64,14 +64,14 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('engagements', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('engagements', function (Blueprint $table): void {
                 $table->dropIndex(['source_type', 'source_id']);
                 $table->dropColumn('source_type');
                 $table->renameColumn('source_id', 'campaign_action_id');
             });
 
-            Schema::table('engagements', function (Blueprint $table) {
+            Schema::table('engagements', function (Blueprint $table): void {
                 $table->foreign('campaign_action_id')->references('id')->on('campaign_actions');
             });
         });

@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Carbon\Carbon;
 
-it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function () {
+it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -89,7 +89,7 @@ it('returns correct total student stats of students, concerns, groups and tasks 
         ->and($stats[2]->getValue())->toEqual($count);
 });
 
-it('returns correct total student stats of students, concerns, and tasks based on group filters', function () {
+it('returns correct total student stats of students, concerns, and tasks based on group filters', function (): void {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([
@@ -165,7 +165,7 @@ it('returns correct total student stats of students, concerns, and tasks based o
         ->and($stats[2]->getValue())->toEqual($count);
 });
 
-it('does not count archived students in the total', function () {
+it('does not count archived students in the total', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now();
 
@@ -182,14 +182,14 @@ it('does not count archived students in the total', function () {
 
     expect($widget->getStats()[0]->getValue())->toEqual(5);
 
-    $archived->each(fn (Student $student) => $student->archive());
+    $archived->each(fn (Student $student): bool => $student->archive());
 
     expect($widget->getStats()[0]->getValue())->toEqual(3);
 });
 
 // Archiving is not retroactive: a student archived in September was genuinely part of the
 // student body in March, so a report looking at March still has to count them.
-it('counts a student archived after the reported period', function () {
+it('counts a student archived after the reported period', function (): void {
     $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 

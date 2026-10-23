@@ -66,9 +66,9 @@ class CreateEventAttendees implements ShouldQueue
     {
         $sender = $this->sender;
 
-        Bus::batch(collect($this->emails)->map(fn ($email) => new CreateEventAttendee($this->event, $email, $sender)))
+        Bus::batch(collect($this->emails)->map(fn ($email): CreateEventAttendee => new CreateEventAttendee($this->event, $email, $sender)))
             ->name("Invite Attendees to Event: {$this->event->getKey()}")
-            ->finally(function (Batch $batch) use ($sender) {
+            ->finally(function (Batch $batch) use ($sender): void {
                 $successfulJobsCount = number_format($batch->totalJobs - $batch->failedJobs);
 
                 $body = 'The'
@@ -87,15 +87,15 @@ class CreateEventAttendees implements ShouldQueue
                     ->body($body)
                     ->when(
                         ! $failedJobsCount,
-                        fn (Notification $notification) => $notification->success(),
+                        fn (Notification $notification): Notification => $notification->success(),
                     )
                     ->when(
                         $failedJobsCount && ($failedJobsCount < $batch->totalJobs),
-                        fn (Notification $notification) => $notification->warning(),
+                        fn (Notification $notification): Notification => $notification->warning(),
                     )
                     ->when(
                         $failedJobsCount === $batch->totalJobs,
-                        fn (Notification $notification) => $notification->danger(),
+                        fn (Notification $notification): Notification => $notification->danger(),
                     )
                     ->sendToDatabase($sender);
             })

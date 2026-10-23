@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::table('permissions')
                 ->where('name', 'LIKE', 'knowledge_base_article.%')
                 ->update([
@@ -101,7 +101,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::table('permissions')
                 ->where('name', 'LIKE', 'resource_hub_article.%')
                 ->update([

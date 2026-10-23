@@ -90,7 +90,7 @@ class ManageAiEmployeeAdvisorSettings extends SettingsPage
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::EmployeeAdvisors->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
@@ -144,7 +144,7 @@ class ManageAiEmployeeAdvisorSettings extends SettingsPage
         if (! ($data['allow_selection_of_model'] ?? true)) {
             AiAssistant::query()
                 ->where('is_default', false)
-                ->each(function (AiAssistant $assistant) use ($data) {
+                ->each(function (AiAssistant $assistant) use ($data): void {
                     if ($assistant->model === $data['preselected_model']) {
                         return;
                     }

@@ -39,7 +39,7 @@ use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Authorization\Models\OneTimeLoginCode;
 use App\Models\User;
 
-it('claims a matching code and soft deletes it', function () {
+it('claims a matching code and soft deletes it', function (): void {
     $user = User::factory()->create();
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -49,7 +49,7 @@ it('claims a matching code and soft deletes it', function () {
         ->and(OneTimeLoginCode::withTrashed()->count())->toBe(1);
 });
 
-it('does not claim a code that has already been claimed', function () {
+it('does not claim a code that has already been claimed', function (): void {
     $user = User::factory()->create();
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
@@ -59,7 +59,7 @@ it('does not claim a code that has already been claimed', function () {
     expect(app(ClaimOneTimeLoginCode::class)($user, $code))->toBeFalse();
 });
 
-it('does not claim an expired code', function () {
+it('does not claim an expired code', function (): void {
     $user = User::factory()->create();
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->subMinute());
@@ -68,7 +68,7 @@ it('does not claim an expired code', function () {
         ->and(OneTimeLoginCode::count())->toBe(1);
 });
 
-it('does not claim a code belonging to a different user', function () {
+it('does not claim a code belonging to a different user', function (): void {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
 
@@ -77,7 +77,7 @@ it('does not claim a code belonging to a different user', function () {
     expect(app(ClaimOneTimeLoginCode::class)($user, $code))->toBeFalse();
 });
 
-it('does not claim an incorrect code', function () {
+it('does not claim an incorrect code', function (): void {
     $user = User::factory()->create();
 
     $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());

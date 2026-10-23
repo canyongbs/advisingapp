@@ -53,7 +53,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 
-it('can render list page', function () {
+it('can render list page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -67,7 +67,7 @@ it('can render list page', function () {
         ->assertSuccessful();
 });
 
-it('can render data in list page', function () {
+it('can render data in list page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -81,7 +81,7 @@ it('can render data in list page', function () {
         ->assertCanSeeTableRecords($basicNeedsPrograms);
 });
 
-it('can render create page', function () {
+it('can render create page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -96,7 +96,7 @@ it('can render create page', function () {
         ->assertSuccessful();
 });
 
-it('can validate input on create page', function () {
+it('can validate input on create page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -116,7 +116,7 @@ it('can validate input on create page', function () {
         ->assertHasFormErrors(['name' => 'required', 'basic_needs_category_id' => 'required']);
 });
 
-it('can create basic needs program', function () {
+it('can create basic needs program', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -156,7 +156,7 @@ it('can create basic needs program', function () {
     ]);
 });
 
-it('can render edit page', function () {
+it('can render edit page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
 
@@ -174,7 +174,7 @@ it('can render edit page', function () {
     ]))->assertSuccessful();
 });
 
-it('can retrieve data', function () {
+it('can retrieve data', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
 
@@ -204,7 +204,7 @@ it('can retrieve data', function () {
         ]);
 });
 
-it('can validate input on edit page', function () {
+it('can validate input on edit page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
 
@@ -228,7 +228,7 @@ it('can validate input on edit page', function () {
         ->assertHasFormErrors(['name' => 'required', 'basic_needs_category_id' => 'required']);
 });
 
-it('can save basic needs program', function () {
+it('can save basic needs program', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $oldBasicNeedsProgram = BasicNeedsProgram::factory()->create();
     $newBasicNeedsProgram = BasicNeedsProgram::factory()->make();
@@ -273,7 +273,7 @@ it('can save basic needs program', function () {
         ->application_process->toBe($newBasicNeedsProgram->application_process);
 });
 
-it('can render view page', function () {
+it('can render view page', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
 
@@ -291,7 +291,7 @@ it('can render view page', function () {
     ]))->assertSuccessful();
 });
 
-it('can delete basic needs program', function () {
+it('can delete basic needs program', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsProgram = BasicNeedsProgram::factory()->create();
 
@@ -315,7 +315,7 @@ it('can delete basic needs program', function () {
     assertSoftDeleted($basicNeedsProgram);
 });
 
-it('can bulk delete basic needs programs', function () {
+it('can bulk delete basic needs programs', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
 
@@ -337,7 +337,7 @@ it('can bulk delete basic needs programs', function () {
     }
 });
 
-it('hides the delete bulk action for users without the delete permission', function () {
+it('hides the delete bulk action for users without the delete permission', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('support_program.view-any');
 
@@ -347,7 +347,7 @@ it('hides the delete bulk action for users without the delete permission', funct
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the delete bulk action for users with the delete permission', function () {
+it('shows the delete bulk action for users with the delete permission', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('support_program.view-any');
     $user->givePermissionTo('support_program.*.delete');
@@ -358,7 +358,7 @@ it('shows the delete bulk action for users with the delete permission', function
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('can filter basic needs program by `program category`', function () {
+it('can filter basic needs program by `program category`', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
     $basicNeedsCategoryId = $basicNeedsPrograms->first()->basic_needs_category_id;
@@ -378,7 +378,7 @@ it('can filter basic needs program by `program category`', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basicNeedsCategoryId));
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->supportPrograms = false;
@@ -405,7 +405,7 @@ it('is gated with proper access control', function () {
     get(BasicNeedsProgramResource::getUrl('index'))->assertSuccessful();
 });
 
-it('can filter support programs by contact person', function () {
+it('can filter support programs by contact person', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
     $contactPerson = $basicNeedsPrograms->first()->contact_person;
@@ -425,7 +425,7 @@ it('can filter support programs by contact person', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
 });
 
-it('loads only distinct contact persons as initial filter options', function () {
+it('loads only distinct contact persons as initial filter options', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('support_program.view-any');
     actingAs($user);
@@ -441,7 +441,7 @@ it('loads only distinct contact persons as initial filter options', function () 
         });
 });
 
-it('returns server-side search results for contact persons beyond the initial 40 options', function () {
+it('returns server-side search results for contact persons beyond the initial 40 options', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('support_program.view-any');
     actingAs($user);

@@ -59,18 +59,18 @@ $fakeTelnyxLookup = function (array $data, int $status = 200, array $responseHea
     ApiRequestor::setHttpClient(new FakeTelnyxHttpClient(json_encode($data, JSON_THROW_ON_ERROR), $status, $responseHeaders));
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(TwilioSettings::class);
     $settings->provider = SmsMessagingProvider::Telnyx;
     $settings->telnyx_api_key = 'test-telnyx-api-key';
     $settings->save();
 });
 
-afterEach(function () {
+afterEach(function (): void {
     ApiRequestor::setHttpClient(CurlClient::instance());
 });
 
-it('stores a successful carrier lookup result', function () use ($fakeTelnyxLookup) {
+it('stores a successful carrier lookup result', function () use ($fakeTelnyxLookup): void {
     $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
@@ -94,7 +94,7 @@ it('stores a successful carrier lookup result', function () use ($fakeTelnyxLook
         ->and(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(1);
 });
 
-it('maps a successful lookup with an inconclusive carrier type to unknown', function () use ($fakeTelnyxLookup) {
+it('maps a successful lookup with an inconclusive carrier type to unknown', function () use ($fakeTelnyxLookup): void {
     $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
@@ -107,7 +107,7 @@ it('maps a successful lookup with an inconclusive carrier type to unknown', func
         ->toBe(PhoneNumberLookupStatus::Unknown);
 });
 
-it('falls back to portability data when the carrier object is null', function () use ($fakeTelnyxLookup) {
+it('falls back to portability data when the carrier object is null', function () use ($fakeTelnyxLookup): void {
     // Telnyx commonly returns a null carrier for US / VoIP / ported numbers,
     // with the line type and carrier name in the portability object instead.
     $fakeTelnyxLookup([
@@ -130,7 +130,7 @@ it('falls back to portability data when the carrier object is null', function ()
         ->and($lookup->carrier_name)->toBe('Bandwidth.com CLEC, LLC');
 });
 
-it('maps a number Telnyx reports as not valid to invalid', function () use ($fakeTelnyxLookup) {
+it('maps a number Telnyx reports as not valid to invalid', function () use ($fakeTelnyxLookup): void {
     $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
@@ -144,7 +144,7 @@ it('maps a number Telnyx reports as not valid to invalid', function () use ($fak
         ->toBe(PhoneNumberLookupStatus::Invalid);
 });
 
-it('reuses an existing lookup result instead of calling Telnyx again', function () use ($fakeTelnyxLookup) {
+it('reuses an existing lookup result instead of calling Telnyx again', function () use ($fakeTelnyxLookup): void {
     $existing = PhoneNumberLookup::factory()->mobile()->create(['number' => '+16502530000']);
 
     // A different result that would be returned if Telnyx were (incorrectly) called.
@@ -162,7 +162,7 @@ it('reuses an existing lookup result instead of calling Telnyx again', function 
         ->and(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(1);
 });
 
-it('stores an invalid result when Telnyx cannot recognize the number', function () use ($fakeTelnyxLookup) {
+it('stores an invalid result when Telnyx cannot recognize the number', function () use ($fakeTelnyxLookup): void {
     $fakeTelnyxLookup([
         'errors' => [
             ['code' => '10005', 'title' => 'Resource not found'],
@@ -176,7 +176,7 @@ it('stores an invalid result when Telnyx cannot recognize the number', function 
         ->and($lookup->carrier_type)->toBeNull();
 });
 
-it('re-throws transient provider errors without storing a result', function () use ($fakeTelnyxLookup) {
+it('re-throws transient provider errors without storing a result', function () use ($fakeTelnyxLookup): void {
     $fakeTelnyxLookup([
         'errors' => [
             ['code' => '90000', 'title' => 'Internal server error'],
@@ -189,12 +189,12 @@ it('re-throws transient provider errors without storing a result', function () u
     expect(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(0);
 });
 
-it('throws when the phone number is not a valid E.164 number', function () {
+it('throws when the phone number is not a valid E.164 number', function (): void {
     expect(fn () => app(PhoneNumberLookupService::class)->lookup('not-a-phone-number'))
         ->toThrow(PhoneNumberLookupInvalidNumber::class);
 });
 
-it('reports as configured when messaging is enabled with a Telnyx API key', function () {
+it('reports as configured when messaging is enabled with a Telnyx API key', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->save();
@@ -202,7 +202,7 @@ it('reports as configured when messaging is enabled with a Telnyx API key', func
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeTrue();
 });
 
-it('reports as not configured when the Telnyx API key is blank', function () {
+it('reports as not configured when the Telnyx API key is blank', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->telnyx_api_key = null;
@@ -211,7 +211,7 @@ it('reports as not configured when the Telnyx API key is blank', function () {
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
 });
 
-it('reports as not configured when messaging is disabled', function () {
+it('reports as not configured when messaging is disabled', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = false;
     $settings->save();
@@ -219,7 +219,7 @@ it('reports as not configured when messaging is disabled', function () {
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
 });
 
-it('reports as not configured when SMS demo mode is enabled', function () {
+it('reports as not configured when SMS demo mode is enabled', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->is_demo_mode_enabled = true;
@@ -228,7 +228,7 @@ it('reports as not configured when SMS demo mode is enabled', function () {
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
 });
 
-it('reports as not configured when Telnyx is not the selected provider', function () {
+it('reports as not configured when Telnyx is not the selected provider', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->provider = SmsMessagingProvider::Twilio;
@@ -237,7 +237,7 @@ it('reports as not configured when Telnyx is not the selected provider', functio
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
 });
 
-it('throws PhoneNumberLookupRateLimited and caches the clear-at timestamp when Telnyx returns 429', function () use ($fakeTelnyxLookup) {
+it('throws PhoneNumberLookupRateLimited and caches the clear-at timestamp when Telnyx returns 429', function () use ($fakeTelnyxLookup): void {
     travelTo(now()->startOfMinute());
 
     $fakeTelnyxLookup(

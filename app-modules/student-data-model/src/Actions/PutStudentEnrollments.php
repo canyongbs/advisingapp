@@ -49,7 +49,7 @@ class PutStudentEnrollments
      */
     public function execute(Student $student, array $requestData): void
     {
-        DB::transaction(function () use ($requestData, $student) {
+        DB::transaction(function () use ($requestData, $student): void {
             $student->enrollments()->delete();
 
             foreach ($requestData as $enrollmentData) {

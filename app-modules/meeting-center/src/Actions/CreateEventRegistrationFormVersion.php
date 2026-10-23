@@ -44,7 +44,7 @@ class CreateEventRegistrationFormVersion
     /** @param array<string, mixed> $newData */
     public function execute(EventRegistrationForm $oldVersion, array $newData): EventRegistrationForm
     {
-        return DB::transaction(function () use ($oldVersion, $newData) {
+        return DB::transaction(function () use ($oldVersion, $newData): EventRegistrationForm {
             $oldVersion->archive();
 
             $newVersion = new EventRegistrationForm();

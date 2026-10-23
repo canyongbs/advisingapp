@@ -56,7 +56,7 @@ class BulkGroupAction
         return BulkAction::make('group')
             ->icon('heroicon-o-rectangle-group')
             ->label('Save Group')
-            ->form(fn (Schema $schema) => $schema->components([
+            ->form(fn (Schema $schema): Schema => $schema->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
@@ -71,7 +71,7 @@ class BulkGroupAction
                     ->label('Description')
                     ->maxLength(65535),
             ]))
-            ->action(function (Collection $records, array $data) use ($groupModel) {
+            ->action(function (Collection $records, array $data) use ($groupModel): void {
                 try {
                     DB::beginTransaction();
                     $group = Group::create([
@@ -84,7 +84,7 @@ class BulkGroupAction
                         fn ($chunkRecord) => $group
                             ->subjects()
                             ->createMany(
-                                $chunkRecord->map(fn ($record) => [
+                                $chunkRecord->map(fn ($record): array => [
                                     'subject_id' => $record->getKey(),
                                     'subject_type' => $record->getMorphClass(),
                                 ])->toArray()

@@ -50,7 +50,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the group', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior): void {
     Bus::fake();
     $user = User::factory()->create();
 
@@ -112,7 +112,7 @@ it('will execute appropriately on each educatable in the group', function (array
         : [...$priorSubscriptions, ...$users->pluck('id')->toArray()];
 
     $relatedModel->subscriptions()
-        ->each(function (Subscription $subscription) use ($expectedUserIds) {
+        ->each(function (Subscription $subscription) use ($expectedUserIds): void {
             expect($subscription)->toBeInstanceOf(Subscription::class);
 
             /** @var Subscription $subscription */

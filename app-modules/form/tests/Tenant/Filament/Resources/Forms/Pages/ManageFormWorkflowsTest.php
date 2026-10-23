@@ -52,7 +52,7 @@ use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-test('can successfully create a new workflow for a form through manage workflows page', function () {
+test('can successfully create a new workflow for a form through manage workflows page', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -79,7 +79,7 @@ test('can successfully create a new workflow for a form through manage workflows
     expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
 });
 
-test('creates multiple workflows for the same form without conflicts', function () {
+test('creates multiple workflows for the same form without conflicts', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -110,7 +110,7 @@ test('creates multiple workflows for the same form without conflicts', function 
     }
 });
 
-test('form workflow creation is gated with proper access control', function () {
+test('form workflow creation is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $form = Form::factory()->create();
 
@@ -136,7 +136,7 @@ test('form workflow creation is gated with proper access control', function () {
     expect($workflowTrigger->related_id)->toBe($form->id);
 });
 
-test('creates workflow in disabled state by default for safety', function () {
+test('creates workflow in disabled state by default for safety', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -149,7 +149,7 @@ test('creates workflow in disabled state by default for safety', function () {
     expect($workflow->is_enabled)->toBeFalse();
 });
 
-test('form workflow editing succeeds with proper permissions', function () {
+test('form workflow editing succeeds with proper permissions', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $form = Form::factory()->create();
     $oldWorkflow = Workflow::factory()
@@ -182,7 +182,7 @@ test('form workflow editing succeeds with proper permissions', function () {
     expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
-test('can successfully edit workflow name for a form workflow', function () {
+test('can successfully edit workflow name for a form workflow', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -212,7 +212,7 @@ test('can successfully edit workflow name for a form workflow', function () {
     expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
-test('can successfully enable and disable workflow for form', function () {
+test('can successfully enable and disable workflow for form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -249,7 +249,7 @@ test('can successfully enable and disable workflow for form', function () {
     expect($workflow->is_enabled)->toBeFalse();
 });
 
-test('validates required workflow name during edit', function () {
+test('validates required workflow name during edit', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -275,7 +275,7 @@ test('validates required workflow name during edit', function () {
     expect($workflow->name)->not->toBe('');
 });
 
-test('validates workflow name maximum length during edit', function () {
+test('validates workflow name maximum length during edit', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -303,7 +303,7 @@ test('validates workflow name maximum length during edit', function () {
     expect($workflow->name)->not->toBe($longName);
 });
 
-test('form workflow deletion succeeds with proper permissions', function () {
+test('form workflow deletion succeeds with proper permissions', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $form = Form::factory()->create();
     $workflow = Workflow::factory()
@@ -337,7 +337,7 @@ test('form workflow deletion succeeds with proper permissions', function () {
     expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
 });
 
-test('manage form workflows page links to nested workflow edit route', function () {
+test('manage form workflows page links to nested workflow edit route', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -360,7 +360,7 @@ test('manage form workflows page links to nested workflow edit route', function 
         ->assertSee($nestedEditUrl, false);
 });
 
-test('nested form workflow edit route is scoped to owner form', function () {
+test('nested form workflow edit route is scoped to owner form', function (): void {
     asSuperAdmin();
 
     $ownerForm = Form::factory()->create();

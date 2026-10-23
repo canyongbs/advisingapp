@@ -39,11 +39,11 @@ use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Notification::fake();
 });
 
-it('sends the proper notification to the assigned User', function () {
+it('sends the proper notification to the assigned User', function (): void {
     $task = Task::factory()->assigned()->create(['is_confidential' => false]);
 
     Notification::assertSentTo($task->assignedTo, TaskAssignedToUserNotification::class);
@@ -61,7 +61,7 @@ it('sends the proper notification to the assigned User', function () {
     Notification::assertNotSentTo($originalAssignedUser, TaskAssignedToUserNotification::class);
 });
 
-it('it properly subscriptions the creator and assigned Users to the Subscribable', function () {
+it('it properly subscriptions the creator and assigned Users to the Subscribable', function (): void {
     $task = Task::factory()
         ->recycle(User::factory()->create())
         ->assigned()

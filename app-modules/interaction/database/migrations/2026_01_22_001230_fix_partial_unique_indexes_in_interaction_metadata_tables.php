@@ -43,33 +43,33 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->dropUnique(['name', 'interactable_type']);
                 $table->uniqueIndex(['name', 'interactable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
@@ -78,33 +78,33 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->dropUniqueIndex(['name', 'interactable_type']);
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
             });

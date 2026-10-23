@@ -58,7 +58,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
 
         $runningTotalPerMonth = $shouldBypassCache
             ? $this->getStudentInteractionData($startDate, $endDate, $groupId)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_line_chart', now()->addHours(24), function () {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_line_chart', now()->addHours(24), function (): array {
                 return $this->getStudentInteractionData();
             });
 
@@ -103,7 +103,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
 
         $monthlyData = Interaction::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
                 $query->when(
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)

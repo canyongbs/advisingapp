@@ -45,7 +45,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -66,7 +66,7 @@ it('is gated with proper access control', function () {
     get(ProspectMessagesDetailReport::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a department that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

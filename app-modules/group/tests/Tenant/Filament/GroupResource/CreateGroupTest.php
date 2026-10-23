@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('CreateGroup is gated with proper access control', function () {
+test('CreateGroup is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -63,7 +63,7 @@ test('CreateGroup is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('group importers expose user-friendly CSV header labels', function () {
+test('group importers expose user-friendly CSV header labels', function (): void {
     $studentSubjectColumn = StudentGroupSubjectImporter::getColumns()[0];
     $prospectSubjectColumn = ProspectGroupSubjectImporter::getColumns()[0];
 
@@ -71,7 +71,7 @@ test('group importers expose user-friendly CSV header labels', function () {
     expect($prospectSubjectColumn->getLabel())->toBe('Email address');
 });
 
-test('CreateGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function () {
+test('CreateGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function (): void {
     asSuperAdmin();
 
     $group = Group::factory()->create(['name' => 'Group Name']);

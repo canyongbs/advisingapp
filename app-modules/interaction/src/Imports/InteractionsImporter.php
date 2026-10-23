@@ -91,14 +91,14 @@ class InteractionsImporter extends Importer
                     },
                 )
                 ->requiredMapping()
-                ->rules(function (InteractionsImporter $importer) {
+                ->rules(function (InteractionsImporter $importer): array {
                     if (! $importer->getImport()->user->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
                         return [];
                     }
 
                     return ['starts_with:prospect:,student:'];
                 })
-                ->example(function () {
+                ->example(function (): string {
                     if (auth()->user()?->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]) ?? true) {
                         return 'student:johnsmith@gmail.com';
                     }

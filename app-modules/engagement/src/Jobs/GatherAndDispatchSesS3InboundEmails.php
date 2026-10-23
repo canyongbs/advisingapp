@@ -56,8 +56,8 @@ class GatherAndDispatchSesS3InboundEmails implements ShouldQueue, NotTenantAware
         }
 
         collect(Storage::disk('s3-inbound-email')->files())
-            ->filter(fn (string $file) => $file !== 'AMAZON_SES_SETUP_NOTIFICATION')
-            ->each(function (string $file) {
+            ->filter(fn (string $file): bool => $file !== 'AMAZON_SES_SETUP_NOTIFICATION')
+            ->each(function (string $file): void {
                 dispatch(new ProcessSesS3InboundEmail($file));
             });
     }

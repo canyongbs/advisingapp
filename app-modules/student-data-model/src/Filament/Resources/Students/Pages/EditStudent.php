@@ -228,7 +228,7 @@ class EditStudent extends EditRecord
                                 return $data;
                             })
                             ->deleteAction(
-                                fn (Action $action) => $action->before(function () use ($action) {
+                                fn (Action $action): Action => $action->before(function () use ($action): void {
                                     $data = $action->getArguments();
 
                                     if (isset($data['number'])) {
@@ -251,7 +251,7 @@ class EditStudent extends EditRecord
                                 AddressInput::make()
                                     ->columnSpanFull()
                                     /** @phpstan-ignore argument.type */
-                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                    ->onItemSelected(function (Set $set, SearchResult $item): void {
                                         try {
                                             $data = $item->get('data');
 

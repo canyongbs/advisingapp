@@ -62,7 +62,7 @@ use function Pest\Laravel\postJson;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->onlineForms = true;
@@ -70,7 +70,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-test('view endpoint returns an empty schema for an authenticated form', function () {
+test('view endpoint returns an empty schema for an authenticated form', function (): void {
     // This is the constraint that forces the preview to use a dedicated endpoint:
     // the public entry endpoint must not leak the schema before authentication.
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
@@ -84,7 +84,7 @@ test('view endpoint returns an empty schema for an authenticated form', function
     expect($response->json('schema'))->toBe([]);
 });
 
-test('preview endpoint returns a populated schema for an authenticated form', function () {
+test('preview endpoint returns a populated schema for an authenticated form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -98,7 +98,7 @@ test('preview endpoint returns a populated schema for an authenticated form', fu
     expect($response->json('schema.children'))->toBeArray()->not->toBeEmpty();
 });
 
-test('preview renders the form fields for an authenticated form', function () {
+test('preview renders the form fields for an authenticated form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);
@@ -144,7 +144,7 @@ test('preview renders the form fields for an authenticated form', function () {
         ->assertJsonFragment(['label' => 'Tell us about yourself']);
 });
 
-test('authenticate locks out after too many invalid code attempts', function () {
+test('authenticate locks out after too many invalid code attempts', function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     $form = Form::factory()->create();
@@ -224,7 +224,7 @@ $createRequestedSubmissionWithAutoReplyAndFollower = function (): array {
     return [$form, $field, $student, $follower, $requestedSubmission, $authentication];
 };
 
-it('completes a requested submission and dispatches `FormSubmissionCreated` once when it is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+it('completes a requested submission and dispatches `FormSubmissionCreated` once when it is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     Queue::fake();
@@ -252,7 +252,7 @@ it('completes a requested submission and dispatches `FormSubmissionCreated` once
     );
 });
 
-it('sends the email auto reply and notifies followers once when a requested submission is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+it('sends the email auto reply and notifies followers once when a requested submission is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     Notification::fake();
@@ -273,7 +273,7 @@ it('sends the email auto reply and notifies followers once when a requested subm
     Notification::assertSentToTimes($follower, AuthorLinkedFormSubmissionCreatedNotification::class, 1);
 });
 
-it('does not send the email auto reply or notify followers when a requested submission fails and is rolled back', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+it('does not send the email auto reply or notify followers when a requested submission fails and is rolled back', function () use ($createRequestedSubmissionWithAutoReplyAndFollower): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     Notification::fake();
@@ -281,7 +281,7 @@ it('does not send the email auto reply or notify followers when a requested subm
 
     [$form, $field, $student, $follower, $requestedSubmission, $authentication] = $createRequestedSubmissionWithAutoReplyAndFollower();
 
-    mock(ProcessSubmissionField::class, function (MockInterface $mock) {
+    mock(ProcessSubmissionField::class, function (MockInterface $mock): void {
         $mock->shouldReceive('__invoke')->andThrow(new Exception('Field processing failed.'));
     });
 

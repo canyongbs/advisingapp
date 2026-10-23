@@ -47,7 +47,7 @@ use Illuminate\Support\Testing\Fakes\PendingBatchFake;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will create an engagement batch', function () {
+it('will create an engagement batch', function (): void {
     Bus::fake();
 
     assertDatabaseCount(EngagementBatch::class, 0);
@@ -77,7 +77,7 @@ it('will create an engagement batch', function () {
     Bus::assertBatched(fn (PendingBatchFake $batch): bool => $batch->jobs->count() === 10);
 });
 
-it('will create a marketing engagement batch and each child engagement inherits marketing email type', function () {
+it('will create a marketing engagement batch and each child engagement inherits marketing email type', function (): void {
     assertDatabaseCount(EngagementBatch::class, 0);
     $data = CreateEngagementBatchRequestFactory::new()->email()->create([
         'emailType' => EmailType::Marketing,
@@ -102,7 +102,7 @@ it('will create a marketing engagement batch and each child engagement inherits 
 
     expect($engagements)->toHaveCount(10);
 
-    $engagements->each(function (Engagement $engagement) {
+    $engagements->each(function (Engagement $engagement): void {
         expect($engagement->email_type)->toBe(EmailType::Marketing);
     });
 });

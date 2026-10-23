@@ -42,7 +42,7 @@ use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Support\Facades\Storage;
 
-it('renders the notification mail with the configured `primary_color`', function () {
+it('renders the notification mail with the configured `primary_color`', function (): void {
     $user = User::factory()->create();
 
     $expected = Color::Gray->getRgb();
@@ -58,7 +58,7 @@ it('renders the notification mail with the configured `primary_color`', function
         ->toContain($expected);
 });
 
-it('applies notification settings when instantiated directly', function () {
+it('applies notification settings when instantiated directly', function (): void {
     $settings = app(NotificationSettings::class);
     $settings->from_name = 'Advising Team';
     $settings->save();
@@ -69,7 +69,7 @@ it('applies notification settings when instantiated directly', function () {
         ->and($mailMessage->from[1])->toBe('Advising Team');
 });
 
-it('renders the active theme logo fallback with a public media URL', function () {
+it('renders the active theme logo fallback with a public media URL', function (): void {
     Storage::fake('s3-public');
 
     $themeSettings = app(ThemeSettings::class);

@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_group_appointments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('booking_group_appointments', function (Blueprint $table): void {
                 $table->foreignUuid('calendar_event_id')
                     ->nullable()
                     ->constrained('calendar_events')
@@ -81,8 +81,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_group_appointments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('booking_group_appointments', function (Blueprint $table): void {
                 $table->dropConstrainedForeignId('calendar_event_id');
             });
         });

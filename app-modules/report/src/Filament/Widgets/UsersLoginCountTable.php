@@ -63,7 +63,7 @@ class UsersLoginCountTable extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -84,7 +84,7 @@ class UsersLoginCountTable extends BaseWidget
                     ->searchable(),
                 TextColumn::make('email'),
                 TextColumn::make('has_logged_in')
-                    ->state(function ($record) {
+                    ->state(function ($record): string {
                         return $record->first_login_at ? 'Yes' : 'No';
                     })
                     ->badge()
@@ -109,7 +109,7 @@ class UsersLoginCountTable extends BaseWidget
                         'logged_in' => 'Has Logged In',
                         'never_logged_in' => 'Never Logged In',
                     ])
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         if ($data['value'] === 'logged_in') {
                             $query->whereNotNull('first_login_at');
                         } elseif ($data['value'] === 'never_logged_in') {

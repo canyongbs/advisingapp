@@ -57,7 +57,7 @@ use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
@@ -100,7 +100,7 @@ $getRenderedFormIds = function (Testable $component): array {
 
 $archiveAction = fn (): TestAction => TestAction::make('archive');
 
-it('can render the manage application page', function () {
+it('can render the manage application page', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -109,7 +109,7 @@ it('can render the manage application page', function () {
         ->assertSuccessful();
 });
 
-it('displays the application data', function () {
+it('displays the application data', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -122,8 +122,8 @@ it('displays the application data', function () {
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds) {
-    it('renders a relation manager only on its own tab', function (string $tab, string $relationManager, string $otherRelationManager) {
+describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds): void {
+    it('renders a relation manager only on its own tab', function (string $tab, string $relationManager, string $otherRelationManager): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -139,7 +139,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'submissions' => ['submissions', SubmissionsRelationManager::class, WorkflowsRelationManager::class],
     ]);
 
-    it('keeps unsaved edits when switching tabs', function () {
+    it('keeps unsaved edits when switching tabs', function (): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -154,7 +154,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->assertSchemaStateSet(['notify_via_email' => true], 'notificationsForm');
     });
 
-    it('shows the number of submissions on the submissions tab', function () use ($getTabLabels) {
+    it('shows the number of submissions on the submissions tab', function () use ($getTabLabels): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -166,7 +166,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getTabLabels($component))->toContain("Submissions {$submissionCount}");
     });
 
-    it('only counts the submissions the user is licensed to see on the submissions tab', function () use ($getTabLabels) {
+    it('only counts the submissions the user is licensed to see on the submissions tab', function () use ($getTabLabels): void {
         $application = Application::factory()->create();
         $application->submissions()->delete();
         ApplicationSubmission::factory()->create([
@@ -188,7 +188,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->toContain('Submissions 0');
     });
 
-    it('only lists the tabs the user can access', function (array $permissions, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels) {
+    it('only lists the tabs the user can access', function (array $permissions, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels): void {
         $actingAsUserWithPermissions(...$permissions);
 
         $application = Application::factory()->create();
@@ -202,7 +202,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications']],
     ]);
 
-    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds) {
+    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -217,7 +217,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'notifications' => ['notifications', ['notificationsForm']],
     ]);
 
-    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds) {
+    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
         $actingAsUserWithPermissions('application.*.view');
 
         $application = Application::factory()->create();
@@ -229,8 +229,8 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
     })->with(['edit', 'notifications']);
 });
 
-describe('edit tab', function () use ($archiveAction) {
-    it('loads existing wizard steps', function () {
+describe('edit tab', function () use ($archiveAction): void {
+    it('loads existing wizard steps', function (): void {
         asSuperAdmin();
 
         $application = Application::factory()->create(['is_wizard' => true]);
@@ -248,7 +248,7 @@ describe('edit tab', function () use ($archiveAction) {
         expect(array_column($steps, 'label'))->toContain('Existing wizard step');
     });
 
-    it('saves edits to an existing wizard step onto a new application version', function () {
+    it('saves edits to an existing wizard step onto a new application version', function (): void {
         asSuperAdmin();
 
         $application = Application::factory()->create(['is_wizard' => true]);
@@ -289,7 +289,7 @@ describe('edit tab', function () use ($archiveAction) {
             ->and($application->steps()->first()->description)->toBe('Original description');
     });
 
-    it('saves uploaded rich editor images onto the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false) {
+    it('saves uploaded rich editor images onto the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false): void {
         asSuperAdmin();
         $disk = Storage::fake('s3-public');
 
@@ -362,7 +362,7 @@ describe('edit tab', function () use ($archiveAction) {
         'new wizard step before an existing step' => [true, true, true],
     ]);
 
-    it('keeps existing wizard images on their steps when the steps change', function (string $change) {
+    it('keeps existing wizard images on their steps when the steps change', function (string $change): void {
         assert(in_array($change, ['reorder', 'insert', 'delete'], true));
 
         asSuperAdmin();
@@ -443,7 +443,7 @@ describe('edit tab', function () use ($archiveAction) {
         }
     })->with(['reorder', 'insert', 'delete']);
 
-    it('shows the `Archive` action whether or not the application has submissions', function (bool $hasSubmissions) use ($archiveAction) {
+    it('shows the `Archive` action whether or not the application has submissions', function (bool $hasSubmissions) use ($archiveAction): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -460,7 +460,7 @@ describe('edit tab', function () use ($archiveAction) {
         'without submissions' => false,
     ]);
 
-    it('archives the application and redirects to the index', function () use ($archiveAction) {
+    it('archives the application and redirects to the index', function () use ($archiveAction): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -475,8 +475,8 @@ describe('edit tab', function () use ($archiveAction) {
     });
 });
 
-describe('notifications tab', function () {
-    it('can save the users to notify', function () {
+describe('notifications tab', function (): void {
+    it('can save the users to notify', function (): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -493,7 +493,7 @@ describe('notifications tab', function () {
         expect($application->fresh()->notificationUsers->modelKeys())->toBe([$userToNotify->getKey()]);
     });
 
-    it('can enable a notification setting', function (string $setting) {
+    it('can enable a notification setting', function (string $setting): void {
         asSuperAdmin();
 
         $application = Application::factory()->create([$setting => false]);
@@ -506,7 +506,7 @@ describe('notifications tab', function () {
         expect($application->fresh()->{$setting})->toBeTrue();
     })->with(['notify_to_care_team', 'notify_to_subscribers', 'notify_via_app', 'notify_via_email']);
 
-    it('does not create a new application version', function () {
+    it('does not create a new application version', function (): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -520,8 +520,8 @@ describe('notifications tab', function () {
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction) {
-    it('denies access to the manage application page without the `application.*.view` permission', function () {
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+    it('denies access to the manage application page without the `application.*.view` permission', function (): void {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
         $application = Application::factory()->create();
@@ -530,7 +530,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('denies access to the manage application page without a license', function () {
+    it('denies access to the manage application page without a license', function (): void {
         $user = User::factory()->create();
         $user->givePermissionTo('application.view-any', 'application.*.view', 'application.*.update');
         actingAs($user);
@@ -541,7 +541,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('denies access to the manage application page when online admissions are unavailable', function () use ($actingAsUserWithPermissions) {
+    it('denies access to the manage application page when online admissions are unavailable', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('application.*.view', 'application.*.update');
 
         $application = Application::factory()->create();
@@ -554,7 +554,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('allows access to the manage application page with the `application.*.view` permission', function () use ($actingAsUserWithPermissions) {
+    it('allows access to the manage application page with the `application.*.view` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('application.*.view');
 
         $application = Application::factory()->create();
@@ -563,7 +563,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSuccessful();
     });
 
-    it('does not load the editable forms without the `application.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('does not load the editable forms without the `application.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('application.*.view');
 
         $application = Application::factory()->create();
@@ -573,7 +573,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSet('notificationsData', []);
     });
 
-    it('does not save without the `application.*.update` permission', function (string $method) use ($actingAsUserWithPermissions) {
+    it('does not save without the `application.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
         $user = $actingAsUserWithPermissions('application.*.view', 'application.*.update');
 
         $application = Application::factory()->create(['notify_via_email' => false]);
@@ -592,7 +592,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->notify_via_email->toBeFalse();
     })->with(['save', 'saveNotifications']);
 
-    it('allows saving with the `application.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('allows saving with the `application.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('application.*.view', 'application.*.update');
 
         $application = Application::factory()->create(['notify_via_email' => false]);
@@ -613,7 +613,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->and(Application::query()->where('root_id', $application->root_id)->whereKeyNot($application->getKey())->value('name'))->toBe('Renamed');
     });
 
-    it('hides the `Archive` action without the `application.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction) {
+    it('hides the `Archive` action without the `application.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('application.*.view', 'application.*.update');
 
         $application = Application::factory()->create();

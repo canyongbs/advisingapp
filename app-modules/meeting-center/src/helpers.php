@@ -43,7 +43,7 @@ if (! function_exists('provider_routes')) {
         return Route::name($provider->value . '.')
             ->prefix('/' . $provider->value)
             ->controller($controller)
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/login', 'login')->name('login');
                 Route::get('/callback', 'callback')->name('callback');
             });

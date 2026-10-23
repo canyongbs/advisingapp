@@ -60,7 +60,7 @@ $permissions = [
     'settings.*.delete',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -73,7 +73,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses,
     ));
@@ -86,7 +86,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -100,7 +100,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can edit a record', function () use ($licenses, $permissions) {
+it('can edit a record', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -121,7 +121,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
     assertDatabaseHas(PromptType::class, $record->toArray());
 });
 
-it('can delete a record', function () use ($licenses, $permissions) {
+it('can delete a record', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -147,7 +147,7 @@ it('can delete a record', function () use ($licenses, $permissions) {
     assertNotNull($record->refresh()->deleted_at);
 });
 
-it('prevents editing a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+it('prevents editing a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -164,7 +164,7 @@ it('prevents editing a prompt type with a case-insensitively duplicate title', f
         ->assertHasFormErrors(['title' => 'unique']);
 });
 
-it('allows reusing the title of a soft-deleted prompt type', function () use ($licenses, $permissions) {
+it('allows reusing the title of a soft-deleted prompt type', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions

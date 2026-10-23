@@ -39,6 +39,7 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -52,7 +53,7 @@ class LandlordPanelProvider extends PanelProvider
             ->id('landlord')
             ->domain(parse_url(config('app.landlord_url'))['host'])
             ->path('/')
-            ->favicon(fn () => asset('/images/default-favicon.png'))
+            ->favicon(fn (): string => asset('/images/default-favicon.png'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->middleware([
                 EncryptCookies::class,
@@ -60,11 +61,11 @@ class LandlordPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
             ])
-            ->routes(function () {
+            ->routes(function (): void {
                 Route::get('/ping', fn () => response()->json(['message' => 'pong']))
                     ->name('ping');
 
-                Route::get('/{path?}', fn () => view('landlord'))
+                Route::get('/{path?}', fn (): Factory|\Illuminate\Contracts\View\View => view('landlord'))
                     ->where('path', '.*');
             });
     }

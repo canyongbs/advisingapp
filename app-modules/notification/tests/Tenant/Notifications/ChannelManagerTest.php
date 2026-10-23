@@ -42,16 +42,16 @@ use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\freezeTime;
 
-it('modifies the SendQueuedNotifications job properly', function () {
+it('modifies the SendQueuedNotifications job properly', function (): void {
     Queue::fake();
 
     $recipient = Student::factory()->create();
     $notification = new TestEmailNotification();
 
-    freezeTime(function () use ($recipient, $notification) {
+    freezeTime(function () use ($recipient, $notification): void {
         $recipient->notify($notification);
 
-        Queue::assertPushed(SendQueuedNotifications::class, function (SendQueuedNotifications $job) use ($recipient, $notification) {
+        Queue::assertPushed(SendQueuedNotifications::class, function (SendQueuedNotifications $job) use ($recipient, $notification): bool {
             return $job->notification::class === $notification::class
                 && $job->notifiables->count() === 1
                 && $job->notifiables->first()->is($recipient)

@@ -149,7 +149,7 @@ trait CanUploadFiles
             ->iconButton()
             ->color('gray')
             ->disabled(count($this->files) >= 1)
-            ->badge(fn () => count($this->files))
+            ->badge(fn (): int => count($this->files))
             ->badgeColor('primary')
             ->modalSubmitActionLabel('Upload')
             ->schema([
@@ -160,7 +160,7 @@ trait CanUploadFiles
                     ->maxSize(config('ai.file_size_limit_kb'))
                     ->required(),
             ])
-            ->action(function (Action $action, array $data) {
+            ->action(function (Action $action, array $data): void {
                 /** @var TemporaryUploadedFile $attachment */
                 $attachment = $data['attachment'];
 

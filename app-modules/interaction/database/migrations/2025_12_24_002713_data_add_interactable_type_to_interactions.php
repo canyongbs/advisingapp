@@ -44,19 +44,19 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             //Drop existing indexes, add interactable_type column
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 $table->string('interactable_type')->nullable();
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 $table->string('interactable_type')->nullable();
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 DB::statement('DROP INDEX IF EXISTS interaction_outcomes_is_default_unique;');
                 DB::statement('DROP INDEX IF EXISTS interaction_relations_is_default_unique;');
@@ -64,23 +64,23 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable();
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 $table->string('interactable_type')->nullable();
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 $table->string('interactable_type')->nullable();
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name']);
                 $table->string('interactable_type')->nullable();
             });
 
             //Make interactable_type non nullable, add unique index
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -90,7 +90,7 @@ return new class () extends Migration {
                 ');
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -100,7 +100,7 @@ return new class () extends Migration {
                 ');
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -110,7 +110,7 @@ return new class () extends Migration {
                 ');
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -120,7 +120,7 @@ return new class () extends Migration {
                 ');
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -130,7 +130,7 @@ return new class () extends Migration {
                 ');
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
@@ -144,35 +144,35 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             //Drop any existing index
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->dropUniqueIfExists(['name', 'interactable_type']);
             });
 
             //Ensure that all records in the interaction table reference the student variant
             DB::table('interactions')
-                ->chunkById(100, function (Collection $interactions) {
+                ->chunkById(100, function (Collection $interactions): void {
                     foreach ($interactions as $interaction) {
                         $interactionStatus = DB::table('interaction_statuses')->where('id', $interaction->interaction_status_id)->first();
 
@@ -250,7 +250,7 @@ return new class () extends Migration {
 
             //Remove all records from meta tables with prospect types
             DB::table('interaction_statuses')
-                ->chunkById(100, function (Collection $interactionStatuses) {
+                ->chunkById(100, function (Collection $interactionStatuses): void {
                     foreach ($interactionStatuses as $interactionStatus) {
                         if ($interactionStatus->interactable_type == 'prospect') {
                             DB::table('interaction_statuses')->delete($interactionStatus->id);
@@ -259,7 +259,7 @@ return new class () extends Migration {
                 });
 
             DB::table('interaction_types')
-                ->chunkById(100, function (Collection $interactionTypes) {
+                ->chunkById(100, function (Collection $interactionTypes): void {
                     foreach ($interactionTypes as $interactionType) {
                         if ($interactionType->interactable_type == 'prospect') {
                             DB::table('interaction_types')->delete($interactionType->id);
@@ -268,7 +268,7 @@ return new class () extends Migration {
                 });
 
             DB::table('interaction_outcomes')
-                ->chunkById(100, function (Collection $interactionOutcomes) {
+                ->chunkById(100, function (Collection $interactionOutcomes): void {
                     foreach ($interactionOutcomes as $interactionOutcome) {
                         if ($interactionOutcome->interactable_type == 'prospect') {
                             DB::table('interaction_outcomes')->delete($interactionOutcome->id);
@@ -277,7 +277,7 @@ return new class () extends Migration {
                 });
 
             DB::table('interaction_relations')
-                ->chunkById(100, function (Collection $interactionRelations) {
+                ->chunkById(100, function (Collection $interactionRelations): void {
                     foreach ($interactionRelations as $interactionRelation) {
                         if ($interactionRelation->interactable_type == 'prospect') {
                             DB::table('interaction_relations')->delete($interactionRelation->id);
@@ -286,7 +286,7 @@ return new class () extends Migration {
                 });
 
             DB::table('interaction_drivers')
-                ->chunkById(100, function (Collection $interactionDrivers) {
+                ->chunkById(100, function (Collection $interactionDrivers): void {
                     foreach ($interactionDrivers as $interactionDriver) {
                         if ($interactionDriver->interactable_type == 'prospect') {
                             DB::table('interaction_drivers')->delete($interactionDriver->id);
@@ -295,7 +295,7 @@ return new class () extends Migration {
                 });
 
             DB::table('interaction_initiatives')
-                ->chunkById(100, function (Collection $interactionInitiatives) {
+                ->chunkById(100, function (Collection $interactionInitiatives): void {
                     foreach ($interactionInitiatives as $interactionInitiative) {
                         if ($interactionInitiative->interactable_type == 'prospect') {
                             DB::table('interaction_initiatives')->delete($interactionInitiative->id);
@@ -304,17 +304,17 @@ return new class () extends Migration {
                 });
 
             //Remove interactable_type column, add indexes on name columns
-            Schema::table('interaction_statuses', function (Blueprint $table) {
+            Schema::table('interaction_statuses', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
+            Schema::table('interaction_types', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });
 
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
+            Schema::table('interaction_outcomes', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_outcomes_is_default_unique
@@ -324,17 +324,17 @@ return new class () extends Migration {
                 $table->unique('name');
             });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
+            Schema::table('interaction_relations', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
+            Schema::table('interaction_drivers', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });
 
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
+            Schema::table('interaction_initiatives', function (Blueprint $table): void {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });

@@ -38,7 +38,7 @@ use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-it('can match to a Student', function () {
+it('can match to a Student', function (): void {
     /** @var Student $student */
     $student = Student::factory()->create();
     $phoneNumber = $student->phoneNumbers->first()->number;
@@ -48,7 +48,7 @@ it('can match to a Student', function () {
     expect($student->is($sender))->toBeTrue();
 });
 
-it('can match to a Prospect', function () {
+it('can match to a Prospect', function (): void {
     /** @var Prospect $prospect */
     $prospect = Prospect::factory()->create();
     $phoneNumber = $prospect->phoneNumbers->first()->number;
@@ -58,7 +58,7 @@ it('can match to a Prospect', function () {
     expect($prospect->is($sender))->toBeTrue();
 });
 
-it('returns null when no match is found', function () {
+it('returns null when no match is found', function (): void {
     /** @var Student $student */
     $student = Student::factory()->create();
 
@@ -72,7 +72,7 @@ it('returns null when no match is found', function () {
     expect($sender)->toBeNull();
 });
 
-it('does not match to an archived Student', function () {
+it('does not match to an archived Student', function (): void {
     $student = Student::factory()->create();
     $phoneNumber = $student->phoneNumbers->first()->number;
 

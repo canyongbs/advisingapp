@@ -130,7 +130,7 @@ $studentLastNameOrFilters = function (array $lastNames): array {
     ];
 };
 
-it('resolves ad-hoc live filters to the same records as an equivalent saved group', function () use ($studentLastNameContainsFilters) {
+it('resolves ad-hoc live filters to the same records as an equivalent saved group', function () use ($studentLastNameContainsFilters): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $filters = $studentLastNameContainsFilters('John');
@@ -153,7 +153,7 @@ it('resolves ad-hoc live filters to the same records as an equivalent saved grou
         ->and($rawIds)->toEqual($savedIds);
 });
 
-it('applies ad-hoc live filters onto an existing query', function () use ($studentLastNameContainsFilters) {
+it('applies ad-hoc live filters onto an existing query', function () use ($studentLastNameContainsFilters): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $filters = $studentLastNameContainsFilters('John');
@@ -169,7 +169,7 @@ it('applies ad-hoc live filters onto an existing query', function () use ($stude
     expect($matchingIds)->toHaveCount(4);
 });
 
-it('treats empty ad-hoc live filters as no filter', function () {
+it('treats empty ad-hoc live filters as no filter', function (): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     Student::factory()->count(5)->create();
@@ -182,7 +182,7 @@ it('treats empty ad-hoc live filters as no filter', function () {
     expect($ids)->toHaveCount(5);
 });
 
-it('resolves relationship constraints identically for saved and ad-hoc live filters', function () use ($studentTaggedWithFilters) {
+it('resolves relationship constraints identically for saved and ad-hoc live filters', function () use ($studentTaggedWithFilters): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $tag = Tag::factory()->create(['type' => TagType::Student]);
@@ -209,7 +209,7 @@ it('resolves relationship constraints identically for saved and ad-hoc live filt
         ->and($rawIds)->toEqual($savedIds);
 });
 
-it('resolves OR blocks identically for saved and ad-hoc live filters', function () use ($studentLastNameOrFilters) {
+it('resolves OR blocks identically for saved and ad-hoc live filters', function () use ($studentLastNameOrFilters): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     Student::factory()->count(3)->create(['last' => 'John']);
@@ -233,7 +233,7 @@ it('resolves OR blocks identically for saved and ad-hoc live filters', function 
         ->and($rawIds)->toEqual($savedIds);
 });
 
-it('ignores subjects of another model when resolving a static group', function () {
+it('ignores subjects of another model when resolving a static group', function (): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $members = Student::factory()->count(2)->create();
@@ -264,7 +264,7 @@ it('ignores subjects of another model when resolving a static group', function (
         ->and($ids)->toEqual($expected);
 });
 
-it('resolves a static group from its stored subject list', function () {
+it('resolves a static group from its stored subject list', function (): void {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $members = Student::factory()->count(3)->create();

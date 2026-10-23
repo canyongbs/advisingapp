@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-it('returns true when student has a healthy primary email address', function () {
+it('returns true when student has a healthy primary email address', function (): void {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()
@@ -56,7 +56,7 @@ it('returns true when student has a healthy primary email address', function () 
     assertTrue($student->canReceiveEmail());
 });
 
-it('returns false when student has no primary email address', function () {
+it('returns false when student has no primary email address', function (): void {
     $student = Student::factory()->create();
 
     // Remove the primary email that was auto-created by the factory
@@ -67,7 +67,7 @@ it('returns false when student has no primary email address', function () {
     assertFalse($student->canReceiveEmail());
 });
 
-it('returns false when student primary email address is bounced', function () {
+it('returns false when student primary email address is bounced', function (): void {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()
@@ -85,7 +85,7 @@ it('returns false when student primary email address is bounced', function () {
     assertFalse($student->canReceiveEmail());
 });
 
-it('returns false when student primary email address is opted out', function () {
+it('returns false when student primary email address is opted out', function (): void {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()
@@ -103,7 +103,7 @@ it('returns false when student primary email address is opted out', function () 
     assertFalse($student->canReceiveEmail());
 });
 
-it('returns true when student primary email address is opted in', function () {
+it('returns true when student primary email address is opted in', function (): void {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()
@@ -121,7 +121,7 @@ it('returns true when student primary email address is opted in', function () {
     assertTrue($student->canReceiveEmail());
 });
 
-it('returns false when student primary email is both bounced and opted out', function () {
+it('returns false when student primary email is both bounced and opted out', function (): void {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()

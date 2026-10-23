@@ -48,7 +48,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     asSuperAdmin();
 
     $sisSettings = app(StudentInformationSystemSettings::class);
@@ -105,7 +105,7 @@ $createStudents = function (): array {
     ];
 };
 
-it('filters the group builder by term, attribute and value', function () use ($termAttributeFilters, $createStudents) {
+it('filters the group builder by term, attribute and value', function () use ($termAttributeFilters, $createStudents): void {
     ['term' => $term, 'matching' => $matching, 'differentValue' => $differentValue, 'differentTerm' => $differentTerm, 'withoutTermAttributes' => $withoutTermAttributes] = $createStudents();
 
     $group = Group::factory()->student()->dynamic()->create([
@@ -117,7 +117,7 @@ it('filters the group builder by term, attribute and value', function () use ($t
         ->assertCanNotSeeTableRecords([$differentValue, $differentTerm, $withoutTermAttributes]);
 });
 
-it('excludes the matching students from the group builder with the `is not` operator', function () use ($termAttributeFilters, $createStudents) {
+it('excludes the matching students from the group builder with the `is not` operator', function () use ($termAttributeFilters, $createStudents): void {
     ['term' => $term, 'matching' => $matching, 'differentValue' => $differentValue, 'differentTerm' => $differentTerm, 'withoutTermAttributes' => $withoutTermAttributes] = $createStudents();
 
     $group = Group::factory()->student()->dynamic()->create([
@@ -129,7 +129,7 @@ it('excludes the matching students from the group builder with the `is not` oper
         ->assertCanNotSeeTableRecords([$matching]);
 });
 
-it('filters the students of a saved group', function () use ($termAttributeFilters, $createStudents) {
+it('filters the students of a saved group', function () use ($termAttributeFilters, $createStudents): void {
     ['term' => $term, 'matching' => $matching] = $createStudents();
 
     $group = Group::factory()->student()->dynamic()->create([
@@ -140,7 +140,7 @@ it('filters the students of a saved group', function () use ($termAttributeFilte
         ->toBe([$matching->sisid]);
 });
 
-it('matches no students for an attribute outside the allow-list', function () use ($termAttributeFilters, $createStudents) {
+it('matches no students for an attribute outside the allow-list', function () use ($termAttributeFilters, $createStudents): void {
     ['term' => $term, 'matching' => $matching] = $createStudents();
 
     $group = Group::factory()->student()->dynamic()->create([
@@ -150,7 +150,7 @@ it('matches no students for an attribute outside the allow-list', function () us
     expect(app(TranslateGroupFilters::class)->execute($group)->count())->toBe(0);
 });
 
-it('summarises the rule', function (bool $isInverse, string $summary) {
+it('summarises the rule', function (bool $isInverse, string $summary): void {
     Term::factory()->create(['sis_term_id' => '301', 'name' => 'FA-21', 'start_date' => '2021-08-23']);
 
     $operator = TermAttributeOperator::make()

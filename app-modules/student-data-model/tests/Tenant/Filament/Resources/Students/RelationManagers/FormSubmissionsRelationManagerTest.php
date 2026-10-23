@@ -50,7 +50,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('is hidden when the OnlineForms feature is disabled', function () {
+it('is hidden when the OnlineForms feature is disabled', function (): void {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -66,7 +66,7 @@ it('is hidden when the OnlineForms feature is disabled', function () {
         ->assertDontSeeLivewire(FormSubmissionsRelationManager::class);
 });
 
-it('is visible when the OnlineForms feature is enabled', function () {
+it('is visible when the OnlineForms feature is enabled', function (): void {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -82,7 +82,7 @@ it('is visible when the OnlineForms feature is enabled', function () {
         ->assertSeeLivewire(FormSubmissionsRelationManager::class);
 });
 
-it('can list form submissions for a student', function () {
+it('can list form submissions for a student', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -99,7 +99,7 @@ it('can list form submissions for a student', function () {
         ->assertCanSeeTableRecords($submissions);
 });
 
-it('does not show submissions belonging to other students', function () {
+it('does not show submissions belonging to other students', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -123,7 +123,7 @@ it('does not show submissions belonging to other students', function () {
         ->assertCanNotSeeTableRecords([$otherSubmission]);
 });
 
-it('has the expected table columns', function () {
+it('has the expected table columns', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -139,7 +139,7 @@ it('has the expected table columns', function () {
         ->assertTableColumnExists('requested_at');
 });
 
-it('can search submissions by form name', function () {
+it('can search submissions by form name', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -168,7 +168,7 @@ it('can search submissions by form name', function () {
         ->assertCanNotSeeTableRecords([$nonMatchingSubmission]);
 });
 
-it('can sort submissions by submitted_at', function () {
+it('can sort submissions by submitted_at', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -195,7 +195,7 @@ it('can sort submissions by submitted_at', function () {
         ->assertCanSeeTableRecords([$newerSubmission, $olderSubmission], inOrder: true);
 });
 
-it('can filter submissions by status', function () {
+it('can filter submissions by status', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -237,7 +237,7 @@ it('can filter submissions by status', function () {
         ->assertCanNotSeeTableRecords([$submittedSubmission, $requestedSubmission]);
 });
 
-it('shows the view action only for submitted submissions', function () {
+it('shows the view action only for submitted submissions', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -264,7 +264,7 @@ it('shows the view action only for submitted submissions', function () {
         ->assertTableActionHidden(ViewAction::class, $requestedSubmission);
 });
 
-it('hides the view action for canceled submissions', function () {
+it('hides the view action for canceled submissions', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -284,7 +284,7 @@ it('hides the view action for canceled submissions', function () {
         ->assertTableActionHidden(ViewAction::class, $canceledSubmission);
 });
 
-it('can delete a form submission', function () {
+it('can delete a form submission', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -303,7 +303,7 @@ it('can delete a form submission', function () {
     expect($student->formSubmissions()->count())->toBe(0);
 });
 
-it('has the bulk delete action available', function () {
+it('has the bulk delete action available', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -315,7 +315,7 @@ it('has the bulk delete action available', function () {
         ->assertTableBulkActionExists(DeleteBulkAction::class);
 });
 
-it('can bulk delete form submissions', function () {
+it('can bulk delete form submissions', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -334,7 +334,7 @@ it('can bulk delete form submissions', function () {
     expect($student->formSubmissions()->count())->toBe(0);
 });
 
-it('displays the requester name for submissions that have a requester', function () {
+it('displays the requester name for submissions that have a requester', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -357,7 +357,7 @@ it('displays the requester name for submissions that have a requester', function
         ->assertTableColumnStateSet('requester.name', 'John Requester', $submission);
 });
 
-it('shows requested_at only when a requester is present', function () {
+it('shows requested_at only when a requester is present', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -387,7 +387,7 @@ it('shows requested_at only when a requester is present', function () {
         ->assertTableColumnStateSet('requested_at', null, $directSubmission);
 });
 
-it('shows the correct status badge for each submission state', function () {
+it('shows the correct status badge for each submission state', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();

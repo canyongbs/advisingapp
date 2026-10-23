@@ -45,11 +45,11 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\patchJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
     $updateStudentRequestData = UpdateStudentRequestFactory::new()->create();
 
@@ -83,7 +83,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('updates a student', function () {
+it('updates a student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -183,7 +183,7 @@ it('updates a student', function () {
 });
 
 // An archived student is unreachable by URL, so they cannot be updated through the API either.
-it('returns not found for an archived student', function () {
+it('returns not found for an archived student', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -202,7 +202,7 @@ it('returns not found for an archived student', function () {
         ->assertNotFound();
 });
 
-it('updates a student\'s primary email address', function () {
+it('updates a student\'s primary email address', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -232,7 +232,7 @@ it('updates a student\'s primary email address', function () {
         ->toBe($studentEmailAddress->getKey());
 });
 
-it('updates a student\'s primary phone number', function () {
+it('updates a student\'s primary phone number', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -262,7 +262,7 @@ it('updates a student\'s primary phone number', function () {
         ->toBe($studentPhoneNumber->getKey());
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -304,7 +304,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`lastlmslogin` is Y-m-d H:i:s format' => [['lastlmslogin' => '2020-01-01'], 'lastlmslogin', 'The lastlmslogin does not match the format Y-m-d H:i:s.'],
     '`primary_email_id` is a valid UUID' => [['primary_email_id' => 'not-a-uuid'], 'primary_email_id', 'The primary email id must be a valid UUID.'],
     '`primary_email_id` is an existing email address ID' => [['primary_email_id' => (string) Str::orderedUuid()], 'primary_email_id', 'The selected primary email id is invalid.'],
-    '`primary_email_id` is an email address ID for the current student' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId) {
+    '`primary_email_id` is an email address ID for the current student' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId): void {
         StudentEmailAddress::factory()
             ->for(Student::factory())
             ->create([
@@ -313,7 +313,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     }],
     '`primary_phone_id` is a valid UUID' => [['primary_phone_id' => 'not-a-uuid'], 'primary_phone_id', 'The primary phone id must be a valid UUID.'],
     '`primary_phone_id` is an existing phone number ID' => [['primary_phone_id' => (string) Str::orderedUuid()], 'primary_phone_id', 'The selected primary phone id is invalid.'],
-    '`primary_phone_id` is an phone number ID for the current student' => [['primary_phone_id' => ($primaryPhoneId = (string) Str::orderedUuid())], 'primary_phone_id', 'The selected primary phone id is invalid.', function () use ($primaryPhoneId) {
+    '`primary_phone_id` is an phone number ID for the current student' => [['primary_phone_id' => ($primaryPhoneId = (string) Str::orderedUuid())], 'primary_phone_id', 'The selected primary phone id is invalid.', function () use ($primaryPhoneId): void {
         StudentPhoneNumber::factory()
             ->for(Student::factory())
             ->create([
@@ -322,7 +322,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     }],
 ]);
 
-it('can include related student relationships', function (string $relationship, string $responseKey) {
+it('can include related student relationships', function (string $relationship, string $responseKey): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

@@ -42,13 +42,13 @@ use function Pest\Laravel\get;
 use function Pest\Laravel\getJson;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(PortalSettings::class);
     $settings->resource_hub_portal_enabled = true;
     $settings->save();
 });
 
-it('authenticates a student via a resource hub portal bearer token', function () {
+it('authenticates a student via a resource hub portal bearer token', function (): void {
     $student = Student::factory()->create();
 
     $token = $student->createToken('resource-hub-portal-access-token', ['resource-hub-portal']);
@@ -60,7 +60,7 @@ it('authenticates a student via a resource hub portal bearer token', function ()
         ->assertJsonFragment(['sisid' => $student->sisid]);
 });
 
-it('authenticates a prospect via a resource hub portal bearer token', function () {
+it('authenticates a prospect via a resource hub portal bearer token', function (): void {
     $prospect = Prospect::factory()->create();
 
     $token = $prospect->createToken('resource-hub-portal-access-token', ['resource-hub-portal']);
@@ -72,7 +72,7 @@ it('authenticates a prospect via a resource hub portal bearer token', function (
         ->assertJsonFragment(['id' => $prospect->getKey()]);
 });
 
-it('resolves the portal token even when a first-party session user is present', function () {
+it('resolves the portal token even when a first-party session user is present', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -86,7 +86,7 @@ it('resolves the portal token even when a first-party session user is present', 
         ->assertJsonFragment(['sisid' => $student->sisid]);
 });
 
-it('does not authenticate a token without the `resource-hub-portal` ability', function () {
+it('does not authenticate a token without the `resource-hub-portal` ability', function (): void {
     $student = Student::factory()->create();
 
     $token = $student->createToken('resource-hub-portal-access-token', ['some-other-ability']);
@@ -97,12 +97,12 @@ it('does not authenticate a token without the `resource-hub-portal` ability', fu
         ->assertUnauthorized();
 });
 
-it('does not authenticate a request without a token', function () {
+it('does not authenticate a request without a token', function (): void {
     getJson(route('portals.user.auth-check'))
         ->assertUnauthorized();
 });
 
-it('does not authenticate a token belonging to an archived student', function () {
+it('does not authenticate a token belonging to an archived student', function (): void {
     $student = Student::factory()->create();
 
     $token = $student->createToken('resource-hub-portal-access-token', ['resource-hub-portal']);

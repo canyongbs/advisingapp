@@ -61,11 +61,11 @@ use Prism\Prism\Testing\TextResponseFake;
 
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Http::preventStrayRequests();
 });
 
-it('can send a message', function () {
+it('can send a message', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -98,7 +98,7 @@ it('can send a message', function () {
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
-it('includes the web_search tool on every outbound message', function () {
+it('includes the web_search tool on every outbound message', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -125,7 +125,7 @@ it('includes the web_search tool on every outbound message', function () {
 
     iterator_to_array($stream());
 
-    $fake->assertRequest(function (array $requests) {
+    $fake->assertRequest(function (array $requests): void {
         expect($requests)->toHaveCount(1);
 
         $tools = $requests[0]->providerOptions('tools');
@@ -135,7 +135,7 @@ it('includes the web_search tool on every outbound message', function () {
     });
 });
 
-it('includes the web_search tool when streaming a prompt', function () {
+it('includes the web_search tool when streaming a prompt', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -152,7 +152,7 @@ it('includes the web_search tool when streaming a prompt', function () {
 
     iterator_to_array($stream());
 
-    $fake->assertRequest(function (array $requests) {
+    $fake->assertRequest(function (array $requests): void {
         expect($requests)->toHaveCount(1);
 
         $tools = $requests[0]->providerOptions('tools');
@@ -162,7 +162,7 @@ it('includes the web_search tool when streaming a prompt', function () {
     });
 });
 
-it('can complete a message response', function () {
+it('can complete a message response', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -205,7 +205,7 @@ it('can complete a message response', function () {
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
-it('can retry a message', function () {
+it('can retry a message', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -238,7 +238,7 @@ it('can retry a message', function () {
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
-it('can complete a prompt', function () {
+it('can complete a prompt', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -260,7 +260,7 @@ it('can complete a prompt', function () {
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
 
-it('can fetch a valid previous response ID for a message', function () {
+it('can fetch a valid previous response ID for a message', function (): void {
     Http::fake([
         '*/responses/*' => Http::response(['id' => 'resp_12345'], 200),
     ]);
@@ -293,7 +293,7 @@ it('can fetch a valid previous response ID for a message', function () {
         ->toBe('resp_12345');
 });
 
-it('can discard an invalid previous response ID for a message', function () {
+it('can discard an invalid previous response ID for a message', function (): void {
     Http::fake([
         '*/responses/*' => Http::response(null, 404),
     ]);
@@ -326,7 +326,7 @@ it('can discard an invalid previous response ID for a message', function () {
         ->toBeNull();
 });
 
-it('can confirm that a file is ready if it has a stored timestamp', function () {
+it('can confirm that a file is ready if it has a stored timestamp', function (): void {
     $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()
@@ -342,7 +342,7 @@ it('can confirm that a file is ready if it has a stored timestamp', function () 
         ->toBeTrue();
 });
 
-it('can confirm that a file is not ready if it is still processing', function () {
+it('can confirm that a file is not ready if it is still processing', function (): void {
     Http::fake([
         '*/vector_stores/*' => Http::response([
             'status' => 'in_progress',
@@ -365,7 +365,7 @@ it('can confirm that a file is not ready if it is still processing', function ()
         ->toBeFalse();
 });
 
-it('can confirm that a file is ready if all files are finished processing', function () {
+it('can confirm that a file is ready if all files are finished processing', function (): void {
     Http::fake([
         '*/vector_stores/*' => Http::response([
             'status' => 'completed',
@@ -394,7 +394,7 @@ it('can confirm that a file is ready if all files are finished processing', func
         ->toBe($expiresAt->subHours(2)->toDateTimeString());
 });
 
-it('can delete an existing vector store file to ensure storage space is used efficiently', function () {
+it('can delete an existing vector store file to ensure storage space is used efficiently', function (): void {
     Http::fake([
         '*/vector_stores/*' => Http::response([
             'status' => 'completed',
@@ -423,7 +423,7 @@ it('can delete an existing vector store file to ensure storage space is used eff
         ->toBeTrue();
 });
 
-it('can upload a file and create a new vector store', function () {
+it('can upload a file and create a new vector store', function (): void {
     Http::fake([
         '*/files*' => Http::response([
             'id' => $fileId = fake()->uuid(),
@@ -445,7 +445,7 @@ it('can upload a file and create a new vector store', function () {
         ->vector_store_id->toBe($vectorStoreId);
 });
 
-it('skips uploading a file that has no parsing results instead of sending an empty file to OpenAI', function () {
+it('skips uploading a file that has no parsing results instead of sending an empty file to OpenAI', function (): void {
     Http::fake([
         '*/files*' => Http::response([
             'id' => fake()->uuid(),
@@ -471,7 +471,7 @@ it('skips uploading a file that has no parsing results instead of sending an emp
         ->toBe(0);
 });
 
-it('uploads files with parsing results while excluding files that have none', function () {
+it('uploads files with parsing results while excluding files that have none', function (): void {
     Http::fake([
         '*/files*' => Http::response([
             'id' => $fileId = fake()->uuid(),
@@ -499,7 +499,7 @@ it('uploads files with parsing results while excluding files that have none', fu
         ->toBe(0);
 });
 
-it('removes an indexed resource hub article when it no longer has parsing results', function () {
+it('removes an indexed resource hub article when it no longer has parsing results', function (): void {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response([
             'data' => [['id' => $fileId = (string) Str::uuid()]],
@@ -542,7 +542,7 @@ it('removes an indexed resource hub article when it no longer has parsing result
         && str_contains($request->url(), "/files/{$fileId}"));
 });
 
-it('deletes the vector store of an indexed file that became blank when another file with content has no vector store yet', function () {
+it('deletes the vector store of an indexed file that became blank when another file with content has no vector store yet', function (): void {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response([
             'data' => [['id' => $blankFileOpenAiId = (string) Str::uuid()]],
@@ -581,7 +581,7 @@ it('deletes the vector store of an indexed file that became blank when another f
         ->vector_store_id->toBe($newVectorStoreId);
 });
 
-it('keeps a vector store that is shared by a blank file and a file with content', function () {
+it('keeps a vector store that is shared by a blank file and a file with content', function (): void {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response(['data' => []]),
         '*/files/*' => Http::response(),
@@ -616,7 +616,7 @@ it('keeps a vector store that is shared by a blank file and a file with content'
         && preg_match('#/vector_stores/' . preg_quote($sharedVectorStoreId, '#') . '(\?|$)#', $request->url()) === 1);
 });
 
-it('keeps the vector store of a file with content when a blank file has a different vector store', function () {
+it('keeps the vector store of a file with content when a blank file has a different vector store', function (): void {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response(['data' => []]),
         '*/files/*' => Http::response(),
@@ -650,7 +650,7 @@ it('keeps the vector store of a file with content when a blank file has a differ
         && preg_match('#/vector_stores/' . preg_quote($contentFileVectorStore->vector_store_id, '#') . '(\?|$)#', $request->url()) === 1);
 });
 
-it('deletes every vector store used only by blank files and still reports the files as ready', function () {
+it('deletes every vector store used only by blank files and still reports the files as ready', function (): void {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response(['data' => []]),
         '*/files/*' => Http::response(),
@@ -674,14 +674,14 @@ it('deletes every vector store used only by blank files and still reports the fi
     $vectorStores->each(fn (OpenAiVectorStore $vectorStore) => assertSoftDeleted($vectorStore));
 });
 
-it('reports an empty list of files as ready', function () {
+it('reports an empty list of files as ready', function (): void {
     $service = app(OpenAiGptTestService::class);
 
     expect($service->areFilesReady([]))
         ->toBeTrue();
 });
 
-it('captures the OpenAI response id from the stream so a conversation can continue', function () {
+it('captures the OpenAI response id from the stream so a conversation can continue', function (): void {
     asSuperAdmin();
 
     $sse = implode("\n\n", [
@@ -706,7 +706,7 @@ it('captures the OpenAI response id from the stream so a conversation can contin
         ->and($meta->nextRequestOptions)->toBe(['previous_response_id' => 'resp_test_12345']);
 });
 
-it('falls back to a default retry delay when the stream is rate limited without a parseable retry time', function () {
+it('falls back to a default retry delay when the stream is rate limited without a parseable retry time', function (): void {
     asSuperAdmin();
 
     $sse = implode("\n\n", [
@@ -732,7 +732,7 @@ it('falls back to a default retry delay when the stream is rate limited without 
         ->and(now()->diffInSeconds($finish->rateLimitResetsAt))->toBeLessThanOrEqual(15);
 });
 
-it('extracts the retry delay from the rate limit error message', function () {
+it('extracts the retry delay from the rate limit error message', function (): void {
     asSuperAdmin();
 
     $sse = implode("\n\n", [

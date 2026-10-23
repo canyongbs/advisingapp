@@ -41,7 +41,7 @@ use App\Models\User;
 
 use function Pest\Laravel\freezeTime;
 
-it('creates a claimable one-time login code', function () {
+it('creates a claimable one-time login code', function (): void {
     $user = User::factory()->external()->create();
 
     $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
@@ -58,7 +58,7 @@ it('creates a claimable one-time login code', function () {
     expect(app(ClaimOneTimeLoginCode::class)($user, $matches[1] ?? ''))->toBeTrue();
 });
 
-it('uses the provided link as the action url', function () {
+it('uses the provided link as the action url', function (): void {
     $user = User::factory()->external()->create();
 
     $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
@@ -66,7 +66,7 @@ it('uses the provided link as the action url', function () {
     expect($mail->actionUrl)->toBe('https://example.com/login');
 });
 
-it('expires the code using the provided expiry', function () {
+it('expires the code using the provided expiry', function (): void {
     freezeTime();
 
     $user = User::factory()->external()->create();

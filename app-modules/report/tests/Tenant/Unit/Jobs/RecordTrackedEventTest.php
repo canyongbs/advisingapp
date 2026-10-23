@@ -40,7 +40,7 @@ use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use Illuminate\Support\Carbon;
 
-it('creates the proper TrackedEvent record', function () {
+it('creates the proper TrackedEvent record', function (): void {
     expect(TrackedEvent::count())
         ->toBe(0);
 
@@ -62,7 +62,7 @@ it('creates the proper TrackedEvent record', function () {
         ->occurred_at->toEqual($occurredAt);
 });
 
-it('creates the proper TrackedEventCount record if one does not already exist', function () {
+it('creates the proper TrackedEventCount record if one does not already exist', function (): void {
     TrackedEventCount::truncate();
 
     expect(TrackedEventCount::count())
@@ -87,7 +87,7 @@ it('creates the proper TrackedEventCount record if one does not already exist', 
         ->last_occurred_at->toEqual($occurredAt);
 });
 
-it('updates the proper TrackedEventCount record if one already exists', function () {
+it('updates the proper TrackedEventCount record if one already exists', function (): void {
     TrackedEventCount::truncate();
 
     /** @var TrackedEventCount $originalTrackedEventCount */
@@ -116,7 +116,7 @@ it('updates the proper TrackedEventCount record if one already exists', function
         ->last_occurred_at->toEqual($occurredAt);
 });
 
-it('does not update the TrackedEventCount record last_occurate_at date if the event was before the current set date', function () {
+it('does not update the TrackedEventCount record last_occurate_at date if the event was before the current set date', function (): void {
     TrackedEventCount::truncate();
 
     /** @var TrackedEventCount $originalTrackedEventCount */

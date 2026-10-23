@@ -42,7 +42,7 @@ use function Pest\Laravel\artisan;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
 
-it('correctly prunes EngagementFiles based on retention_date', function () {
+it('correctly prunes EngagementFiles based on retention_date', function (): void {
     $expiredFile = EngagementFile::factory()->create([
         'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
     ]);
@@ -64,7 +64,7 @@ it('correctly prunes EngagementFiles based on retention_date', function () {
     assertModelExists($futureRetentionDateFile);
 });
 
-it('is pruned by the daily `PruneModels` job', function () {
+it('is pruned by the daily `PruneModels` job', function (): void {
     $expiredFile = EngagementFile::factory()->create([
         'retention_date' => now()->subDay(),
     ]);

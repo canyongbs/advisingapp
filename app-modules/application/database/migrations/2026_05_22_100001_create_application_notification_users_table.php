@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('application_notification_users', function (Blueprint $table) {
+        Schema::create('application_notification_users', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('application_id')->constrained('applications')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();

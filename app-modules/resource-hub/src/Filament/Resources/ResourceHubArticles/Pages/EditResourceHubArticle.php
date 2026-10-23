@@ -113,7 +113,7 @@ class EditResourceHubArticle extends EditRecord
                                     ->suffixAction(
                                         BaseAction::make('saveArticleTitle')
                                             ->icon('heroicon-o-check')
-                                            ->action(function (Model $record, $state) {
+                                            ->action(function (Model $record, $state): void {
                                                 if ($record->title === $state) {
                                                     return;
                                                 }

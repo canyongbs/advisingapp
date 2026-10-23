@@ -67,7 +67,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('requires proper access', function () {
+it('requires proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
 
@@ -87,7 +87,7 @@ it('requires proper access', function () {
         ->assertOk();
 });
 
-it('renders the EducatableActivityFeedWidget based on proper access', function () {
+it('renders the EducatableActivityFeedWidget based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -115,7 +115,7 @@ it('renders the EducatableActivityFeedWidget based on proper access', function (
         ->assertSeeLivewire($widget);
 });
 
-it('renders the ProgramsRelationManager based on proper access', function () {
+it('renders the ProgramsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -142,7 +142,7 @@ it('renders the ProgramsRelationManager based on proper access', function () {
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EnrollmentsRelationManager based on proper access', function () {
+it('renders the EnrollmentsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -169,7 +169,7 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the TermAttributesRelationManager based on proper access', function () {
+it('renders the TermAttributesRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -200,7 +200,7 @@ it('renders the TermAttributesRelationManager based on proper access', function 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EngagementsRelationManager based on proper access', function () {
+it('renders the EngagementsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -251,7 +251,7 @@ it('renders the EngagementsRelationManager based on proper access', function () 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the InteractionsRelationManager based on proper access', function () {
+it('renders the InteractionsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -278,7 +278,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EngagementFilesRelationManager based on proper access', function () {
+it('renders the EngagementFilesRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -305,7 +305,7 @@ it('renders the EngagementFilesRelationManager based on proper access', function
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EducatableConcernsWidget based on proper access', function () {
+it('renders the EducatableConcernsWidget based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -335,7 +335,7 @@ it('renders the EducatableConcernsWidget based on proper access', function () {
         ->assertSeeLivewire($widget);
 });
 
-it('renders the EducatableTasksWidget based on proper access', function () {
+it('renders the EducatableTasksWidget based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -362,7 +362,7 @@ it('renders the EducatableTasksWidget based on proper access', function () {
         ->assertSeeLivewire($widget);
 });
 
-it('renders the EducatableCareTeamWidget based on proper access', function () {
+it('renders the EducatableCareTeamWidget based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -389,7 +389,7 @@ it('renders the EducatableCareTeamWidget based on proper access', function () {
         ->assertSeeLivewire($widget);
 });
 
-it('renders the EducatableSubscriptionsWidget based on proper access', function () {
+it('renders the EducatableSubscriptionsWidget based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -416,7 +416,7 @@ it('renders the EducatableSubscriptionsWidget based on proper access', function 
         ->assertSeeLivewire($widget);
 });
 
-it('renders the FormSubmissionsRelationManager based on Feature access', function () {
+it('renders the FormSubmissionsRelationManager based on Feature access', function (): void {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -446,7 +446,7 @@ it('renders the FormSubmissionsRelationManager based on Feature access', functio
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EventsRelationManager based on Feature access', function () {
+it('renders the EventsRelationManager based on Feature access', function (): void {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -476,7 +476,7 @@ it('renders the EventsRelationManager based on Feature access', function () {
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the ApplicationSubmissionsRelationManager based on Feature access', function () {
+it('renders the ApplicationSubmissionsRelationManager based on Feature access', function (): void {
     $student = Student::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -506,7 +506,7 @@ it('renders the ApplicationSubmissionsRelationManager based on Feature access', 
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the StudentTagsAction based on proper access', function () {
+it('renders the StudentTagsAction based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
 
@@ -530,7 +530,7 @@ it('renders the StudentTagsAction based on proper access', function () {
         ->assertActionVisible(StudentTagsAction::class);
 });
 
-it('renders the SyncStudentSisAction based on proper access', function () {
+it('renders the SyncStudentSisAction based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
 
@@ -557,7 +557,7 @@ it('renders the SyncStudentSisAction based on proper access', function () {
         ->assertActionVisible('refreshSis');
 });
 
-it('renders the `ArchiveAction` based on proper access', function () {
+it('renders the `ArchiveAction` based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
 
@@ -594,10 +594,10 @@ it('renders the `ArchiveAction` based on proper access', function () {
         ->assertActionVisible(ArchiveAction::class);
 });
 
-describe('archiving', function () {
+describe('archiving', function (): void {
     // The resource query excludes archived students, so the page cannot resolve them at all:
     // a link that was valid before they were archived, or a URL typed by hand, gets a 404.
-    it('cannot be opened once the student is archived', function () {
+    it('cannot be opened once the student is archived', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -611,7 +611,7 @@ describe('archiving', function () {
             ->toThrow(ModelNotFoundException::class);
     });
 
-    it('returns not found for a direct URL to an archived student', function () {
+    it('returns not found for a direct URL to an archived student', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

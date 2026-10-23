@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('engagement_response_actioned_notes', function (Blueprint $table) {
+        Schema::create('engagement_response_actioned_notes', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('engagement_response_id')->constrained('engagement_responses')->onDelete('cascade');
             $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();

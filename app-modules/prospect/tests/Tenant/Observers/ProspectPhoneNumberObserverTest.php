@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Support\Facades\Bus;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->provider = SmsMessagingProvider::Telnyx;
@@ -50,7 +50,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-it('queues a lookup when a prospect phone number is created', function () {
+it('queues a lookup when a prospect phone number is created', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $prospect = Prospect::factory()->create();
@@ -60,11 +60,11 @@ it('queues a lookup when a prospect phone number is created', function () {
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(1);
 });
 
-it('queues a lookup when the number on a prospect phone number changes', function () {
+it('queues a lookup when the number on a prospect phone number changes', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $prospect = Prospect::factory()->create();
@@ -75,11 +75,11 @@ it('queues a lookup when the number on a prospect phone number changes', functio
 
     $phoneNumber->update(['number' => '+16502531111']);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502531111'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502531111'))
         ->toHaveCount(1);
 });
 
-it('does not queue a lookup when a non-number field changes', function () {
+it('does not queue a lookup when a non-number field changes', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $prospect = Prospect::factory()->create();
@@ -90,11 +90,11 @@ it('does not queue a lookup when a non-number field changes', function () {
 
     $phoneNumber->update(['type' => 'Work']);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(1);
 });
 
-it('does not queue a lookup when a result already exists for the number', function () {
+it('does not queue a lookup when a result already exists for the number', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $prospect = Prospect::factory()->create();
@@ -105,11 +105,11 @@ it('does not queue a lookup when a result already exists for the number', functi
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(0);
 });
 
-it('does not queue a lookup when no lookup provider is configured', function () {
+it('does not queue a lookup when no lookup provider is configured', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->telnyx_api_key = null;
     $settings->save();
@@ -123,11 +123,11 @@ it('does not queue a lookup when no lookup provider is configured', function () 
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(0);
 });
 
-it('does not queue a lookup when messaging is disabled', function () {
+it('does not queue a lookup when messaging is disabled', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = false;
     $settings->save();
@@ -141,11 +141,11 @@ it('does not queue a lookup when messaging is disabled', function () {
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(0);
 });
 
-it('does not queue a lookup when SMS demo mode is enabled', function () {
+it('does not queue a lookup when SMS demo mode is enabled', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->save();
@@ -159,11 +159,11 @@ it('does not queue a lookup when SMS demo mode is enabled', function () {
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(0);
 });
 
-it('does not queue a lookup when Telnyx is not the selected provider', function () {
+it('does not queue a lookup when Telnyx is not the selected provider', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->provider = SmsMessagingProvider::Twilio;
     $settings->save();
@@ -177,6 +177,6 @@ it('does not queue a lookup when Telnyx is not the selected provider', function 
         'number' => '+16502530000',
     ]);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530000'))
         ->toHaveCount(0);
 });

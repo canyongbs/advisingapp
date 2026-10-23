@@ -38,6 +38,7 @@ namespace App\Filament\Widgets\QueueMonitoring\Actions;
 
 use App\Models\FailedJob;
 use Filament\Actions\Action;
+use Illuminate\Contracts\View\Factory;
 
 class ViewFailedJobAction
 {
@@ -46,7 +47,7 @@ class ViewFailedJobAction
         return Action::make('details')
             ->label('Details')
             ->modalHeading(fn (FailedJob $record): string => $record->display_name)
-            ->modalContent(fn (FailedJob $record) => view('filament.widgets.queue-monitoring.failed-job-detail', ['record' => $record]))
+            ->modalContent(fn (FailedJob $record): Factory|\Illuminate\Contracts\View\View => view('filament.widgets.queue-monitoring.failed-job-detail', ['record' => $record]))
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Close');
     }

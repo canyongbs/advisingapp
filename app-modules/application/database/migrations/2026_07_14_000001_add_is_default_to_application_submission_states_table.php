@@ -42,8 +42,8 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('application_submission_states', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('application_submission_states', function (Blueprint $table): void {
                 $table->boolean('is_default')->default(false);
             });
 
@@ -57,10 +57,10 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::statement('DROP INDEX IF EXISTS application_submission_states_is_default_unique;');
 
-            Schema::table('application_submission_states', function (Blueprint $table) {
+            Schema::table('application_submission_states', function (Blueprint $table): void {
                 $table->dropColumn('is_default');
             });
         });

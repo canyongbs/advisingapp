@@ -247,7 +247,7 @@ class ViewEngagementResponse extends Page
                             ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('scheduled_at')
                             ->required()
-                            ->visible(fn (Get $get) => $get('send_later')),
+                            ->visible(fn (Get $get): mixed => $get('send_later')),
                     ]),
             ])
             ->statePath('replyData')

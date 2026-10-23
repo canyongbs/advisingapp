@@ -49,7 +49,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
-it('triggers Enter workflows when application submission is created', function () {
+it('triggers Enter workflows when application submission is created', function (): void {
     $receivedState = ApplicationSubmissionState::factory()
         ->state(['classification' => ApplicationSubmissionStateClassification::Received])
         ->create();
@@ -84,7 +84,7 @@ it('triggers Enter workflows when application submission is created', function (
     expect($workflowRun->related_id)->toBe($submission->author->getKey());
 });
 
-it('triggers Exit workflows when submission state changes', function () {
+it('triggers Exit workflows when submission state changes', function (): void {
     $receivedState = ApplicationSubmissionState::factory()
         ->state(['classification' => ApplicationSubmissionStateClassification::Received])
         ->create();
@@ -124,7 +124,7 @@ it('triggers Exit workflows when submission state changes', function () {
     expect(WorkflowRun::first()->workflow_trigger_id)->toBe($exitTrigger->id);
 });
 
-it('triggers both Exit and Enter workflows on a single state transition', function () {
+it('triggers both Exit and Enter workflows on a single state transition', function (): void {
     $receivedState = ApplicationSubmissionState::factory()
         ->state(['classification' => ApplicationSubmissionStateClassification::Received])
         ->create();
@@ -174,7 +174,7 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
     expect($triggerIds)->toContain($exitReceivedTrigger->id, $enterReviewTrigger->id);
 });
 
-it('does not trigger workflows whose stage does not match the transition', function () {
+it('does not trigger workflows whose stage does not match the transition', function (): void {
     // Received must exist so the observer can pick it as the submission's default state.
     ApplicationSubmissionState::factory()
         ->state(['classification' => ApplicationSubmissionStateClassification::Received])
@@ -204,7 +204,7 @@ it('does not trigger workflows whose stage does not match the transition', funct
     expect(WorkflowRun::count())->toBe(0);
 });
 
-it('does not trigger disabled workflows', function () {
+it('does not trigger disabled workflows', function (): void {
     $receivedState = ApplicationSubmissionState::factory()
         ->state(['classification' => ApplicationSubmissionStateClassification::Received])
         ->create();
@@ -229,7 +229,7 @@ it('does not trigger disabled workflows', function () {
     expect(WorkflowRun::count())->toBe(0);
 });
 
-test('ApplicationSubmissionStateEntered event is wired to the stage workflows listener', function () {
+test('ApplicationSubmissionStateEntered event is wired to the stage workflows listener', function (): void {
     Event::fake();
 
     Event::assertListening(
@@ -238,7 +238,7 @@ test('ApplicationSubmissionStateEntered event is wired to the stage workflows li
     );
 });
 
-test('ApplicationSubmissionStateExited event is wired to the stage workflows listener', function () {
+test('ApplicationSubmissionStateExited event is wired to the stage workflows listener', function (): void {
     Event::fake();
 
     Event::assertListening(

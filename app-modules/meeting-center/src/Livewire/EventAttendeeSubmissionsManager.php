@@ -49,6 +49,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Livewire\Component;
 
@@ -60,7 +62,7 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
 
     public EventAttendee $record;
 
-    public function render()
+    public function render(): Factory|View
     {
         return view('meeting-center::livewire.event-attendee-submissions-manager');
     }
@@ -82,7 +84,7 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
             ->defaultSort('submitted_at', 'desc')
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (EventRegistrationFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
+                    ->modalHeading(fn (EventRegistrationFormSubmission $record): string => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->schema(fn (EventRegistrationFormSubmission $record): array => [
                         Section::make('Metadata')
                             ->schema([
@@ -94,7 +96,7 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
                             ])
                             ->columns(),
                     ])
-                    ->modalContent(fn (EventRegistrationFormSubmission $record) => view('meeting-center::event-registration-submission', ['submission' => $record])),
+                    ->modalContent(fn (EventRegistrationFormSubmission $record): Factory|\Illuminate\Contracts\View\View => view('meeting-center::event-registration-submission', ['submission' => $record])),
             ]);
     }
 }

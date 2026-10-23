@@ -51,7 +51,7 @@ class GetTwilioApiKey
     {
         $apiKey = $this->twilioSettings->api_key;
 
-        if (empty($apiKey)) {
+        if (! $apiKey instanceof TwilioApiKey) {
             $newKey = $this->twilioClient->newKeys
                 ->create(['friendlyName' => config('app.name')]);
 

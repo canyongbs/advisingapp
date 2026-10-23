@@ -77,7 +77,7 @@ class CreateCustomerAdvisorThreadInteraction implements ShouldQueue
             content: $transcript,
         );
 
-        DB::transaction(function () use ($summary, $transcript) {
+        DB::transaction(function () use ($summary, $transcript): void {
             assert($this->thread->author instanceof Student || $this->thread->author instanceof Prospect);
 
             $interaction = $this->thread->author->interactions()->create([

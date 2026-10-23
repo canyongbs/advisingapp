@@ -53,15 +53,16 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     asSuperAdmin();
 });
 
-it('shows interaction options only for campaign population model type when editing journey step', function () {
+it('shows interaction options only for campaign population model type when editing journey step', function (): void {
     $campaign = Campaign::factory()
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->for(Group::factory()->state(['model' => GroupModel::Student]), 'group')
@@ -93,7 +94,7 @@ it('shows interaction options only for campaign population model type when editi
         'pageClass' => ViewCampaign::class,
     ])
         ->mountAction(TestAction::make('edit')->table($action))
-        ->assertFormFieldExists('data.interaction_initiative_id', checkFieldUsing: function (Select $field) use ($studentInitiative, $prospectInitiative) {
+        ->assertFormFieldExists('data.interaction_initiative_id', checkFieldUsing: function (Select $field) use ($studentInitiative, $prospectInitiative): true {
             $optionKeys = array_keys($field->getOptions());
 
             expect($optionKeys)->toContain($studentInitiative->getKey())
@@ -101,7 +102,7 @@ it('shows interaction options only for campaign population model type when editi
 
             return true;
         })
-        ->assertFormFieldExists('data.interaction_driver_id', checkFieldUsing: function (Select $field) use ($studentDriver, $prospectDriver) {
+        ->assertFormFieldExists('data.interaction_driver_id', checkFieldUsing: function (Select $field) use ($studentDriver, $prospectDriver): true {
             $optionKeys = array_keys($field->getOptions());
 
             expect($optionKeys)->toContain($studentDriver->getKey())
@@ -111,7 +112,7 @@ it('shows interaction options only for campaign population model type when editi
         });
 });
 
-it('shows interaction options only for campaign population model type when editing journey step of a prospect campaign', function () {
+it('shows interaction options only for campaign population model type when editing journey step of a prospect campaign', function (): void {
     $prospectGroup = Group::factory()->state(['model' => GroupModel::Prospect])->create();
 
     $studentInitiative = InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student]);
@@ -146,7 +147,7 @@ it('shows interaction options only for campaign population model type when editi
         'pageClass' => ViewCampaign::class,
     ])
         ->mountAction(TestAction::make('edit')->table($action))
-        ->assertFormFieldExists('data.interaction_initiative_id', checkFieldUsing: function (Select $field) use ($studentInitiative, $prospectInitiative) {
+        ->assertFormFieldExists('data.interaction_initiative_id', checkFieldUsing: function (Select $field) use ($studentInitiative, $prospectInitiative): true {
             $optionKeys = array_keys($field->getOptions());
 
             expect($optionKeys)->toContain($prospectInitiative->getKey())
@@ -154,7 +155,7 @@ it('shows interaction options only for campaign population model type when editi
 
             return true;
         })
-        ->assertFormFieldExists('data.interaction_driver_id', checkFieldUsing: function (Select $field) use ($studentDriver, $prospectDriver) {
+        ->assertFormFieldExists('data.interaction_driver_id', checkFieldUsing: function (Select $field) use ($studentDriver, $prospectDriver): true {
             $optionKeys = array_keys($field->getOptions());
 
             expect($optionKeys)->toContain($prospectDriver->getKey())
@@ -164,7 +165,7 @@ it('shows interaction options only for campaign population model type when editi
         });
 });
 
-it('shows interaction options only for the selected population model type in the create wizard', function (GroupModel $groupModel, InteractableType $expected, InteractableType $excluded) {
+it('shows interaction options only for the selected population model type in the create wizard', function (GroupModel $groupModel, InteractableType $expected, InteractableType $excluded): void {
     $group = Group::factory()->create(['model' => $groupModel, 'user_id' => auth()->id()]);
 
     $selects = [
@@ -192,7 +193,7 @@ it('shows interaction options only for the selected population model type in the
                 'step-one' => [
                     'type' => 'interaction',
                     'data' => [
-                        ...array_map(fn ($record) => $record->getKey(), $expectedRecords),
+                        ...array_map(fn (\Illuminate\Database\Eloquent\Collection|Model $record) => $record->getKey(), $expectedRecords),
                         'start_datetime' => now()->toDateTimeString(),
                         'end_datetime' => now()->addHour()->toDateTimeString(),
                         'subject' => 'Test subject',
@@ -206,7 +207,7 @@ it('shows interaction options only for the selected population model type in the
     foreach (array_keys($selects) as $field) {
         $component->assertFormFieldExists(
             "actions.step-one.data.{$field}",
-            checkFieldUsing: function (Select $select) use ($expectedRecords, $excludedRecords, $field) {
+            checkFieldUsing: function (Select $select) use ($expectedRecords, $excludedRecords, $field): true {
                 $optionKeys = array_keys($select->getOptions());
 
                 expect($optionKeys)->toContain($expectedRecords[$field]->getKey())
@@ -221,7 +222,7 @@ it('shows interaction options only for the selected population model type in the
     'prospect population group' => [GroupModel::Prospect, InteractableType::Prospect, InteractableType::Student],
 ]);
 
-it('offers no interaction options in the create wizard until a population group is selected', function () {
+it('offers no interaction options in the create wizard until a population group is selected', function (): void {
     InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student]);
     InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
@@ -247,7 +248,7 @@ it('offers no interaction options in the create wizard until a population group 
                 ],
             ],
         ])
-        ->assertFormFieldExists('actions.step-one.data.interaction_initiative_id', checkFieldUsing: function (Select $select) {
+        ->assertFormFieldExists('actions.step-one.data.interaction_initiative_id', checkFieldUsing: function (Select $select): true {
             expect($select->getOptions())->toBeEmpty();
 
             return true;

@@ -55,7 +55,7 @@ class SyncResourceHubArticlesToAssistantVectorStores implements ShouldQueue, Ten
     {
         AiAssistant::query()
             ->where('has_resource_hub_knowledge', true)
-            ->eachById(function (AiAssistant $assistant) {
+            ->eachById(function (AiAssistant $assistant): void {
                 UploadAssistantFilesToVectorStore::dispatch($assistant);
             });
     }

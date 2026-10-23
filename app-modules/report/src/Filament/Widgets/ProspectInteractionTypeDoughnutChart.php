@@ -80,7 +80,7 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
 
         $interactionsByType = $shouldBypassCache
             ? $this->getInteractionTypeData($startDate, $endDate, $groupId)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function () {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function (): Collection {
                 return $this->getInteractionTypeData();
             });
 
@@ -136,21 +136,21 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $query = InteractionType::where('interactable_type', InteractableType::Prospect)
             ->withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId): void {
+                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId): void {
                         $query->when(
                             $groupId,
                             fn (Builder $query) => $this->groupFilter($query, $groupId)
                         );
                     })
                         ->when(
-                            $startDate && $endDate,
+                            $startDate instanceof Carbon && $endDate instanceof Carbon,
                             fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                         );
                 },
             ])->get(['id', 'name']);
 
-        return $query->map(function (InteractionType $interactionType) {
+        return $query->map(function (InteractionType $interactionType): InteractionType {
             $interactionType['bg_color'] = $this->getRgbString();
 
             return $interactionType;

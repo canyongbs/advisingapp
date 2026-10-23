@@ -66,7 +66,7 @@ class CompleteStudentDataImport
         $totalFailedRowsCount = $studentsImportFailedRowsCount + $emailAddressesImportFailedRowsCount + $phoneNumbersImportFailedRowsCount + $addressesImportFailedRowsCount + $programsImportFailedRowsCount + $enrollmentsImportFailedRowsCount;
 
         if (! $totalFailedRowsCount) {
-            DB::transaction(function () use ($import) {
+            DB::transaction(function () use ($import): void {
                 DB::table("import_{$import->studentsImport->getKey()}_students")
                     ->update([
                         'primary_email_id' => $import->emailAddressesImport ? DB::raw("(SELECT email.id FROM \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)") : null,

@@ -95,7 +95,7 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
             ...self::getDescriptionSectionsSchema($field),
         ];
 
-        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+        if ($author && $submissible instanceof Submissible && in_array($submissible::class, [Form::class, Application::class])) {
             $schema['value'] = $author->primaryPhoneNumber->number ?? '';
 
             if ($author instanceof Student) {
@@ -118,7 +118,7 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
             'string',
             'max:255',
             'nullable',
-            function (string $attribute, mixed $value, Closure $fail) {
+            function (string $attribute, mixed $value, Closure $fail): void {
                 if (blank($value)) {
                     return;
                 }

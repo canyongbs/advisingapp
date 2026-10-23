@@ -43,13 +43,13 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('event_registration_forms', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('event_registration_forms', function (Blueprint $table): void {
                 $table->uuid('root_id')->nullable();
                 $table->timestamp('archived_at')->nullable();
             });
 
-            Schema::table('event_registration_forms', function (Blueprint $table) {
+            Schema::table('event_registration_forms', function (Blueprint $table): void {
                 $table->uuid('root_id')->nullable(false)->change();
                 $table->foreign('root_id')->references('id')->on('event_registration_forms');
                 $table->index('root_id');
@@ -69,7 +69,7 @@ return new class () extends Migration {
                    )'
             );
 
-            Schema::table('event_registration_forms', function (Blueprint $table) {
+            Schema::table('event_registration_forms', function (Blueprint $table): void {
                 $table->uniqueIndex(['event_id'])->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
             });
         });
@@ -77,12 +77,12 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('event_registration_forms', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('event_registration_forms', function (Blueprint $table): void {
                 $table->dropIndex('event_registration_forms_event_id_unique');
             });
 
-            Schema::table('event_registration_forms', function (Blueprint $table) {
+            Schema::table('event_registration_forms', function (Blueprint $table): void {
                 $table->dropForeign(['root_id']);
                 $table->dropIndex(['root_id']);
                 $table->dropColumn(['root_id', 'archived_at']);

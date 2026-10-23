@@ -47,12 +47,18 @@ use Livewire\Livewire;
 
 class ReportServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ReportPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new ReportPlugin());
+        });
     }
 
-    public function boot()
+    public function boot(): void
     {
         Livewire::component('report::live-filter-builder', LiveFilterBuilderComponent::class);
 

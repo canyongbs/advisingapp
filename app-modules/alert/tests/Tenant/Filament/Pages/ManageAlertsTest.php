@@ -53,7 +53,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     DB::statement('DROP VIEW IF EXISTS student_alerts');
     $settings = app(LicenseSettings::class);
 
@@ -61,7 +61,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
     $settings = app(LicenseSettings::class);
 
@@ -82,7 +82,7 @@ it('is gated with proper access control', function () {
     get(ManageAlerts::getUrl())->assertSuccessful();
 });
 
-it('saves without showing modal when no alerts are being disabled', function () {
+it('saves without showing modal when no alerts are being disabled', function (): void {
     asSuperAdmin();
 
     $alertConfig = AlertConfiguration::factory()
@@ -105,7 +105,7 @@ it('saves without showing modal when no alerts are being disabled', function () 
     expect($alertConfig->is_enabled)->toBeTrue();
 });
 
-it('saves without showing modal when disabling alerts not used by any groups', function () {
+it('saves without showing modal when disabling alerts not used by any groups', function (): void {
     asSuperAdmin();
 
     $alertConfig = AlertConfiguration::factory()
@@ -128,7 +128,7 @@ it('saves without showing modal when disabling alerts not used by any groups', f
     expect($alertConfig->is_enabled)->toBeFalse();
 });
 
-it('shows confirmation modal when disabling alerts used by groups', function () {
+it('shows confirmation modal when disabling alerts used by groups', function (): void {
     asSuperAdmin();
 
     $alertConfig = AlertConfiguration::factory()
@@ -172,7 +172,7 @@ it('shows confirmation modal when disabling alerts used by groups', function () 
         ->assertActionMounted('confirmDisableAlerts');
 });
 
-it('dispatches job when proceeding with disabling alerts used by groups', function () {
+it('dispatches job when proceeding with disabling alerts used by groups', function (): void {
     Queue::fake([RemoveAlertFiltersFromGroupsJob::class]);
 
     asSuperAdmin();
@@ -217,7 +217,7 @@ it('dispatches job when proceeding with disabling alerts used by groups', functi
         ->call('save')
         ->callMountedAction();
 
-    Queue::assertPushed(RemoveAlertFiltersFromGroupsJob::class, function (RemoveAlertFiltersFromGroupsJob $job) use ($alertConfig) {
+    Queue::assertPushed(RemoveAlertFiltersFromGroupsJob::class, function (RemoveAlertFiltersFromGroupsJob $job) use ($alertConfig): bool {
         return in_array((string) $alertConfig->id, $job->alertConfigurationIds, true);
     });
 
@@ -225,7 +225,7 @@ it('dispatches job when proceeding with disabling alerts used by groups', functi
     expect($alertConfig->is_enabled)->toBeFalse();
 });
 
-it('does not dispatch job when save proceeds without modal', function () {
+it('does not dispatch job when save proceeds without modal', function (): void {
     Queue::fake([RemoveAlertFiltersFromGroupsJob::class]);
 
     asSuperAdmin();
@@ -249,7 +249,7 @@ it('does not dispatch job when save proceeds without modal', function () {
     Queue::assertNotPushed(RemoveAlertFiltersFromGroupsJob::class);
 });
 
-it('detects multiple alerts being disabled that are used by different groups', function () {
+it('detects multiple alerts being disabled that are used by different groups', function (): void {
     asSuperAdmin();
 
     $dorfConfig = AlertConfiguration::factory()

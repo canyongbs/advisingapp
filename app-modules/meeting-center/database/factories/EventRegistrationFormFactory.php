@@ -59,7 +59,7 @@ class EventRegistrationFormFactory extends Factory
     {
         return [
             'embed_enabled' => $this->faker->boolean(),
-            'allowed_domains' => fn ($attributes) => $attributes['embed_enabled'] ? [
+            'allowed_domains' => fn ($attributes): array => $attributes['embed_enabled'] ? [
                 parse_url(config('app.url'), PHP_URL_HOST),
                 parse_url($this->faker->url(), PHP_URL_HOST),
             ] : [],
@@ -72,11 +72,11 @@ class EventRegistrationFormFactory extends Factory
 
     public function configure(): EventRegistrationForm|Factory
     {
-        return $this->afterCreating(function (EventRegistrationForm $eventRegistrationForm) {
+        return $this->afterCreating(function (EventRegistrationForm $eventRegistrationForm): void {
             if ($eventRegistrationForm->is_wizard) {
                 EventRegistrationFormStep::factory()
                     ->count(rand(2, 5))
-                    ->sequence(fn (Sequence $sequence) => ['sort' => $sequence->index])
+                    ->sequence(fn (Sequence $sequence): array => ['sort' => $sequence->index])
                     ->create([
                         'form_id' => $eventRegistrationForm->getKey(),
                     ]);
@@ -116,7 +116,7 @@ class EventRegistrationFormFactory extends Factory
             ->create([
                 'form_id' => $eventRegistrationForm->getKey(),
             ])
-            ->map(fn (EventRegistrationFormField $field) => [
+            ->map(fn (EventRegistrationFormField $field): array => [
                 'type' => 'customBlock',
                 'attrs' => [
                     'config' => [

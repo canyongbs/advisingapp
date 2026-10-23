@@ -41,7 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Livewire\Livewire;
 
-it('displays only CustomerAdvisorThreads added within the selected date range based on tabs', function () {
+it('displays only CustomerAdvisorThreads added within the selected date range based on tabs', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 

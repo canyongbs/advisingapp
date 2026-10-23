@@ -43,7 +43,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('ViewProspectCareTeamRole is gated with proper access control', function () {
+test('ViewProspectCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
@@ -77,7 +77,7 @@ test('ViewProspectCareTeamRole is gated with proper access control', function ()
         )->assertSuccessful();
 });
 
-test('The correct details are displayed on the ViewProspectCareTeamRole page', function () {
+test('The correct details are displayed on the ViewProspectCareTeamRole page', function (): void {
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
 
     asSuperAdmin()

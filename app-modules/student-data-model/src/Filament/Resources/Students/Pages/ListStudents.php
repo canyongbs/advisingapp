@@ -173,12 +173,12 @@ class ListStudents extends ListRecords
                     ->optionsLimit(20)
                     ->multiple()
                     ->query(
-                        function (Builder $query, array $data) {
+                        function (Builder $query, array $data): void {
                             if (blank($data['values'])) {
                                 return;
                             }
 
-                            $query->whereHas('tags', function (Builder $query) use ($data) {
+                            $query->whereHas('tags', function (Builder $query) use ($data): void {
                                 $query->whereIn('tag_id', $data['values']);
                             });
                         }

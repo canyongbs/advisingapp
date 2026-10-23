@@ -47,14 +47,14 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('renders successfully', function () {
+it('renders successfully', function (): void {
     asSuperAdmin();
 
     Livewire::test(ManageAiSettings::class)
         ->assertStatus(200);
 });
 
-it('does not load if you do not have any permissions to access', function () {
+it('does not load if you do not have any permissions to access', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
@@ -63,7 +63,7 @@ it('does not load if you do not have any permissions to access', function () {
         ->assertStatus(403);
 });
 
-it('cannot access the page if assistant is default', function () {
+it('cannot access the page if assistant is default', function (): void {
     $aiSettings = app(LicenseSettings::class);
 
     $aiSettings->data->addons->employeeAdvisors = true;
@@ -87,7 +87,7 @@ it('cannot access the page if assistant is default', function () {
         )->assertForbidden();
 });
 
-it('can access the page if assistant is not default', function () {
+it('can access the page if assistant is not default', function (): void {
     $aiSettings = app(LicenseSettings::class);
 
     $aiSettings->data->addons->employeeAdvisors = true;

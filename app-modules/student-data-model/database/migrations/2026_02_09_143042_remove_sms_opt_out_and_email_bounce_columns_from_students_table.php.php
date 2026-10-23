@@ -40,7 +40,7 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->dropColumn('sms_opt_out');
             $table->dropColumn('email_bounce');
         });
@@ -48,7 +48,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->boolean('sms_opt_out')->nullable();
             $table->boolean('email_bounce')->nullable();
         });

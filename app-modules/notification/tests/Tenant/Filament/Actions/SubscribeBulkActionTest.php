@@ -44,7 +44,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('can bulk subscribe students without removing the prior subscriptions', function () {
+it('can bulk subscribe students without removing the prior subscriptions', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Student::getLicenseType())->create();
 
@@ -57,7 +57,7 @@ it('can bulk subscribe students without removing the prior subscriptions', funct
         'subscriptions'
     )->count(5)->create();
 
-    $students->each(function (Student $student) use ($user) {
+    $students->each(function (Student $student) use ($user): void {
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
@@ -68,13 +68,13 @@ it('can bulk subscribe students without removing the prior subscriptions', funct
         ])
         ->assertSuccessful();
 
-    $students->each(function (Student $student) use ($user, $anotherUser) {
+    $students->each(function (Student $student) use ($user, $anotherUser): void {
         expect($student->subscriptions()->where('user_id', $anotherUser->getKey())->exists())->toBeTrue();
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 });
 
-it('can bulk subscribe students and remove the prior subscriptions', function () {
+it('can bulk subscribe students and remove the prior subscriptions', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Student::getLicenseType())->create();
 
@@ -87,7 +87,7 @@ it('can bulk subscribe students and remove the prior subscriptions', function ()
         'subscriptions'
     )->count(5)->create();
 
-    $students->each(function (Student $student) use ($user) {
+    $students->each(function (Student $student) use ($user): void {
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
@@ -98,13 +98,13 @@ it('can bulk subscribe students and remove the prior subscriptions', function ()
         ])
         ->assertSuccessful();
 
-    $students->each(function (Student $student) use ($user, $anotherUser) {
+    $students->each(function (Student $student) use ($user, $anotherUser): void {
         expect($student->subscriptions()->where('user_id', $anotherUser->getKey())->exists())->toBeTrue();
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeFalse();
     });
 });
 
-it('can bulk subscribe prospects without removing the prior subscriptions', function () {
+it('can bulk subscribe prospects without removing the prior subscriptions', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Prospect::getLicenseType())->create();
 
@@ -117,7 +117,7 @@ it('can bulk subscribe prospects without removing the prior subscriptions', func
         'subscriptions'
     )->count(5)->create();
 
-    $prospects->each(function (Prospect $prospect) use ($user) {
+    $prospects->each(function (Prospect $prospect) use ($user): void {
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
@@ -128,13 +128,13 @@ it('can bulk subscribe prospects without removing the prior subscriptions', func
         ])
         ->assertSuccessful();
 
-    $prospects->each(function (Prospect $prospect) use ($user, $anotherUser) {
+    $prospects->each(function (Prospect $prospect) use ($user, $anotherUser): void {
         expect($prospect->subscriptions()->where('user_id', $anotherUser->getKey())->exists())->toBeTrue();
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 });
 
-it('can bulk subscribe prospects and remove the prior subscriptions', function () {
+it('can bulk subscribe prospects and remove the prior subscriptions', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
     $anotherUser = User::factory()->licensed(Prospect::getLicenseType())->create();
 
@@ -147,7 +147,7 @@ it('can bulk subscribe prospects and remove the prior subscriptions', function (
         'subscriptions'
     )->count(5)->create();
 
-    $prospects->each(function (Prospect $prospect) use ($user) {
+    $prospects->each(function (Prospect $prospect) use ($user): void {
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
@@ -158,7 +158,7 @@ it('can bulk subscribe prospects and remove the prior subscriptions', function (
         ])
         ->assertSuccessful();
 
-    $prospects->each(function (Prospect $prospect) use ($user, $anotherUser) {
+    $prospects->each(function (Prospect $prospect) use ($user, $anotherUser): void {
         expect($prospect->subscriptions()->where('user_id', $anotherUser->getKey())->exists())->toBeTrue();
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeFalse();
     });

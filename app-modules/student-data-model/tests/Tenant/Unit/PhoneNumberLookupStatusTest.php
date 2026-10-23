@@ -36,7 +36,7 @@
 
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 
-it('maps Telnyx carrier types to the correct internal status', function (?string $carrierType, PhoneNumberLookupStatus $expected) {
+it('maps Telnyx carrier types to the correct internal status', function (?string $carrierType, PhoneNumberLookupStatus $expected): void {
     expect(PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType))->toBe($expected);
 })->with([
     'mobile' => ['mobile', PhoneNumberLookupStatus::ValidMobile],
@@ -52,10 +52,10 @@ it('maps Telnyx carrier types to the correct internal status', function (?string
     'empty string' => ['', PhoneNumberLookupStatus::Unknown],
 ]);
 
-it('matches carrier types case-insensitively', function () {
+it('matches carrier types case-insensitively', function (): void {
     expect(PhoneNumberLookupStatus::fromTelnyxCarrierType('MOBILE'))->toBe(PhoneNumberLookupStatus::ValidMobile);
 });
 
-it('prefers voip over landline for a "fixed voip" carrier type', function () {
+it('prefers voip over landline for a "fixed voip" carrier type', function (): void {
     expect(PhoneNumberLookupStatus::fromTelnyxCarrierType('fixed voip'))->toBe(PhoneNumberLookupStatus::ValidVoip);
 });

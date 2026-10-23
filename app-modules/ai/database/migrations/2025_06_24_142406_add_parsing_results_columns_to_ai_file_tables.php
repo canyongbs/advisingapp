@@ -42,11 +42,11 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('ai_assistant_files', function (Blueprint $table) {
+        Schema::table('ai_assistant_files', function (Blueprint $table): void {
             $table->longText('parsing_results')->nullable();
         });
 
-        Schema::table('ai_message_files', function (Blueprint $table) {
+        Schema::table('ai_message_files', function (Blueprint $table): void {
             $table->longText('parsing_results')->nullable();
         });
     }
@@ -54,11 +54,11 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('ai_assistant_files', function (Blueprint $table) {
+        Schema::table('ai_assistant_files', function (Blueprint $table): void {
             $table->dropColumn('parsing_results');
         });
 
-        Schema::table('ai_message_files', function (Blueprint $table) {
+        Schema::table('ai_message_files', function (Blueprint $table): void {
             $table->dropColumn('parsing_results');
         });
     }

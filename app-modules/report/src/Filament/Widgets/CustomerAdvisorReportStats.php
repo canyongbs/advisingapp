@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -63,7 +64,7 @@ class CustomerAdvisorReportStats extends StatsOverviewReportWidget
         $customerAdvisors = $shouldBypassCache
             ? CustomerAdvisor::query()
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -77,7 +78,7 @@ class CustomerAdvisorReportStats extends StatsOverviewReportWidget
             ? CustomerAdvisorThread::query()
                 ->whereMorphedTo('author', Student::class)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -91,7 +92,7 @@ class CustomerAdvisorReportStats extends StatsOverviewReportWidget
             ? CustomerAdvisorThread::query()
                 ->whereMorphedTo('author', Prospect::class)
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -105,7 +106,7 @@ class CustomerAdvisorReportStats extends StatsOverviewReportWidget
             ? CustomerAdvisorThread::query()
                 ->whereNull('author_id')
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()

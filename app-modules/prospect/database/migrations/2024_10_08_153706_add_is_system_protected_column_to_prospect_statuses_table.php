@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('prospect_statuses', function (Blueprint $table) {
+        Schema::table('prospect_statuses', function (Blueprint $table): void {
             $table->boolean('is_system_protected')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::table('prospect_statuses', function (Blueprint $table) {
+        Schema::table('prospect_statuses', function (Blueprint $table): void {
             $table->dropColumn('is_system_protected');
         });
     }

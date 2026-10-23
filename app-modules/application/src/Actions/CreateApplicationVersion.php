@@ -45,7 +45,7 @@ class CreateApplicationVersion
     /** @param array<string, mixed> $newData */
     public function execute(Application $oldVersion, array $newData): Application
     {
-        return DB::transaction(function () use ($oldVersion, $newData) {
+        return DB::transaction(function () use ($oldVersion, $newData): Application {
             $oldVersion->archive();
 
             $newVersion = new Application();
@@ -73,7 +73,7 @@ class CreateApplicationVersion
 
     private function reassociateWorkflowTriggers(Application $oldVersion, Application $newVersion): void
     {
-        $oldVersion->workflowTriggers->each(function (WorkflowTrigger $trigger) use ($newVersion) {
+        $oldVersion->workflowTriggers->each(function (WorkflowTrigger $trigger) use ($newVersion): void {
             $trigger->related()->associate($newVersion);
             $trigger->save();
         });

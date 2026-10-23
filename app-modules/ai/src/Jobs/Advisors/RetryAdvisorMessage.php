@@ -232,6 +232,6 @@ class RetryAdvisorMessage implements ShouldQueue
             error: 'An error happened when sending your message.',
         ));
 
-        $exception && report($exception);
+        $exception instanceof Throwable && report($exception);
     }
 }

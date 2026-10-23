@@ -95,7 +95,7 @@ class CareTeamBlock extends CampaignActionBlock
                         ->exists('users', 'id'),
                     Select::make('care_team_role_id')
                         ->label('Role')
-                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, mixed $livewire, string $operation) {
+                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, mixed $livewire, string $operation): void {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {
@@ -127,7 +127,7 @@ class CareTeamBlock extends CampaignActionBlock
                             };
                         })
                         ->model(CareTeam::class)
-                        ->visible(function (Get $get, mixed $livewire, string $operation) {
+                        ->visible(function (Get $get, mixed $livewire, string $operation): bool {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {

@@ -105,18 +105,18 @@ class CreatePrompt extends CreateRecord
                                 ->label('Users')
                                 ->multiple()
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                             Select::make('confidential_prompt_departments')
                                 ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
                                 ->label('Departments')
                                 ->multiple()
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         ])
                             ->columns(2)
                             ->columnSpanFull()
-                            ->visible(fn (Get $get) => $get('is_smart') === 0),
+                            ->visible(fn (Get $get): bool => $get('is_smart') === 0),
                     ]),
             ]);
     }

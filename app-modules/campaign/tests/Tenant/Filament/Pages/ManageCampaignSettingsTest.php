@@ -40,7 +40,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('requires all three permissions to access', function (array $permissions, bool $accessible) {
+it('requires all three permissions to access', function (array $permissions, bool $accessible): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo($permissions);

@@ -50,7 +50,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('ListEngagementFiles is gated with proper access control', function () {
+test('ListEngagementFiles is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -66,7 +66,7 @@ test('ListEngagementFiles is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-it('hides the delete bulk action for users without the delete permission', function () {
+it('hides the delete bulk action for users without the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('engagement_file.view-any');
 
@@ -76,7 +76,7 @@ it('hides the delete bulk action for users without the delete permission', funct
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the delete bulk action for users with the delete permission', function () {
+it('shows the delete bulk action for users with the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('engagement_file.view-any');
     $user->givePermissionTo('engagement_file.*.delete');

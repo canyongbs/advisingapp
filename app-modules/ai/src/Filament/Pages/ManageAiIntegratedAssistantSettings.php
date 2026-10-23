@@ -79,7 +79,7 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         return $schema
             ->components([
                 Select::make('default_model')
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],

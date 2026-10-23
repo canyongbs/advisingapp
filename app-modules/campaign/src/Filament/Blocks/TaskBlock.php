@@ -83,7 +83,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->live(),
                             Select::make('confidential_task_users')
                                 ->options(fn (Select $component) => User::query()
-                                    ->where(function (Builder $query) use ($component) {
+                                    ->where(function (Builder $query) use ($component): void {
                                         $query->tap(new WithoutAnyAdmin());
                                         $selected = array_filter((array) ($component->getState() ?? []));
 
@@ -97,7 +97,7 @@ class TaskBlock extends CampaignActionBlock
                                     ->all())
                                 ->searchable()
                                 ->getSearchResultsUsing(fn (string $search, Select $component): array => User::query()
-                                    ->where(function (Builder $query) use ($component) {
+                                    ->where(function (Builder $query) use ($component): void {
                                         $query->tap(new WithoutAnyAdmin());
                                         $selected = array_filter((array) ($component->getState() ?? []));
 
@@ -121,7 +121,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                             Select::make('department_confidential_task')
                                 ->options(fn () => Department::query()
                                     ->orderBy('name')
@@ -145,7 +145,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         ]),
                     TextInput::make('title')
                         ->required()

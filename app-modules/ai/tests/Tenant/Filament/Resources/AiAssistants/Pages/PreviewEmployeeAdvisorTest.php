@@ -45,13 +45,13 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();
 });
 
-test('Preview Employee Advisor is gated with proper access control', function () {
+test('Preview Employee Advisor is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -74,7 +74,7 @@ test('Preview Employee Advisor is gated with proper access control', function ()
         )->assertSuccessful();
 });
 
-test('Preview Employee Advisor creates a fresh preview thread on mount', function () {
+test('Preview Employee Advisor creates a fresh preview thread on mount', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo('assistant_custom.view-any');
@@ -99,7 +99,7 @@ test('Preview Employee Advisor creates a fresh preview thread on mount', functio
         ->and($previewThread->is_preview)->toBeTrue();
 });
 
-test('Preview Employee Advisor creates a new thread on each page load', function () {
+test('Preview Employee Advisor creates a new thread on each page load', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo('assistant_custom.view-any');

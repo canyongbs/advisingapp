@@ -72,7 +72,7 @@ class TagsCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             collect($addedOrUpdatedPivotModels)
                 ->flatten()
                 ->unique()
-                ->each(function (string $addedOrUpdatedPivotModel) {
+                ->each(function (string $addedOrUpdatedPivotModel): void {
                     $taggable = Taggable::query()
                         ->where('tag_id', $addedOrUpdatedPivotModel)
                         ->where('taggable_type', $this->actionEducatable->educatable_type)

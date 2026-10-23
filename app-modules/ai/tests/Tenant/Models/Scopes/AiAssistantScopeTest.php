@@ -43,13 +43,13 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('AiAssistant model has applied global scope', function () {
+test('AiAssistant model has applied global scope', function (): void {
     AiAssistant::bootHasGlobalScopes();
 
     expect(AiAssistant::hasGlobalScope(AiAssistantConfidentialScope::class))->toBeTrue();
 });
 
-test('AiAssistant model with fetch data for department user', function () {
+test('AiAssistant model with fetch data for department user', function (): void {
     $departmentUser = User::factory()->licensed(LicenseType::cases())->create();
 
     $department = Department::factory()->create();
@@ -87,7 +87,7 @@ test('AiAssistant model with fetch data for department user', function () {
         ->not->toContain(...$privateAiAssistants->pluck('id'));
 });
 
-test('AiAssistant model with fetch data for assigned user', function () {
+test('AiAssistant model with fetch data for assigned user', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $ownedConfidentialAiAssistants = AiAssistant::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
@@ -118,7 +118,7 @@ test('AiAssistant model with fetch data for assigned user', function () {
         ->not->toContain(...$privateAiAssistants->pluck('id'));
 });
 
-test('AiAssistant model with fetch data for creator user', function () {
+test('AiAssistant model with fetch data for creator user', function (): void {
     $creatorUser = User::factory()->licensed(LicenseType::cases())->create();
 
     $ownedConfidentialAiAssistants = AiAssistant::factory()->for($creatorUser, 'createdBy')->count(10)->create([
@@ -149,7 +149,7 @@ test('AiAssistant model with fetch data for creator user', function () {
         ->not->toContain(...$privateAiAssistants->pluck('id'));
 });
 
-test('AiAssistant model with fetch data for superadmin user', function () {
+test('AiAssistant model with fetch data for superadmin user', function (): void {
     $privateAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => true,
     ]);

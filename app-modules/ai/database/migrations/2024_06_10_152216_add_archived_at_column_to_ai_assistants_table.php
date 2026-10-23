@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->dateTime('archived_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->dropColumn('archived_at');
         });
     }

@@ -91,7 +91,7 @@ class EngagementResponseFactory extends Factory
 
     public function email(): self
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes): array {
             return [
                 'type' => EngagementResponseType::Email,
             ];
@@ -100,7 +100,7 @@ class EngagementResponseFactory extends Factory
 
     public function sms(): self
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes): array {
             return [
                 'type' => EngagementResponseType::Sms,
             ];

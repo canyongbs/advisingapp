@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('event_attendees', function (Blueprint $table) {
+        Schema::table('event_attendees', function (Blueprint $table): void {
             $table->timestamp('archived_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('event_attendees', function (Blueprint $table) {
+        Schema::table('event_attendees', function (Blueprint $table): void {
             $table->dropColumn('archived_at');
         });
     }

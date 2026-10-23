@@ -51,7 +51,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('can render with proper permission', function () {
+it('can render with proper permission', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -70,7 +70,7 @@ it('can render with proper permission', function () {
         ->assertSuccessful();
 });
 
-it('validates the inputs', function (CreateBookingGroupRequestFactory $data, array $errors) {
+it('validates the inputs', function (CreateBookingGroupRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $request = CreateBookingGroupRequestFactory::new($data)->create();
@@ -84,37 +84,37 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
 
     assertDatabaseCount(BookingGroup::class, 0);
 })->with([
-    'name required' => fn () => [
+    'name required' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->without('name'),
         ['name' => 'required'],
     ],
-    'name string' => fn () => [
+    'name string' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->state(['name' => 1]),
         ['name' => 'string'],
     ],
-    'name max' => fn () => [
+    'name max' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
-    'slug required' => fn () => [
+    'slug required' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->state(['slug' => null]),
         ['slug' => 'required'],
     ],
-    'description string' => fn () => [
+    'description string' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],
     ],
-    'description max' => fn () => [
+    'description max' => fn (): array => [
         CreateBookingGroupRequestFactory::new()->state(['description' => str()->random(65536)]),
         ['description' => 'max'],
     ],
-    'meeting owner required' => fn () => [
+    'meeting owner required' => fn (): array => [
         CreateBookingGroupRequestFactory::new(),
         ['meeting_owner_id' => 'required'],
     ],
 ]);
 
-it('can create a booking group with users and departments', function () {
+it('can create a booking group with users and departments', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     $user = User::factory()->create();
@@ -153,7 +153,7 @@ it('can create a booking group with users and departments', function () {
     $undoRepeaterFake();
 });
 
-it('tracks created_by user correctly', function () {
+it('tracks created_by user correctly', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     $user = User::factory()->create();
@@ -184,7 +184,7 @@ it('tracks created_by user correctly', function () {
     $undoRepeaterFake();
 });
 
-it('validates meeting owner must be in the group', function () {
+it('validates meeting owner must be in the group', function (): void {
     asSuperAdmin();
 
     $groupUser = User::factory()->create();
@@ -202,7 +202,7 @@ it('validates meeting owner must be in the group', function () {
         ->assertHasFormErrors(['meeting_owner_id']);
 });
 
-it('validates meeting owner must have a connected calendar', function () {
+it('validates meeting owner must have a connected calendar', function (): void {
     asSuperAdmin();
 
     $meetingOwner = User::factory()->create();
@@ -218,7 +218,7 @@ it('validates meeting owner must have a connected calendar', function () {
         ->assertHasFormErrors(['meeting_owner_id']);
 });
 
-it('users UserSelect does not show admin users in options by default on CreateBookingGroup', function () {
+it('users UserSelect does not show admin users in options by default on CreateBookingGroup', function (): void {
     asSuperAdmin();
 
     $regularUser = User::factory()->create();
@@ -233,7 +233,7 @@ it('users UserSelect does not show admin users in options by default on CreateBo
         });
 });
 
-it('users UserSelect shows all users when filter_admins_from_selection config is false on CreateBookingGroup', function () {
+it('users UserSelect shows all users when filter_admins_from_selection config is false on CreateBookingGroup', function (): void {
     Config::set('app.filter_admins_from_selection', false);
 
     asSuperAdmin();

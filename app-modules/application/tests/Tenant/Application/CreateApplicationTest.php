@@ -50,7 +50,7 @@ use function Pest\Laravel\actingAs;
 
 // Permission Tests
 
-test('CreateApplication is gated with proper access control', function () {
+test('CreateApplication is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -72,7 +72,7 @@ test('CreateApplication is gated with proper access control', function () {
     // TODO: Finish the test by adding the request factory CreateApplicationRequestFactory
 });
 
-test('CreateApplication is gated with proper feature access control', function () {
+test('CreateApplication is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->onlineAdmissions = false;

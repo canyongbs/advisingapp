@@ -47,7 +47,7 @@ class AuditAttachAction extends AttachAction
     {
         parent::setUp();
 
-        $this->using(function (array $data, Model $record, BelongsToMany $relationship) {
+        $this->using(function (array $data, Model $record, BelongsToMany $relationship): void {
             /** @var Auditable $parent */
             $parent = $relationship->getParent();
 

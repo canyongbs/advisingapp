@@ -43,7 +43,7 @@ use App\Models\User;
 
 use function Tests\asSuperAdmin;
 
-it('links the author name to their student record', function () {
+it('links the author name to their student record', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -59,10 +59,10 @@ it('links the author name to their student record', function () {
     expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
 });
 
-describe('archiving', function () {
+describe('archiving', function (): void {
     // The student's page no longer resolves, so the notification names them without a link
     // rather than sending the reader to a page that does not exist.
-    it('names an archived author without linking to them', function () {
+    it('names an archived author without linking to them', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

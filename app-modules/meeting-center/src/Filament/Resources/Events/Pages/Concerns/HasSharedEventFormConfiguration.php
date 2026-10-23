@@ -127,8 +127,8 @@ trait HasSharedEventFormConfiguration
                                         ->label('Allowed Domains')
                                         ->helperText('Only these domains will be allowed to embed this form.')
                                         ->placeholder('example.com')
-                                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                        ->hidden(fn (Get $get): bool => ! $get('embed_enabled'))
+                                        ->disabled(fn (Get $get): bool => ! $get('embed_enabled'))
                                         ->nestedRecursiveRules(
                                             [
                                                 'string',
@@ -146,7 +146,7 @@ trait HasSharedEventFormConfiguration
                         ->schema([
                             $this->fieldBuilder(),
                         ])
-                        ->hidden(fn (Get $get) => $get('is_wizard'))
+                        ->hidden(fn (Get $get): mixed => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
                     Repeater::make('steps')
                         ->schema([
@@ -166,7 +166,7 @@ trait HasSharedEventFormConfiguration
                         ])
                         ->addActionLabel('New step')
                         ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                        ->visible(fn (Get $get) => $get('is_wizard'))
+                        ->visible(fn (Get $get): mixed => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
                         ->relationship()
                         ->orderColumn('sort')
@@ -197,7 +197,7 @@ trait HasSharedEventFormConfiguration
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record): void {
                 if ($component->isDisabled()) {
                     return;
                 }

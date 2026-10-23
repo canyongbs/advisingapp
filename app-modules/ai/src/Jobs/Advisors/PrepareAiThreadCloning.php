@@ -77,7 +77,7 @@ class PrepareAiThreadCloning implements ShouldQueue
             },
         )
             ->name("AiThreadCloning batch for {$this->targetType->getLabel()}")
-            ->finally(function (Batch $batch) use ($threadName, $sender) {
+            ->finally(function (Batch $batch) use ($threadName, $sender): void {
                 $notification = FilamentNotification::make()
                     ->title("AI chat cloning for {$threadName} processing completed.");
 
@@ -123,7 +123,7 @@ class PrepareAiThreadCloning implements ShouldQueue
         return User::query()
             ->whereKey($this->targetIds)
             ->get()
-            ->map(function (User $recipient) {
+            ->map(function (User $recipient): CloneAiThread {
                 return new CloneAiThread($this->thread, $this->sender, $recipient);
             })
             ->all();
@@ -142,7 +142,7 @@ class PrepareAiThreadCloning implements ShouldQueue
                 return $department->users()
                     ->whereKeyNot($this->sender)
                     ->get()
-                    ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))
+                    ->map(fn (User $recipient): CloneAiThread => new CloneAiThread($this->thread, $this->sender, $recipient))
                     ->all();
             })
             ->toArray();

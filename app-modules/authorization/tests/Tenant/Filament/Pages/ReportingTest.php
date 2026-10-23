@@ -47,7 +47,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('cannot be accessed by a user without the reporting permission', function () {
+it('cannot be accessed by a user without the reporting permission', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -55,7 +55,7 @@ it('cannot be accessed by a user without the reporting permission', function () 
     get(Reporting::getUrl())->assertForbidden();
 });
 
-it('can be accessed by a user with the reporting permission', function () {
+it('can be accessed by a user with the reporting permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('reporting.view-any');
@@ -65,7 +65,7 @@ it('can be accessed by a user with the reporting permission', function () {
     get(Reporting::getUrl())->assertSuccessful();
 });
 
-it('always lists reports that require no license or addon', function () {
+it('always lists reports that require no license or addon', function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->limits->conversationalAiSeats = 0;
     $settings->data->limits->retentionCrmSeats = 0;
@@ -83,7 +83,7 @@ it('always lists reports that require no license or addon', function () {
         ->assertCanSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
 });
 
-it('only lists a report when the required licenses and addons are enabled for the tenant', function (Closure $enableReport, ReportAccessKey $case) {
+it('only lists a report when the required licenses and addons are enabled for the tenant', function (Closure $enableReport, ReportAccessKey $case): void {
     $settings = app(LicenseSettings::class);
     $settings->data->limits->conversationalAiSeats = 0;
     $settings->data->limits->retentionCrmSeats = 0;
@@ -107,82 +107,82 @@ it('only lists a report when the required licenses and addons are enabled for th
         ->assertCanSeeTableRecords([$case->value]);
 })->with([
     ReportAccessKey::ArtificialIntelligence->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->conversationalAiSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->conversationalAiSeats = 10,
         ReportAccessKey::ArtificialIntelligence,
     ],
     ReportAccessKey::CustomerAdvisorReport->value => [
-        function (LicenseSettings $settings) {
+        function (LicenseSettings $settings): void {
             $settings->data->limits->conversationalAiSeats = 10;
             $settings->data->addons->customerAdvisors = true;
         },
         ReportAccessKey::CustomerAdvisorReport,
     ],
     ReportAccessKey::EmployeeAdvisorReport->value => [
-        function (LicenseSettings $settings) {
+        function (LicenseSettings $settings): void {
             $settings->data->limits->conversationalAiSeats = 10;
             $settings->data->addons->employeeAdvisors = true;
         },
         ReportAccessKey::EmployeeAdvisorReport,
     ],
     ReportAccessKey::InstitutionalAdvisorReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->conversationalAiSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->conversationalAiSeats = 10,
         ReportAccessKey::InstitutionalAdvisorReport,
     ],
     ReportAccessKey::StudentActionCenter->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentActionCenter,
     ],
     ReportAccessKey::Students->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::Students,
     ],
     ReportAccessKey::StudentDeliverabilityReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentDeliverabilityReport,
     ],
     ReportAccessKey::StudentInteractionReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentInteractionReport,
     ],
     ReportAccessKey::StudentMessagesDetailReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentMessagesDetailReport,
     ],
     ReportAccessKey::StudentMessagesOverviewReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentMessagesOverviewReport,
     ],
     ReportAccessKey::StudentTaskManagement->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentTaskManagement,
     ],
     ReportAccessKey::ProspectActionCenter->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectActionCenter,
     ],
     ReportAccessKey::ProspectReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectReport,
     ],
     ReportAccessKey::ProspectInteractionReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectInteractionReport,
     ],
     ReportAccessKey::ProspectMessagesDetailReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectMessagesDetailReport,
     ],
     ReportAccessKey::ProspectMessagesOverviewReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectMessagesOverviewReport,
     ],
     ReportAccessKey::ProspectTaskManagement->value => [
-        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        fn (LicenseSettings $settings): int => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectTaskManagement,
     ],
 ]);
 
-it('can search reports by name', function () {
+it('can search reports by name', function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->customerAdvisors = true;
     $settings->save();
@@ -198,7 +198,7 @@ it('can search reports by name', function () {
         ->assertCanNotSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
 });
 
-it('can filter reports by category', function () {
+it('can filter reports by category', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
 
@@ -210,7 +210,7 @@ it('can filter reports by category', function () {
         ->assertCanNotSeeTableRecords([ReportAccessKey::ArtificialIntelligence->value]);
 });
 
-it('manage report action with approprite permissions', function () {
+it('manage report action with approprite permissions', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -221,7 +221,7 @@ it('manage report action with approprite permissions', function () {
         ->assertActionVisible(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value));
 });
 
-it('can not manage report action without approprite permissions', function () {
+it('can not manage report action without approprite permissions', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
 
@@ -231,7 +231,7 @@ it('can not manage report action without approprite permissions', function () {
         ->assertActionHidden(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value));
 });
 
-it('assigns users to a report through the manage action', function () {
+it('assigns users to a report through the manage action', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -255,7 +255,7 @@ it('assigns users to a report through the manage action', function () {
     )->toBeTrue();
 });
 
-it('assigns departments to a report through the manage action', function () {
+it('assigns departments to a report through the manage action', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -279,7 +279,7 @@ it('assigns departments to a report through the manage action', function () {
     )->toBeTrue();
 });
 
-it('removes access that is no longer selected when managing a report', function () {
+it('removes access that is no longer selected when managing a report', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -308,7 +308,7 @@ it('removes access that is no longer selected when managing a report', function 
     )->toBeFalse();
 });
 
-it('counts a user with both direct and department access only once', function () {
+it('counts a user with both direct and department access only once', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);
@@ -328,7 +328,7 @@ it('counts a user with both direct and department access only once', function ()
 
 // Bulk Manage Assignments tests
 
-it('bulk manage assignments action is visible when feature flag is active and user has permission', function () {
+it('bulk manage assignments action is visible when feature flag is active and user has permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -339,7 +339,7 @@ it('bulk manage assignments action is visible when feature flag is active and us
         ->assertTableBulkActionVisible('manageReportAssignments');
 });
 
-it('bulk manage assignments action is not visible for user without update permission', function () {
+it('bulk manage assignments action is not visible for user without update permission', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
 
@@ -349,7 +349,7 @@ it('bulk manage assignments action is not visible for user without update permis
         ->assertTableBulkActionHidden('manageReportAssignments');
 });
 
-it('bulk manage assignments action adds users and departments to selected reports additively', function () {
+it('bulk manage assignments action adds users and departments to selected reports additively', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -395,7 +395,7 @@ it('bulk manage assignments action adds users and departments to selected report
     )->toBeTrue('Department should be added');
 });
 
-it('bulk manage assignments action replaces all existing assignments when sync is enabled', function () {
+it('bulk manage assignments action replaces all existing assignments when sync is enabled', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');

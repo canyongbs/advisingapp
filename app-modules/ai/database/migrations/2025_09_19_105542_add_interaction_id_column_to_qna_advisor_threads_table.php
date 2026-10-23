@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('qna_advisor_threads', function (Blueprint $table) {
+        Schema::table('qna_advisor_threads', function (Blueprint $table): void {
             $table->foreignUuid('interaction_id')->nullable()->constrained();
         });
     }
 
     public function down(): void
     {
-        Schema::table('qna_advisor_threads', function (Blueprint $table) {
+        Schema::table('qna_advisor_threads', function (Blueprint $table): void {
             $table->dropColumn('interaction_id');
         });
     }

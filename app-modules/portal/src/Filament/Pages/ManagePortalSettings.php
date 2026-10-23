@@ -119,7 +119,7 @@ class ManagePortalSettings extends SettingsPage
                         Toggle::make('has_knowledge_base')
                             ->label('Resource Hub')
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.'),
                         Toggle::make('has_tasks')
                             ->label('Tasks'),
@@ -128,12 +128,12 @@ class ManagePortalSettings extends SettingsPage
                         Toggle::make('has_forms')
                             ->label('Forms')
                             ->disabled(! Gate::check(Feature::OnlineForms->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Forms are not a part of your current subscription.'),
                         Toggle::make('has_surveys')
                             ->label('Surveys')
                             ->disabled(! Gate::check(Feature::OnlineSurveys->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
                     ->columns(3),
@@ -142,42 +142,42 @@ class ManagePortalSettings extends SettingsPage
                         Toggle::make('resource_hub_portal_enabled')
                             ->label('Resource Hub')
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->live()
                             ->columnSpanFull(),
                         ColorSelect::make('resource_hub_portal_primary_color')
                             ->label('Primary Color')
-                            ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
+                            ->visible(fn (Get $get): mixed => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Select $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
                         Select::make('resource_hub_portal_rounding')
                             ->label('Rounding')
                             ->enum(Rounding::class)
                             ->options(Rounding::class)
-                            ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
+                            ->visible(fn (Get $get): mixed => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Select $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
                         TextInput::make('resource_hub_portal_authorized_domain')
                             ->label('Authorized Domain')
                             ->url()
-                            ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
+                            ->visible(fn (Get $get): mixed => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (TextInput $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (TextInput $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpanFull(),
                         Toggle::make('resource_hub_portal_requires_authentication')
                             ->label('Require Authentication')
-                            ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->visible(fn (Get $get): mixed => $get('resource_hub_portal_enabled'))
+                            ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->columnSpanFull(),
                         Actions::make([
                             Action::make('view')
-                                ->url(fn () => route('portal.resource-hub.show'))
+                                ->url(fn (): string => route('portal.resource-hub.show'))
                                 ->icon('heroicon-m-arrow-top-right-on-square')
                                 ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
                                 ->openUrlInNewTab(),
@@ -210,7 +210,7 @@ class ManagePortalSettings extends SettingsPage
                                 ->modalCancelActionLabel('Close'),
                         ])
                             ->visible(
-                                fn (Get $get) => $get('resource_hub_portal_enabled') &&
+                                fn (Get $get): bool => $get('resource_hub_portal_enabled') &&
                                     ! is_null($get('resource_hub_portal_primary_color')) &&
                                     ! is_null($get('resource_hub_portal_rounding'))
                             )
@@ -244,7 +244,7 @@ class ManagePortalSettings extends SettingsPage
                             ->required()
                             ->label('GDPR Button Label'),
                     ])
-                    ->visible(fn (Get $get) => $get('resource_hub_portal_enabled')),
+                    ->visible(fn (Get $get): mixed => $get('resource_hub_portal_enabled')),
             ]);
     }
 }

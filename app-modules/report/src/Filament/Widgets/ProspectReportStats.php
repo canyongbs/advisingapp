@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -63,7 +64,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
         $prospectsCount = $shouldBypassCache
             ? Prospect::query()
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->when(
@@ -79,14 +80,14 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $concernsCount = $shouldBypassCache
             ? Concern::query()
-                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -98,14 +99,14 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()

@@ -48,7 +48,7 @@ class CreateProspect
 
     public function execute(CreateProspectData $data): Prospect
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data): Prospect {
             $prospect = new Prospect();
 
             $prospect->fill($data->except('emailAddresses', 'status', 'source')->toArray());

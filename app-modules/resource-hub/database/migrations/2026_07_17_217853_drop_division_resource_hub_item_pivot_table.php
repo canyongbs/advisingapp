@@ -46,7 +46,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::create('division_resource_hub_item', function (Blueprint $table) {
+        Schema::create('division_resource_hub_item', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('resource_hub_item_id')->references('id')->on('resource_hub_articles');
             $table->foreignUuid('division_id')->references('id')->on('divisions');

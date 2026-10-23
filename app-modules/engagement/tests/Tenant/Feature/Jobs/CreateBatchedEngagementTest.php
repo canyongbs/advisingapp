@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\RateLimiter;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will create and send an engagement immediately', function () {
+it('will create and send an engagement immediately', function (): void {
     Notification::fake();
 
     $engagementBatch = EngagementBatch::factory()->deliverNow()->create();
@@ -77,7 +77,7 @@ it('will create and send an engagement immediately', function () {
     );
 });
 
-it('will create but not dispatch a scheduled engagement', function () {
+it('will create but not dispatch a scheduled engagement', function (): void {
     Notification::fake();
 
     $engagementBatch = EngagementBatch::factory()->create([
@@ -111,7 +111,7 @@ it('will create but not dispatch a scheduled engagement', function () {
     );
 });
 
-it('has the notification rate limiting applied properly for email batched engagements', function () {
+it('has the notification rate limiting applied properly for email batched engagements', function (): void {
     $engagementBatch = EngagementBatch::factory()->email()->create();
     $recipient = Student::factory()->create();
 
@@ -133,7 +133,7 @@ it('has the notification rate limiting applied properly for email batched engage
         ->decaySeconds->toEqual(1);
 });
 
-it('has the notification rate limiting applied properly for sms batched engagements', function () {
+it('has the notification rate limiting applied properly for sms batched engagements', function (): void {
     $engagementBatch = EngagementBatch::factory()->sms()->create();
     $recipient = Student::factory()->create();
 

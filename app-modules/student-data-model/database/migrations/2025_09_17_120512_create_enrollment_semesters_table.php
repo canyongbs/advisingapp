@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('enrollment_semesters', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::create('enrollment_semesters', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
                 $table->string('name')->index();
                 $table->unsignedInteger('order');
@@ -51,7 +51,7 @@ return new class () extends Migration {
                 $table->softDeletes();
             });
 
-            Schema::table('enrollments', function (Blueprint $table) {
+            Schema::table('enrollments', function (Blueprint $table): void {
                 $table->index('semester_name');
             });
         });
@@ -59,8 +59,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('enrollments', function (Blueprint $table): void {
                 $table->dropIndex(['semester_name']);
             });
 

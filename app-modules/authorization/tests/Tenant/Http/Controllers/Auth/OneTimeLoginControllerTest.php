@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\get;
 
-it('hands an eligible internal user off to the code confirmation page', function () {
+it('hands an eligible internal user off to the code confirmation page', function (): void {
     $user = User::factory()->create(['password' => null]);
 
     assertGuest();
@@ -53,7 +53,7 @@ it('hands an eligible internal user off to the code confirmation page', function
     assertGuest();
 });
 
-it('does not authenticate the user directly', function () {
+it('does not authenticate the user directly', function (): void {
     $user = User::factory()->create(['password' => null]);
 
     get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false));
@@ -61,8 +61,8 @@ it('does not authenticate the user directly', function () {
     assertGuest();
 });
 
-describe('authorization', function () {
-    it('does not proceed if the URL signature is expired', function () {
+describe('authorization', function (): void {
+    it('does not proceed if the URL signature is expired', function (): void {
         $user = User::factory()->create(['password' => null]);
 
         get(URL::temporarySignedRoute('login.one-time', now()->subMinute(), ['user' => $user], absolute: false))
@@ -71,7 +71,7 @@ describe('authorization', function () {
         assertGuest();
     });
 
-    it('does not proceed if the URL is not signed', function () {
+    it('does not proceed if the URL is not signed', function (): void {
         $user = User::factory()->create(['password' => null]);
 
         get(route('login.one-time', ['user' => $user]))
@@ -80,7 +80,7 @@ describe('authorization', function () {
         assertGuest();
     });
 
-    it('does not proceed if the internal user already has a password set', function () {
+    it('does not proceed if the internal user already has a password set', function (): void {
         $user = User::factory()->create();
 
         get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
@@ -89,7 +89,7 @@ describe('authorization', function () {
         assertGuest();
     });
 
-    it('proceeds for external users even when a password is set', function () {
+    it('proceeds for external users even when a password is set', function (): void {
         $user = User::factory()->external()->create();
 
         get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))

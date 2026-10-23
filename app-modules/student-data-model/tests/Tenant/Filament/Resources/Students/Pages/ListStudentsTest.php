@@ -59,7 +59,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-it('can filter students by first generation', function () {
+it('can filter students by first generation', function (): void {
     Student::truncate();
 
     asSuperAdmin();
@@ -85,7 +85,7 @@ it('can filter students by first generation', function () {
         ->assertCanNotSeeTableRecords($studentsWithFirstGen);
 });
 
-it('renders the CreateAction based on proper access', function () {
+it('renders the CreateAction based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -114,7 +114,7 @@ it('renders the CreateAction based on proper access', function () {
         ->assertActionVisible(CreateAction::class);
 });
 
-it('the archive bulk action is gated by the `student.*.delete` permission', function () {
+it('the archive bulk action is gated by the `student.*.delete` permission', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -136,7 +136,7 @@ it('the archive bulk action is gated by the `student.*.delete` permission', func
         ->assertTableBulkActionVisible(ArchiveBulkAction::class);
 });
 
-it('shows the view action only with the `settings.*.view` permission', function () {
+it('shows the view action only with the `settings.*.view` permission', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -155,7 +155,7 @@ it('shows the view action only with the `settings.*.view` permission', function 
         ->assertTableActionVisible(ViewAction::class, $student);
 });
 
-it('can filter students by concerns', function () {
+it('can filter students by concerns', function (): void {
     Student::truncate();
 
     asSuperAdmin();
@@ -210,7 +210,7 @@ it('can filter students by concerns', function () {
         ->assertCanSeeTableRecords($studentsWithoutConcerns->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
 
-it('renders the bulk create concern action based on proper access', function () {
+it('renders the bulk create concern action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -232,7 +232,7 @@ it('renders the bulk create concern action based on proper access', function () 
         ->assertTableBulkActionVisible('createConcern');
 });
 
-it('shows bulk assign tags action for authorized user', function () {
+it('shows bulk assign tags action for authorized user', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -253,7 +253,7 @@ it('shows bulk assign tags action for authorized user', function () {
         ->assertTableBulkActionVisible('bulkStudentTags');
 });
 
-it('renders the bulk create interaction action based on proper access', function () {
+it('renders the bulk create interaction action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -272,7 +272,7 @@ it('renders the bulk create interaction action based on proper access', function
         ->assertTableBulkActionVisible('createInteraction');
 });
 
-it('shows bulk subscription action for authorized user', function () {
+it('shows bulk subscription action for authorized user', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -294,13 +294,13 @@ it('shows bulk subscription action for authorized user', function () {
         ->assertSuccessful();
 });
 
-describe('archiving', function () {
-    it('does not list archived students', function () {
+describe('archiving', function (): void {
+    it('does not list archived students', function (): void {
         asSuperAdmin();
 
         $active = Student::factory()->count(3)->create();
         $archived = Student::factory()->count(2)->create();
-        $archived->each(fn (Student $student) => $student->archive());
+        $archived->each(fn (Student $student): bool => $student->archive());
 
         Livewire::test(ListStudents::class)
             ->assertOk()
@@ -308,7 +308,7 @@ describe('archiving', function () {
             ->assertCanNotSeeTableRecords($archived);
     });
 
-    it('archives the selected students instead of deleting them', function () {
+    it('archives the selected students instead of deleting them', function (): void {
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -333,8 +333,8 @@ describe('archiving', function () {
     });
 });
 
-describe('filter options', function () {
-    it('does not offer SIS categories that only archived students have', function () {
+describe('filter options', function (): void {
+    it('does not offer SIS categories that only archived students have', function (): void {
         asSuperAdmin();
 
         Student::factory()->create(['sis_category' => 'Active Category']);
@@ -355,8 +355,8 @@ describe('filter options', function () {
     });
 });
 
-describe('term attribute filter', function () {
-    beforeEach(function () {
+describe('term attribute filter', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
 
         $sisSettings = app(StudentInformationSystemSettings::class);
@@ -365,7 +365,7 @@ describe('term attribute filter', function () {
         $sisSettings->save();
     });
 
-    it('filters students by term, attribute and value', function () {
+    it('filters students by term, attribute and value', function (): void {
         $term = Term::factory()->create();
         $otherTerm = Term::factory()->create();
 
@@ -389,7 +389,7 @@ describe('term attribute filter', function () {
             ->assertCanNotSeeTableRecords([$differentValue, $differentTerm]);
     });
 
-    it('enables the attribute and value fields once the previous fields are selected', function () {
+    it('enables the attribute and value fields once the previous fields are selected', function (): void {
         $term = Term::factory()->create();
 
         Livewire::test(ListStudents::class)
@@ -402,12 +402,12 @@ describe('term attribute filter', function () {
             ->assertFormFieldEnabled('termAttribute.value', 'tableFiltersForm');
     });
 
-    it('is available for tenants using Thesis Elements', function () {
+    it('is available for tenants using Thesis Elements', function (): void {
         Livewire::test(ListStudents::class)
             ->assertTableFilterVisible('termAttribute');
     });
 
-    it('is not available for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem) {
+    it('is not available for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem): void {
         $sisSettings = app(StudentInformationSystemSettings::class);
         $sisSettings->is_enabled = $isEnabled;
         $sisSettings->sis_system = $sisSystem;
@@ -420,7 +420,7 @@ describe('term attribute filter', function () {
         'SIS disabled' => [false, SisSystem::ThesisElements],
     ]);
 
-    it('is not available while `TermAttributesFeature` is inactive', function () {
+    it('is not available while `TermAttributesFeature` is inactive', function (): void {
         TermAttributesFeature::deactivate();
 
         Livewire::test(ListStudents::class)

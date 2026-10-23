@@ -58,7 +58,7 @@ trait HasGlobalSearchResultScoring
             $cases[] = [$attribute, "%{$search}%", $maxScore / 3];
         }
 
-        usort($cases, fn (array $setA, array $setB) => $setA[2] <=> $setB[2]);
+        usort($cases, fn (array $setA, array $setB): int => $setA[2] <=> $setB[2]);
 
         [$cases, $bindings] = array_reduce(
             $cases,

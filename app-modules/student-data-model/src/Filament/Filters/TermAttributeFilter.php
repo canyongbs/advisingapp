@@ -88,7 +88,7 @@ class TermAttributeFilter
                 ->searchable()
                 ->required($isRequired)
                 ->live()
-                ->afterStateUpdated(fn (Set $set) => $set('value', null)),
+                ->afterStateUpdated(fn (Set $set): mixed => $set('value', null)),
             Select::make('attribute')
                 ->label('Attribute')
                 ->options(StudentTermAttributeField::class)
@@ -97,7 +97,7 @@ class TermAttributeFilter
                 ->disabled(fn (Get $get): bool => blank($get('sis_term_id')))
                 ->placeholder(fn (Get $get): ?string => blank($get('sis_term_id')) ? 'Select a term first' : null)
                 ->live()
-                ->afterStateUpdated(fn (Set $set) => $set('value', null)),
+                ->afterStateUpdated(fn (Set $set): mixed => $set('value', null)),
             Select::make('value')
                 ->label('Value')
                 ->options(fn (Get $get): array => static::getValueOptions($get('sis_term_id'), $get('attribute')))
@@ -171,7 +171,7 @@ class TermAttributeFilter
     {
         $field = static::resolveAttribute($attribute);
 
-        if (blank($termId) || ! is_scalar($termId) || ! $field) {
+        if (blank($termId) || ! is_scalar($termId) || ! $field instanceof StudentTermAttributeField) {
             return [];
         }
 

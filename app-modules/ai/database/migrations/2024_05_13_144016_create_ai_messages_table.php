@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('ai_messages', function (Blueprint $table) {
+        Schema::create('ai_messages', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('message_id')->nullable();
             $table->text('content');

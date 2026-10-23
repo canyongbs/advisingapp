@@ -37,7 +37,7 @@
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Models\Form;
 
-it('generates standardized wizard navigation', function () {
+it('generates standardized wizard navigation', function (): void {
     $form = Form::factory()->create(['is_wizard' => true]);
 
     $form->steps()->createMany([
@@ -76,7 +76,7 @@ it('generates standardized wizard navigation', function () {
         ->not->toContain('$setActiveStep');
 });
 
-it('includes a step description below the step title when the step has one', function () {
+it('includes a step description below the step title when the step has one', function (): void {
     $form = Form::factory()->create(['is_wizard' => true]);
 
     $form->steps()->createMany([
@@ -93,7 +93,7 @@ it('includes a step description below the step title when the step has one', fun
         ->and($schema[0]['children'][1]['children'][0]['children'])->toHaveCount(1);
 });
 
-it('renders an empty heading block without throwing', function () {
+it('renders an empty heading block without throwing', function (): void {
     $form = Form::factory()->make();
 
     $schema = app(GenerateFormKitSchema::class)->content([], [
@@ -103,7 +103,7 @@ it('renders an empty heading block without throwing', function () {
     expect($schema[0])->toBe(['$el' => 'h2', 'children' => []]);
 });
 
-it('renders an empty grid column block without throwing', function () {
+it('renders an empty grid column block without throwing', function (): void {
     $form = Form::factory()->make();
 
     $schema = app(GenerateFormKitSchema::class)->content([], [
@@ -113,7 +113,7 @@ it('renders an empty grid column block without throwing', function () {
     expect($schema[0])->toBe(['$el' => 'div', 'children' => [], 'attrs' => ['class' => ['grid-col' => true]]]);
 });
 
-it('renders a heading and grid column with content', function () {
+it('renders a heading and grid column with content', function (): void {
     $form = Form::factory()->make();
 
     $schema = app(GenerateFormKitSchema::class)->content([], [

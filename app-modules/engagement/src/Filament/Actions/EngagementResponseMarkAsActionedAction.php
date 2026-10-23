@@ -71,7 +71,7 @@ class EngagementResponseMarkAsActionedAction extends Action
                 $this->getModalCancelAction(),
                 $this->getModalSubmitAction(),
             ]))
-            ->action(function (array $data, ?Model $record) {
+            ->action(function (array $data, ?Model $record): void {
                 $engagementResponse = $this->getEngagementResponse($record);
 
                 if ($engagementResponse === null) {

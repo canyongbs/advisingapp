@@ -120,7 +120,7 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
             ->filters([
                 SelectFilter::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query): void {
                         $assistant = $this->getOwnerRecord();
 
                         assert($assistant instanceof AiAssistant);
@@ -192,7 +192,7 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
         return [
             Select::make('category_id')
                 ->label('Category')
-                ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
+                ->relationship('category', 'name', modifyQueryUsing: function (Builder $query): void {
                     $assistant = $this->getOwnerRecord();
 
                     assert($assistant instanceof AiAssistant);

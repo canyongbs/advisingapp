@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('can create a concern properly', function () {
+it('can create a concern properly', function (): void {
     asSuperAdmin();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
@@ -62,7 +62,7 @@ it('can create a concern properly', function () {
     expect($resourceHubArticle->concerns()->first()->description)->toBe($data['description']);
 });
 
-it('renders the raise concern action based on proper access', function () {
+it('renders the raise concern action based on proper access', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();

@@ -56,7 +56,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable): void {
     Bus::fake();
 
     /** @var Group $group */

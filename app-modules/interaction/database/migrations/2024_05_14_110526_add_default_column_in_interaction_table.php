@@ -42,15 +42,15 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('interaction_initiatives', function (Blueprint $table) {
+        Schema::table('interaction_initiatives', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
         });
 
-        Schema::table('interaction_drivers', function (Blueprint $table) {
+        Schema::table('interaction_drivers', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
         });
 
-        Schema::table('interaction_types', function (Blueprint $table) {
+        Schema::table('interaction_types', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
         });
     }
@@ -58,15 +58,15 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('interaction_initiatives', function (Blueprint $table) {
+        Schema::table('interaction_initiatives', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
 
-        Schema::table('interaction_drivers', function (Blueprint $table) {
+        Schema::table('interaction_drivers', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
 
-        Schema::table('interaction_types', function (Blueprint $table) {
+        Schema::table('interaction_types', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
     }

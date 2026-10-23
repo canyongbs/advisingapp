@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Gate;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('denies viewing term attributes without a Retention CRM license', function () {
+it('denies viewing term attributes without a Retention CRM license', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo(['enrollment.view-any', 'enrollment.*.view']);
 
@@ -52,7 +52,7 @@ it('denies viewing term attributes without a Retention CRM license', function ()
         ->and(Gate::allows('view', StudentTermAttribute::factory()->create()))->toBeFalse();
 });
 
-it('does not allow changing term attributes, even for a super admin', function (string $ability) {
+it('does not allow changing term attributes, even for a super admin', function (string $ability): void {
     asSuperAdmin();
 
     $termAttribute = StudentTermAttribute::factory()->create();
@@ -60,14 +60,14 @@ it('does not allow changing term attributes, even for a super admin', function (
     expect(Gate::allows($ability, $ability === 'create' ? StudentTermAttribute::class : $termAttribute))->toBeFalse();
 })->with(['create', 'update', 'delete', 'restore', 'forceDelete']);
 
-describe('authorization', function () {
-    it('denies viewing term attributes without the `enrollment.view-any` permission', function () {
+describe('authorization', function (): void {
+    it('denies viewing term attributes without the `enrollment.view-any` permission', function (): void {
         actingAs(User::factory()->licensed(Student::getLicenseType())->create());
 
         expect(Gate::allows('viewAny', StudentTermAttribute::class))->toBeFalse();
     });
 
-    it('allows viewing term attributes with the `enrollment.view-any` permission', function () {
+    it('allows viewing term attributes with the `enrollment.view-any` permission', function (): void {
         $user = User::factory()->licensed(Student::getLicenseType())->create();
         $user->givePermissionTo('enrollment.view-any');
 
@@ -76,13 +76,13 @@ describe('authorization', function () {
         expect(Gate::allows('viewAny', StudentTermAttribute::class))->toBeTrue();
     });
 
-    it('denies viewing a term attribute without the `enrollment.*.view` permission', function () {
+    it('denies viewing a term attribute without the `enrollment.*.view` permission', function (): void {
         actingAs(User::factory()->licensed(Student::getLicenseType())->create());
 
         expect(Gate::allows('view', StudentTermAttribute::factory()->create()))->toBeFalse();
     });
 
-    it('allows viewing a term attribute with the `enrollment.*.view` permission', function () {
+    it('allows viewing a term attribute with the `enrollment.*.view` permission', function (): void {
         $user = User::factory()->licensed(Student::getLicenseType())->create();
         $user->givePermissionTo('enrollment.*.view');
 

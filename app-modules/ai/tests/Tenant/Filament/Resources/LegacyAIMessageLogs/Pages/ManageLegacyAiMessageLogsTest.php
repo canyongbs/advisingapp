@@ -41,7 +41,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);

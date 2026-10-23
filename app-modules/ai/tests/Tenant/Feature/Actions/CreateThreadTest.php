@@ -48,7 +48,7 @@ use function Pest\Laravel\travelBack;
 use function Pest\Laravel\travelTo;
 use function Tests\asSuperAdmin;
 
-it('creates a new thread', function () {
+it('creates a new thread', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -69,7 +69,7 @@ it('creates a new thread', function () {
         ->wasRecentlyCreated->toBeTrue();
 });
 
-it('gives a new thread a default name stamped with the current date and time in the user\'s timezone', function () {
+it('gives a new thread a default name stamped with the current date and time in the user\'s timezone', function (): void {
     asSuperAdmin(User::factory()->create([
         'timezone' => 'America/Chicago',
     ]));
@@ -101,7 +101,7 @@ it('gives a new thread a default name stamped with the current date and time in 
     }
 });
 
-it('does not create a new thread if an empty existing one exists', function () {
+it('does not create a new thread if an empty existing one exists', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -127,7 +127,7 @@ it('does not create a new thread if an empty existing one exists', function () {
         ->toBe($thread->getKey());
 });
 
-it('does not match existing threads belonging to other users', function () {
+it('does not match existing threads belonging to other users', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -153,7 +153,7 @@ it('does not match existing threads belonging to other users', function () {
         ->not->toBe($thread->getKey());
 });
 
-it('does not match existing threads with messages', function () {
+it('does not match existing threads with messages', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -180,7 +180,7 @@ it('does not match existing threads with messages', function () {
         ->not->toBe($thread->getKey());
 });
 
-it('does not match existing threads belonging to other assistants', function () {
+it('does not match existing threads belonging to other assistants', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -209,7 +209,7 @@ it('does not match existing threads belonging to other assistants', function () 
         ->not->toBe($thread->getKey());
 });
 
-it('does not match existing threads that have been renamed by the user', function () {
+it('does not match existing threads that have been renamed by the user', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -236,7 +236,7 @@ it('does not match existing threads that have been renamed by the user', functio
         ->not->toBe($thread->getKey());
 });
 
-it('uses the default assistant if none is provided', function () {
+it('uses the default assistant if none is provided', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -257,7 +257,7 @@ it('uses the default assistant if none is provided', function () {
         ->wasRecentlyCreated->toBeTrue();
 });
 
-it('does not match a default assistant if one belongs to a different application', function () {
+it('does not match a default assistant if one belongs to a different application', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -283,7 +283,7 @@ it('does not match a default assistant if one belongs to a different application
         ->not->toBe($thread->getKey());
 })->skip('There are no alternative assistant applications to test this with yet.');
 
-it('does not match an assistant if it is not marked as default', function () {
+it('does not match an assistant if it is not marked as default', function (): void {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -309,7 +309,7 @@ it('does not match an assistant if it is not marked as default', function () {
         ->not->toBe($thread->getKey());
 });
 
-it('creates a new assistant if no default assistant exists', function () {
+it('creates a new assistant if no default assistant exists', function (): void {
     asSuperAdmin();
 
     $thread = app(CreateThread::class)(AiAssistantApplication::Test);

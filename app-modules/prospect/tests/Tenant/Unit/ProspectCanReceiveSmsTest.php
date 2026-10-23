@@ -43,13 +43,13 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-it('returns true when the primary phone has a textable Telnyx lookup and is not opted out or bounced', function () {
+it('returns true when the primary phone has a textable Telnyx lookup and is not opted out or bounced', function (): void {
     $prospect = Prospect::factory()->create();
 
     assertTrue($prospect->canReceiveSms());
 });
 
-it('returns false when the prospect has no primary phone number', function () {
+it('returns false when the prospect has no primary phone number', function (): void {
     $prospect = Prospect::factory()->create();
 
     $prospect->primary_phone_id = null;
@@ -59,7 +59,7 @@ it('returns false when the prospect has no primary phone number', function () {
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when the primary phone has no Telnyx lookup yet', function () {
+it('returns false when the primary phone has no Telnyx lookup yet', function (): void {
     $prospect = Prospect::factory()->create();
 
     // Simulate a phone created before the lookup job ran.
@@ -69,7 +69,7 @@ it('returns false when the primary phone has no Telnyx lookup yet', function () 
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when the primary phone has a non-textable Telnyx lookup', function (PhoneNumberLookupStatus $status) {
+it('returns false when the primary phone has a non-textable Telnyx lookup', function (PhoneNumberLookupStatus $status): void {
     $prospect = Prospect::factory()->create();
 
     $prospect->primaryPhoneNumber->phoneNumberLookup->update(['status' => $status]);
@@ -83,7 +83,7 @@ it('returns false when the primary phone has a non-textable Telnyx lookup', func
     PhoneNumberLookupStatus::LookupFailed,
 ]);
 
-it('returns false when the primary phone is opted out of SMS', function () {
+it('returns false when the primary phone is opted out of SMS', function (): void {
     $prospect = Prospect::factory()->create();
 
     SmsOptOutPhoneNumber::factory()->create([
@@ -93,7 +93,7 @@ it('returns false when the primary phone is opted out of SMS', function () {
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when the primary phone has previously bounced', function () {
+it('returns false when the primary phone has previously bounced', function (): void {
     $prospect = Prospect::factory()->create();
 
     BouncedPhoneNumber::factory()->create([
@@ -103,7 +103,7 @@ it('returns false when the primary phone has previously bounced', function () {
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when the primary phone is both bounced and opted out', function () {
+it('returns false when the primary phone is both bounced and opted out', function (): void {
     $prospect = Prospect::factory()->create();
     $number = $prospect->primaryPhoneNumber->number;
 
@@ -113,7 +113,7 @@ it('returns false when the primary phone is both bounced and opted out', functio
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns true in SMS demo mode even when the primary phone has no textable Telnyx lookup', function () {
+it('returns true in SMS demo mode even when the primary phone has no textable Telnyx lookup', function (): void {
     $prospect = Prospect::factory()->create();
 
     // Simulate a phone without a Telnyx lookup, which normally blocks SMS.
@@ -131,7 +131,7 @@ it('returns true in SMS demo mode even when the primary phone has no textable Te
     assertTrue($prospect->hasValidSms());
 });
 
-it('still returns false in SMS demo mode when the primary phone is opted out', function () {
+it('still returns false in SMS demo mode when the primary phone is opted out', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->save();
@@ -145,7 +145,7 @@ it('still returns false in SMS demo mode when the primary phone is opted out', f
     assertFalse($prospect->canReceiveSms());
 });
 
-it('still returns false in SMS demo mode when the primary phone has previously bounced', function () {
+it('still returns false in SMS demo mode when the primary phone has previously bounced', function (): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->save();

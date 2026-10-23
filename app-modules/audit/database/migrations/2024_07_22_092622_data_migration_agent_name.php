@@ -47,7 +47,7 @@ return new class () extends Migration {
             DB::table('audits')
                 ->join('users', 'audits.change_agent_id', '=', 'users.id')
                 ->select('audits.id', 'users.name')
-                ->chunkById(100, function (Collection $audits) {
+                ->chunkById(100, function (Collection $audits): void {
                     foreach ($audits as $audit) {
                         DB::table('audits')
                             ->where('audits.id', $audit->id)

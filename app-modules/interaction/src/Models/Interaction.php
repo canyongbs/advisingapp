@@ -205,7 +205,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! auth()->check()) {
                 return;
             }

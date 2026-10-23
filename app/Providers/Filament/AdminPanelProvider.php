@@ -65,6 +65,7 @@ use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Column;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -91,8 +92,8 @@ class AdminPanelProvider extends PanelProvider
         Field::configureUsing(fn ($field) => $field->translateLabel());
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
-        ExportAction::configureUsing(fn (ExportAction $action) => $action->maxRows(100000));
-        ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
+        ExportAction::configureUsing(fn (ExportAction $action): ExportAction => $action->maxRows(100000));
+        ImportAction::configureUsing(fn (ImportAction $action): ImportAction => $action->maxRows(100000));
     }
 
     public function panel(Panel $panel): Panel
@@ -153,34 +154,34 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Profile Settings')
-                    ->url(fn () => ProfileSettings::getUrl())
+                    ->url(fn (): string => ProfileSettings::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
                 Action::make('about')
                     ->label('About')
                     ->modalHeading('Advising App® by Canyon GBS')
                     ->modalDescription('Version ' . config('sentry.release'))
-                    ->modalContent(fn () => view('components.about-modal'))
+                    ->modalContent(fn (): Factory|\Illuminate\Contracts\View\View => view('components.about-modal'))
                     ->modalFooterActions([])
                     ->modalWidth(Width::Small)
                     ->icon('heroicon-s-information-circle'),
                 MenuItem::make()
                     ->label('Recent Updates')
-                    ->url(function (ThemeSettings $themeSettings) {
+                    ->url(function (ThemeSettings $themeSettings): ?string {
                         return $themeSettings->recent_updates_url;
                     })
                     ->icon('heroicon-s-megaphone')
                     ->openUrlInNewTab()
-                    ->visible(function (ThemeSettings $themeSettings) {
+                    ->visible(function (ThemeSettings $themeSettings): bool {
                         return $themeSettings->is_recent_updates_url_enabled && ! empty($themeSettings->recent_updates_url);
                     }),
                 MenuItem::make()
                     ->label('Get Support')
-                    ->url(function (ThemeSettings $themeSettings) {
+                    ->url(function (ThemeSettings $themeSettings): ?string {
                         return $themeSettings->support_url;
                     })
                     ->icon('heroicon-s-lifebuoy')
                     ->openUrlInNewTab()
-                    ->visible(function (ThemeSettings $themeSettings) {
+                    ->visible(function (ThemeSettings $themeSettings): bool {
                         return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
                     }),
             ])
@@ -189,9 +190,9 @@ class AdminPanelProvider extends PanelProvider
                 : config('default-colors'))
             ->renderHook(
                 'panels::head.end',
-                fn (ThemeSettings $themeSettings) => (Tenant::current() && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn (ThemeSettings $themeSettings): Factory|\Illuminate\Contracts\View\View|null => (Tenant::current() instanceof Tenant && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
-            ->bootUsing(function (Panel $panel) {
+            ->bootUsing(function (Panel $panel): void {
                 if (! Tenant::current()) {
                     return;
                 }
@@ -225,7 +226,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::TOPBAR_AFTER,
                 function (): ?Htmlable {
-                    $showBanner = Cache::remember('azure_credentials_expiring', now()->addDay(), function () {
+                    $showBanner = Cache::remember('azure_credentials_expiring', now()->addDay(), function (): bool {
                         $credentialsCheck = HealthCheckResultHistoryItem::where('check_name', app(AzureCredentialsExpiringCheck::class)->getName())
                             ->latest()
                             ->first();

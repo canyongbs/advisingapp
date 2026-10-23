@@ -50,7 +50,7 @@ class BrandedWebsiteLinksController extends Controller
 
         $tenant = Tenant::findOrFail($data['tenant_id']);
 
-        $tenant->execute(function () use ($data) {
+        $tenant->execute(function () use ($data): void {
             $settings = app(ThemeSettings::class);
             $settings->is_support_url_enabled = $data['is_support_url_enabled'];
             $settings->support_url = $data['support_url'];

@@ -39,13 +39,15 @@ namespace AdvisingApp\Engagement\Http\Controllers;
 use AdvisingApp\Engagement\Http\Requests\EngagementFileDownloadRequest;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 
 class EngagementFileDownloadController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(EngagementFileDownloadRequest $request, EngagementFile $file)
+    public function __invoke(EngagementFileDownloadRequest $request, EngagementFile $file): Redirector|RedirectResponse
     {
         return redirect(
             $file->getFirstMedia('file')

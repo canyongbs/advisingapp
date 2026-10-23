@@ -78,7 +78,7 @@ class ListConcerns extends ListRecords
                 TextEntry::make('concern.display_name')
                     ->label('Related To')
                     ->state(fn (Concern $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Concern $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->url(fn (Concern $record): ?string => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ManageProspectConcerns::getUrl(['record' => $record->concern]),
                         default => null,
@@ -98,7 +98,7 @@ class ListConcerns extends ListRecords
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
                     ->state(fn (Concern $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->url(fn (Concern $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->url(fn (Concern $record): ?string => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ManageProspectConcerns::getUrl(['record' => $record->concern]),
                         default => null,

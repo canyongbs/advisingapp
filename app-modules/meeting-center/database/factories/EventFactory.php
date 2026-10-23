@@ -65,7 +65,7 @@ class EventFactory extends Factory
 
     public function configure(): EventFactory|Factory
     {
-        return $this->afterCreating(function (Event $event) {
+        return $this->afterCreating(function (Event $event): void {
             EventRegistrationForm::factory()->create([
                 'event_id' => $event->getKey(),
             ]);

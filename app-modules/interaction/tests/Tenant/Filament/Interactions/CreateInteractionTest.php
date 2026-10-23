@@ -49,7 +49,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('CreateInteraction is gated with proper access control', function () {
+test('CreateInteraction is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -66,7 +66,7 @@ test('CreateInteraction is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-it('interaction_confidential_users UserSelect does not show admin users in options by default on CreateInteraction', function () {
+it('interaction_confidential_users UserSelect does not show admin users in options by default on CreateInteraction', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('interaction.view-any');
     $user->givePermissionTo('interaction.create');
@@ -85,7 +85,7 @@ it('interaction_confidential_users UserSelect does not show admin users in optio
         });
 });
 
-it('interaction_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on CreateInteraction', function () {
+it('interaction_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on CreateInteraction', function (): void {
     Config::set('app.filter_admins_from_selection', false);
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -104,7 +104,7 @@ it('interaction_confidential_users UserSelect shows all users when filter_admins
         });
 });
 
-it('does not offer archived students in the related to select', function () {
+it('does not offer archived students in the related to select', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -125,7 +125,7 @@ it('does not offer archived students in the related to select', function () {
         });
 });
 
-it('accepts an active student as the submitted related record', function () {
+it('accepts an active student as the submitted related record', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -139,7 +139,7 @@ it('accepts an active student as the submitted related record', function () {
         ->assertHasNoFormErrors(['interactable_id']);
 });
 
-it('does not create an interaction for an archived student even when their id is submitted', function () {
+it('does not create an interaction for an archived student even when their id is submitted', function (): void {
     asSuperAdmin();
 
     $archived = Student::factory()->create();

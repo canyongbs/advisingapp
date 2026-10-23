@@ -61,7 +61,7 @@ class FormFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Form $form) {
+        return $this->afterCreating(function (Form $form): void {
             if ($form->fields()->doesntExist()) {
                 $form->fields()->createMany(FormField::factory()->count(3)->make()->toArray());
 

@@ -50,11 +50,17 @@ class WebhookServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new WebhookPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new WebhookPlugin());
+        });
 
         $this->app->bind(
             MessageValidator::class,
-            fn () => new MessageValidator(new CachedSnsCertificateFetcher(Cache::store('landlord')))
+            fn (): MessageValidator => new MessageValidator(new CachedSnsCertificateFetcher(Cache::store('landlord')))
         );
     }
 

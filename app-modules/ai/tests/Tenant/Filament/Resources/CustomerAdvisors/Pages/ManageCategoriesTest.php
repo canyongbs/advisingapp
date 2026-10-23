@@ -79,7 +79,7 @@ $customerCategoryImporter = function (User $user, CustomerAdvisor $advisor): Cus
     ]);
 };
 
-test('Create Customer Advisor Category is gated with proper access control', function () {
+test('Create Customer Advisor Category is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -111,7 +111,7 @@ test('Create Customer Advisor Category is gated with proper access control', fun
         )->assertSuccessful();
 });
 
-test('can create Customer Advisor Category', function () {
+test('can create Customer Advisor Category', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -144,7 +144,7 @@ test('can create Customer Advisor Category', function () {
     );
 });
 
-test('can create multiple Customer Advisor Categories at once', function () {
+test('can create multiple Customer Advisor Categories at once', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -176,7 +176,7 @@ test('can create multiple Customer Advisor Categories at once', function () {
     assertDatabaseHas(CustomerAdvisorCategory::class, $secondCategory->toArray());
 });
 
-test('creating duplicate Customer Advisor Category names in the same batch is rejected', function () {
+test('creating duplicate Customer Advisor Category names in the same batch is rejected', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -205,7 +205,7 @@ test('creating duplicate Customer Advisor Category names in the same batch is re
     assertCount(0, CustomerAdvisorCategory::all());
 });
 
-test('Create Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors) {
+test('Create Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -242,7 +242,7 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
 
     Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['categories' => [$customerAdvisorCategory->toArray()]])
-        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field): array => ["categories.0.{$field}" => $rule])->toArray());
 
     $undoRepeaterFake();
 
@@ -275,7 +275,7 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
     ]
 );
 
-test('can edit Customer Advisor Category', function () {
+test('can edit Customer Advisor Category', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -303,7 +303,7 @@ test('can edit Customer Advisor Category', function () {
     );
 });
 
-test('Edit Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors) {
+test('Edit Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -364,8 +364,8 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
         ]
     );
 
-describe('import and export', function () use ($customerCategoryImporter) {
-    beforeEach(function () {
+describe('import and export', function () use ($customerCategoryImporter): void {
+    beforeEach(function (): void {
         $settings = app(LicenseSettings::class);
 
         $settings->data->addons->customerAdvisors = true;
@@ -373,7 +373,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
         $settings->save();
     });
 
-    it('shows the `ImportAction` and `ExportAction` actions', function () {
+    it('shows the `ImportAction` and `ExportAction` actions', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
@@ -386,7 +386,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
             ->assertTableActionVisible(ExportAction::class);
     });
 
-    it('exports customer advisor categories as scoped csv content', function () {
+    it('exports customer advisor categories as scoped csv content', function (): void {
         Storage::fake('s3');
 
         config()->set('filament.default_filesystem_disk', 's3');
@@ -432,7 +432,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
             ->not->toContain('Billing FAQs');
     });
 
-    it('imports customer advisor categories scoped to the selected advisor', function () use ($customerCategoryImporter) {
+    it('imports customer advisor categories scoped to the selected advisor', function () use ($customerCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -457,7 +457,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
         ]);
     });
 
-    it('validates required fields during customer advisor category import', function () use ($customerCategoryImporter) {
+    it('validates required fields during customer advisor category import', function () use ($customerCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $advisor = CustomerAdvisor::factory()->create();
 
@@ -467,7 +467,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
         ]))->toThrow(ValidationException::class);
     });
 
-    it('validates customer advisor category import uniqueness case-insensitively and scoped per advisor', function () use ($customerCategoryImporter) {
+    it('validates customer advisor category import uniqueness case-insensitively and scoped per advisor', function () use ($customerCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -496,7 +496,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
         ]))->toThrow(ValidationException::class);
     });
 
-    it('imports a name freed by a soft deleted category', function () use ($customerCategoryImporter) {
+    it('imports a name freed by a soft deleted category', function () use ($customerCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -522,8 +522,8 @@ describe('import and export', function () use ($customerCategoryImporter) {
     });
 });
 
-describe('authorization', function () {
-    beforeEach(function () {
+describe('authorization', function (): void {
+    beforeEach(function (): void {
         $settings = app(LicenseSettings::class);
 
         $settings->data->addons->customerAdvisors = true;
@@ -531,7 +531,7 @@ describe('authorization', function () {
         $settings->save();
     });
 
-    it('hides the `ImportAction` action without the `customer_advisor.create` permission', function () {
+    it('hides the `ImportAction` action without the `customer_advisor.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
 

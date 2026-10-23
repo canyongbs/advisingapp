@@ -68,7 +68,7 @@ class EditSystemUser extends EditRecord
                 ->hint('Please copy the token, it will only be shown once.')
                 ->disabled()
                 ->dehydrated(false)
-                ->visible(fn (?string $state) => filled($state)),
+                ->visible(fn (?string $state): bool => filled($state)),
         ]);
     }
 
@@ -92,7 +92,7 @@ class EditSystemUser extends EditRecord
     {
         return [
             Action::make('Reset Token')
-                ->action(function (SystemUser $record) {
+                ->action(function (SystemUser $record): void {
                     $record->tokens()->where('name', 'api')->delete();
 
                     $token = str($record->createToken('api', ['api'])->plainTextToken)

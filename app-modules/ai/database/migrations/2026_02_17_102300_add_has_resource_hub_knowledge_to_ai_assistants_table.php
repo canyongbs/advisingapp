@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->boolean('has_resource_hub_knowledge')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
+        Schema::table('ai_assistants', function (Blueprint $table): void {
             $table->dropColumn('has_resource_hub_knowledge');
         });
     }

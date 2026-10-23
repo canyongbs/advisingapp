@@ -82,6 +82,6 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function withExtension(): Factory
     {
-        return $this->state(fn () => ['ext' => $this->faker->randomNumber()]);
+        return $this->state(fn (): array => ['ext' => $this->faker->randomNumber()]);
     }
 }

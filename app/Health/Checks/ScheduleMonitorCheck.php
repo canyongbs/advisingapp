@@ -46,20 +46,20 @@ class ScheduleMonitorCheck extends Check
 {
     public function run(): Result
     {
-        return Landlord::execute(function () {
+        return Landlord::execute(function (): Result {
             $tasks = ScheduledTasks::createForSchedule()->monitoredTasks();
 
-            $lateTasks = $tasks->filter(fn (Task $task) => $task->lastRunFinishedTooLate());
+            $lateTasks = $tasks->filter(fn (Task $task): bool => $task->lastRunFinishedTooLate());
 
-            $failedTasks = $tasks->filter(fn (Task $task) => $task->lastRunFailed());
+            $failedTasks = $tasks->filter(fn (Task $task): bool => $task->lastRunFailed());
 
             $result = Result::make();
 
             if ($lateTasks->isNotEmpty() || $failedTasks->isNotEmpty()) {
                 return $result->shortSummary("Late Tasks: {$lateTasks->count()} | Failed Tasks: {$failedTasks->count()}")
                     ->meta([
-                        'late_tasks' => $lateTasks->map(fn (Task $task) => $task->name())->toArray(),
-                        'failed_tasks' => $failedTasks->map(fn (Task $task) => $task->name())->toArray(),
+                        'late_tasks' => $lateTasks->map(fn (Task $task): ?string => $task->name())->toArray(),
+                        'failed_tasks' => $failedTasks->map(fn (Task $task): ?string => $task->name())->toArray(),
                     ])
                     ->failed();
             }

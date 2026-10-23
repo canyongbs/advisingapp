@@ -47,7 +47,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\asSuperAdmin;
 
-it('shows the form and validation', function (BulkCreateInteractionActionRequestFactory $data, array $errors) {
+it('shows the form and validation', function (BulkCreateInteractionActionRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -128,7 +128,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
 ]);
 
-it('can successfully create bulk interaction with student', function () {
+it('can successfully create bulk interaction with student', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -161,7 +161,7 @@ it('can successfully create bulk interaction with student', function () {
     assertDatabaseHas(Interaction::class, $expected);
 });
 
-it('can successfully create bulk interaction with prospect', function () {
+it('can successfully create bulk interaction with prospect', function (): void {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();

@@ -79,7 +79,7 @@ class ListPromptTypes extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->action(function (Collection $records) {
+                        ->action(function (Collection $records): void {
                             $deletedPromptTypesCount = PromptType::query()
                                 ->whereKey($records)
                                 ->whereDoesntHave('prompts')

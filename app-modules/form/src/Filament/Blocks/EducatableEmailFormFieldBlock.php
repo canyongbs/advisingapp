@@ -91,7 +91,7 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
             ...self::getDescriptionSectionsSchema($field),
         ];
 
-        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+        if ($author && $submissible instanceof Submissible && in_array($submissible::class, [Form::class, Application::class])) {
             $schema['value'] = $author->primaryEmailAddress->address ?? '';
 
             if ($author instanceof Student) {

@@ -42,11 +42,11 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\patchJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
     $prospectEmailAddress = ProspectEmailAddress::factory()
         ->for($prospect)
@@ -74,7 +74,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('updates a prospect', function () {
+it('updates a prospect', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -107,7 +107,7 @@ it('updates a prospect', function () {
     }
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Jobs\CustomerAdvisors\AutomaticallyEndCustomerAdvisors;
 use AdvisingApp\Ai\Jobs\DispatchAutomaticallyEndCustomerAdvisorsForEachTenant;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `AutomaticallyEndCustomerAdvisors` for each eligible tenant', function () {
+it('dispatches `AutomaticallyEndCustomerAdvisors` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchAutomaticallyEndCustomerAdvisorsForEachTenant())->handle();

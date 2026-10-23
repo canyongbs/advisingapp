@@ -43,7 +43,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
-it('will not create an engagement response when it cannot find an associated message sender', function () {
+it('will not create an engagement response when it cannot find an associated message sender', function (): void {
     $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
     $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
@@ -54,7 +54,7 @@ it('will not create an engagement response when it cannot find an associated mes
     ]);
 });
 
-it('will create an engagement response when a message is received', function () {
+it('will create an engagement response when a message is received', function (): void {
     $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
     $student = Student::factory()->create();

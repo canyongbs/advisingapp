@@ -55,13 +55,13 @@ $handleResourceHubPortalRequest = function (Student $student): Response {
     );
 };
 
-it('allows a student with a valid token through', function () use ($handleResourceHubPortalRequest) {
+it('allows a student with a valid token through', function () use ($handleResourceHubPortalRequest): void {
     $student = Student::factory()->create();
 
     expect($handleResourceHubPortalRequest($student)->getStatusCode())->toBe(200);
 });
 
-it('rejects a token belonging to an archived student', function () use ($handleResourceHubPortalRequest) {
+it('rejects a token belonging to an archived student', function () use ($handleResourceHubPortalRequest): void {
     $student = Student::factory()->create();
     $student->archive();
 

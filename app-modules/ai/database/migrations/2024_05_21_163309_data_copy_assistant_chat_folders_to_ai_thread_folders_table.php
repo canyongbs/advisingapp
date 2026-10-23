@@ -42,7 +42,7 @@ return new class () extends Migration {
     {
         DB::table('assistant_chat_folders')
             ->get(['id', 'name', 'user_id', 'created_at', 'updated_at', 'deleted_at'])
-            ->each(function (stdClass $folder) {
+            ->each(function (stdClass $folder): void {
                 DB::table('ai_thread_folders')
                     ->insert([
                         'id' => $folder->id,

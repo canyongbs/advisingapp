@@ -39,7 +39,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Tests\asSuperAdmin;
 
-it('excludes archived students from the student population query', function () {
+it('excludes archived students from the student population query', function (): void {
     asSuperAdmin();
 
     $active = Student::factory()->create();

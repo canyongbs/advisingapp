@@ -104,7 +104,7 @@ class ManageAiSettings extends SettingsPage
                     ->model($this->defaultAssistant)
                     ->schema([
                         Select::make('model')
-                            ->options(fn (AiModel|string|null $state) => array_unique([
+                            ->options(fn (AiModel|string|null $state): array => array_unique([
                                 ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
                                 ...match (true) {
                                     $state instanceof AiModel => [$state->value => $state->getLabel()],
@@ -142,7 +142,7 @@ class ManageAiSettings extends SettingsPage
                     ->minValue(0)
                     ->maxValue(1),
                 Select::make('default_model')
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::InstitutionalAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],

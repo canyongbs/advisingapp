@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAd
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -68,7 +69,7 @@ class StudentDeliverableTable extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -88,7 +89,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->tap(new WithoutArchivedStudents(asOf: $endDate))
                     ->with(['primaryEmailAddress', 'primaryPhoneNumber'])
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereBetween('created_at_source', [$startDate, $endDate]);
                         },
@@ -107,8 +108,8 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('email_status')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn (Student $record) => $record->canReceiveEmail() ? 'info' : 'warning')
-                    ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy'),
+                    ->color(fn (Student $record): string => $record->canReceiveEmail() ? 'info' : 'warning')
+                    ->state(fn (Student $record): string => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy'),
                 IconColumn::make('primary_email_set')
                     ->label('Institutional Email Set')
                     ->boolean()
@@ -116,7 +117,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->state(fn (Student $record) => filled($record->primaryEmailAddress)),
+                    ->state(fn (Student $record): bool => filled($record->primaryEmailAddress)),
                 IconColumn::make('email_bounced')
                     ->label('Email Bounce')
                     ->boolean()
@@ -124,7 +125,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->state(fn (Student $record) => $record->primaryEmailAddress ? ($record->primaryEmailAddress->bounced !== null) : false),
+                    ->state(fn (Student $record): bool => $record->primaryEmailAddress ? ($record->primaryEmailAddress->bounced !== null) : false),
                 IconColumn::make('email_opt_out')
                     ->label('Email Opt Out')
                     ->boolean()
@@ -132,12 +133,12 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->state(fn (Student $record) => $record->primaryEmailAddress ? ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) : false),
+                    ->state(fn (Student $record): bool => $record->primaryEmailAddress ? ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) : false),
                 TextColumn::make('phone_status')
                     ->label('Phone Status')
                     ->badge()
-                    ->color(fn (Student $record) => $record->canReceiveSms() ? 'info' : 'warning')
-                    ->state(fn (Student $record) => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy'),
+                    ->color(fn (Student $record): string => $record->canReceiveSms() ? 'info' : 'warning')
+                    ->state(fn (Student $record): string => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy'),
                 IconColumn::make('primary_phone_set')
                     ->label('Primary Phone Set')
                     ->boolean()
@@ -145,7 +146,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->state(fn (Student $record) => filled($record->primaryPhoneNumber)),
+                    ->state(fn (Student $record): bool => filled($record->primaryPhoneNumber)),
                 IconColumn::make('is_textable')
                     ->label('SMS Capable')
                     ->boolean()

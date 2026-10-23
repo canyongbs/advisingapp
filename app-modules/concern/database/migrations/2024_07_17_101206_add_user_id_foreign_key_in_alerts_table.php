@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->foreignUuid('created_by')->nullable()->references('id')->on('users')->restrictOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->dropColumn('created_by');
         });
     }

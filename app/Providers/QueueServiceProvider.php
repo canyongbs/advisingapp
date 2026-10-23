@@ -47,8 +47,8 @@ class QueueServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $manager = $this->app->make('queue');
-        $manager->addConnector('tenant-fair-sqs', fn () => new TenantFairSqsConnector());
-        $manager->addConnector('tenant-aware-background', fn () => new TenantAwareBackgroundConnector());
+        $manager->addConnector('tenant-fair-sqs', fn (): TenantFairSqsConnector => new TenantFairSqsConnector());
+        $manager->addConnector('tenant-aware-background', fn (): TenantAwareBackgroundConnector => new TenantAwareBackgroundConnector());
 
         Queue::createPayloadUsing(new ForgetUnsampledTraceDecision());
     }

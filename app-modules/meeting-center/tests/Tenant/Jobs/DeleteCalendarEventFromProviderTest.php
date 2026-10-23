@@ -60,7 +60,7 @@ beforeEach(function (): void {
     Queue::fake();
 });
 
-it('deletes the event on the resolved provider driver', function () use ($makeDeleteJobCalendar) {
+it('deletes the event on the resolved provider driver', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
     $eventId = (string) Str::uuid();
 
@@ -79,7 +79,7 @@ it('deletes the event on the resolved provider driver', function () use ($makeDe
     (new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', $eventId))->handle();
 });
 
-it('swallows a CouldNotRefreshToken failure', function () use ($makeDeleteJobCalendar) {
+it('swallows a CouldNotRefreshToken failure', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -92,7 +92,7 @@ it('swallows a CouldNotRefreshToken failure', function () use ($makeDeleteJobCal
     (new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->handle();
 });
 
-it('releases the job when the provider is rate limited', function () use ($makeDeleteJobCalendar) {
+it('releases the job when the provider is rate limited', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -108,7 +108,7 @@ it('releases the job when the provider is rate limited', function () use ($makeD
     $job->assertReleased(45);
 });
 
-it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($makeDeleteJobCalendar) {
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -122,7 +122,7 @@ it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () u
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('prevents overlaps with other provider jobs for the same event', function () use ($makeDeleteJobCalendar) {
+it('prevents overlaps with other provider jobs for the same event', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
     $eventId = (string) Str::uuid();
 
@@ -141,13 +141,13 @@ it('prevents overlaps with other provider jobs for the same event', function () 
     expect((int) $middleware[0]->expiresAfter)->toBe(60);
 });
 
-it('has maxExceptions of 3', function () use ($makeDeleteJobCalendar) {
+it('has maxExceptions of 3', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     expect((new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->maxExceptions)->toBe(3);
 });
 
-it('is placed on configured queue', function () use ($makeDeleteJobCalendar) {
+it('is placed on configured queue', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     $job = new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid());
@@ -155,13 +155,13 @@ it('is placed on configured queue', function () use ($makeDeleteJobCalendar) {
     expect($job->queue)->toBe(config('meeting-center.queue'));
 });
 
-it('uses a backoff of 10 seconds', function () use ($makeDeleteJobCalendar) {
+it('uses a backoff of 10 seconds', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     expect((new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->backoff())->toBe(10);
 });
 
-it('retries for an hour', function () use ($makeDeleteJobCalendar) {
+it('retries for an hour', function () use ($makeDeleteJobCalendar): void {
     $calendar = $makeDeleteJobCalendar();
 
     travelTo(Carbon::parse('2026-09-23 12:00:00'));

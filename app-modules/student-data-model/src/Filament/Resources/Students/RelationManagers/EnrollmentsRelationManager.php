@@ -125,9 +125,9 @@ class EnrollmentsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): void {
                 $query
-                    ->leftJoin('enrollment_semesters', function (JoinClause $join) {
+                    ->leftJoin('enrollment_semesters', function (JoinClause $join): void {
                         $join
                             ->on(DB::raw('LOWER(enrollments.semester_name)'), '=', DB::raw('LOWER(enrollment_semesters.name)'))
                             ->whereNull('enrollment_semesters.deleted_at');
@@ -199,7 +199,7 @@ class EnrollmentsRelationManager extends RelationManager
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                        ->action(function (Collection $records) {
+                        ->action(function (Collection $records): void {
                             $deletedCount = 0;
                             $notDeleteCount = 0;
 
@@ -216,7 +216,7 @@ class EnrollmentsRelationManager extends RelationManager
                                 }
                             }
 
-                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
+                            $wasWere = fn ($count): string => $count === 1 ? 'was' : 'were';
 
                             $notification = match (true) {
                                 $deletedCount === 0 => [

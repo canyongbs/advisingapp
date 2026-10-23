@@ -51,16 +51,16 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('update_submission_state action is labeled Update State', function () {
+test('update_submission_state action is labeled Update State', function (): void {
     $actions = ApplicationAdmissionActions::get();
 
-    $action = collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
+    $action = collect($actions)->firstWhere(fn (Action $action): bool => $action->getName() === 'update_submission_state');
 
     expect($action)->not->toBeNull();
     expect($action->getLabel())->toBe('Update State');
 });
 
-test('update_submission_state action is visible when submission state has allowed transitions', function () {
+test('update_submission_state action is visible when submission state has allowed transitions', function (): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -79,7 +79,7 @@ test('update_submission_state action is visible when submission state has allowe
         ->assertActionVisible('update_submission_state');
 });
 
-test('update_submission_state action is not visible when submission state has no allowed transitions', function () {
+test('update_submission_state action is not visible when submission state has no allowed transitions', function (): void {
     asSuperAdmin();
 
     $admitState = ApplicationSubmissionState::factory()->create([
@@ -98,7 +98,7 @@ test('update_submission_state action is not visible when submission state has no
         ->assertActionHidden('update_submission_state');
 });
 
-test('calling the update_submission_state action transitions the submission to the selected state', function () {
+test('calling the update_submission_state action transitions the submission to the selected state', function (): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -123,7 +123,7 @@ test('calling the update_submission_state action transitions the submission to t
     expect($submission->fresh()->state_id)->toBe($reviewState->id);
 });
 
-test('state dropdown excludes archived states that are not the currently selected state', function () {
+test('state dropdown excludes archived states that are not the currently selected state', function (): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -147,7 +147,7 @@ test('state dropdown excludes archived states that are not the currently selecte
     Livewire::test(SubmissionsRelationManager::class, ['ownerRecord' => $application, 'pageClass' => ManageApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
-        ->assertFormFieldExists('state_id', checkFieldUsing: function (Select $field) use ($receivedState, $reviewState) {
+        ->assertFormFieldExists('state_id', checkFieldUsing: function (Select $field) use ($receivedState, $reviewState): true {
             $optionKeys = array_keys($field->getOptions());
 
             expect($optionKeys)->toContain($receivedState->id)
@@ -157,7 +157,7 @@ test('state dropdown excludes archived states that are not the currently selecte
         });
 });
 
-test('state dropdown pre-selects the current submission state by default', function () {
+test('state dropdown pre-selects the current submission state by default', function (): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -177,7 +177,7 @@ test('state dropdown pre-selects the current submission state by default', funct
         ->assertSchemaStateSet(['state_id' => $submission->state_id]);
 });
 
-test('calling the update_submission_state action with a disallowed transition state does not change the submission state', function () {
+test('calling the update_submission_state action with a disallowed transition state does not change the submission state', function (): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -204,8 +204,8 @@ test('calling the update_submission_state action with a disallowed transition st
     expect($submission->fresh()->state_id)->toBe($receivedState->id);
 });
 
-describe('authorization', function () {
-    it('does not update the submission state without the `application.*.update` permission', function () {
+describe('authorization', function (): void {
+    it('does not update the submission state without the `application.*.update` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('application.view-any', 'application.*.view');
         actingAs($user);

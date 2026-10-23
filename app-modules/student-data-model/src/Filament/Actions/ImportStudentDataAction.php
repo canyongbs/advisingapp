@@ -88,7 +88,7 @@ class ImportStudentDataAction
             ->placeholder('Upload a students CSV file')
             ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
             ->rules($action->getFileValidationRules())
-            ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action, $columnMapStatePath, $importer) {
+            ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action, $columnMapStatePath, $importer): void {
                 if (! $state instanceof TemporaryUploadedFile) {
                     return;
                 }
@@ -123,7 +123,7 @@ class ImportStudentDataAction
                     $csvColumns,
                 );
 
-                $set($columnMapStatePath, array_reduce(($importer ?? $action->getImporter())::getColumns(), function (array $carry, ImportColumn $column) use ($lowercaseCsvColumnKeys, $lowercaseCsvColumnValues) {
+                $set($columnMapStatePath, array_reduce(($importer ?? $action->getImporter())::getColumns(), function (array $carry, ImportColumn $column) use ($lowercaseCsvColumnKeys, $lowercaseCsvColumnValues): array {
                     $carry[$column->getName()] = $lowercaseCsvColumnKeys[Arr::first(
                         array_intersect(
                             $lowercaseCsvColumnValues,
@@ -213,7 +213,7 @@ class ImportStudentDataAction
 
                 $csv->insertAll($exampleRows);
 
-                return response()->streamDownload(function () use ($csv) {
+                return response()->streamDownload(function () use ($csv): void {
                     echo $csv->toString();
                 }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($importer)->classBasename()->kebab()]), [
                     'Content-Type' => 'text/csv',
@@ -301,7 +301,7 @@ class ImportStudentDataAction
                     importer: StudentEnrollmentImporter::class,
                 )->label('Enrollment columns'),
             ], $action->getImporter()::getOptionsFormComponents()))
-            ->action(function (ImportAction $action, array $data) {
+            ->action(function (ImportAction $action, array $data): void {
                 $csvFile = $data['file'];
                 $emailAddressesCsvFile = $data['emailAddressesFile'] ?? null;
                 $phoneNumbersCsvFile = $data['phoneNumbersFile'] ?? null;
@@ -311,7 +311,7 @@ class ImportStudentDataAction
 
                 $user = auth()->user();
 
-                [$studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $emailAddressesCsvFile, $phoneNumbersCsvFile, $addressesCsvFile, $programsCsvFile, $enrollmentsCsvFile, $user) {
+                [$studentsImport, $emailAddressesImport, $phoneNumbersImport, $addressesImport, $programsImport, $enrollmentsImport] = DB::transaction(function () use ($action, $csvFile, $emailAddressesCsvFile, $phoneNumbersCsvFile, $addressesCsvFile, $programsCsvFile, $enrollmentsCsvFile, $user): array {
                     $makeImport = function (?TemporaryUploadedFile $csvFile = null, ?string $importer = null) use ($action, $user): ?Import {
                         if (! $csvFile) {
                             return null;

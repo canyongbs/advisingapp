@@ -38,7 +38,7 @@ use AdvisingApp\Engagement\Jobs\DeliverEngagements;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `DeliverEngagements` for each eligible tenant', function () {
+it('dispatches `DeliverEngagements` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchDeliverEngagementsForEachTenant())->handle();

@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('ListStudentCareTeamRole is gated with proper access control', function () {
+test('ListStudentCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user)
@@ -62,7 +62,7 @@ test('ListStudentCareTeamRole is gated with proper access control', function () 
         )->assertSuccessful();
 });
 
-test('The correct details are displayed on the ListStudentCareTeamRole page', function () {
+test('The correct details are displayed on the ListStudentCareTeamRole page', function (): void {
     $careTeamRoles = CareTeamRole::factory()->count(3)->create(['type' => CareTeamRoleType::Student]);
 
     asSuperAdmin();
@@ -95,7 +95,7 @@ test('The correct details are displayed on the ListStudentCareTeamRole page', fu
     );
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('settings.view-any');

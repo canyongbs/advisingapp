@@ -80,9 +80,9 @@ class GetEmployeeAdvisorQnaInstructions
 
         END;
 
-        $categoriesWithQuestions->each(function (EmployeeAdvisorCategory $category) use (&$qnaSection) {
+        $categoriesWithQuestions->each(function (EmployeeAdvisorCategory $category) use (&$qnaSection): void {
             $questions = $category->questions->reduce(
-                function (string $carry, EmployeeAdvisorQuestion $question) {
+                function (string $carry, EmployeeAdvisorQuestion $question): string {
                     return $carry . <<<END
                     #### {$question->question}
                     {$question->answer}

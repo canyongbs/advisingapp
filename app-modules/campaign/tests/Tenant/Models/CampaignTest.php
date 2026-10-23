@@ -41,7 +41,7 @@ use RuntimeException;
 
 use function Tests\asSuperAdmin;
 
-it('disables an enabled campaign when it is archived', function () {
+it('disables an enabled campaign when it is archived', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -58,7 +58,7 @@ it('disables an enabled campaign when it is archived', function () {
         ->and($campaign->archived_at)->not->toBeNull();
 });
 
-it('rolls back the disable when archiving fails, leaving the campaign enabled and not archived', function () {
+it('rolls back the disable when archiving fails, leaving the campaign enabled and not archived', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -78,7 +78,7 @@ it('rolls back the disable when archiving fails, leaving the campaign enabled an
         ->and($persisted->archived_at)->toBeNull();
 });
 
-it('archives an already disabled campaign without re-enabling it', function () {
+it('archives an already disabled campaign without re-enabling it', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();

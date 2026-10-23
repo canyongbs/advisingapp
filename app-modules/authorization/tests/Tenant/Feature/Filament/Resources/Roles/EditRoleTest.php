@@ -43,7 +43,7 @@ use Livewire\Livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-test('EditRole does not allow duplicate role names case insensitively within a guard', function () {
+test('EditRole does not allow duplicate role names case insensitively within a guard', function (): void {
     asSuperAdmin();
 
     $role = Role::factory()->create(['name' => 'First Role', 'guard_name' => 'web']);
@@ -62,8 +62,8 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-describe('enterprise ai', function () {
-    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function () {
+describe('enterprise ai', function (): void {
+    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $role = Role::factory()->create(['guard_name' => 'web']);
@@ -92,7 +92,7 @@ describe('enterprise ai', function () {
             ->and($availablePermissionGroupNames)->toContain('User', 'Role');
     });
 
-    it('keeps a role\'s hidden Enterprise AI permissions when it is saved while Enterprise AI is disabled', function () {
+    it('keeps a role\'s hidden Enterprise AI permissions when it is saved while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $role = Role::factory()->create(['name' => 'Advisors', 'guard_name' => 'web']);

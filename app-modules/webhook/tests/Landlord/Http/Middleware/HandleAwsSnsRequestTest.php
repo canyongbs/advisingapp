@@ -37,11 +37,13 @@
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use AdvisingApp\Webhook\Http\Middleware\HandleAwsSnsRequest;
 use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use function Tests\loadFixtureFromModule;
 
-it('will successfully handle a SubscriptionConfirmation request', function () {
+it('will successfully handle a SubscriptionConfirmation request', function (): void {
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
@@ -61,7 +63,7 @@ it('will successfully handle a SubscriptionConfirmation request', function () {
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('Made it through.');
     };
 
@@ -79,7 +81,7 @@ it('will successfully handle a SubscriptionConfirmation request', function () {
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/SubscriptionConfirmation')));
 });
 
-it('will successfully handle a UnsubscribeConfirmation request', function () {
+it('will successfully handle a UnsubscribeConfirmation request', function (): void {
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
@@ -99,7 +101,7 @@ it('will successfully handle a UnsubscribeConfirmation request', function () {
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('Made it through.');
     };
 
@@ -117,7 +119,7 @@ it('will successfully handle a UnsubscribeConfirmation request', function () {
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/UnsubscribeConfirmation')));
 });
 
-it('will throw an error if the type is not expected', function () {
+it('will throw an error if the type is not expected', function (): void {
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
@@ -137,7 +139,7 @@ it('will throw an error if the type is not expected', function () {
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('Made it through.');
     };
 
@@ -152,7 +154,7 @@ it('will throw an error if the type is not expected', function () {
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/UnsubscribeConfirmation')));
 })->throws(Exception::class, 'Unknown AWS SNS webhook type');
 
-it('will successfully handle a Notification request', function () {
+it('will successfully handle a Notification request', function (): void {
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
@@ -173,7 +175,7 @@ it('will successfully handle a Notification request', function () {
         ]
     );
 
-    $next = function () {
+    $next = function (): ResponseFactory|Response {
         return response('Made it through.');
     };
 

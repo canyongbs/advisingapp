@@ -42,7 +42,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('hides the delete bulk action for users without the delete permission', function () {
+it('hides the delete bulk action for users without the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('settings.view-any');
 
@@ -52,7 +52,7 @@ it('hides the delete bulk action for users without the delete permission', funct
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the delete bulk action for users with the delete permission', function () {
+it('shows the delete bulk action for users with the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.delete');

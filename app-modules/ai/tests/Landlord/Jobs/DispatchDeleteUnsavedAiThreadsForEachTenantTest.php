@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Jobs\DeleteUnsavedAiThreads;
 use AdvisingApp\Ai\Jobs\DispatchDeleteUnsavedAiThreadsForEachTenant;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches `DeleteUnsavedAiThreads` for each eligible tenant', function () {
+it('dispatches `DeleteUnsavedAiThreads` for each eligible tenant', function (): void {
     Queue::fake();
 
     (new DispatchDeleteUnsavedAiThreadsForEachTenant())->handle();

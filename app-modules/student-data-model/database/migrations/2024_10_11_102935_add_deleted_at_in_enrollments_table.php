@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
+        Schema::table('enrollments', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
     }

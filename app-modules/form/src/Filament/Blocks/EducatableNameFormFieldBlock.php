@@ -115,7 +115,7 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
         $helpText = null;
         $disabled = false;
 
-        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+        if ($author && $submissible instanceof Submissible && in_array($submissible::class, [Form::class, Application::class])) {
             if ($author instanceof Student) {
                 $disabled = true;
                 $helpText = self::MAPPED_STUDENT_FIELD_HELP_TEXT;

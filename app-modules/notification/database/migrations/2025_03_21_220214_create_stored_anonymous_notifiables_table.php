@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('stored_anonymous_notifiables', function (Blueprint $table) {
+        Schema::create('stored_anonymous_notifiables', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('type');
             $table->string('route');

@@ -68,7 +68,7 @@ class ListSurveys extends ListRecords
             ])
             ->recordActions([
                 Action::make('Respond')
-                    ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
+                    ->url(fn (Survey $survey): string => route('surveys.show', ['survey' => $survey]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()
                     ->color('gray'),

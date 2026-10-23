@@ -42,19 +42,19 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('interaction_outcomes', function (Blueprint $table) {
+        Schema::table('interaction_outcomes', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
 
             $table->unique(['is_default', 'deleted_at']);
         });
 
-        Schema::table('interaction_relations', function (Blueprint $table) {
+        Schema::table('interaction_relations', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
 
             $table->unique(['is_default', 'deleted_at']);
         });
 
-        Schema::table('interaction_statuses', function (Blueprint $table) {
+        Schema::table('interaction_statuses', function (Blueprint $table): void {
             $table->boolean('is_default')->default(false);
 
             $table->unique(['is_default', 'deleted_at']);
@@ -64,15 +64,15 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('interaction_outcomes', function (Blueprint $table) {
+        Schema::table('interaction_outcomes', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
 
-        Schema::table('interaction_relations', function (Blueprint $table) {
+        Schema::table('interaction_relations', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
 
-        Schema::table('interaction_statuses', function (Blueprint $table) {
+        Schema::table('interaction_statuses', function (Blueprint $table): void {
             $table->dropColumn('is_default');
         });
     }

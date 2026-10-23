@@ -63,7 +63,7 @@ class AiThreadFactory extends Factory
 
     public function saved(): AiThreadFactory
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes): array {
             return [
                 'name' => $this->faker->word(),
                 'saved_at' => $this->faker->dateTime(),

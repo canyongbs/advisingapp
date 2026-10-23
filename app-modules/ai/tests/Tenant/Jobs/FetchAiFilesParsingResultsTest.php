@@ -46,7 +46,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches a parsing results job for each recent unparsed file and link', function () {
+it('dispatches a parsing results job for each recent unparsed file and link', function (): void {
     Queue::fake();
 
     $assistantFile = AiAssistantFile::factory()->create(['assistant_id' => AiAssistant::factory(), 'parsing_results' => null]);
@@ -59,13 +59,13 @@ it('dispatches a parsing results job for each recent unparsed file and link', fu
 
     (new FetchAiFilesParsingResults())->handle();
 
-    Queue::assertPushed(FetchAiAssistantFileParsingResults::class, fn (FetchAiAssistantFileParsingResults $job) => $job->uniqueId() === $assistantFile->getKey());
-    Queue::assertPushed(FetchAiAssistantLinkParsingResults::class, fn (FetchAiAssistantLinkParsingResults $job) => $job->uniqueId() === $assistantLink->getKey());
-    Queue::assertPushed(FetchCustomerAdvisorFileParsingResults::class, fn (FetchCustomerAdvisorFileParsingResults $job) => $job->uniqueId() === $advisorFile->getKey());
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, fn (FetchCustomerAdvisorLinkParsingResults $job) => $job->uniqueId() === $advisorLink->getKey());
+    Queue::assertPushed(FetchAiAssistantFileParsingResults::class, fn (FetchAiAssistantFileParsingResults $job): bool => $job->uniqueId() === $assistantFile->getKey());
+    Queue::assertPushed(FetchAiAssistantLinkParsingResults::class, fn (FetchAiAssistantLinkParsingResults $job): bool => $job->uniqueId() === $assistantLink->getKey());
+    Queue::assertPushed(FetchCustomerAdvisorFileParsingResults::class, fn (FetchCustomerAdvisorFileParsingResults $job): bool => $job->uniqueId() === $advisorFile->getKey());
+    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, fn (FetchCustomerAdvisorLinkParsingResults $job): bool => $job->uniqueId() === $advisorLink->getKey());
 });
 
-it('does not dispatch for files and links that are already parsed or older than an hour', function () {
+it('does not dispatch for files and links that are already parsed or older than an hour', function (): void {
     Queue::fake();
 
     AiAssistantFile::factory()->create(['assistant_id' => AiAssistant::factory(), 'parsing_results' => 'Parsed']);

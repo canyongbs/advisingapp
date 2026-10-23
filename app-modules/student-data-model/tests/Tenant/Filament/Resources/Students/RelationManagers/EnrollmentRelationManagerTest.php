@@ -73,8 +73,8 @@ it('can filter by name search', function (): void {
         ->assertCanNotSeeTableRecords([$student->enrollments->where('name', 'Regular Course Name')->first()]);
 });
 
-describe('sis term id', function () {
-    beforeEach(function () {
+describe('sis term id', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
 
         $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
@@ -82,7 +82,7 @@ describe('sis term id', function () {
         $studentConfigurationSettings->save();
     });
 
-    it('can create an enrollment with a `sis_term_id`', function () {
+    it('can create an enrollment with a `sis_term_id`', function (): void {
         $student = Student::factory()->create();
 
         Livewire::test(EnrollmentsRelationManager::class, [
@@ -97,7 +97,7 @@ describe('sis term id', function () {
         expect($student->enrollments()->sole()->sis_term_id)->toBe('267');
     });
 
-    it('does not save the `sis_term_id` while `TermAttributesFeature` is inactive', function () {
+    it('does not save the `sis_term_id` while `TermAttributesFeature` is inactive', function (): void {
         $student = Student::factory()->create();
 
         TermAttributesFeature::deactivate();
@@ -114,7 +114,7 @@ describe('sis term id', function () {
         expect($student->enrollments()->sole()->sis_term_id)->toBeNull();
     });
 
-    it('shows the `sis_term_id` when viewing an enrollment', function () {
+    it('shows the `sis_term_id` when viewing an enrollment', function (): void {
         $student = Student::factory()->has(Enrollment::factory(['sis_term_id' => '267']), 'enrollments')->create();
 
         Livewire::test(EnrollmentsRelationManager::class, [
@@ -125,7 +125,7 @@ describe('sis term id', function () {
             ->assertSchemaComponentVisible('sis_term_id');
     });
 
-    it('hides the `sis_term_id` when viewing an enrollment while `TermAttributesFeature` is inactive', function () {
+    it('hides the `sis_term_id` when viewing an enrollment while `TermAttributesFeature` is inactive', function (): void {
         $student = Student::factory()->has(Enrollment::factory(), 'enrollments')->create();
 
         TermAttributesFeature::deactivate();

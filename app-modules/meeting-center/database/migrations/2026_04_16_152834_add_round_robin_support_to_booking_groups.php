@@ -42,11 +42,11 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('booking_groups', function (Blueprint $table) {
+        Schema::table('booking_groups', function (Blueprint $table): void {
             $table->foreignUuid('round_robin_last_assigned_id')->nullable()->constrained('users')->nullOnDelete();
         });
 
-        Schema::table('booking_group_appointments', function (Blueprint $table) {
+        Schema::table('booking_group_appointments', function (Blueprint $table): void {
             $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
         });
     }
@@ -54,11 +54,11 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('booking_group_appointments', function (Blueprint $table) {
+        Schema::table('booking_group_appointments', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('meeting_owner_id');
         });
 
-        Schema::table('booking_groups', function (Blueprint $table) {
+        Schema::table('booking_groups', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('round_robin_last_assigned_id');
         });
     }

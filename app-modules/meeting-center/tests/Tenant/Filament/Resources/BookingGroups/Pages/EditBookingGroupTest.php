@@ -50,7 +50,7 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('can render with proper permission', function () {
+it('can render with proper permission', function (): void {
     $user = User::factory()->create();
 
     $bookingGroup = BookingGroup::factory()
@@ -75,7 +75,7 @@ it('can render with proper permission', function () {
         ->assertSuccessful();
 });
 
-it('validates the inputs', function (EditBookingGroupRequestFactory $data, array $errors) {
+it('validates the inputs', function (EditBookingGroupRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $user = User::factory()->create();
@@ -95,37 +95,37 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
         $request
     );
 })->with([
-    'name required' => fn () => [
+    'name required' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['name' => null]),
         ['name' => 'required'],
     ],
-    'name string' => fn () => [
+    'name string' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['name' => 1]),
         ['name' => 'string'],
     ],
-    'name max' => fn () => [
+    'name max' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
-    'slug required' => fn () => [
+    'slug required' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['slug' => null]),
         ['slug' => 'required'],
     ],
-    'description string' => fn () => [
+    'description string' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],
     ],
-    'description max' => fn () => [
+    'description max' => fn (): array => [
         EditBookingGroupRequestFactory::new()->state(['description' => str()->random(65536)]),
         ['description' => 'max'],
     ],
-    'meeting owner required' => fn () => [
+    'meeting owner required' => fn (): array => [
         EditBookingGroupRequestFactory::new(),
         ['meeting_owner_id' => 'required'],
     ],
 ]);
 
-it('can edit a booking group', function () {
+it('can edit a booking group', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -168,7 +168,7 @@ it('can edit a booking group', function () {
     expect($bookingGroup->meeting_owner_id)->toBe($meetingOwner->id);
 });
 
-it('tracks last_updated_by user correctly', function () {
+it('tracks last_updated_by user correctly', function (): void {
     $creator = User::factory()->create();
     $editor = User::factory()->create();
 
@@ -206,7 +206,7 @@ it('tracks last_updated_by user correctly', function () {
     expect($bookingGroup->last_updated_by_id)->toBe($editor->id);
 });
 
-it('blocks save when meeting owner is no longer in selected users or departments', function () {
+it('blocks save when meeting owner is no longer in selected users or departments', function (): void {
     asSuperAdmin();
 
     $meetingOwner = User::factory()->create();
@@ -232,7 +232,7 @@ it('blocks save when meeting owner is no longer in selected users or departments
         ->assertHasFormErrors(['meeting_owner_id']);
 });
 
-it('validates meeting owner must have a connected calendar', function () {
+it('validates meeting owner must have a connected calendar', function (): void {
     asSuperAdmin();
 
     $meetingOwner = User::factory()->create();
@@ -256,7 +256,7 @@ it('validates meeting owner must have a connected calendar', function () {
         ->assertHasFormErrors(['meeting_owner_id']);
 });
 
-it('users UserSelect does not show admin users in options by default on EditBookingGroup', function () {
+it('users UserSelect does not show admin users in options by default on EditBookingGroup', function (): void {
     asSuperAdmin();
 
     $regularUser = User::factory()->create();
@@ -277,7 +277,7 @@ it('users UserSelect does not show admin users in options by default on EditBook
         });
 });
 
-it('users UserSelect shows all users when filter_admins_from_selection config is false on EditBookingGroup', function () {
+it('users UserSelect shows all users when filter_admins_from_selection config is false on EditBookingGroup', function (): void {
     Config::set('app.filter_admins_from_selection', false);
 
     asSuperAdmin();

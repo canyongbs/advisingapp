@@ -40,7 +40,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use Illuminate\Support\Facades\Queue;
 
-it('returns no articles when has_resource_hub_knowledge is false', function () {
+it('returns no articles when has_resource_hub_knowledge is false', function (): void {
     Queue::fake();
 
     ResourceHubArticle::factory()->count(3)->create([
@@ -55,7 +55,7 @@ it('returns no articles when has_resource_hub_knowledge is false', function () {
     expect($advisor->getResourceHubArticles())->toBeEmpty();
 });
 
-it('returns all articles when access is All', function () {
+it('returns all articles when access is All', function (): void {
     Queue::fake();
 
     $publicArticles = ResourceHubArticle::factory()->count(2)->create([
@@ -79,7 +79,7 @@ it('returns all articles when access is All', function () {
     );
 });
 
-it('returns all articles when access is null, matching the All behavior', function () {
+it('returns all articles when access is null, matching the All behavior', function (): void {
     Queue::fake();
 
     $publicArticles = ResourceHubArticle::factory()->count(2)->create([
@@ -105,7 +105,7 @@ it('returns all articles when access is null, matching the All behavior', functi
     );
 });
 
-it('returns only public articles when access is Public', function () {
+it('returns only public articles when access is Public', function (): void {
     Queue::fake();
 
     $publicArticles = ResourceHubArticle::factory()->count(2)->create([
@@ -128,7 +128,7 @@ it('returns only public articles when access is Public', function () {
     expect($articleIds->toArray())->not()->toEqualCanonicalizing($internalArticles->pluck('id')->toArray());
 });
 
-it('returns only internal articles when access is Internal', function () {
+it('returns only internal articles when access is Internal', function (): void {
     Queue::fake();
 
     $publicArticles = ResourceHubArticle::factory()->count(2)->create([
@@ -151,7 +151,7 @@ it('returns only internal articles when access is Internal', function () {
     expect($articleIds->toArray())->not()->toEqualCanonicalizing($publicArticles->pluck('id')->toArray());
 });
 
-it('excludes articles without article_details', function () {
+it('excludes articles without article_details', function (): void {
     Queue::fake();
 
     $articleWithDetails = ResourceHubArticle::factory()->create([
@@ -174,7 +174,7 @@ it('excludes articles without article_details', function () {
     expect($articleIds->first())->toBe($articleWithDetails->id);
 });
 
-it('filters articles by associated resource hub categories', function () {
+it('filters articles by associated resource hub categories', function (): void {
     Queue::fake();
 
     $categoryA = ResourceHubCategory::factory()->create();
@@ -204,7 +204,7 @@ it('filters articles by associated resource hub categories', function () {
     expect($articleIds->toArray())->not()->toEqualCanonicalizing($articlesInCategoryB->pluck('id')->toArray());
 });
 
-it('returns all matching articles when no categories are attached', function () {
+it('returns all matching articles when no categories are attached', function (): void {
     Queue::fake();
 
     $articles = ResourceHubArticle::factory()->count(3)->create([

@@ -43,7 +43,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('ViewStudentCareTeamRole is gated with proper access control', function () {
+test('ViewStudentCareTeamRole is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
@@ -66,7 +66,7 @@ test('ViewStudentCareTeamRole is gated with proper access control', function () 
         )->assertSuccessful();
 });
 
-test('The correct details are displayed on the ViewStudentCareTeamRole page', function () {
+test('The correct details are displayed on the ViewStudentCareTeamRole page', function (): void {
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
 
     asSuperAdmin()

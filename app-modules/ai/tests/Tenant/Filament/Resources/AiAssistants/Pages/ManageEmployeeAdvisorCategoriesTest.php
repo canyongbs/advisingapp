@@ -79,13 +79,13 @@ $employeeCategoryImporter = function (User $user, AiAssistant $assistant): Emplo
     ]);
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();
 });
 
-test('creating an employee advisor category is gated with proper access control', function () {
+test('creating an employee advisor category is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -111,7 +111,7 @@ test('creating an employee advisor category is gated with proper access control'
         )->assertSuccessful();
 });
 
-test('can create an employee advisor category', function () {
+test('can create an employee advisor category', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -138,7 +138,7 @@ test('can create an employee advisor category', function () {
     );
 });
 
-test('can create multiple employee advisor categories at once', function () {
+test('can create multiple employee advisor categories at once', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -164,7 +164,7 @@ test('can create multiple employee advisor categories at once', function () {
     assertDatabaseHas(EmployeeAdvisorCategory::class, $secondCategory->toArray());
 });
 
-test('creating duplicate employee advisor category names in the same batch is rejected', function () {
+test('creating duplicate employee advisor category names in the same batch is rejected', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -187,7 +187,7 @@ test('creating duplicate employee advisor category names in the same batch is re
     assertCount(0, EmployeeAdvisorCategory::all());
 });
 
-test('creating an employee advisor category validates the inputs', function (EmployeeAdvisorCategoryRequestFactory $data, array $errors) {
+test('creating an employee advisor category validates the inputs', function (EmployeeAdvisorCategoryRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $assistant = AiAssistant::factory()->create();
@@ -202,7 +202,7 @@ test('creating an employee advisor category validates the inputs', function (Emp
 
     Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['categories' => [$categoryData->toArray()]])
-        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field): array => ["categories.0.{$field}" => $rule])->toArray());
 
     $undoRepeaterFake();
 
@@ -235,7 +235,7 @@ test('creating an employee advisor category validates the inputs', function (Emp
     ]
 );
 
-test('can edit an employee advisor category', function () {
+test('can edit an employee advisor category', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -263,7 +263,7 @@ test('can edit an employee advisor category', function () {
     );
 });
 
-test('editing an employee advisor category validates the inputs', function (EmployeeAdvisorCategoryRequestFactory $data, array $errors) {
+test('editing an employee advisor category validates the inputs', function (EmployeeAdvisorCategoryRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo([
@@ -324,8 +324,8 @@ test('editing an employee advisor category validates the inputs', function (Empl
         ]
     );
 
-describe('import and export', function () use ($employeeCategoryImporter) {
-    it('shows the `ImportAction` and `ExportAction` actions', function () {
+describe('import and export', function () use ($employeeCategoryImporter): void {
+    it('shows the `ImportAction` and `ExportAction` actions', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
 
@@ -338,7 +338,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
             ->assertTableActionVisible(ExportAction::class);
     });
 
-    it('exports employee advisor categories as scoped csv content', function () {
+    it('exports employee advisor categories as scoped csv content', function (): void {
         Storage::fake('s3');
 
         config()->set('filament.default_filesystem_disk', 's3');
@@ -384,7 +384,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
             ->not->toContain('Payroll related prompts');
     });
 
-    it('imports employee advisor categories scoped to the selected assistant', function () use ($employeeCategoryImporter) {
+    it('imports employee advisor categories scoped to the selected assistant', function () use ($employeeCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -409,7 +409,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
         ]);
     });
 
-    it('validates required fields during employee advisor category import', function () use ($employeeCategoryImporter) {
+    it('validates required fields during employee advisor category import', function () use ($employeeCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $assistant = AiAssistant::factory()->create();
 
@@ -419,7 +419,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
         ]))->toThrow(ValidationException::class);
     });
 
-    it('validates employee advisor category import uniqueness case-insensitively', function () use ($employeeCategoryImporter) {
+    it('validates employee advisor category import uniqueness case-insensitively', function () use ($employeeCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $assistant = AiAssistant::factory()->create();
 
@@ -434,7 +434,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
         ]))->toThrow(ValidationException::class);
     });
 
-    it('imports a name freed by a soft deleted category', function () use ($employeeCategoryImporter) {
+    it('imports a name freed by a soft deleted category', function () use ($employeeCategoryImporter): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -460,8 +460,8 @@ describe('import and export', function () use ($employeeCategoryImporter) {
     });
 });
 
-describe('authorization', function () {
-    it('hides the `ImportAction` action without the `assistant_custom.create` permission', function () {
+describe('authorization', function (): void {
+    it('hides the `ImportAction` action without the `assistant_custom.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
 

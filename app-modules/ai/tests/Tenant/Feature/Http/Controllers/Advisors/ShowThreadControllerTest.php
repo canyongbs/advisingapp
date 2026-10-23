@@ -45,7 +45,7 @@ use Filament\Facades\Filament;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('fetches information about a thread', function () {
+it('fetches information about a thread', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -61,7 +61,7 @@ it('fetches information about a thread', function () {
         ->assertSuccessful();
 });
 
-it('lists messages in a thread', function () {
+it('lists messages in a thread', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -78,7 +78,7 @@ it('lists messages in a thread', function () {
         ->assertJsonCount(3, 'messages');
 });
 
-it('converts new lines to HTML in messages sent by users', function () {
+it('converts new lines to HTML in messages sent by users', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -99,7 +99,7 @@ it('converts new lines to HTML in messages sent by users', function () {
         ]);
 });
 
-it('removes HTML tags from messages sent by users', function () {
+it('removes HTML tags from messages sent by users', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -120,7 +120,7 @@ it('removes HTML tags from messages sent by users', function () {
         ]);
 });
 
-it('lists users involved in a thread once', function () {
+it('lists users involved in a thread once', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -146,7 +146,7 @@ it('lists users involved in a thread once', function () {
         ]);
 });
 
-it('prevents users who do not own the thread from fetching it', function () {
+it('prevents users who do not own the thread from fetching it', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()

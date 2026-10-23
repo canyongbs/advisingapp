@@ -41,7 +41,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             try {
                 $this->migrator->add('ai.llamaparse_model_name');
             } catch (SettingAlreadyExists $exception) {
@@ -58,7 +58,7 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $this->migrator->deleteIfExists('ai.llamaparse_model_name');
             $this->migrator->deleteIfExists('ai.llamaparse_api_key');
         });

@@ -47,7 +47,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertDatabaseCount;
 use function Tests\asSuperAdmin;
 
-it('can create a bulk SMS Engagement properly for students', function () {
+it('can create a bulk SMS Engagement properly for students', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -75,7 +75,7 @@ it('can create a bulk SMS Engagement properly for students', function () {
     Queue::assertPushed(CreateBatchedEngagement::class, 3);
 });
 
-it('can create a bulk SMS Engagement properly for prospects', function () {
+it('can create a bulk SMS Engagement properly for prospects', function (): void {
     Queue::fake();
 
     asSuperAdmin();

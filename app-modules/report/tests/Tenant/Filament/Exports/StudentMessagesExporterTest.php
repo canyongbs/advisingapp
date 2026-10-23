@@ -45,14 +45,14 @@ $studentMessagesExportColumn = function (string $name): ExportColumn {
     return $column;
 };
 
-it('formats the exported `type` value', function (string $state, string $expected) use ($studentMessagesExportColumn) {
+it('formats the exported `type` value', function (string $state, string $expected) use ($studentMessagesExportColumn): void {
     expect($studentMessagesExportColumn('type')->formatState($state))->toBe($expected);
 })->with([
     'email' => ['email', 'Email'],
     'sms' => ['sms', 'Text'],
 ]);
 
-it('rejects an unknown exported `type` value', function () use ($studentMessagesExportColumn) {
-    expect(fn () => $studentMessagesExportColumn('type')->formatState('database'))
+it('rejects an unknown exported `type` value', function () use ($studentMessagesExportColumn): void {
+    expect(fn (): mixed => $studentMessagesExportColumn('type')->formatState('database'))
         ->toThrow(Exception::class, 'Invalid type');
 });

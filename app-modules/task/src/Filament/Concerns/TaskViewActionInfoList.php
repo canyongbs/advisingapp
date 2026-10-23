@@ -71,12 +71,12 @@ trait TaskViewActionInfoList
                             ->columnSpanFull(),
                         TextEntry::make('assignedTo.name')
                             ->label('Assigned To')
-                            ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                            ->url(fn (Task $record): ?string => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
                             ->default('Unassigned'),
                         TextEntry::make('concern.display_name')
                             ->label('Related To')
                             ->state(fn (Task $record): ?string => $record->concern->{$record->concern::displayNameKey()})
-                            ->url(fn (Task $record) => match ($record->concern::class) {
+                            ->url(fn (Task $record): ?string => match ($record->concern::class) {
                                 Student::class => StudentResource::getViewUrl($record->concern),
                                 Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                                 default => null,
@@ -96,7 +96,7 @@ trait TaskViewActionInfoList
                         TextEntry::make('createdBy.name')
                             ->label('Created By')
                             ->placeholder('N/A')
-                            ->url(fn (Task $record) => $record->createdBy ? UserResource::getUrl('view', ['record' => $record->createdBy]) : null),
+                            ->url(fn (Task $record): ?string => $record->createdBy ? UserResource::getUrl('view', ['record' => $record->createdBy]) : null),
                     ]),
             ])->from('md'),
         ];

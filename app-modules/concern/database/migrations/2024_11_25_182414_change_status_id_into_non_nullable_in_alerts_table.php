@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->foreignUuid('status_id')->nullable(false)->change();
             $table->dropColumn('status');
         });
@@ -49,7 +49,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('alerts', function (Blueprint $table) {
+        Schema::table('alerts', function (Blueprint $table): void {
             $table->foreignUuid('status_id')->nullable()->change();
             $table->string('status');
         });

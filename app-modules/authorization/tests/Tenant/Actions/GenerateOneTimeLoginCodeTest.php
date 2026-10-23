@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Hash;
 
 use function Pest\Laravel\freezeTime;
 
-it('generates a six digit code stored as a hash', function () {
+it('generates a six digit code stored as a hash', function (): void {
     freezeTime();
 
     $user = User::factory()->create();

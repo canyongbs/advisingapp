@@ -40,7 +40,7 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Http\Request;
 
-it('preserves zero-valued dropdown responses', function (bool $isRequired, bool $isWizard) {
+it('preserves zero-valued dropdown responses', function (bool $isRequired, bool $isWizard): void {
     $form = Form::factory()
         ->has(FormField::factory()->state([
             'type' => 'select',
@@ -73,7 +73,7 @@ it('preserves zero-valued dropdown responses', function (bool $isRequired, bool 
     'optional multi-step field' => [false, true],
 ]);
 
-it('omits blank optional responses', function (mixed $response) {
+it('omits blank optional responses', function (mixed $response): void {
     $form = Form::factory()
         ->has(FormField::factory()->state([
             'type' => 'select',

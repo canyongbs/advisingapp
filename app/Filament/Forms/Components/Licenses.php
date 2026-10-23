@@ -76,10 +76,10 @@ class Licenses extends Section
                     ->hiddenLabel()
                     ->offColor('danger')
                     ->onColor('success')
-                    ->formatStateUsing(function (?User $record) use ($licenseType) {
+                    ->formatStateUsing(function (?User $record) use ($licenseType): ?bool {
                         return $record?->hasLicense($licenseType);
                     })
-                    ->afterStateUpdated(function (bool $state, User $record) use ($licenseType) {
+                    ->afterStateUpdated(function (bool $state, User $record) use ($licenseType): void {
                         $notification = Notification::make();
 
                         if ($state) {
@@ -94,9 +94,9 @@ class Licenses extends Section
 
                         $notification->send();
                     })
-                    ->disabled(fn (?bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
-                    ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                    ->hintIconTooltip(function () use ($licenseType) {
+                    ->disabled(fn (?bool $state): bool => ! $state && ! $licenseType->hasAvailableLicenses())
+                    ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                    ->hintIconTooltip(function () use ($licenseType): string {
                         /** @var User $user */
                         $user = auth()->user();
 

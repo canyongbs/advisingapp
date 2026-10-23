@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->string('primary_email_id')->nullable();
             $table->string('primary_phone_id')->nullable();
             $table->string('primary_address_id')->nullable();
@@ -50,7 +50,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->dropColumn(['primary_email_id', 'primary_phone_id', 'primary_address_id']);
         });
     }

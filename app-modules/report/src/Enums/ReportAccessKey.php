@@ -230,7 +230,7 @@ enum ReportAccessKey: string
     public function accessCount(): int
     {
         return User::query()
-            ->where(function (Builder $query) {
+            ->where(function (Builder $query): void {
                 $query->whereIn(
                     'id',
                     ReportUserAccess::query()

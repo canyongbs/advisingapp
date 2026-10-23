@@ -170,7 +170,7 @@ class SurveySubmission extends Submission
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             $builder->tap(new LicensedToEducatable('author'));
         });
     }

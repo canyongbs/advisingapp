@@ -61,7 +61,7 @@ $setUp = function (
     ?User $user = null,
     User | Collection | null $records = null,
     LicenseType | array | null $licenseTypes = null,
-) {
+): array {
     $user ??= User::factory()->create();
     $user->givePermissionTo([
         'user.view-any',
@@ -86,14 +86,14 @@ $setUp = function (
 
     $licenseTypes = collect($licenseTypes ?? LicenseType::cases());
 
-    $records->each(function (User $record) use ($licenseTypes) {
-        $licenseTypes->each(fn ($licenseType) => assertFalse($record->hasLicense($licenseType)));
+    $records->each(function (User $record) use ($licenseTypes): void {
+        $licenseTypes->each(fn (\AdvisingApp\Authorization\Enums\LicenseType|string|array|null $licenseType) => assertFalse($record->hasLicense($licenseType)));
     });
 
     return ['user' => $user, 'records' => $records, 'licenseTypes' => $licenseTypes];
 };
 
-it('will assign licenses to users', function (LicenseType $licenseType) use ($setUp) {
+it('will assign licenses to users', function (LicenseType $licenseType) use ($setUp): void {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp(licenseTypes: $licenseType);
 
     Livewire::test(ListUsers::class)
@@ -101,24 +101,24 @@ it('will assign licenses to users', function (LicenseType $licenseType) use ($se
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => false,
-            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => true]),
         ])
         ->assertHasNoTableBulkActionErrors()
         ->assertNotified();
 
-    $records->each(function (User $record) use ($licenseTypes) {
+    $records->each(function (User $record) use ($licenseTypes): void {
         $record->refresh();
         $licenseTypes->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
     });
 })->with(LicenseType::cases());
 
-it('will replace existing licenses', function () use ($setUp) {
+it('will replace existing licenses', function () use ($setUp): void {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp();
 
     [$add, $existing] = $licenseTypes->split(2);
 
-    $records->each(function (User $record) use ($existing) {
-        $existing->each(function (LicenseType $licenseType) use ($record) {
+    $records->each(function (User $record) use ($existing): void {
+        $existing->each(function (LicenseType $licenseType) use ($record): void {
             $record->grantLicense($licenseType);
             assertTrue($record->refresh()->hasLicense($licenseType));
         });
@@ -129,25 +129,25 @@ it('will replace existing licenses', function () use ($setUp) {
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => true,
-            ...$add->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+            ...$add->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => true]),
         ])
         ->assertHasNoTableBulkActionErrors()
         ->assertNotified();
 
-    $records->each(function (User $record) use ($add, $existing) {
+    $records->each(function (User $record) use ($add, $existing): void {
         $record->refresh();
         $add->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
         $existing->each(fn (LicenseType $licenseType) => assertFalse($record->hasLicense($licenseType)));
     });
 });
 
-it('it will not revoke existing licenses if not replacing', function () use ($setUp) {
+it('it will not revoke existing licenses if not replacing', function () use ($setUp): void {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp();
 
     [$add, $existing] = $licenseTypes->split(2);
 
-    $records->each(function (User $record) use ($existing) {
-        $existing->each(function (LicenseType $licenseType) use ($record) {
+    $records->each(function (User $record) use ($existing): void {
+        $existing->each(function (LicenseType $licenseType) use ($record): void {
             $record->grantLicense($licenseType);
             assertTrue($record->refresh()->hasLicense($licenseType));
         });
@@ -158,23 +158,23 @@ it('it will not revoke existing licenses if not replacing', function () use ($se
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => false,
-            ...$add->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+            ...$add->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => true]),
         ])
         ->assertHasNoTableBulkActionErrors()
         ->assertNotified();
 
-    $records->each(function (User $record) use ($add, $existing) {
+    $records->each(function (User $record) use ($add, $existing): void {
         $record->refresh();
         $add->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
         $existing->each(fn (LicenseType $licenseType) => assertTrue($record->hasLicense($licenseType)));
     });
 });
 
-it('will revoke licenses if replacing', function () use ($setUp) {
+it('will revoke licenses if replacing', function () use ($setUp): void {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp();
 
-    $records->each(function (User $record) use ($licenseTypes) {
-        $licenseTypes->each(function (LicenseType $licenseType) use ($record) {
+    $records->each(function (User $record) use ($licenseTypes): void {
+        $licenseTypes->each(function (LicenseType $licenseType) use ($record): void {
             $record->grantLicense($licenseType);
             assertTrue($record->refresh()->hasLicense($licenseType));
         });
@@ -185,18 +185,18 @@ it('will revoke licenses if replacing', function () use ($setUp) {
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => true,
-            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => false]),
+            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => false]),
         ])
         ->assertHasNoTableBulkActionErrors()
         ->assertNotified();
 
-    $records->each(function (User $record) use ($licenseTypes) {
+    $records->each(function (User $record) use ($licenseTypes): void {
         $record->refresh();
         $licenseTypes->each(fn (LicenseType $licenseType) => assertFalse($record->hasLicense($licenseType)));
     });
 });
 
-it('will not allow assigning more licenses than available', function () use ($setUp) {
+it('will not allow assigning more licenses than available', function () use ($setUp): void {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -211,7 +211,7 @@ it('will not allow assigning more licenses than available', function () use ($se
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
             'replace' => false,
-            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType) => [$licenseType->value => true]),
+            ...$licenseTypes->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => true]),
         ])
         ->assertHasTableBulkActionErrors([
             'conversational_ai' => ['You do not have enough seats for ' . LicenseType::ConversationalAi->getLabel()],
@@ -221,8 +221,8 @@ it('will not allow assigning more licenses than available', function () use ($se
         ->assertNotNotified();
 });
 
-describe('enterprise ai', function () use ($setUp) {
-    it('does not assign a `ConversationalAi` license while Enterprise AI is disabled', function () use ($setUp) {
+describe('enterprise ai', function () use ($setUp): void {
+    it('does not assign a `ConversationalAi` license while Enterprise AI is disabled', function () use ($setUp): void {
         ['records' => $records] = $setUp(licenseTypes: [LicenseType::ConversationalAi, LicenseType::RetentionCrm]);
 
         setEnterpriseAiEnabled(false);
@@ -236,16 +236,16 @@ describe('enterprise ai', function () use ($setUp) {
             ->assertHasNoTableBulkActionErrors()
             ->assertNotified();
 
-        $records->each(function (User $record) {
+        $records->each(function (User $record): void {
             assertDatabaseMissing('licenses', ['user_id' => $record->getKey(), 'type' => LicenseType::ConversationalAi]);
             assertTrue($record->refresh()->hasLicense(LicenseType::RetentionCrm));
         });
     });
 
-    it('does not revoke existing `ConversationalAi` licenses when replacing while Enterprise AI is disabled', function () use ($setUp) {
+    it('does not revoke existing `ConversationalAi` licenses when replacing while Enterprise AI is disabled', function () use ($setUp): void {
         ['records' => $records] = $setUp(licenseTypes: LicenseType::ConversationalAi);
 
-        $records->each(fn (User $record) => $record->grantLicense(LicenseType::ConversationalAi));
+        $records->each(fn (User $record): bool => $record->grantLicense(LicenseType::ConversationalAi));
 
         setEnterpriseAiEnabled(false);
 
@@ -258,7 +258,7 @@ describe('enterprise ai', function () use ($setUp) {
             ->assertHasNoTableBulkActionErrors()
             ->assertNotified();
 
-        $records->each(function (User $record) {
+        $records->each(function (User $record): void {
             assertDatabaseHas('licenses', ['user_id' => $record->getKey(), 'type' => LicenseType::ConversationalAi, 'deleted_at' => null]);
         });
 

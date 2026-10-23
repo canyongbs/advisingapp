@@ -91,13 +91,13 @@ trait HasEventRegistrationForm
                                     $wizardStepVersionMap = [];
 
                                     $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
-                                        ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
+                                        ->first(fn ($component): bool => $component instanceof Repeater && $component->getName() === 'steps')
                                         ?->getRawState();
 
                                     $steps = ! empty($repeaterState)
                                         ? $repeaterState
                                         : $record->steps()->orderBy('sort')->get()
-                                            ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label, 'description' => $step->description]])
+                                            ->mapWithKeys(fn (EventRegistrationFormStep $step): array => [$step->id => ['label' => $step->label, 'description' => $step->description]])
                                             ->all();
 
                                     foreach ($steps as $key => $stepData) {
@@ -158,7 +158,7 @@ trait HasEventRegistrationForm
                             ->schema([
                                 $this->registrationFormFieldBuilder(),
                             ])
-                            ->hidden(fn (Get $get) => $get('is_wizard'))
+                            ->hidden(fn (Get $get): mixed => $get('is_wizard'))
                             ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
                         Repeater::make('steps')
                             ->schema([
@@ -178,7 +178,7 @@ trait HasEventRegistrationForm
                             ])
                             ->addActionLabel('New step')
                             ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                            ->visible(fn (Get $get) => $get('is_wizard'))
+                            ->visible(fn (Get $get): mixed => $get('is_wizard'))
                             ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
                             ->relationship()
                             ->orderColumn('sort')
@@ -231,7 +231,7 @@ trait HasEventRegistrationForm
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record): void {
                 if ($this->registrationFormVersionedInCurrentSave) {
                     if ($record instanceof EventRegistrationFormStep) {
                         $newStep = $this->wizardStepVersionMap[(string) $record->id] ?? null;

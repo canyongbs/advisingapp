@@ -50,7 +50,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::create('role_groups', function (Blueprint $table) {
+        Schema::create('role_groups', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name', 125);
@@ -63,13 +63,13 @@ return new class () extends Migration {
             $table->unique(['name', 'guard_name']);
         });
 
-        Schema::create('role_group_user', function (Blueprint $table) {
+        Schema::create('role_group_user', function (Blueprint $table): void {
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
             $table->timestamps();
         });
 
-        Schema::create('role_role_group', function (Blueprint $table) {
+        Schema::create('role_role_group', function (Blueprint $table): void {
             $table->foreignUuid('role_id')->references('id')->on('roles');
             $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
             $table->timestamps();

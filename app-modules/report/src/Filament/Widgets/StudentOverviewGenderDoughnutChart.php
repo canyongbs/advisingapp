@@ -80,7 +80,7 @@ class StudentOverviewGenderDoughnutChart extends ChartReportWidget
 
         $genderData = $shouldBypassCache
             ? $this->getGenderData($startDate, $endDate, $groupId)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_by_gender', now()->addHours(24), function () {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_by_gender', now()->addHours(24), function (): Collection {
                 return $this->getGenderData();
             });
 
@@ -143,7 +143,7 @@ class StudentOverviewGenderDoughnutChart extends ChartReportWidget
             ->whereNotNull('gender')
             ->where('gender', '!=', '')
             ->when(
-                $startDate && $endDate,
+                $startDate instanceof Carbon && $endDate instanceof Carbon,
                 fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
             )
             ->when(
@@ -152,7 +152,7 @@ class StudentOverviewGenderDoughnutChart extends ChartReportWidget
             )
             ->groupBy('gender_lower')
             ->orderBy('gender_lower')
-            ->get()->map(function (Student $student) {
+            ->get()->map(function (Student $student): Student {
                 $student['bg_color'] = $this->getRgbString();
 
                 return $student;

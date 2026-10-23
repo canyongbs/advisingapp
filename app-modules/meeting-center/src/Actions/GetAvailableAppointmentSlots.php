@@ -73,7 +73,7 @@ class GetAvailableAppointmentSlots
         return (new Collection())
             ->merge($this->getCalendarEventsFor($user, $start, $end))
             /** @phpstan-ignore-next-line */
-            ->map(fn (CalendarEvent $event) => [
+            ->map(fn (CalendarEvent $event): array => [
                 'start' => $event->starts_at,
                 'end' => $event->ends_at,
             ])
@@ -88,7 +88,7 @@ class GetAvailableAppointmentSlots
         return CalendarEvent::query()
             ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
             ->where(fn (Builder $query) => $this->wherePeriodOverlaps($query, $start, $end))
-            ->where(function (Builder $query) {
+            ->where(function (Builder $query): void {
                 $query->whereIn('transparency', [
                     EventTransparency::Busy->value,
                     EventTransparency::Tentative->value,
@@ -120,8 +120,8 @@ class GetAvailableAppointmentSlots
         $periodCollection = new Collection($period);
 
         return $periodCollection
-            ->reject(fn (Carbon $date) => $this->isOutOfOffice($user, $date))
-            ->flatMap(fn (Carbon $date) => $this->getAvailableBlocksForDay($user, $date, $busyPeriods, $leadTimeHours, $maxLeadTimeDays))
+            ->reject(fn (Carbon $date): bool => $this->isOutOfOffice($user, $date))
+            ->flatMap(fn (Carbon $date): array => $this->getAvailableBlocksForDay($user, $date, $busyPeriods, $leadTimeHours, $maxLeadTimeDays))
             ->all();
     }
 
@@ -159,7 +159,7 @@ class GetAvailableAppointmentSlots
 
         return $hours
             ->filter(fn (array $period) => ($period['enabled'] ?? $period['is_enabled'] ?? false))
-            ->flatMap(function (array $period) use ($date, $busyPeriods) {
+            ->flatMap(function (array $period) use ($date, $busyPeriods): array {
                 // Office hours are stored in UTC, so we parse them as UTC first
                 $startTime = $period['start'] ?? $period['starts_at'];
                 $endTime = $period['end'] ?? $period['ends_at'];
@@ -186,7 +186,7 @@ class GetAvailableAppointmentSlots
                 fn (Collection $collection) => $collection
                     ->filter(fn (array $block) => $block['start']->lte($latestAllowed))
             )
-            ->map(function (array $block) use ($now, $latestAllowed) {
+            ->map(function (array $block) use ($now, $latestAllowed): array {
                 $start = $block['start']->isBefore($now) ? $now->copy() : $block['start'];
                 $end = ($latestAllowed !== null && $block['end']->isAfter($latestAllowed))
                     ? $latestAllowed->copy()
@@ -306,7 +306,7 @@ class GetAvailableAppointmentSlots
         $blockCollection = new Collection($blocks);
 
         return $blockCollection
-            ->flatMap(fn (array $block) => $this->splitBlockIfOverlaps($block, $busyStart, $busyEnd))
+            ->flatMap(fn (array $block): array => $this->splitBlockIfOverlaps($block, $busyStart, $busyEnd))
             ->all();
     }
 

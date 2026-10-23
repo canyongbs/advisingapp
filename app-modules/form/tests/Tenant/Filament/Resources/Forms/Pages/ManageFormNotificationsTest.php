@@ -42,7 +42,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('can save notification users to a form', function () {
+test('can save notification users to a form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -59,7 +59,7 @@ test('can save notification users to a form', function () {
     expect($form->fresh()->notificationUsers->first()->id)->toBe($userToNotify->id);
 });
 
-test('can enable notify_via_email and it persists', function () {
+test('can enable notify_via_email and it persists', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['notify_via_email' => false]);
@@ -72,7 +72,7 @@ test('can enable notify_via_email and it persists', function () {
     expect($form->fresh()->notify_via_email)->toBeTrue();
 });
 
-test('can enable notify_via_app and it persists', function () {
+test('can enable notify_via_app and it persists', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['notify_via_app' => false]);
@@ -85,7 +85,7 @@ test('can enable notify_via_app and it persists', function () {
     expect($form->fresh()->notify_via_app)->toBeTrue();
 });
 
-test('notify_to_care_team toggle is only visible when form is authenticated', function () {
+test('notify_to_care_team toggle is only visible when form is authenticated', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => false]);
@@ -99,7 +99,7 @@ test('notify_to_care_team toggle is only visible when form is authenticated', fu
         ->assertFormFieldIsVisible('notify_to_care_team');
 });
 
-test('notify_to_subscribers toggle is only visible when form is authenticated', function () {
+test('notify_to_subscribers toggle is only visible when form is authenticated', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => false]);
@@ -113,7 +113,7 @@ test('notify_to_subscribers toggle is only visible when form is authenticated', 
         ->assertFormFieldIsVisible('notify_to_subscribers');
 });
 
-test('can enable notify_to_care_team on an authenticated form', function () {
+test('can enable notify_to_care_team on an authenticated form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create([
@@ -129,7 +129,7 @@ test('can enable notify_to_care_team on an authenticated form', function () {
     expect($form->fresh()->notify_to_care_team)->toBeTrue();
 });
 
-test('can enable notify_to_subscribers on an authenticated form', function () {
+test('can enable notify_to_subscribers on an authenticated form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create([
@@ -145,7 +145,7 @@ test('can enable notify_to_subscribers on an authenticated form', function () {
     expect($form->fresh()->notify_to_subscribers)->toBeTrue();
 });
 
-test('can save all notification settings together on an authenticated form', function () {
+test('can save all notification settings together on an authenticated form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => true]);

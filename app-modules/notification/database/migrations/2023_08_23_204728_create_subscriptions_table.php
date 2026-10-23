@@ -42,7 +42,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -88,7 +88,7 @@ class EngagementsRelationManager extends RelationManager
 
     public function infolist(Schema $schema): Schema
     {
-        return $schema->components(fn (Timeline $record) => match ($record->timelineable::class) {
+        return $schema->components(fn (Timeline $record): array => match ($record->timelineable::class) {
             Engagement::class => [
                 Tabs::make()
                     ->columnSpanFull()
@@ -202,7 +202,7 @@ class EngagementsRelationManager extends RelationManager
                         ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
                     ])
                     ->with([
-                        'timelineable' => function ($morphQuery) use ($canAccessEngagements, $canAccessEngagementResponses) {
+                        'timelineable' => function ($morphQuery) use ($canAccessEngagements, $canAccessEngagementResponses): void {
                             $morphQuery->when(
                                 $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
                                 fn (Builder $query) => $query->with(['latestEmailMessage.events', 'latestSmsMessage.events', 'user'])
@@ -215,12 +215,12 @@ class EngagementsRelationManager extends RelationManager
             )
             ->columns([
                 TextColumn::make('direction')
-                    ->state(fn (Timeline $record) => match ($record->timelineable::class) {
+                    ->state(fn (Timeline $record): string => match ($record->timelineable::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
                         default => '',
                     })
-                    ->icon(fn (string $state) => match ($state) {
+                    ->icon(fn (string $state): ?string => match ($state) {
                         'Outbound' => 'heroicon-o-arrow-up-tray',
                         'Inbound' => 'heroicon-o-arrow-down-tray',
                         default => null,
@@ -280,7 +280,7 @@ class EngagementsRelationManager extends RelationManager
 
                         return $timelineable->getDeliveryMethod();
                     })
-                    ->icon(fn (NotificationChannel $state) => $state->getIcon())
+                    ->icon(fn (NotificationChannel $state): ?string => $state->getIcon())
                     ->tooltip(fn (NotificationChannel $state): string => $state->getLabel()),
                 TextColumn::make('subject')
                     ->label('Preview')
@@ -329,7 +329,7 @@ class EngagementsRelationManager extends RelationManager
                                 Action::make('markAsNew')
                                     ->label('Mark as New')
                                     ->color('gray')
-                                    ->action(function (Timeline $record) {
+                                    ->action(function (Timeline $record): void {
                                         /** @var EngagementResponse $engagementResponse */
                                         $engagementResponse = $record->timelineable;
 
@@ -347,8 +347,8 @@ class EngagementsRelationManager extends RelationManager
             ->headerActions([
                 SendEngagementAction::make()
                     ->label('New')
-                    ->draftWithAiAction(fn () => RelationManagerDraftWithAiAction::make()->mergeTags(SendEngagementAction::getDefaultMergeTags()))
-                    ->educatable(fn () => $this->getOwnerRecord()),
+                    ->draftWithAiAction(fn (): RelationManagerDraftWithAiAction => RelationManagerDraftWithAiAction::make()->mergeTags(SendEngagementAction::getDefaultMergeTags()))
+                    ->educatable(fn (): Model => $this->getOwnerRecord()),
             ])
             ->recordAction('view')
             ->filters([

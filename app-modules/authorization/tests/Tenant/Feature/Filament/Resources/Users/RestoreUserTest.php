@@ -46,7 +46,7 @@ use function Pest\Laravel\actingAs;
 use function PHPUnit\Framework\assertNotInstanceOf;
 use function Tests\asSuperAdmin;
 
-it('show trashed filter only if user has user restore permission', function () {
+it('show trashed filter only if user has user restore permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
@@ -56,7 +56,7 @@ it('show trashed filter only if user has user restore permission', function () {
         ->assertTableFilterExists(TrashedFilter::class);
 });
 
-it('do not show trashed filter if user does not has restore permission', function () {
+it('do not show trashed filter if user does not has restore permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('user.view-any', 'user.*.view');
@@ -69,7 +69,7 @@ it('do not show trashed filter if user does not has restore permission', functio
     );
 });
 
-it('do not show soft deleted users when filter is not selected', function () {
+it('do not show soft deleted users when filter is not selected', function (): void {
     asSuperAdmin();
     $users = User::factory()->count(3)->create();
 
@@ -85,7 +85,7 @@ it('do not show soft deleted users when filter is not selected', function () {
         ->assertCanNotSeeTableRecords($softDeletedUserRecords);
 });
 
-it('can see soft deleted, non soft deleted records and status column only if the filter is on', function () {
+it('can see soft deleted, non soft deleted records and status column only if the filter is on', function (): void {
     asSuperAdmin();
     $users = User::factory()->count(3)->create();
 
@@ -99,7 +99,7 @@ it('can see soft deleted, non soft deleted records and status column only if the
         ->assertCanSeeTableRecords($users);
 });
 
-it('Show restore action only if user has permission to restore user', function () {
+it('Show restore action only if user has permission to restore user', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
@@ -118,7 +118,7 @@ it('Show restore action only if user has permission to restore user', function (
         ->assertTableActionExists(RestoreAction::class);
 });
 
-it('check if restore feature works as expected', function () {
+it('check if restore feature works as expected', function (): void {
     asSuperAdmin();
     $user = User::factory()->create();
 
@@ -135,7 +135,7 @@ it('check if restore feature works as expected', function () {
     expect($user->refresh())->deleted_at->toBe(null);
 });
 
-it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating new user with email that is deleted', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating new user with email that is deleted', function (): void {
     asSuperAdmin();
     $user = User::factory()->create();
 
@@ -151,7 +151,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while c
         ->assertHasFormErrors(['email' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.']);
 });
 
-it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating user with email that is already in use', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while creating user with email that is already in use', function (): void {
     asSuperAdmin();
     $first = User::factory()->create();
 
@@ -164,7 +164,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while c
         ->assertHasFormErrors(['email' => "A user with this email address already exists. Please use a different email address or contact your administrator if you need to modify this user's account."]);
 });
 
-it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is deleted', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is deleted', function (): void {
     asSuperAdmin();
     $first = User::factory()->create();
     $second = User::factory()->create();
@@ -182,7 +182,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while e
         ->assertHasFormErrors(['email' => 'An archived user with this email address already exists. Please contact an administrator to restore this user or use a different email address.']);
 });
 
-it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is already in use', function () {
+it('check if email EmailNotInUseOrSoftDeleted validations works properly while editing user with email that is already in use', function (): void {
     asSuperAdmin();
     $first = User::factory()->create();
     $second = User::factory()->create();

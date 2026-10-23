@@ -52,7 +52,7 @@ class TranslateGroup extends Command
     public function handle(): int
     {
         Group::all()
-            ->each(function (Group $group) {
+            ->each(function (Group $group): void {
                 resolve(TranslateGroupFilters::class)->execute($group)->get();
             });
 

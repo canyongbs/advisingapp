@@ -58,11 +58,11 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Define your route model bindings, pattern filters, etc.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->configureRateLimiting();
 
-        $this->routes(function () {
+        $this->routes(function (): void {
             Route::get('/ping', fn () => response()->json(['message' => 'pong']))
                 ->name('ping');
 

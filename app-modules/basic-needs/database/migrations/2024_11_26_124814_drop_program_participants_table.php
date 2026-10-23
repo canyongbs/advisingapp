@@ -45,7 +45,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::create('program_participants', function (Blueprint $table) {
+        Schema::create('program_participants', function (Blueprint $table): void {
             $table->foreignUuid('basic_needs_program_id')->constrained('basic_needs_programs')->cascadeOnDelete();
             $table->string('program_participants_type');
             $table->string('program_participants_id');

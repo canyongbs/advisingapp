@@ -68,7 +68,7 @@ class PasswordButtonAction extends Action
         return parent::call($data);
     }
 
-    protected function isPasswordSessionValid()
+    protected function isPasswordSessionValid(): bool
     {
         return session()->has('auth.password_confirmed_at')
             && (time() - session('auth.password_confirmed_at', 0)) < config('auth.password_timeout');

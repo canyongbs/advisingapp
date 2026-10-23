@@ -58,7 +58,7 @@ $cumulativeStudentsByMonth = function (array $pageFilters = ['startDate' => '202
     return array_combine($data['labels'], $data['datasets'][0]['data']);
 };
 
-it('returns correct cumulative student counts grouped by month within the given date range', function () use ($cumulativeStudentsByMonth) {
+it('returns correct cumulative student counts grouped by month within the given date range', function () use ($cumulativeStudentsByMonth): void {
     Student::factory()->count(5)->state(['created_at_source' => '2026-03-10'])->create();
     Student::factory()->count(5)->state(['created_at_source' => '2026-06-25'])->create();
 
@@ -70,7 +70,7 @@ it('returns correct cumulative student counts grouped by month within the given 
     ]);
 });
 
-it('returns correct cumulative student counts grouped by month based on group filters', function () use ($cumulativeStudentsByMonth) {
+it('returns correct cumulative student counts grouped by month based on group filters', function () use ($cumulativeStudentsByMonth): void {
     // With no date filter the chart defaults to the twelve months ending now, so "now" has
     // to be pinned for the series to be predictable.
     Carbon::setTestNow('2026-06-15');
@@ -129,8 +129,8 @@ it('returns correct cumulative student counts grouped by month based on group fi
     ]);
 });
 
-describe('archiving', function () use ($cumulativeStudentsByMonth) {
-    it('drops an archived student from the month they were archived onwards', function () use ($cumulativeStudentsByMonth) {
+describe('archiving', function () use ($cumulativeStudentsByMonth): void {
+    it('drops an archived student from the month they were archived onwards', function () use ($cumulativeStudentsByMonth): void {
         Student::factory()->count(2)->state(['created_at_source' => '2026-04-10'])->create();
 
         $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
@@ -143,7 +143,7 @@ describe('archiving', function () use ($cumulativeStudentsByMonth) {
         ]);
     });
 
-    it('keeps counting a student archived after the reported period', function () use ($cumulativeStudentsByMonth) {
+    it('keeps counting a student archived after the reported period', function () use ($cumulativeStudentsByMonth): void {
         $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-08-20')])->save();
 
@@ -154,7 +154,7 @@ describe('archiving', function () use ($cumulativeStudentsByMonth) {
         ]);
     });
 
-    it('counts a student created before the reported period until they are archived within it', function () use ($cumulativeStudentsByMonth) {
+    it('counts a student created before the reported period until they are archived within it', function () use ($cumulativeStudentsByMonth): void {
         $archived = Student::factory()->create(['created_at_source' => '2026-01-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
 
@@ -166,8 +166,8 @@ describe('archiving', function () use ($cumulativeStudentsByMonth) {
     });
 });
 
-describe('baseline', function () use ($cumulativeStudentsByMonth) {
-    it('counts a student created before the reported period in every bucket', function () use ($cumulativeStudentsByMonth) {
+describe('baseline', function () use ($cumulativeStudentsByMonth): void {
+    it('counts a student created before the reported period in every bucket', function () use ($cumulativeStudentsByMonth): void {
         Student::factory()->create(['created_at_source' => '2026-01-10']);
 
         expect($cumulativeStudentsByMonth())->toBe([
@@ -177,7 +177,7 @@ describe('baseline', function () use ($cumulativeStudentsByMonth) {
         ]);
     });
 
-    it('applies the group filter to students counted in the baseline', function () use ($cumulativeStudentsByMonth) {
+    it('applies the group filter to students counted in the baseline', function () use ($cumulativeStudentsByMonth): void {
         $group = Group::factory()->create([
             'model' => GroupModel::Student,
             'filters' => [

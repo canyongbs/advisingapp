@@ -47,7 +47,7 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-it('will properly match to and create an engagement response for a student email', function () {
+it('will properly match to and create an engagement response for a student email', function (): void {
     $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->email()->create();
     $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->email()->create();
 
@@ -82,7 +82,7 @@ it('will properly match to and create an engagement response for a student email
     ]);
 });
 
-it('will properly match to and create an engagement response for a prospect email', function () {
+it('will properly match to and create an engagement response for a prospect email', function (): void {
     $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->email()->create();
     $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->email()->create();
 
@@ -117,7 +117,7 @@ it('will properly match to and create an engagement response for a prospect emai
     ]);
 });
 
-it('will properly match to and create an engagement response for a student phone number', function () {
+it('will properly match to and create an engagement response for a student phone number', function (): void {
     $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->sms()->create();
     $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->sms()->create();
 
@@ -150,7 +150,7 @@ it('will properly match to and create an engagement response for a student phone
     ]);
 });
 
-it('will properly match to and create an engagement response for a prospect phone number', function () {
+it('will properly match to and create an engagement response for a prospect phone number', function (): void {
     $unmatchedInboundRecordOne = UnmatchedInboundCommunication::factory()->sms()->create();
     $unmatchedInboundRecordTwo = UnmatchedInboundCommunication::factory()->sms()->create();
 
@@ -183,7 +183,7 @@ it('will properly match to and create an engagement response for a prospect phon
     ]);
 });
 
-it('can check unmatched inbound communications with no match', function () {
+it('can check unmatched inbound communications with no match', function (): void {
     $unmatchedInboundEmailRecord = UnmatchedInboundCommunication::factory()->email()->create();
     $unmatchedInboundSmsRecord = UnmatchedInboundCommunication::factory()->sms()->create();
 

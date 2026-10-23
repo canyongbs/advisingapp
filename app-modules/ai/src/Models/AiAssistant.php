@@ -111,7 +111,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-            ->acceptsFile(function (File $file) {
+            ->acceptsFile(function (File $file): bool {
                 if ($this->application === AiAssistantApplication::PersonalAssistant && $this->is_default) {
                     throw new DefaultAssistantLockedPropertyException('avatar');
                 }

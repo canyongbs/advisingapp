@@ -39,7 +39,7 @@ use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Support\Facades\Http;
 
-it('refreshes existing parsing results when explicitly requested', function () {
+it('refreshes existing parsing results when explicitly requested', function (): void {
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);
@@ -58,7 +58,7 @@ it('refreshes existing parsing results when explicitly requested', function () {
     expect($link->parsing_results)->toBe('fresh parsing results');
 });
 
-it('does not refresh existing parsing results when not explicitly requested', function () {
+it('does not refresh existing parsing results when not explicitly requested', function (): void {
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);

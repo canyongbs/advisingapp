@@ -49,21 +49,21 @@ $isRequiredSelect = function (mixed $field): bool {
     return $field->isRequired();
 };
 
-it('does not require the fields on the students list filter', function () use ($isRequiredSelect) {
+it('does not require the fields on the students list filter', function () use ($isRequiredSelect): void {
     $fields = collect(TermAttributeFilter::make()->getSchemaComponents());
 
     expect($fields)->toHaveCount(3)
         ->and($fields->filter($isRequiredSelect))->toBeEmpty();
 });
 
-it('requires the fields in group rules', function () use ($isRequiredSelect) {
+it('requires the fields in group rules', function () use ($isRequiredSelect): void {
     $fields = collect(TermAttributeFilter::getFormSchema());
 
     expect($fields)->toHaveCount(3)
         ->and($fields->reject($isRequiredSelect))->toBeEmpty();
 });
 
-it('only offers the terms that have term attributes, latest first', function () {
+it('only offers the terms that have term attributes, latest first', function (): void {
     $olderTerm = Term::factory()->create(['sis_term_id' => '268', 'name' => 'FA-20', 'start_date' => '2020-08-24']);
     $latestTerm = Term::factory()->create(['sis_term_id' => '301', 'name' => 'FA-21', 'start_date' => '2021-08-23']);
     $undatedTerm = Term::factory()->create(['sis_term_id' => '302', 'name' => 'Summer TBD', 'start_date' => null]);
@@ -79,7 +79,7 @@ it('only offers the terms that have term attributes, latest first', function () 
         ->and(array_values($options))->toBe(['FA-21 (Aug 2021)', 'FA-20 (Aug 2020)', 'Summer TBD']);
 });
 
-it('offers the existing values of the selected attribute for the selected term', function () {
+it('offers the existing values of the selected attribute for the selected term', function (): void {
     $term = Term::factory()->create();
     $otherTerm = Term::factory()->create();
 
@@ -95,7 +95,7 @@ it('offers the existing values of the selected attribute for the selected term',
         ->and(TermAttributeFilter::getValueOptions($term->sis_term_id, 'sisid'))->toBe([]);
 });
 
-it('filters by the attribute whether it is given as an enum or a string', function (StudentTermAttributeField | string $attribute) {
+it('filters by the attribute whether it is given as an enum or a string', function (StudentTermAttributeField | string $attribute): void {
     asSuperAdmin();
 
     $term = Term::factory()->create();
@@ -113,7 +113,7 @@ it('filters by the attribute whether it is given as an enum or a string', functi
     'string' => ['campus'],
 ]);
 
-it('matches no students for an attribute outside the allow-list', function () {
+it('matches no students for an attribute outside the allow-list', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -121,7 +121,7 @@ it('matches no students for an attribute outside the allow-list', function () {
     expect(TermAttributeFilter::applyToQuery(Student::query(), '267', 'sisid', $student->sisid)->count())->toBe(0);
 });
 
-it('does not filter until the term, attribute and value are all selected', function () {
+it('does not filter until the term, attribute and value are all selected', function (): void {
     asSuperAdmin();
 
     Student::factory()->count(2)->create();
@@ -129,7 +129,7 @@ it('does not filter until the term, attribute and value are all selected', funct
     expect(TermAttributeFilter::applyToQuery(Student::query(), '267', 'campus', null)->count())->toBe(2);
 });
 
-it('summarises the filter', function () {
+it('summarises the filter', function (): void {
     Term::factory()->create(['sis_term_id' => '301', 'name' => 'FA-21', 'start_date' => '2021-08-23']);
 
     expect(TermAttributeFilter::getSummary('301', StudentTermAttributeField::Campus, 'Main'))->toBe('FA-21 (Aug 2021): Campus is "Main"')

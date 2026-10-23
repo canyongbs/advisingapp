@@ -73,9 +73,9 @@ class EmailSignature extends ProfilePage
                             ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                             ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                             ->json()
-                            ->required(fn (Get $get) => $get('is_signature_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_signature_enabled'))
                             ->fileAttachmentsDisk('s3-public')
-                            ->visible(fn (Get $get) => $get('is_signature_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_signature_enabled')),
                     ]),
             ]);
     }

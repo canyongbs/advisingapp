@@ -42,14 +42,14 @@ use App\Models\User;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Event;
 
-it('marketing email contains an Unsubscribe link in rendered HTML', function () {
+it('marketing email contains an Unsubscribe link in rendered HTML', function (): void {
     Event::fake(MessageSent::class);
 
     $notifiable = Prospect::factory()->create();
 
     $notifiable->notify(new TestMarketingNotification());
 
-    Event::assertDispatched(function (MessageSent $event) {
+    Event::assertDispatched(function (MessageSent $event): bool {
         $htmlBody = $event->message->getHtmlBody();
 
         return str_contains($htmlBody, 'Unsubscribe')
@@ -57,28 +57,28 @@ it('marketing email contains an Unsubscribe link in rendered HTML', function () 
     });
 });
 
-it('transactional email does not contain an Unsubscribe link in rendered HTML', function () {
+it('transactional email does not contain an Unsubscribe link in rendered HTML', function (): void {
     Event::fake(MessageSent::class);
 
     $notifiable = Prospect::factory()->create();
 
     $notifiable->notify(new TestTransactionalNotification());
 
-    Event::assertDispatched(function (MessageSent $event) {
+    Event::assertDispatched(function (MessageSent $event): bool {
         $htmlBody = $event->message->getHtmlBody();
 
         return ! str_contains($htmlBody, '/unsubscribe');
     });
 });
 
-it('system notification email does not contain an Unsubscribe link in rendered HTML', function () {
+it('system notification email does not contain an Unsubscribe link in rendered HTML', function (): void {
     Event::fake(MessageSent::class);
 
     $notifiable = User::factory()->create();
 
     $notifiable->notify(new TestSystemNotification());
 
-    Event::assertDispatched(function (MessageSent $event) {
+    Event::assertDispatched(function (MessageSent $event): bool {
         $htmlBody = $event->message->getHtmlBody();
 
         return ! str_contains($htmlBody, '/unsubscribe');

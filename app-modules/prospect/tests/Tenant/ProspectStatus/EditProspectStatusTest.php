@@ -47,7 +47,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
-test('A successful action on the EditProspectStatus page', function () {
+test('A successful action on the EditProspectStatus page', function (): void {
     $prospectStatus = ProspectStatus::factory()->create();
 
     asSuperAdmin()
@@ -78,7 +78,7 @@ test('A successful action on the EditProspectStatus page', function () {
     assertEquals($editRequest['color'], $prospectStatus->fresh()->color->value);
 });
 
-test('EditProspectStatus requires valid data', function (EditProspectStatusRequestFactory $data, array $errors) {
+test('EditProspectStatus requires valid data', function (EditProspectStatusRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $prospectStatus = ProspectStatus::factory()->create();
@@ -107,7 +107,7 @@ test('EditProspectStatus requires valid data', function (EditProspectStatusReque
 
 // Permission Tests
 
-test('EditProspectStatus is gated with proper access control', function () {
+test('EditProspectStatus is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectStatus = ProspectStatus::factory()->create();
@@ -148,7 +148,7 @@ test('EditProspectStatus is gated with proper access control', function () {
     assertEquals($request['color'], $prospectStatus->fresh()->color->value);
 });
 
-test('EditProspectStatus is gated with proper system protection access control', function () {
+test('EditProspectStatus is gated with proper system protection access control', function (): void {
     $prospectStatus = ProspectStatus::factory()->create(['is_system_protected' => true]);
 
     asSuperAdmin()

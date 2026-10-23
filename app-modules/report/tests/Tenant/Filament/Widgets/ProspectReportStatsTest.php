@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct total prospect stats of prospects, concerns, and tasks within the given date range', function () {
+it('returns correct total prospect stats of prospects, concerns, and tasks within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -85,7 +85,7 @@ it('returns correct total prospect stats of prospects, concerns, and tasks withi
         ->and($stats[2]->getValue())->toEqual($taskCount);
 });
 
-it('returns correct total prospect stats of prospects, concerns, and tasks based on group filter', function () {
+it('returns correct total prospect stats of prospects, concerns, and tasks based on group filter', function (): void {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([

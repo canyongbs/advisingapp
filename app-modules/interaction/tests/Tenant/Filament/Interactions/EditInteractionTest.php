@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('EditInteraction is gated with proper access control', function () {
+test('EditInteraction is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('student.*.view');
@@ -70,8 +70,8 @@ test('EditInteraction is gated with proper access control', function () {
         ->assertSuccessful();
 });
 
-describe('archived students', function () {
-    it('does not offer archived students in the related to select', function () {
+describe('archived students', function (): void {
+    it('does not offer archived students in the related to select', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -94,7 +94,7 @@ describe('archived students', function () {
             );
     });
 
-    it('still shows the archived student the interaction is already attached to', function () {
+    it('still shows the archived student the interaction is already attached to', function (): void {
         asSuperAdmin();
 
         $archived = Student::factory()->state(['full_name' => 'Already Selected'])->create();
@@ -113,7 +113,7 @@ describe('archived students', function () {
             );
     });
 
-    it('still saves while attached to the archived student', function () {
+    it('still saves while attached to the archived student', function (): void {
         asSuperAdmin();
 
         $archived = Student::factory()->create();

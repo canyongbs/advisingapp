@@ -42,12 +42,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\deleteJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
     $prospectEmailAddress = ProspectEmailAddress::factory()
         ->for($prospect)
@@ -77,7 +77,7 @@ it('is gated with proper access control', function () {
         ->assertNoContent();
 });
 
-it('deletes a prospect email address', function () {
+it('deletes a prospect email address', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);
@@ -95,7 +95,7 @@ it('deletes a prospect email address', function () {
     ]);
 });
 
-it('swaps out the current primary email address for a prospect with another when the primary email address is deleted', function () {
+it('swaps out the current primary email address for a prospect with another when the primary email address is deleted', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
     Sanctum::actingAs($user, ['api']);

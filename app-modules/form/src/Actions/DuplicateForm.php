@@ -62,7 +62,7 @@ class DuplicateForm
     {
         $stepMap = [];
 
-        $this->original->steps()->each(function (FormStep $step) use (&$stepMap) {
+        $this->original->steps()->each(function (FormStep $step) use (&$stepMap): void {
             $newStep = $step->replicate();
             $newStep->form_id = $this->replica->id;
             $newStep->save();
@@ -82,7 +82,7 @@ class DuplicateForm
     {
         $fieldMap = [];
 
-        $this->original->fields()->each(function (FormField $field) use (&$fieldMap, $stepMap) {
+        $this->original->fields()->each(function (FormField $field) use (&$fieldMap, $stepMap): void {
             $newField = $field->replicate();
             $newField->form_id = $this->replica->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -99,7 +99,7 @@ class DuplicateForm
      */
     private function updateStepContent(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (FormStep $step) use ($fieldMap) {
+        $this->replica->steps()->each(function (FormStep $step) use ($fieldMap): void {
             $content = $step->content;
 
             $step->update([

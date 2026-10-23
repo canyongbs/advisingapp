@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::table('assistant_chat_messages')->truncate();
             DB::table('assistant_chats')->truncate();
         });

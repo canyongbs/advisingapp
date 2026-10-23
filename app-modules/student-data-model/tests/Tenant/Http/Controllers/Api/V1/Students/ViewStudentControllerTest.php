@@ -40,12 +40,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
 
     $user = SystemUser::factory()->create();
@@ -72,7 +72,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a student resource', function () {
+it('returns a student resource', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view']);
     Sanctum::actingAs($user, ['api']);
@@ -91,7 +91,7 @@ it('returns a student resource', function () {
 
 // The panel returns not found for an archived student's pages; the API binds the student by
 // route instead of through the resource, so it has to refuse them the same way.
-it('returns not found for an archived student', function () {
+it('returns not found for an archived student', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view']);
     Sanctum::actingAs($user, ['api']);
@@ -103,7 +103,7 @@ it('returns not found for an archived student', function () {
         ->assertNotFound();
 });
 
-it('can include related student relationships', function (string $relationship, string $responseKey) {
+it('can include related student relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view']);
     Sanctum::actingAs($user, ['api']);

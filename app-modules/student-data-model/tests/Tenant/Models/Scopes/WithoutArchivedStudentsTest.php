@@ -40,7 +40,7 @@ use Carbon\Carbon;
 
 use function Tests\asSuperAdmin;
 
-it('excludes archived students', function () {
+it('excludes archived students', function (): void {
     asSuperAdmin();
 
     $active = Student::factory()->create();
@@ -53,8 +53,8 @@ it('excludes archived students', function () {
         ->and($sisids)->not->toContain($archived->getKey());
 });
 
-describe('as of a point in time', function () {
-    it('includes a student archived after the point in time', function () {
+describe('as of a point in time', function (): void {
+    it('includes a student archived after the point in time', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -67,7 +67,7 @@ describe('as of a point in time', function () {
         expect($sisids)->toContain($student->getKey());
     });
 
-    it('excludes a student archived before the point in time', function () {
+    it('excludes a student archived before the point in time', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();
@@ -82,7 +82,7 @@ describe('as of a point in time', function () {
 
     // The client settled this boundary: a month bucket reports the state at the END of the
     // month, so a student archived within it is already gone by the time it is reported.
-    it('excludes a student archived exactly at the point in time', function () {
+    it('excludes a student archived exactly at the point in time', function (): void {
         asSuperAdmin();
 
         $archivedAt = Carbon::parse('2026-08-31 23:59:59');
@@ -97,7 +97,7 @@ describe('as of a point in time', function () {
         expect($sisids)->not->toContain($student->getKey());
     });
 
-    it('includes a student who was never archived', function () {
+    it('includes a student who was never archived', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

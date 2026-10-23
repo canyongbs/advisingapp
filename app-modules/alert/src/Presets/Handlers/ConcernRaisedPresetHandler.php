@@ -71,7 +71,7 @@ class ConcernRaisedPresetHandler implements AlertPresetHandler
         return DB::table('alerts')
             ->select('students.sisid')
             ->join('alert_statuses', 'alerts.status_id', '=', 'alert_statuses.id')
-            ->join('students', function (JoinClause $join) {
+            ->join('students', function (JoinClause $join): void {
                 $join->on('alerts.concern_id', '=', 'students.sisid')
                     ->where('alerts.concern_type', '=', (new Student())->getMorphClass());
             })

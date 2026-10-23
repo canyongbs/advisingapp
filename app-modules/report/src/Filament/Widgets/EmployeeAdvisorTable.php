@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -69,8 +70,8 @@ class EmployeeAdvisorTable extends BaseWidget
                 AiAssistant::query()
                     ->where('is_default', false)
                     ->withCount([
-                        'uses' => function (Builder $query) use ($startDate, $endDate) {
-                            if ($startDate && $endDate) {
+                        'uses' => function (Builder $query) use ($startDate, $endDate): void {
+                            if ($startDate instanceof Carbon && $endDate instanceof Carbon) {
                                 $query->whereBetween('created_at', [$startDate, $endDate]);
                             }
                         },

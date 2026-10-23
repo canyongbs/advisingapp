@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->boolean('should_generate_prospects')->default(false);
         });
     }
 
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
+        Schema::table('applications', function (Blueprint $table): void {
             $table->dropColumn('should_generate_prospects');
         });
     }

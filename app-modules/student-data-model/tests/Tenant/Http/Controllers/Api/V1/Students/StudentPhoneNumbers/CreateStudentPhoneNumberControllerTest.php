@@ -44,12 +44,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
     $createStudentPhoneNumberRequestData = CreateStudentPhoneNumberRequestFactory::new()->create();
 
@@ -83,7 +83,7 @@ it('is gated with proper access control', function () {
         ->assertCreated();
 });
 
-it('creates a student phone number', function () {
+it('creates a student phone number', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -128,7 +128,7 @@ it('creates a student phone number', function () {
     ]);
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

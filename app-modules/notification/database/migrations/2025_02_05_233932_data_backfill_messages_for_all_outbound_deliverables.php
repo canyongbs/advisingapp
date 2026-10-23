@@ -45,8 +45,8 @@ return new class () extends Migration {
     {
         DB::table('outbound_deliverables')
             ->where('channel', 'email')
-            ->chunkById(100, function (Collection $outboundDeliverables) {
-                $outboundDeliverables->each(function (object $outboundDeliverable) {
+            ->chunkById(100, function (Collection $outboundDeliverables): void {
+                $outboundDeliverables->each(function (object $outboundDeliverable): void {
                     DB::table('email_messages')
                         ->insert([
                             'id' => $outboundDeliverable->id,
@@ -156,8 +156,8 @@ return new class () extends Migration {
 
         DB::table('outbound_deliverables')
             ->where('channel', 'sms')
-            ->chunkById(100, function (Collection $outboundDeliverables) {
-                $outboundDeliverables->each(function (object $outboundDeliverable) {
+            ->chunkById(100, function (Collection $outboundDeliverables): void {
+                $outboundDeliverables->each(function (object $outboundDeliverable): void {
                     DB::table('sms_messages')
                         ->insert([
                             'id' => $outboundDeliverable->id,
@@ -267,8 +267,8 @@ return new class () extends Migration {
 
         DB::table('outbound_deliverables')
             ->where('channel', 'database')
-            ->chunkById(100, function (Collection $outboundDeliverables) {
-                $outboundDeliverables->each(function (object $outboundDeliverable) {
+            ->chunkById(100, function (Collection $outboundDeliverables): void {
+                $outboundDeliverables->each(function (object $outboundDeliverable): void {
                     DB::table('database_messages')
                         ->insert([
                             'id' => $outboundDeliverable->id,

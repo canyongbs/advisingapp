@@ -89,7 +89,7 @@ $enrolledTermConstraintOptions = function (string $name): array {
     return $constraint->getOptions();
 };
 
-it('does not offer enrolled terms that only archived students have', function () use ($enrolledTermConstraintOptions) {
+it('does not offer enrolled terms that only archived students have', function () use ($enrolledTermConstraintOptions): void {
     asSuperAdmin();
 
     $active = Student::factory()->create();
@@ -115,7 +115,7 @@ it('does not offer enrolled terms that only archived students have', function ()
         ->not->toContain('Archived Only Term');
 });
 
-it('filters by the selected name attribute', function (string $attribute, string $column) use ($studentsMatchingRule) {
+it('filters by the selected name attribute', function (string $attribute, string $column) use ($studentsMatchingRule): void {
     $matching = Student::factory()->create([$column => 'Abernathy']);
     $other = Student::factory()->create([$column => 'Zimmerman']);
 
@@ -130,7 +130,7 @@ it('filters by the selected name attribute', function (string $attribute, string
     'preferred name' => ['preferredName', 'preferred'],
 ]);
 
-it('filters by the selected primary address attribute', function (string $attribute) use ($studentsMatchingRule) {
+it('filters by the selected primary address attribute', function (string $attribute) use ($studentsMatchingRule): void {
     $matching = Student::factory()->create();
     $matchingAddress = $matching->primaryAddress;
     assert($matchingAddress instanceof StudentAddress);
@@ -148,7 +148,7 @@ it('filters by the selected primary address attribute', function (string $attrib
         ->toBe([$matching->getKey()]);
 })->with(['city', 'state', 'postal', 'country']);
 
-it('filters by the primary phone country code', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber) {
+it('filters by the primary phone country code', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber): void {
     $unitedStates = Student::factory()->create();
     $setPrimaryPhoneNumber($unitedStates, '+12025550123');
 
@@ -161,7 +161,7 @@ it('filters by the primary phone country code', function () use ($studentsMatchi
         ->toBe([$unitedStates->getKey()]);
 });
 
-it('filters by the primary phone area code of North American numbers only', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber) {
+it('filters by the primary phone area code of North American numbers only', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber): void {
     $matching = Student::factory()->create();
     $setPrimaryPhoneNumber($matching, '+12025550123');
 
@@ -177,7 +177,7 @@ it('filters by the primary phone area code of North American numbers only', func
         ->toBe([$otherAreaCode->getKey()]);
 });
 
-it('does not filter by phone numbers other than the primary one', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber) {
+it('does not filter by phone numbers other than the primary one', function () use ($studentsMatchingRule, $setPrimaryPhoneNumber): void {
     $student = Student::factory()->create();
     $setPrimaryPhoneNumber($student, '+12025550123');
 
@@ -190,14 +190,14 @@ it('does not filter by phone numbers other than the primary one', function () us
     expect($studentsMatchingRule('primaryPhone', 'countryCode', 'equals', '44'))->toBeEmpty();
 });
 
-it('does not match any phone number when the value has no digits', function (string $operator) use ($studentsMatchingRule, $setPrimaryPhoneNumber) {
+it('does not match any phone number when the value has no digits', function (string $operator) use ($studentsMatchingRule, $setPrimaryPhoneNumber): void {
     $student = Student::factory()->create();
     $setPrimaryPhoneNumber($student, '+12025550123');
 
     expect($studentsMatchingRule('primaryPhone', 'areaCode', $operator, 'abc'))->toBeEmpty();
 })->with(['contains', 'startsWith', 'endsWith', 'equals', 'contains.inverse']);
 
-it('summarizes a rule by its attribute', function () {
+it('summarizes a rule by its attribute', function (): void {
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
         ->flatten()
         ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === 'name');
@@ -209,7 +209,7 @@ it('summarizes a rule by its attribute', function () {
     expect($operator->getSummary())->toBe('Last Name starts with A');
 });
 
-it('offers the legacy filters until the consolidation migration has run', function () {
+it('offers the legacy filters until the consolidation migration has run', function (): void {
     $constraintNames = fn (): array => collect(StudentsTable::getQueryBuilderConstraints())
         ->flatten()
         ->map(fn (Constraint $constraint): string => $constraint->getName())
