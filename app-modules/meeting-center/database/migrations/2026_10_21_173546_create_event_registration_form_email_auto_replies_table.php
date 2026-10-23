@@ -47,6 +47,7 @@ return new class () extends Migration {
             $table->jsonb('subject')->nullable();
             $table->jsonb('body')->nullable();
             $table->boolean('is_enabled')->default(false);
+            $table->string('delivery_preference')->default('after_attendance_confirmation');
 
             $table->foreignUuid('form_id')->constrained('event_registration_forms')->cascadeOnDelete();
 
