@@ -34,21 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Enums;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\Terms\Schemas;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Query\Builder;
 
-enum EnrollmentSemesterAutoImportDefaultOrder: string implements HasLabel
+class TermForm
 {
-    case First = 'first';
-
-    case Last = 'last';
-
-    public function getLabel(): string
+    public static function configure(Schema $schema): Schema
     {
-        return match ($this) {
-            self::First => 'First (Most Recent Semester)',
-            self::Last => 'Last (Oldest Semester)',
-        };
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->datalist(fn (): array => Enrollment::query()
+                        ->whereNotNull('semester_name')
+                        ->whereNotExists(fn (Builder $query) => $query
+                            ->selectRaw('1')
+                            ->from('terms')
+                            ->whereRaw('terms.name = enrollments.semester_name::citext')
+                            ->whereNull('terms.deleted_at'))
+                        ->distinct()
+                        ->orderBy('semester_name')
+                        ->limit(250)
+                        ->pluck('semester_name')
+                        ->all()),
+            ]);
     }
 }

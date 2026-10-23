@@ -320,3 +320,29 @@ test('2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms does not copy the
         }
     );
 });
+
+test('2026_10_23_212020_remove_enrollment_semester_auto_import_settings removes the auto import settings', function () {
+    isolatedMigration(
+        '2026_10_23_212020_remove_enrollment_semester_auto_import_settings',
+        function () {
+            $settings = [
+                ['group' => 'student_information_system', 'name' => 'is_enrollment_semester_auto_import_enabled'],
+                ['group' => 'student_information_system', 'name' => 'enrollment_semester_auto_import_default_order'],
+            ];
+
+            foreach ($settings as $setting) {
+                assertDatabaseHas('settings', $setting);
+            }
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_212020_remove_enrollment_semester_auto_import_settings.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            foreach ($settings as $setting) {
+                assertDatabaseMissing('settings', $setting);
+            }
+        }
+    );
+});

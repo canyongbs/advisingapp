@@ -138,6 +138,34 @@ test('The SIS data pipeline table displays term sync progress and includes it in
         ->assertTableColumnStateSet('total', new SisPipelineProgress(processed: 11, total: 11, successful: 8), record: 0);
 });
 
+test('The SIS data pipeline table displays term sync progress when the SIS returned no terms', function () {
+    asSuperAdmin();
+
+    Http::fake([
+        'integrations/*/sis-sync-pipeline-data' => Http::response([
+            'data' => [
+                [
+                    'started_at' => now()->subHour()->format('Y-m-d H:i:s'),
+                    'completed_at' => now()->format('Y-m-d H:i:s'),
+                    'type' => 'all',
+                    'trigger' => 'schedule',
+                    'total_student' => 10,
+                    'processed_students' => 10,
+                    'successful_students' => 8,
+                    'total_term' => 0,
+                    'processed_terms' => 0,
+                    'successful_terms' => 0,
+                ],
+            ],
+        ], 200),
+    ]);
+
+    Livewire::test(SisDataPipelineTable::class)
+        ->assertSuccessful()
+        ->assertTableColumnStateSet('terms', new SisPipelineProgress(processed: 0, total: 0, successful: 0), record: 0)
+        ->assertTableColumnStateSet('total', new SisPipelineProgress(processed: 10, total: 10, successful: 8), record: 0);
+});
+
 test('The SIS data pipeline table leaves terms empty and the total unchanged for runs without term sync progress', function (array $termFields) {
     asSuperAdmin();
 

@@ -34,15 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Listeners;
+use AdvisingApp\StudentDataModel\Models\Term;
 
-use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use AdvisingApp\StudentDataModel\Jobs\AutoImportEnrollmentSemesters;
+it('orders a new manually maintained term after the existing terms', function () {
+    Term::factory()->withoutSisTermId()->create(['order' => 5]);
 
-class AutoImportEnrollmentSemestersAfterSisSync
-{
-    public function handle(SisSyncCompleted $event): void
-    {
-        dispatch(new AutoImportEnrollmentSemesters());
-    }
-}
+    $term = Term::factory()->withoutSisTermId()->create();
+
+    expect($term->refresh()->order)->toBe(6);
+});
+
+it('keeps the given order of a new manually maintained term', function () {
+    $term = Term::factory()->withoutSisTermId()->create(['order' => 2]);
+
+    expect($term->refresh()->order)->toBe(2);
+});
+
+it('does not order a new term synced from the SIS', function () {
+    $term = Term::factory()->create();
+
+    expect($term->refresh()->order)->toBeNull();
+});

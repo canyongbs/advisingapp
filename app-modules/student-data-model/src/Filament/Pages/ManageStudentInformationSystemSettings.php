@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
@@ -90,19 +89,6 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->visible(fn (Get $get) => $get('is_enabled')),
                     ])
                     ->disabled(),
-                Section::make('Semesters')
-                    ->schema([
-                        Toggle::make('is_enrollment_semester_auto_import_enabled')
-                            ->label('Auto Import')
-                            ->default(false)
-                            ->live(),
-                        Select::make('enrollment_semester_auto_import_default_order')
-                            ->label('Default Sorting')
-                            ->options(EnrollmentSemesterAutoImportDefaultOrder::class)
-                            ->default(EnrollmentSemesterAutoImportDefaultOrder::First)
-                            ->visible(fn (Get $get): bool => $get('is_enrollment_semester_auto_import_enabled')),
-                    ])
-                    ->disabled(! auth()->user()->can('settings.*.update')),
                 Section::make('Student Record Management')
                     ->description('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
                     ->schema([

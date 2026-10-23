@@ -38,7 +38,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Term;
 
 it('orders terms by start date, then by `order`, then by name', function () {
-    $termWithoutOrder = Term::factory()->withoutSisTermId()->create(['name' => 'Winter 2012']);
+    $lowestOrderedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Winter 2012', 'order' => 0]);
     $olderTerm = Term::factory()->create(['start_date' => '2020-09-01']);
     $secondNamedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Summer 2012', 'order' => 1]);
     $higherOrderedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2012', 'order' => 2]);
@@ -51,6 +51,6 @@ it('orders terms by start date, then by `order`, then by name', function () {
         $higherOrderedTerm->getKey(),
         $firstNamedTerm->getKey(),
         $secondNamedTerm->getKey(),
-        $termWithoutOrder->getKey(),
+        $lowestOrderedTerm->getKey(),
     ]);
 });

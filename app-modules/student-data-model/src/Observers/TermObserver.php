@@ -34,38 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Tables;
+namespace AdvisingApp\StudentDataModel\Observers;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\StudentDataModel\Models\Term;
+use Illuminate\Support\Facades\DB;
 
-class UnsyncedEnrollmentsTable
+class TermObserver
 {
-    public static function configure(Table $table): Table
+    public function creating(Term $term): void
     {
-        return $table
-            ->query(self::getUnsyncedEnrollments())
-            ->columns([
-                TextColumn::make('semester_name'),
-            ]);
-    }
+        // Terms synced from the SIS are ordered by start date, so only manually maintained terms need an `order`.
+        if (filled($term->sis_term_id) || filled($term->order)) {
+            return;
+        }
 
-    /**
-     * @return Builder<Enrollment>
-     */
-    public static function getUnsyncedEnrollments(): Builder
-    {
-        return Enrollment::query()
-            ->whereNotNull('semester_name')
-            ->whereNotIn(
-                'semester_name',
-                EnrollmentSemester::query()->select('name')
-            )
-            ->distinct('semester_name')
-            ->orderBy('semester_name')
-            ->orderBy('id');
+        $term->order = DB::raw("(SELECT COALESCE(MAX(\"{$term->getTable()}\".\"order\"), 0) + 1 FROM \"{$term->getTable()}\")"); /** @phpstan-ignore assign.propertyType */
     }
 }

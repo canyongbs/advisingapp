@@ -38,6 +38,8 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Database\Factories\TermFactory;
+use AdvisingApp\StudentDataModel\Observers\TermObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +51,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 /**
  * @mixin IdeHelperTerm
  */
+#[ObservedBy(TermObserver::class)]
 class Term extends Model implements Auditable
 {
     use AuditableTrait;
@@ -86,6 +89,18 @@ class Term extends Model implements Auditable
         'is_active' => 'boolean',
         'order' => 'integer',
     ];
+
+    /**
+     * Terms are maintained manually, ordered by `order`, until the SIS syncs any.
+     */
+    public static function hasSisTerms(): bool
+    {
+        return static::query()
+            ->whereNotNull('sis_term_id')
+            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+            ->whereNull('deleted_at')
+            ->exists();
+    }
 
     /**
      * Term names are not unique in the SIS, so the start month is included to tell them apart (e.g. `FA-20 (Sep 2020)`).
