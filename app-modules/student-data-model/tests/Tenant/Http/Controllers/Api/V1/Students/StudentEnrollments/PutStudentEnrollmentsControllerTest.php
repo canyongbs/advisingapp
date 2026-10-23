@@ -37,7 +37,6 @@
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEnrollments\RequestFactories\StudentEnrollmentRequestFactory;
-use App\Features\TermAttributesFeature;
 use App\Models\SystemUser;
 use Carbon\Carbon;
 use Laravel\Sanctum\Sanctum;
@@ -358,23 +357,3 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
             'The enrollments.0.end_date does not match the format Y-m-d H:i:s.',
         ],
     ]);
-
-it('ignores the `sis_term_id` while `TermAttributesFeature` is inactive', function () {
-    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    $studentConfigurationSettings->is_enabled = true;
-    $studentConfigurationSettings->save();
-
-    $student = Student::factory()->create();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create', 'enrollment.*.update', 'enrollment.*.delete']);
-    Sanctum::actingAs($user, ['api']);
-
-    TermAttributesFeature::deactivate();
-
-    putJson(route('api.v1.students.enrollments.put', ['student' => $student], false), [
-        'enrollments' => [StudentEnrollmentRequestFactory::new()->create(['sis_term_id' => '267'])],
-    ])->assertOk();
-
-    expect($student->enrollments()->sole()->sis_term_id)->toBeNull();
-});

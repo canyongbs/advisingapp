@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\TermAttributesFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -108,8 +107,7 @@ class EnrollmentsRelationManager extends RelationManager
                         ->placeholder('N/A'),
                     TextEntry::make('sis_term_id')
                         ->label('SIS Term ID')
-                        ->placeholder('N/A')
-                        ->visible(fn (): bool => TermAttributesFeature::active()),
+                        ->placeholder('N/A'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
                         ->dateTime()
@@ -312,8 +310,7 @@ class EnrollmentsRelationManager extends RelationManager
                 TextInput::make('sis_term_id')
                     ->label('SIS term ID')
                     ->string()
-                    ->maxLength(255)
-                    ->visible(fn (): bool => TermAttributesFeature::active()),
+                    ->maxLength(255),
                 DateTimePicker::make('start_date')
                     ->label('Start date')
                     ->native(false)

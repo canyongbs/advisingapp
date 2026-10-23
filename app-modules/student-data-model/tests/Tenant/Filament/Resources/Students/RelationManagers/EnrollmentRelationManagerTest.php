@@ -39,7 +39,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\En
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\TermAttributesFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
@@ -97,23 +96,6 @@ describe('sis term id', function () {
         expect($student->enrollments()->sole()->sis_term_id)->toBe('267');
     });
 
-    it('does not save the `sis_term_id` while `TermAttributesFeature` is inactive', function () {
-        $student = Student::factory()->create();
-
-        TermAttributesFeature::deactivate();
-
-        Livewire::test(EnrollmentsRelationManager::class, [
-            'ownerRecord' => $student,
-            'pageClass' => ViewStudent::class,
-        ])
-            ->callAction(TestAction::make(CreateAction::class)->table(), [
-                'sis_term_id' => '267',
-            ])
-            ->assertHasNoFormErrors();
-
-        expect($student->enrollments()->sole()->sis_term_id)->toBeNull();
-    });
-
     it('shows the `sis_term_id` when viewing an enrollment', function () {
         $student = Student::factory()->has(Enrollment::factory(['sis_term_id' => '267']), 'enrollments')->create();
 
@@ -123,18 +105,5 @@ describe('sis term id', function () {
         ])
             ->mountAction(TestAction::make(ViewAction::class)->table($student->enrollments->sole()))
             ->assertSchemaComponentVisible('sis_term_id');
-    });
-
-    it('hides the `sis_term_id` when viewing an enrollment while `TermAttributesFeature` is inactive', function () {
-        $student = Student::factory()->has(Enrollment::factory(), 'enrollments')->create();
-
-        TermAttributesFeature::deactivate();
-
-        Livewire::test(EnrollmentsRelationManager::class, [
-            'ownerRecord' => $student,
-            'pageClass' => ViewStudent::class,
-        ])
-            ->mountAction(TestAction::make(ViewAction::class)->table($student->enrollments->sole()))
-            ->assertSchemaComponentHidden('sis_term_id');
     });
 });

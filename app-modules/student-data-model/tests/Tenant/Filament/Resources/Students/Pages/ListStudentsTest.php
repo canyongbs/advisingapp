@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\TermAttributesFeature;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
@@ -419,11 +418,4 @@ describe('term attribute filter', function () {
         'Ellucian Ethos' => [true, SisSystem::EllucianEthos],
         'SIS disabled' => [false, SisSystem::ThesisElements],
     ]);
-
-    it('is not available while `TermAttributesFeature` is inactive', function () {
-        TermAttributesFeature::deactivate();
-
-        Livewire::test(ListStudents::class)
-            ->assertTableFilterHidden('termAttribute');
-    });
 });

@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\TermAttributesFeature;
 use App\Models\User;
 use Filament\Tables\Filters\SelectFilter;
 use Livewire\Livewire;
@@ -153,12 +152,6 @@ describe('visibility', function () {
         'Ellucian Ethos' => [true, SisSystem::EllucianEthos],
         'SIS disabled' => [false, SisSystem::ThesisElements],
     ]);
-
-    it('is hidden while `TermAttributesFeature` is inactive', function () {
-        TermAttributesFeature::deactivate();
-
-        expect(TermAttributesRelationManager::canViewForRecord(Student::factory()->create(), ViewStudent::class))->toBeFalse();
-    });
 });
 
 describe('authorization', function () {

@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Settings;
 
 use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use App\Features\TermAttributesFeature;
 use Spatie\LaravelSettings\Settings;
 
 class StudentInformationSystemSettings extends Settings
@@ -61,8 +60,7 @@ class StudentInformationSystemSettings extends Settings
      */
     public function hasTermAttributes(): bool
     {
-        return TermAttributesFeature::active()
-            && $this->is_enabled
+        return $this->is_enabled
             && ($this->sis_system?->hasTermAttributes() ?? false);
     }
 }

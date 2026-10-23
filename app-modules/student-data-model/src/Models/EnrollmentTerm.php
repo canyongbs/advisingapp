@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use App\Support\AbstractFeatureFlag;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class TermAttributesFeature extends AbstractFeatureFlag
+/**
+ * A read-only row of the `enrollment_terms` database view, which matches each enrollment to at most one term.
+ *
+ * @mixin IdeHelperEnrollmentTerm
+ */
+class EnrollmentTerm extends Model
 {
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
+    use UsesTenantConnection;
+
+    protected $table = 'enrollment_terms';
+
+    protected $primaryKey = 'enrollment_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
+    protected $fillable = [];
 }
