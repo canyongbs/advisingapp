@@ -112,10 +112,6 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
-                UserSelect::make('created_by_id')
-                    ->label('Created By')
-                    ->relationship('createdBy', 'name')
-                    ->visible(auth()->user()->isSuperAdmin()),
                 Section::make('Institutional Data')
                     ->columns(2)
                     ->schema([

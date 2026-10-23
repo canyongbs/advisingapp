@@ -109,13 +109,19 @@ it('can render', function () use ($licenses, $permissions): void {
         ->assertSuccessful();
 });
 
-it('can create a record', function () use ($licenses, $permissions): void {
+it('can create a record with the authenticated creator', function (bool $isSuperAdmin) use ($licenses, $permissions): void {
     Storage::fake('s3');
 
-    actingAs(user(
+    $creator = user(
         licenses: $licenses,
         permissions: $permissions
-    ));
+    );
+
+    if ($isSuperAdmin) {
+        $creator->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+    }
+
+    actingAs($creator);
 
     $settings = app(LicenseSettings::class);
 
@@ -128,12 +134,15 @@ it('can create a record', function () use ($licenses, $permissions): void {
     $request = collect(CreateAiAssistantRequestFactory::new()->create());
 
     Livewire::test(CreateAiAssistant::class)
+        ->assertFormFieldDoesNotExist('created_by_id')
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors()
         ->assertHasNoErrors();
 
     assertDatabaseCount(AiAssistant::class, 1);
+
+    expect(AiAssistant::query()->sole()->created_by_id)->toBe($creator->getKey());
 
     assertDatabaseHas(
         AiAssistant::class,
@@ -150,7 +159,10 @@ it('can create a record', function () use ($licenses, $permissions): void {
             'collection_name' => 'avatar',
         ]
     );
-});
+})->with([
+    'regular user' => false,
+    'super admin' => true,
+]);
 
 it('validates the inputs', function (CreateAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions): void {
     Storage::fake('s3');

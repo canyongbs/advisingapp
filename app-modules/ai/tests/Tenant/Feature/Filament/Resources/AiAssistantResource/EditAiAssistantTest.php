@@ -123,13 +123,19 @@ it('can render', function () use ($licenses, $permissions): void {
         ->assertSuccessful();
 });
 
-it('can edit a record', function () use ($licenses, $permissions): void {
+it('can edit a record without changing its creator', function (bool $isSuperAdmin) use ($licenses, $permissions): void {
     Storage::fake('s3');
 
-    actingAs(user(
+    $editor = user(
         licenses: $licenses,
         permissions: $permissions
-    ));
+    );
+
+    if ($isSuperAdmin) {
+        $editor->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+    }
+
+    actingAs($editor);
 
     $settings = app(LicenseSettings::class);
 
@@ -137,17 +143,24 @@ it('can edit a record', function () use ($licenses, $permissions): void {
 
     $settings->save();
 
-    $aiAssistant = AiAssistant::factory()->create();
+    $creator = User::factory()->create();
+
+    $aiAssistant = AiAssistant::factory()->for($creator, 'createdBy')->create();
+
+    expect($aiAssistant->created_by_id)->toBe($creator->getKey());
 
     $request = collect(EditAiAssistantRequestFactory::new()->create());
 
     Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
+        ->assertFormFieldDoesNotExist('created_by_id')
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors()
         ->assertHasNoErrors();
+
+    expect($aiAssistant->refresh()->created_by_id)->toBe($creator->getKey());
 
     assertDatabaseHas(
         AiAssistant::class,
@@ -164,7 +177,10 @@ it('can edit a record', function () use ($licenses, $permissions): void {
             'collection_name' => 'avatar',
         ]
     );
-});
+})->with([
+    'regular user' => false,
+    'super admin' => true,
+]);
 
 it('validates the inputs', function (EditAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions): void {
     Storage::fake('s3');
