@@ -55,6 +55,7 @@ class GenerateEventRegistrationFormKitSchema extends GenerateFormKitSchema
             'children' => [
                 [
                     '$formkit' => 'radio',
+                    'if' => '$isAttendanceQuestionRequired !== false',
                     'label' => 'Will you be attending?',
                     'id' => 'attending',
                     'name' => 'attending',
@@ -69,6 +70,13 @@ class GenerateEventRegistrationFormKitSchema extends GenerateFormKitSchema
                         ],
                     ],
                     'validation' => 'required',
+                ],
+                [
+                    '$formkit' => 'hidden',
+                    'if' => '$isAttendanceQuestionRequired === false',
+                    'id' => 'attending',
+                    'name' => 'attending',
+                    'value' => 'yes',
                 ],
                 [
                     '$el' => 'div',

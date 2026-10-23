@@ -43,6 +43,7 @@ use AdvisingApp\MeetingCenter\Actions\GenerateEventRegistrationFormKitSchema;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
@@ -204,6 +205,9 @@ class EventRegistrationWidgetController extends Controller
             'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
         ]);
 
+        $form = $authentication->submissible;
+        assert($form instanceof EventRegistrationForm);
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.event-registration.api.submit',
@@ -212,6 +216,7 @@ class EventRegistrationWidgetController extends Controller
                     'event' => $authentication->submissible->event,
                 ],
             ),
+            'is_attendance_question_required' => $authentication->author->hasPendingInvitationTo($form),
         ]);
     }
 
@@ -239,11 +244,15 @@ class EventRegistrationWidgetController extends Controller
                 abort(Response::HTTP_UNAUTHORIZED);
             }
 
+            $isAttendanceQuestionRequired = $authentication->author->hasPendingInvitationTo($form);
+
+            $attending = $isAttendanceQuestionRequired ? $request->get('attending') : 'yes';
+
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'attending' => ['required', 'in:yes,no'],
-                    ...$request->get('attending') === 'yes' ? $generateValidation($form) : [],
+                    ...$isAttendanceQuestionRequired ? ['attending' => ['required', 'in:yes,no']] : [],
+                    ...$attending === 'yes' ? $generateValidation($form) : [],
                 ]
             );
 
@@ -270,15 +279,15 @@ class EventRegistrationWidgetController extends Controller
 
             $submission->submitted_at = now();
 
-            $submission->attendee_status = $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending;
+            $submission->attendee_status = $attending === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending;
 
             $submission->save();
 
-            $authentication->author->update(['status' => $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
+            $authentication->author->update(['status' => $attending === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
 
             $data = $validator->validated();
 
-            if ($data['attending'] === 'yes') {
+            if ($attending === 'yes') {
                 unset($data['recaptcha-token'], $data['attending']);
 
                 if ($form->is_wizard) {
