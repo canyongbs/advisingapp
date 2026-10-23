@@ -247,6 +247,43 @@ describe('submission links', function (): void {
 });
 
 describe('authorization', function () use ($testSubmissions, $manageFormSubmissionsTestUser): void {
+    it('denies a list-only account access to submissions and their deep links', function (bool $hasSubmissionLink) use ($manageFormSubmissionsTestUser): void {
+        $user = $manageFormSubmissionsTestUser();
+        $user->givePermissionTo('form.view-any');
+        actingAs($user);
+
+        $form = Form::factory()->create();
+        $submission = FormSubmission::factory()->create(['form_id' => $form->getKey()]);
+
+        Livewire::withQueryParams($hasSubmissionLink ? [
+            'actionComponent' => 'submissions',
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->getKey(),
+        ] : [])
+            ->test(SubmissionsRelationManager::class, ['ownerRecord' => $form, 'pageClass' => ManageForm::class])
+            ->assertForbidden();
+    })->with(['table' => false, 'submission details' => true]);
+
+    it('allows viewing submissions and their details with the `form.*.view` permission', function () use ($manageFormSubmissionsTestUser): void {
+        $user = $manageFormSubmissionsTestUser();
+        $user->givePermissionTo('form.view-any', 'form.*.view');
+        actingAs($user);
+
+        $form = Form::factory()->create();
+        $submission = FormSubmission::factory()->create(['form_id' => $form->getKey()]);
+
+        Livewire::withQueryParams([
+            'actionComponent' => 'submissions',
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->getKey(),
+        ])
+            ->test(SubmissionsRelationManager::class, ['ownerRecord' => $form, 'pageClass' => ManageForm::class])
+            ->assertCanSeeTableRecords([$submission])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.0.context.recordKey', $submission->getKey());
+    });
+
     it('denies access to the submissions without the `form.view-any` permission', function () use ($testSubmissions, $manageFormSubmissionsTestUser): void {
         actingAs($manageFormSubmissionsTestUser());
 

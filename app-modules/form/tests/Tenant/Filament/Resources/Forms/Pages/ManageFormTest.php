@@ -42,6 +42,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\SubmissionsRelati
 use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -158,6 +159,23 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         $component = Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()]);
 
         expect($getTabLabels($component))->toContain('Submissions 2');
+    });
+
+    it('only counts the submissions the user is licensed to see on the submissions tab', function () use ($getTabLabels): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        FormSubmission::factory()->for(Student::factory(), 'author')->create(['form_id' => $form->getKey()]);
+
+        expect($getTabLabels(Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])))
+            ->toContain('Submissions 1');
+
+        $user = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
+        $user->givePermissionTo('form.view-any', 'form.*.view');
+        actingAs($user);
+
+        expect($getTabLabels(Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])))
+            ->toContain('Submissions 0');
     });
 
     it('only lists the tabs the user can access', function (array $permissions, bool $isAuthenticated, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels): void {
@@ -485,7 +503,26 @@ describe('notifications tab', function (): void {
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction, $getTabLabels): void {
+    it('does not expose the submissions tab to a list-only account', function () use ($actingAsUserWithPermissions, $getTabLabels): void {
+        $actingAsUserWithPermissions();
+
+        $form = Form::factory()->create();
+        $submission = FormSubmission::factory()->create(['form_id' => $form->getKey()]);
+
+        $component = Livewire::withQueryParams([
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->getKey(),
+        ])
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', 'workflows')
+            ->assertDontSeeLivewire(SubmissionsRelationManager::class);
+
+        expect($getTabLabels($component))->not->toContain('Submissions 1');
+    });
+
     it('opens the first accessible tab when the user cannot view the form', function (array $permissions, ?string $requestedTab, string $expectedTab) use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions(...$permissions);
 

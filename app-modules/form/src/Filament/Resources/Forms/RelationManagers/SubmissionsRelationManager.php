@@ -84,7 +84,9 @@ class SubmissionsRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return FormResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
+        return FormResource::canAccess()
+            && FormResource::canView($ownerRecord)
+            && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function getDefaultActionUrlIdentifier(): string
