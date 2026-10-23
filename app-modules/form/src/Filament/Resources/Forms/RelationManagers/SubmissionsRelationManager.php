@@ -60,7 +60,10 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Url;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SubmissionsRelationManager extends RelationManager
@@ -68,6 +71,16 @@ class SubmissionsRelationManager extends RelationManager
     protected static string $relationship = 'submissions';
 
     protected static ?string $title = 'Submissions';
+
+    /** @var array<string, mixed>|null */
+    #[Url(as: 'filters')]
+    public ?array $tableFilters = null;
+
+    #[Url(as: 'search')]
+    public $tableSearch = '';
+
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
@@ -117,7 +130,10 @@ class SubmissionsRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('author.primaryEmailAddress.address')
                     ->label('Submitter')
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHas(
+                        'author.primaryEmailAddress',
+                        fn (Builder $query): Builder => $query->where(new Expression('lower(address)'), 'like', '%' . Str::lower($search) . '%'),
+                    )),
                 TextColumn::make('author_type')
                     ->label('Submitter Type')
                     ->badge()

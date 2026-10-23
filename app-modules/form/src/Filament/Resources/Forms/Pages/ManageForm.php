@@ -94,6 +94,22 @@ class ManageForm extends EditRecord
     /** @var array<string, mixed>|null */
     protected ?array $versioningFormData = null;
 
+    public function mount(int | string $record): void
+    {
+        parent::mount($record);
+
+        $visibleTabs = array_map(strval(...), array_keys(array_filter(
+            $this->getTabComponents(),
+            fn (?Tab $tab): bool => $tab?->isVisible() ?? false,
+        )));
+
+        if (! in_array($this->activeRelationManager ?? '', $visibleTabs, strict: true)) {
+            $firstVisibleTab = $visibleTabs[0] ?? '';
+
+            $this->activeRelationManager = ($firstVisibleTab === '') ? null : $firstVisibleTab;
+        }
+    }
+
     public function getTitle(): string
     {
         return __('filament-panels::resources/pages/view-record.title', ['label' => $this->getRecordTitle()]);
@@ -224,7 +240,6 @@ class ManageForm extends EditRecord
 
         DB::transaction(function (): void {
             $this->emailAutoReplyForm->getState();
-            $this->emailAutoReplyForm->saveRelationships();
         });
 
         $this->getSavedNotification()?->send();

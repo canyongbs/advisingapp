@@ -180,7 +180,8 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         $form = Form::factory()->create(['is_authenticated' => true]);
 
         $component = Livewire::withQueryParams(['tab' => $tab])
-            ->test(ManageForm::class, ['record' => $form->getRouteKey()]);
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', $tab);
 
         expect($getRenderedFormIds($component))->toBe($formIds);
     })->with([
@@ -197,7 +198,9 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         $form = Form::factory()->create(['is_authenticated' => true]);
 
         $component = Livewire::withQueryParams(['tab' => $tab])
-            ->test(ManageForm::class, ['record' => $form->getRouteKey()]);
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', null)
+            ->assertSeeHtml('data-mapped-block-types="');
 
         expect($getRenderedFormIds($component))->toBe([]);
     })->with(['edit', 'on-screen-response', 'email-auto-reply', 'notifications']);
@@ -208,10 +211,23 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         $form = Form::factory()->create(['is_authenticated' => false]);
 
         $component = Livewire::withQueryParams(['tab' => 'email-auto-reply'])
-            ->test(ManageForm::class, ['record' => $form->getRouteKey()]);
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', null)
+            ->assertSeeHtml('data-mapped-block-types="');
 
         expect($getRenderedFormIds($component))->toBe([])
             ->and($getTabLabels($component))->not->toContain('Email Auto Reply');
+    });
+
+    it('opens the view tab when the requested tab does not exist', function (): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+
+        Livewire::withQueryParams(['tab' => 'unknown'])
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', null)
+            ->assertSeeHtml('data-mapped-block-types="');
     });
 });
 
@@ -470,6 +486,27 @@ describe('notifications tab', function (): void {
 });
 
 describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+    it('opens the first accessible tab when the user cannot view the form', function (array $permissions, ?string $requestedTab, string $expectedTab) use ($actingAsUserWithPermissions): void {
+        $actingAsUserWithPermissions(...$permissions);
+
+        $form = Form::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => $requestedTab])
+            ->test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSet('activeRelationManager', $expectedTab);
+
+        if ($expectedTab === 'edit') {
+            $component->assertSeeHtml('id="form"');
+        } else {
+            $component->assertSeeLivewire(WorkflowsRelationManager::class);
+        }
+    })->with([
+        'update only with no tab' => [['form.*.update'], null, 'edit'],
+        'update only with an unknown tab' => [['form.*.update'], 'unknown', 'edit'],
+        'relation managers only with no tab' => [[], null, 'workflows'],
+        'relation managers only with a hidden tab' => [[], 'edit', 'workflows'],
+    ]);
+
     it('denies access to the manage form page without the `form.view-any` permission', function (): void {
         $settings = app(LicenseSettings::class);
         $settings->data->addons->onlineForms = true;

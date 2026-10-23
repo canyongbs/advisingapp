@@ -39,6 +39,8 @@ use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageForm;
 use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\SubmissionsRelationManager;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Livewire\Features\SupportTesting\Testable;
@@ -153,6 +155,46 @@ test('archiving submissions refreshes the page so the tab badge updates', functi
 ]);
 
 describe('submission links', function (): void {
+    it('applies filters from the URL', function (): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $archivedSubmission = FormSubmission::factory()->create(['form_id' => $form->id, 'archived_at' => now()]);
+
+        Livewire::withQueryParams(['filters' => ['withoutArchived' => ['isActive' => false]]])
+            ->test(SubmissionsRelationManager::class, ['ownerRecord' => $form, 'pageClass' => ManageForm::class])
+            ->assertCanSeeTableRecords([$archivedSubmission]);
+    });
+
+    it('applies search from the URL', function (string $authorClass): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $author = $authorClass::factory()->create();
+        $submission = FormSubmission::factory()->for($author, 'author')->create(['form_id' => $form->id]);
+        $otherSubmission = FormSubmission::factory()->create(['form_id' => $form->id]);
+
+        Livewire::withQueryParams(['search' => strtoupper($author->primaryEmailAddress->address)])
+            ->test(SubmissionsRelationManager::class, ['ownerRecord' => $form, 'pageClass' => ManageForm::class])
+            ->assertCanSeeTableRecords([$submission])
+            ->assertCanNotSeeTableRecords([$otherSubmission]);
+    })->with(['student' => Student::class, 'prospect' => Prospect::class]);
+
+    it('applies sorting from the URL', function (string $direction): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $olderSubmission = FormSubmission::factory()->create(['form_id' => $form->id, 'submitted_at' => now()->subDay()]);
+        $newerSubmission = FormSubmission::factory()->create(['form_id' => $form->id, 'submitted_at' => now()]);
+
+        Livewire::withQueryParams(['sort' => 'submitted_at:' . $direction])
+            ->test(SubmissionsRelationManager::class, ['ownerRecord' => $form, 'pageClass' => ManageForm::class])
+            ->assertCanSeeTableRecords(
+                $direction === 'asc' ? [$olderSubmission, $newerSubmission] : [$newerSubmission, $olderSubmission],
+                inOrder: true,
+            );
+    })->with(['ascending' => 'asc', 'descending' => 'desc']);
+
     $linkTo = fn (FormSubmission $submission, array $query = []): array => [
         'actionComponent' => 'submissions',
         'tableAction' => 'view',

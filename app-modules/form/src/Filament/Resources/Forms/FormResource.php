@@ -86,11 +86,7 @@ class FormResource extends Resource
             'create' => CreateForm::route('/create'),
             'edit' => RedirectToFormTab::route('/{record}/edit'),
             'view' => ManageForm::route('/{record}'),
-            'manage-on-screen-response' => RedirectToFormTab::route('/{record}/on-screen-response'),
-            'manage-form-workflows' => RedirectToFormTab::route('/{record}/workflows'),
             'manage-submissions' => RedirectToFormTab::route('/{record}/submissions'),
-            'manage-email-auto-reply' => RedirectToFormTab::route('/{record}/email-auto-reply'),
-            'manage-notifications' => RedirectToFormTab::route('/{record}/notifications'),
         ];
     }
 }

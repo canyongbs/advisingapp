@@ -52,12 +52,32 @@ it('redirects a legacy URL to its tab', function (string $page, string $tab): vo
         ->assertRedirect(FormResource::getUrl('view', ['record' => $form, 'tab' => $tab]));
 })->with([
     ['edit', 'edit'],
-    ['manage-on-screen-response', 'on-screen-response'],
-    ['manage-form-workflows', 'workflows'],
     ['manage-submissions', 'submissions'],
-    ['manage-email-auto-reply', 'email-auto-reply'],
-    ['manage-notifications', 'notifications'],
 ]);
+
+it('does not retain sub-page URLs that were not linked from notifications', function (string $path): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    get(FormResource::getUrl('view', ['record' => $form]) . '/' . $path)
+        ->assertNotFound();
+})->with(['on-screen-response', 'workflows', 'email-auto-reply', 'notifications']);
+
+it('preserves legacy submission table state when redirecting', function (): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $parameters = [
+        'record' => $form,
+        'filters' => ['withoutArchived' => ['isActive' => false]],
+        'search' => 'submitter@example.com',
+        'sort' => 'submitted_at:asc',
+    ];
+
+    get(FormResource::getUrl('manage-submissions', $parameters))
+        ->assertRedirect(FormResource::getUrl('view', [...$parameters, 'tab' => 'submissions']));
+});
 
 it('keeps the query string and targets the submissions table when redirecting a submission link', function (): void {
     asSuperAdmin();
