@@ -32,46 +32,27 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { computed } from 'vue';
-    import BaseCard from './BaseCard.vue';
+    import BaseButton from '@common/BaseButton.vue';
+    import EmptyState from '@common/portal/EmptyState.vue';
+    import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
+    import { defineEmits, defineProps } from 'vue';
 
-    const props = defineProps({
-        label: {
+    defineProps({
+        heading: {
             type: String,
             required: true,
         },
-        value: {
-            type: [Number, String],
-            required: true,
-        },
-        tone: {
-            type: String,
-            default: 'neutral',
-            validator: (v) => ['neutral', 'warning', 'success', 'danger'].includes(v),
-        },
     });
 
-    const toneConfig = computed(() => {
-        const map = {
-            neutral: { bg: 'bg-white', labelColor: 'text-gray-500', valueColor: 'text-gray-900' },
-            warning: { bg: 'bg-orange-50', labelColor: 'text-orange-600', valueColor: 'text-orange-600' },
-            success: { bg: 'bg-green-50', labelColor: 'text-green-600', valueColor: 'text-green-700' },
-            danger: { bg: 'bg-red-50', labelColor: 'text-red-600', valueColor: 'text-red-600' },
-        };
-        return map[props.tone] ?? map.neutral;
-    });
+    defineEmits(['retry']);
 </script>
 
 <template>
-    <BaseCard :bg="toneConfig.bg">
-        <div class="flex items-start justify-between gap-3">
-            <div>
-                <p class="mb-1 text-xs font-semibold" :class="toneConfig.labelColor">{{ label }}</p>
-                <p class="text-4xl font-semibold leading-none tabular-nums" :class="toneConfig.valueColor">
-                    {{ value }}
-                </p>
-            </div>
-            <slot name="icon" />
-        </div>
-    </BaseCard>
+    <EmptyState role="status" :icon="ExclamationTriangleIcon" :contained="false">
+        <template #heading>{{ heading }}</template>
+        <template #description>Something went wrong while loading these results.</template>
+        <template #actions>
+            <BaseButton color="gray" size="md" @click="$emit('retry')">Try again</BaseButton>
+        </template>
+    </EmptyState>
 </template>
