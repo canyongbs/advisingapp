@@ -45,6 +45,8 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
+use AdvisingApp\Form\Filament\Forms\Components\EmailAutoReplySection;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -65,6 +67,7 @@ use Livewire\Attributes\Url;
 /**
  * @property-read Schema $infolist
  * @property-read Schema $notificationsForm
+ * @property-read Schema $emailAutoReplyForm
  */
 class ManageApplication extends EditRecord
 {
@@ -80,6 +83,9 @@ class ManageApplication extends EditRecord
 
     /** @var array<string, mixed>|null */
     public ?array $notificationsData = [];
+
+    /** @var array<string, mixed>|null */
+    public ?array $emailAutoReplyData = [];
 
     /** @var array<string, mixed>|null */
     protected ?array $versioningFormData = null;
@@ -127,6 +133,11 @@ class ManageApplication extends EditRecord
                 ->schema([
                     $this->makeFormContentComponent('notificationsForm', 'saveNotifications'),
                 ]),
+            'email-auto-reply' => Tab::make('Email Auto Reply')
+                ->visible(fn (): bool => AdmissionsAndEventsEmailAutoReplyFeature::active() && ApplicationResource::canEdit($record))
+                ->schema([
+                    $this->makeFormContentComponent('emailAutoReplyForm', 'saveEmailAutoReply'),
+                ]),
         ];
     }
 
@@ -152,6 +163,18 @@ class ManageApplication extends EditRecord
             ->statePath('notificationsData');
     }
 
+    public function emailAutoReplyForm(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                EmailAutoReplySection::make()
+                    ->relationship('emailAutoReply'),
+            ])
+            ->model($this->getRecord())
+            ->operation('edit')
+            ->statePath('emailAutoReplyData');
+    }
+
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         ApplicationResource::authorizeEdit($this->getRecord());
@@ -173,6 +196,17 @@ class ManageApplication extends EditRecord
         ApplicationResource::authorizeEdit($record);
 
         DB::transaction(fn () => $record->update($this->notificationsForm->getState()));
+
+        $this->getSavedNotification()?->send();
+    }
+
+    public function saveEmailAutoReply(): void
+    {
+        abort_unless(AdmissionsAndEventsEmailAutoReplyFeature::active(), 404);
+
+        ApplicationResource::authorizeEdit($this->getRecord());
+
+        DB::transaction(fn () => $this->emailAutoReplyForm->getState());
 
         $this->getSavedNotification()?->send();
     }
@@ -202,6 +236,10 @@ class ManageApplication extends EditRecord
             parent::fillForm();
 
             $this->notificationsForm->fill($data);
+
+            if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+                $this->emailAutoReplyForm->fill([]);
+            }
         }
     }
 

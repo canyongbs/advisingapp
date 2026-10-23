@@ -44,6 +44,7 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -99,6 +100,11 @@ $getRenderedFormIds = function (Testable $component): array {
 };
 
 $archiveAction = fn (): TestAction => TestAction::make('archive');
+
+$richText = fn (string $text): array => [
+    'type' => 'doc',
+    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
+];
 
 it('can render the manage application page', function (): void {
     asSuperAdmin();
@@ -199,7 +205,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getTabLabels($component))->toBe($tabs);
     })->with([
         'view' => [['application.*.view'], ['View', 'Workflows', 'Submissions 0']],
-        'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications']],
+        'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications', 'Email Auto Reply']],
     ]);
 
     it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds): void {
@@ -215,6 +221,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'view' => [null, []],
         'edit' => ['edit', ['form']],
         'notifications' => ['notifications', ['notificationsForm']],
+        'email auto reply' => ['email-auto-reply', ['emailAutoReplyForm']],
     ]);
 
     it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
@@ -226,7 +233,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->test(ManageApplication::class, ['record' => $application->getRouteKey()]);
 
         expect($getRenderedFormIds($component))->toBe([]);
-    })->with(['edit', 'notifications']);
+    })->with(['edit', 'notifications', 'email-auto-reply']);
 });
 
 describe('edit tab', function () use ($archiveAction): void {
@@ -287,6 +294,50 @@ describe('edit tab', function () use ($archiveAction): void {
             ->description->toBe('Updated description')
             ->and($application->fresh()->isArchived())->toBeTrue()
             ->and($application->steps()->first()->description)->toBe('Original description');
+    });
+
+    it('moves the email auto reply onto the new application version', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+        $emailAutoReply->update(['is_enabled' => true]);
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['name' => 'Renamed'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $newVersion = Application::query()
+            ->where('root_id', $application->root_id)
+            ->whereKeyNot($application->getKey())
+            ->firstOrFail();
+
+        expect($newVersion->emailAutoReply?->getKey())->toBe($emailAutoReply->getKey())
+            ->and($newVersion->emailAutoReply?->is_enabled)->toBeTrue()
+            ->and($application->fresh()->emailAutoReply)->toBeNull();
+    });
+
+    it('does not move the email auto reply onto the new application version when the feature is inactive', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['name' => 'Renamed'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $newVersion = Application::query()
+            ->where('root_id', $application->root_id)
+            ->whereKeyNot($application->getKey())
+            ->firstOrFail();
+
+        expect($newVersion->emailAutoReply()->exists())->toBeFalse()
+            ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
     });
 
     it('saves uploaded rich editor images onto the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false): void {
@@ -520,7 +571,164 @@ describe('notifications tab', function (): void {
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
+    it('displays the email auto reply data', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $application->emailAutoReply()->firstOrFail()->update(['is_enabled' => true]);
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->assertSchemaStateSet(['emailAutoReply.is_enabled' => true], 'emailAutoReplyForm');
+    });
+
+    it('can save the email auto reply', function () use ($richText): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        expect($application->emailAutoReply()->firstOrFail()->is_enabled)->toBeFalse();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for applying'),
+                    'body' => $richText('We have received your application.'),
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm')
+            ->assertNotified();
+
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+
+        expect($emailAutoReply->is_enabled)->toBeTrue()
+            ->and($emailAutoReply->getSubject(null))->toBe('Thanks for applying')
+            ->and($emailAutoReply->getBody(null))->toContain('We have received your application.');
+    });
+
+    it('creates the email auto reply for an application that does not have one yet', function () use ($richText): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $application->emailAutoReply()->forceDelete();
+
+        expect($application->emailAutoReply()->exists())->toBeFalse();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for applying'),
+                    'body' => $richText('We have received your application.'),
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+
+        expect($application->emailAutoReply()->firstOrFail()->is_enabled)->toBeTrue();
+    });
+
+    it('saves uploaded images in the email auto reply body', function () use ($richText): void {
+        asSuperAdmin();
+        $disk = Storage::fake('s3-public');
+
+        $application = Application::factory()->create();
+        $statePath = 'emailAutoReplyData.emailAutoReply.body';
+
+        expect($application->emailAutoReply()->firstOrFail()->getMedia('body'))->toBeEmpty();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->set('emailAutoReplyData.emailAutoReply.is_enabled', true)
+            ->set('emailAutoReplyData.emailAutoReply.subject', $richText('Thanks for applying'))
+            ->set($statePath, [
+                'type' => 'doc',
+                'content' => [[
+                    'type' => 'image',
+                    'attrs' => ['id' => 'uploaded-image', 'src' => 'temporary-image.png'],
+                ]],
+            ])
+            ->set("componentFileAttachments.{$statePath}.uploaded-image", UploadedFile::fake()->image('image.png'))
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+        $media = $emailAutoReply->getFirstMedia('body');
+        assert($media !== null);
+
+        expect(data_get($emailAutoReply->body, 'content.0.attrs.id'))->toBe($media->uuid)
+            ->and($media->uuid)->not->toBe('uploaded-image');
+        $disk->assertExists($media->getPathRelativeToRoot());
+    });
+
+    it('validates the inputs', function (array $data, array $errors) use ($richText): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for applying'),
+                    'body' => $richText('We have received your application.'),
+                    ...$data,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasFormErrors($errors, 'emailAutoReplyForm');
+    })->with([
+        'subject required' => [['subject' => null], ['emailAutoReply.subject' => 'The subject field is required.']],
+        'body required' => [['body' => null], ['emailAutoReply.body' => 'The body field is required.']],
+    ]);
+
+    it('does not require the subject and body when the email auto reply is disabled', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => false,
+                    'subject' => null,
+                    'body' => null,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+    });
+
+    it('does not create a new application version', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['emailAutoReply' => ['is_enabled' => false]], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply');
+
+        expect(Application::query()->where('root_id', $application->root_id)->count())->toBe(1)
+            ->and($application->fresh()->isArchived())->toBeFalse();
+    });
+
+    it('does not show or save the email auto reply when the feature is inactive', function () use ($getTabLabels): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        $component = Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()]);
+
+        expect($getTabLabels($component))->not->toContain('Email Auto Reply');
+
+        $component->call('saveEmailAutoReply')->assertNotFound();
+    });
+});
+
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction, $richText): void {
     it('denies access to the manage application page without the `application.*.view` permission', function (): void {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
@@ -570,7 +778,8 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
 
         Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
             ->assertSet('data', [])
-            ->assertSet('notificationsData', []);
+            ->assertSet('notificationsData', [])
+            ->assertSet('emailAutoReplyData', []);
     });
 
     it('does not save without the `application.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
@@ -591,6 +800,28 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->name->not->toBe('Renamed')
             ->notify_via_email->toBeFalse();
     })->with(['save', 'saveNotifications']);
+
+    it('does not save the email auto reply without the `application.*.update` permission', function () use ($actingAsUserWithPermissions, $richText): void {
+        $user = $actingAsUserWithPermissions('application.*.view', 'application.*.update');
+
+        $application = Application::factory()->create();
+
+        $component = Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for applying'),
+                    'body' => $richText('We have received your application.'),
+                ],
+            ], 'emailAutoReplyForm');
+
+        $user->revokePermissionTo('application.*.update');
+
+        $component->call('saveEmailAutoReply')->assertForbidden();
+
+        expect($application->emailAutoReply()->firstOrFail()->is_enabled)->toBeFalse()
+            ->and($application->fresh()->isArchived())->toBeFalse();
+    });
 
     it('allows saving with the `application.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('application.*.view', 'application.*.update');
