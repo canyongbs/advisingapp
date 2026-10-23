@@ -41,11 +41,11 @@ use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 use function Pest\Laravel\seed;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('creates a disabled email auto reply for a new application', function () {
+it('creates a disabled email auto reply for a new application', function (): void {
     expect(ApplicationEmailAutoReply::query()->count())->toBe(0);
 
     $application = Application::factory()->create();
@@ -56,7 +56,7 @@ it('creates a disabled email auto reply for a new application', function () {
         ->and($emailAutoReply->is_enabled)->toBeFalse();
 });
 
-it('does not create an email auto reply for a new version of an application', function () {
+it('does not create an email auto reply for a new version of an application', function (): void {
     $application = Application::factory()->create();
 
     $newVersion = Application::factory()->create(['root_id' => $application->root_id]);
@@ -65,7 +65,7 @@ it('does not create an email auto reply for a new version of an application', fu
         ->and(ApplicationEmailAutoReply::query()->count())->toBe(1);
 });
 
-it('does not create an email auto reply when the feature is inactive', function () {
+it('does not create an email auto reply when the feature is inactive', function (): void {
     AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
 
     $application = Application::factory()->create();

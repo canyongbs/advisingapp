@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\seed;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
@@ -53,7 +53,7 @@ beforeEach(function () {
 
 $richText = fn (array $content): array => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => $content]]];
 
-it('renders the subject and body of the latest application version for the author', function () use ($richText) {
+it('renders the subject and body of the latest application version for the author', function () use ($richText): void {
     $student = Student::factory()->create(['first' => 'Jamie']);
     $oldVersion = Application::factory()->create();
 

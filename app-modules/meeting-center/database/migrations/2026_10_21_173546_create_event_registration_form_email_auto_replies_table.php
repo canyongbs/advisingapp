@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('event_registration_form_email_auto_replies', function (Blueprint $table) {
+        Schema::create('event_registration_form_email_auto_replies', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->jsonb('subject')->nullable();

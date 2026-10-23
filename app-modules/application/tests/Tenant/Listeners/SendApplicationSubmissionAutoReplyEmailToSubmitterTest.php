@@ -42,11 +42,11 @@ use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\seed;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job when an application is submitted', function () {
+it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job when an application is submitted', function (): void {
     Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
 
     $submission = ApplicationSubmission::factory()->create();
@@ -57,7 +57,7 @@ it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job when an applica
     );
 });
 
-it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job for a requested application only once it is submitted', function () {
+it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job for a requested application only once it is submitted', function (): void {
     Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
 
     $submission = ApplicationSubmission::factory()->create(['submitted_at' => null]);
@@ -69,7 +69,7 @@ it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job for a requested
     Queue::assertPushed(SendApplicationSubmissionAutoReplyEmail::class, 1);
 });
 
-it('does not dispatch the `SendApplicationSubmissionAutoReplyEmail` job when the feature is inactive', function () {
+it('does not dispatch the `SendApplicationSubmissionAutoReplyEmail` job when the feature is inactive', function (): void {
     AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
 
     Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
