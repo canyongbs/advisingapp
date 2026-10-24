@@ -58,7 +58,7 @@ class UpdateThemeController extends Controller
 
         Tenant::query()
             ->whereIn('id', $request->validated('tenant_ids') ?? [])
-            ->eachById(function (Tenant $tenant) use ($config, &$jobs) {
+            ->eachById(function (Tenant $tenant) use ($config, &$jobs): void {
                 $jobs[] = app(UpdateTenantTheme::class, [
                     'tenant' => $tenant,
                     'config' => $config,

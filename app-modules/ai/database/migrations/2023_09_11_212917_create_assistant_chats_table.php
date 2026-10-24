@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('assistant_chats', function (Blueprint $table) {
+        Schema::create('assistant_chats', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name');

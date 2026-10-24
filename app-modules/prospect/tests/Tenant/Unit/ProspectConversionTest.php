@@ -40,7 +40,7 @@ use Cknow\Money\Money;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
 
-it('validate the prospect conversion value', function () {
+it('validate the prospect conversion value', function (): void {
     $settings = app(ProspectConversionSettings::class);
     $expectedValue = Money::parseByDecimal(18.29, 'USD');
     $settings->estimated_average_revenue = $expectedValue;

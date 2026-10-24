@@ -104,7 +104,7 @@ class ManageSmartPromptInstructionsSettings extends SettingsPage
                                     ->requiresConfirmation()
                                     ->modalHeading('Reset instructions to default?')
                                     ->modalDescription('This will replace the current instructions with the system default. You can save or discard the change afterwards.')
-                                    ->action(fn (Set $set) => $set('smart_prompt_instructions', AiSettings::defaultSmartPromptInstructions()))
+                                    ->action(fn (Set $set): mixed => $set('smart_prompt_instructions', AiSettings::defaultSmartPromptInstructions()))
                             )
                             ->columnSpanFull(),
                     ]),

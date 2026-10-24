@@ -46,7 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-test('can create a submission state with is_default set to true', function () {
+test('can create a submission state with is_default set to true', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->make([
@@ -65,7 +65,7 @@ test('can create a submission state with is_default set to true', function () {
     ]);
 });
 
-test('creating a state with is_default true clears the previous default', function () {
+test('creating a state with is_default true clears the previous default', function (): void {
     asSuperAdmin();
 
     $existingDefault = ApplicationSubmissionState::factory()->create([
@@ -91,7 +91,7 @@ test('creating a state with is_default true clears the previous default', functi
     ]);
 });
 
-test('editing a state to set is_default true clears the previous default', function () {
+test('editing a state to set is_default true clears the previous default', function (): void {
     asSuperAdmin();
 
     $existingDefault = ApplicationSubmissionState::factory()->create([
@@ -113,7 +113,7 @@ test('editing a state to set is_default true clears the previous default', funct
     expect($anotherState->fresh()->is_default)->toBeTrue();
 });
 
-test('there can be no default state (all is_default false)', function () {
+test('there can be no default state (all is_default false)', function (): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->count(3)->create(['is_default' => false]);
@@ -121,7 +121,7 @@ test('there can be no default state (all is_default false)', function () {
     expect(ApplicationSubmissionState::query()->where('is_default', true)->exists())->toBeFalse();
 });
 
-test('getDefaultActiveTab returns the default state id when one exists', function () {
+test('getDefaultActiveTab returns the default state id when one exists', function (): void {
     asSuperAdmin();
 
     $defaultState = ApplicationSubmissionState::factory()->create([
@@ -137,7 +137,7 @@ test('getDefaultActiveTab returns the default state id when one exists', functio
     expect($component->getDefaultActiveTab())->toBe($defaultState->id);
 });
 
-test('getDefaultActiveTab returns all when no default state is set', function () {
+test('getDefaultActiveTab returns all when no default state is set', function (): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->count(2)->create(['is_default' => false]);
@@ -150,14 +150,14 @@ test('getDefaultActiveTab returns all when no default state is set', function ()
     expect($component->getDefaultActiveTab())->toBe('all');
 });
 
-test('is_default toggle is visible on create form', function () {
+test('is_default toggle is visible on create form', function (): void {
     asSuperAdmin();
 
     Livewire::test(CreateApplicationSubmissionState::class)
         ->assertFormFieldExists('is_default');
 });
 
-test('is_default toggle is visible on edit form', function () {
+test('is_default toggle is visible on edit form', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([

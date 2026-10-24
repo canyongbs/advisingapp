@@ -95,7 +95,7 @@ class SyncTenantRequest extends FormRequest
 
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function (Validator $validator) {
+        $validator->after(function (Validator $validator): void {
             $categories = $this->input('smartPrompts', []);
 
             if (! is_array($categories)) {

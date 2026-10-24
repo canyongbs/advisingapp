@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('tracked_events', function (Blueprint $table) {
+        Schema::table('tracked_events', function (Blueprint $table): void {
             $table->nullableUuidMorphs('related_to');
         });
     }
 
     public function down(): void
     {
-        Schema::table('tracked_events', function (Blueprint $table) {
+        Schema::table('tracked_events', function (Blueprint $table): void {
             $table->dropIndex(['related_to_type', 'related_to_id']);
             $table->dropColumn(['related_to_type', 'related_to_id']);
         });

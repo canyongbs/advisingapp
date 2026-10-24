@@ -41,7 +41,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Role::create([
                 'name' => Authenticatable::AI_ADMIN_ROLE,
                 'guard_name' => 'web',

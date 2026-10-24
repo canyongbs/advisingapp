@@ -91,7 +91,7 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
             ...self::getDescriptionSectionsSchema($field),
         ];
 
-        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+        if ($author && $submissible instanceof Submissible && in_array($submissible::class, [Form::class, Application::class])) {
             $birthdate = $author->birthdate?->format('Y-m-d') ?? '';
             $schema['value'] = $birthdate;
 

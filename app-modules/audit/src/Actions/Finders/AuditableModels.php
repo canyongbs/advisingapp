@@ -46,7 +46,7 @@ class AuditableModels
     public static function all(): Collection
     {
         return collect(Relation::morphMap())
-            ->filter(fn (string $class) => (new ReflectionClass($class))->implementsInterface(Auditable::class))
-            ->transform(fn (string $class) => (new ReflectionClass($class))->getShortName());
+            ->filter(fn (string $class): bool => (new ReflectionClass($class))->implementsInterface(Auditable::class))
+            ->transform(fn (string $class): string => (new ReflectionClass($class))->getShortName());
     }
 }

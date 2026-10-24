@@ -54,7 +54,7 @@ $listSurveysTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-it('the delete bulk action is gated by the delete permission', function () use ($listSurveysTestUser) {
+it('the delete bulk action is gated by the delete permission', function () use ($listSurveysTestUser): void {
     $user = $listSurveysTestUser();
     $user->givePermissionTo('survey.view-any');
 
@@ -69,7 +69,7 @@ it('the delete bulk action is gated by the delete permission', function () use (
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('the duplicate action is gated by the create permission', function () use ($listSurveysTestUser) {
+it('the duplicate action is gated by the create permission', function () use ($listSurveysTestUser): void {
     $user = $listSurveysTestUser();
     $user->givePermissionTo('survey.view-any');
 
@@ -86,7 +86,7 @@ it('the duplicate action is gated by the create permission', function () use ($l
         ->assertTableActionVisible('Duplicate', $survey);
 });
 
-it('can duplicate a survey its steps and its fields', function () {
+it('can duplicate a survey its steps and its fields', function (): void {
     asSuperAdmin();
 
     // Given that we have a survey
@@ -109,7 +109,7 @@ it('can duplicate a survey its steps and its fields', function () {
     expect($duplicatedSurvey->steps->count())->toBe($survey->steps->count());
 });
 
-it('will not duplicate survey submissions if they exist', function () {
+it('will not duplicate survey submissions if they exist', function (): void {
     asSuperAdmin();
 
     // Given that we have a survey
@@ -130,7 +130,7 @@ it('will not duplicate survey submissions if they exist', function () {
     expect($duplicatedSurvey->submissions()->count())->toBe(0);
 });
 
-it('prevents duplicating a survey to a case-insensitive duplicate name', function () {
+it('prevents duplicating a survey to a case-insensitive duplicate name', function (): void {
     asSuperAdmin();
 
     $survey = Survey::factory()->create();

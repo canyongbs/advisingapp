@@ -43,7 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('returns correct monthly email and sms engagement data for prospects within the given date range', function () {
+it('returns correct monthly email and sms engagement data for prospects within the given date range', function (): void {
     $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
@@ -74,7 +74,7 @@ it('returns correct monthly email and sms engagement data for prospects within t
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
-it('returns correct monthly email and sms engagement data for prospects based on group filters', function () {
+it('returns correct monthly email and sms engagement data for prospects based on group filters', function (): void {
     $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 

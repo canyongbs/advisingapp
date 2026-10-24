@@ -93,14 +93,14 @@ trait CanManageEducatableTasks
                             ->label('Users')
                             ->multiple()
                             ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         Select::make('department_confidential_task')
                             ->relationship('confidentialAccessDepartments', 'name')
                             ->preload()
                             ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                     ]),
                 TextInput::make('title')
                     ->required()
@@ -135,8 +135,8 @@ trait CanManageEducatableTasks
                 TextColumn::make('description')
                     ->wrap()
                     ->limit(50)
-                    ->icon(fn (Task $record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
+                    ->icon(fn (Task $record): ?string => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn (Task $record): ?string => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
                     ->badge()
@@ -147,11 +147,11 @@ trait CanManageEducatableTasks
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
-                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                    ->url(fn (Task $record): ?string => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
                     ->sortable(),
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
-                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->url(fn (Task $record): ?string => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
@@ -174,7 +174,7 @@ trait CanManageEducatableTasks
                     ->multiple(),
                 SelectFilter::make('status')
                     ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
+                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction): array => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
                     ->multiple()
                     ->default(
                         [
@@ -227,7 +227,7 @@ trait CanManageEducatableTasks
 
                             return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                         })
-                        ->using(function (Collection $selectedRecords) {
+                        ->using(function (Collection $selectedRecords): void {
                             $selectedRecords->each(
                                 fn (Task $selectedRecord) => $selectedRecord->concern()->dissociate()->save()
                             );

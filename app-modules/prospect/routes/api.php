@@ -44,10 +44,10 @@ use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\UpdateProspectControl
 use AdvisingApp\Prospect\Http\Controllers\Api\V1\Prospects\ViewProspectController;
 use Illuminate\Support\Facades\Route;
 
-Route::api(majorVersion: 1, routes: function () {
+Route::api(majorVersion: 1, routes: function (): void {
     Route::name('prospects.')
         ->prefix('prospects')
-        ->group(function () {
+        ->group(function (): void {
             Route::get('/', ListProspectsController::class)->name('index');
             Route::post('/', CreateProspectController::class)->name('create');
             Route::get('{prospect}', ViewProspectController::class)->name('view');
@@ -56,7 +56,7 @@ Route::api(majorVersion: 1, routes: function () {
 
             Route::name('email-addresses.')
                 ->prefix('{prospect}/email-addresses')
-                ->group(function () {
+                ->group(function (): void {
                     Route::post('/', CreateProspectEmailAddressController::class)->name('create');
                     Route::patch('/{prospectEmailAddress}', UpdateProspectEmailAddressController::class)->name('update');
                     Route::delete('/{prospectEmailAddress}', DeleteProspectEmailAddressController::class)->name('delete');

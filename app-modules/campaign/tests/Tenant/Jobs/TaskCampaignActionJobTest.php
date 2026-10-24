@@ -53,7 +53,7 @@ use Illuminate\Support\Facades\Bus;
 
 use function Tests\asSuperAdmin;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable): void {
     Bus::fake();
 
     /** @var Group $group */
@@ -129,7 +129,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
         ],
     ]);
 
-it('creates a non-confidential task when is_confidential is not set', function (Educatable $educatable) {
+it('creates a non-confidential task when is_confidential is not set', function (Educatable $educatable): void {
     Bus::fake();
 
     /** @var Group $group */
@@ -181,7 +181,7 @@ it('creates a non-confidential task when is_confidential is not set', function (
         'prospect' => [fn () => Prospect::factory()->create()],
     ]);
 
-it('creates a confidential task and syncs confidential access relationships', function (Educatable $educatable) {
+it('creates a confidential task and syncs confidential access relationships', function (Educatable $educatable): void {
     asSuperAdmin();
     Bus::fake();
 

@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Jobs\DeleteUnsavedAiThreads;
 use AdvisingApp\Ai\Models\AiThread;
 
-it('selects and soft deletes the proper records', function () {
+it('selects and soft deletes the proper records', function (): void {
     $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);
     $notSavedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(2)]);
     $savedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(4)]);

@@ -84,7 +84,7 @@ class ViewPublicUserProfileController extends Controller
     {
         return collect($hours)
             ->filter(fn ($data, $day) => data_get($data, 'is_enabled'))
-            ->mapWithKeys(fn ($data, $day) => [
+            ->mapWithKeys(fn ($data, $day): array => [
                 $day => [
                     'starts_at' => data_get($data, 'starts_at'),
                     'ends_at' => data_get($data, 'ends_at'),

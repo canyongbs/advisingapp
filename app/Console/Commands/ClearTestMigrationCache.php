@@ -57,7 +57,7 @@ class ClearTestMigrationCache extends Command
             ->ignoreVCS(true)
             ->files();
 
-        $this->withProgressBar($finder, function (SplFileInfo $file) {
+        $this->withProgressBar($finder, function (SplFileInfo $file): void {
             unlink($file->getPathname());
         });
 

@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('segment_subjects', function (Blueprint $table) {
+        Schema::create('segment_subjects', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('subject_id');

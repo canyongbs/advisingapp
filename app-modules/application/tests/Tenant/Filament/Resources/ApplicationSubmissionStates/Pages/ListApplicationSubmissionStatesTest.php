@@ -41,35 +41,35 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('can view list of application submission states', function () {
+test('can view list of application submission states', function (): void {
     asSuperAdmin();
 
     Livewire::test(ListApplicationSubmissionStates::class)
         ->assertSuccessful();
 });
 
-test('states table displays classification column', function () {
+test('states table displays classification column', function (): void {
     asSuperAdmin();
 
     Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableColumnExists('classification');
 });
 
-test('states table displays submissions count column', function () {
+test('states table displays submissions count column', function (): void {
     asSuperAdmin();
 
     Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableColumnExists('submissions_count');
 });
 
-test('view action is available on each state record', function () {
+test('view action is available on each state record', function (): void {
     asSuperAdmin();
 
     Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableActionExists('view');
 });
 
-test('can see all created states in the list', function () {
+test('can see all created states in the list', function (): void {
     asSuperAdmin();
 
     $states = ApplicationSubmissionState::factory()->count(3)->create();
@@ -78,7 +78,7 @@ test('can see all created states in the list', function () {
         ->assertCanSeeTableRecords($states);
 });
 
-test('archived state with no submissions is not visible in the list', function () {
+test('archived state with no submissions is not visible in the list', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([

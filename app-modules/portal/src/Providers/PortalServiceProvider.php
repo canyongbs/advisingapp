@@ -46,12 +46,18 @@ use Illuminate\Support\ServiceProvider;
 
 class PortalServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new PortalPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new PortalPlugin());
+        });
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'portal_settings_property' => PortalSettingsProperty::class,

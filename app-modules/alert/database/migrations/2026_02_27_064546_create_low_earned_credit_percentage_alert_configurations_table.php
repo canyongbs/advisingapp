@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('low_earned_credit_percentage_alert_configurations', function (Blueprint $table) {
+        Schema::create('low_earned_credit_percentage_alert_configurations', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->unsignedInteger('minimum_earned_credit_percentage');
             $table->timestamps();

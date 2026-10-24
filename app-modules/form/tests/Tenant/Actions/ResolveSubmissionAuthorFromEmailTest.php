@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-it('resolves a student from their email address', function () {
+it('resolves a student from their email address', function (): void {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()
@@ -51,7 +51,7 @@ it('resolves a student from their email address', function () {
     expect(app(ResolveSubmissionAuthorFromEmail::class)($address)?->is($student))->toBeTrue();
 });
 
-it('resolves a prospect from their email address', function () {
+it('resolves a prospect from their email address', function (): void {
     $prospect = Prospect::factory()->create();
 
     $address = ProspectEmailAddress::factory()
@@ -62,16 +62,16 @@ it('resolves a prospect from their email address', function () {
     expect(app(ResolveSubmissionAuthorFromEmail::class)($address)?->is($prospect))->toBeTrue();
 });
 
-it('returns null when the address matches nobody', function () {
+it('returns null when the address matches nobody', function (): void {
     expect(app(ResolveSubmissionAuthorFromEmail::class)('nobody@example.com'))->toBeNull();
 });
 
-it('returns null when the address is blank', function () {
+it('returns null when the address is blank', function (): void {
     expect(app(ResolveSubmissionAuthorFromEmail::class)(null))->toBeNull();
 });
 
 // A public form submission must not be silently attributed to an archived student.
-it('does not resolve an archived student', function () {
+it('does not resolve an archived student', function (): void {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()
@@ -88,7 +88,7 @@ it('does not resolve an archived student', function () {
 
 // A new submission must never be attached to an archived student, but an existing one still
 // belongs to them, so identifying its author has to be able to reach them.
-it('resolves an archived student when asked to include them', function () {
+it('resolves an archived student when asked to include them', function (): void {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()

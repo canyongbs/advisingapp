@@ -39,14 +39,14 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 
 use function Pest\Laravel\get;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(PortalSettings::class);
     $settings->resource_hub_portal_enabled = true;
     $settings->resource_hub_portal_requires_authentication = false;
     $settings->save();
 });
 
-it('lists categories with a null description', function () {
+it('lists categories with a null description', function (): void {
     $category = ResourceHubCategory::factory()->create(['description' => null]);
 
     get(route('portals.resource-hub.api.category.index'))

@@ -42,7 +42,7 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\loadFixtureFromModule;
 
-it('will dispatch the correct job to handle the incoming webhook', function (string $event, string $payloadPath, string $expectedJob, array $unexpectedJobs = []) {
+it('will dispatch the correct job to handle the incoming webhook', function (string $event, string $payloadPath, string $expectedJob, array $unexpectedJobs = []): void {
     withoutMiddleware();
 
     Queue::fake();

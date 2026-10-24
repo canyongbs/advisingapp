@@ -105,7 +105,7 @@ class ProspectsTable
             ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
-                    ->url(fn (Prospect $record) => ProspectResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record])),
             ]);
     }
 

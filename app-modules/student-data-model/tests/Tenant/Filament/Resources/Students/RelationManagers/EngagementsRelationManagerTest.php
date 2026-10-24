@@ -75,8 +75,8 @@ dataset('messages tab owners', [
     'prospect' => [Prospect::class, ViewProspect::class],
 ]);
 
-describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
-    it('only offers email and text as message types', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
+    it('only offers email and text as message types', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
         $owner = $createMessagesTabOwner($ownerType);
 
         $actingAsUserWithMessagesTabAccess($owner);
@@ -91,7 +91,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
             ]);
     })->with('messages tab owners');
 
-    it('filters messages by type', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+    it('filters messages by type', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
         $owner = $createMessagesTabOwner($ownerType);
 
         $actingAsUserWithMessagesTabAccess($owner);
@@ -143,7 +143,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
             ]);
     })->with('messages tab owners');
 
-    it('ignores an unsupported message type filter value', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+    it('ignores an unsupported message type filter value', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
         $owner = $createMessagesTabOwner($ownerType);
 
         $actingAsUserWithMessagesTabAccess($owner);
@@ -170,7 +170,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
             ->assertCanSeeTableRecords([$engagement->timelineRecord, $response->timelineRecord]);
     })->with('messages tab owners');
 
-    it('filters messages by direction', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+    it('filters messages by direction', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
         $owner = $createMessagesTabOwner($ownerType);
 
         $actingAsUserWithMessagesTabAccess($owner);

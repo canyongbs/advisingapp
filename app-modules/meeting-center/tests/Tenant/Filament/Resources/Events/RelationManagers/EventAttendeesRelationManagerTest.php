@@ -59,7 +59,7 @@ $eventAttendeesRelationManagerTestUser = function (): User {
     return $user;
 };
 
-test('archive action is visible when attendee is not archived', function () {
+test('archive action is visible when attendee is not archived', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -69,7 +69,7 @@ test('archive action is visible when attendee is not archived', function () {
         ->assertTableActionVisible('archive', $attendee);
 });
 
-test('archive action successfully archives an attendee', function () {
+test('archive action successfully archives an attendee', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -84,7 +84,7 @@ test('archive action successfully archives an attendee', function () {
     expect($attendee->fresh()->isArchived())->toBeTrue();
 });
 
-test('bulk archive action successfully archives multiple attendees', function () {
+test('bulk archive action successfully archives multiple attendees', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -103,7 +103,7 @@ test('bulk archive action successfully archives multiple attendees', function ()
     });
 });
 
-test('archived attendees are hidden by default', function () {
+test('archived attendees are hidden by default', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -118,7 +118,7 @@ test('archived attendees are hidden by default', function () {
         ->assertCanNotSeeTableRecords([$archivedAttendee]);
 });
 
-test('archived attendees are visible when the withoutArchived filter is removed', function () {
+test('archived attendees are visible when the withoutArchived filter is removed', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -133,7 +133,7 @@ test('archived attendees are visible when the withoutArchived filter is removed'
         ->assertCanSeeTableRecords([$activeAttendee, $archivedAttendee]);
 });
 
-test('invite action dispatches attendee invitations for the owner event', function () {
+test('invite action dispatches attendee invitations for the owner event', function (): void {
     asSuperAdmin();
     Bus::fake();
 
@@ -150,8 +150,8 @@ test('invite action dispatches attendee invitations for the owner event', functi
     });
 });
 
-describe('authorization', function () use ($eventAttendeesRelationManagerTestUser) {
-    it('shows the Invite action with the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+describe('authorization', function () use ($eventAttendeesRelationManagerTestUser): void {
+    it('shows the Invite action with the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser): void {
         $user = $eventAttendeesRelationManagerTestUser();
         $user->givePermissionTo(['event_attendee.view-any', 'event_attendee.create']);
         actingAs($user);
@@ -162,7 +162,7 @@ describe('authorization', function () use ($eventAttendeesRelationManagerTestUse
             ->assertActionVisible(TestAction::make('invite')->table());
     });
 
-    it('hides the Invite action without the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+    it('hides the Invite action without the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser): void {
         $user = $eventAttendeesRelationManagerTestUser();
         $user->givePermissionTo('event_attendee.view-any');
         actingAs($user);
@@ -173,7 +173,7 @@ describe('authorization', function () use ($eventAttendeesRelationManagerTestUse
             ->assertActionHidden(TestAction::make('invite')->table());
     });
 
-    it('denies direct access without the `event_attendee.view-any` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+    it('denies direct access without the `event_attendee.view-any` permission', function () use ($eventAttendeesRelationManagerTestUser): void {
         $user = $eventAttendeesRelationManagerTestUser();
         actingAs($user);
 

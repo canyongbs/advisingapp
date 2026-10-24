@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\artisan;
 
-it('moves a failed inbound email back out of the failed folder and queues it for reprocessing from its original path', function () {
+it('moves a failed inbound email back out of the failed folder and queues it for reprocessing from its original path', function (): void {
     Bus::fake();
 
     $filesystem = Storage::fake('s3-inbound-email');
@@ -63,7 +63,7 @@ it('moves a failed inbound email back out of the failed folder and queues it for
     );
 });
 
-it('normalizes a full s3 object key including the disk root and a leading slash', function () {
+it('normalizes a full s3 object key including the disk root and a leading slash', function (): void {
     Bus::fake();
 
     config()->set('filesystems.disks.s3-inbound-email.root', 'some-root/inbound-email');
@@ -85,7 +85,7 @@ it('normalizes a full s3 object key including the disk root and a leading slash'
     );
 });
 
-it('fails and dispatches nothing when the file does not exist', function () {
+it('fails and dispatches nothing when the file does not exist', function (): void {
     Bus::fake();
 
     Storage::fake('s3-inbound-email');

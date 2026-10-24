@@ -57,7 +57,7 @@ $listFormsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-it('the create action is gated by the create permission', function () use ($listFormsTestUser) {
+it('the create action is gated by the create permission', function () use ($listFormsTestUser): void {
     $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
@@ -72,7 +72,7 @@ it('the create action is gated by the create permission', function () use ($list
         ->assertActionVisible('create');
 });
 
-it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser) {
+it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser): void {
     $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
@@ -89,7 +89,7 @@ it('the duplicate action is gated by the create permission', function () use ($l
         ->assertTableActionVisible('Duplicate', $form);
 });
 
-it('can duplicate a form its steps and its fields', function () {
+it('can duplicate a form its steps and its fields', function (): void {
     asSuperAdmin();
 
     // Given that we have a form
@@ -112,7 +112,7 @@ it('can duplicate a form its steps and its fields', function () {
     expect($duplicatedForm->steps->count())->toBe($form->steps->count());
 });
 
-it('does not allow duplicating a form to a name matching another non-archived form case-insensitively', function () {
+it('does not allow duplicating a form to a name matching another non-archived form case-insensitively', function (): void {
     asSuperAdmin();
 
     Form::factory()->create(['name' => 'Existing Form']);
@@ -123,7 +123,7 @@ it('does not allow duplicating a form to a name matching another non-archived fo
         ->assertHasTableActionErrors(['name' => 'unique']);
 });
 
-it('allows duplicating a form to a name freed up by an archived form', function () {
+it('allows duplicating a form to a name freed up by an archived form', function (): void {
     asSuperAdmin();
 
     $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
@@ -138,7 +138,7 @@ it('allows duplicating a form to a name freed up by an archived form', function 
     expect(Form::query()->whereNull('archived_at')->where('name', 'reusable name')->exists())->toBeTrue();
 });
 
-it('will not duplicate form submissions if they exist', function () {
+it('will not duplicate form submissions if they exist', function (): void {
     asSuperAdmin();
 
     // Given that we have a form
@@ -159,7 +159,7 @@ it('will not duplicate form submissions if they exist', function () {
     expect($duplicatedForm->submissions()->count())->toBe(0);
 });
 
-it('displays the correct submissions count for a form', function () {
+it('displays the correct submissions count for a form', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -173,7 +173,7 @@ it('displays the correct submissions count for a form', function () {
         ->assertTableColumnStateSet('submissions_count', 5, $form);
 });
 
-it('displays the correct submissions count across all versions', function () {
+it('displays the correct submissions count across all versions', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -197,7 +197,7 @@ it('displays the correct submissions count across all versions', function () {
         ->assertTableColumnStateSet('submissions_count', 7, $form);
 });
 
-it('does not count submissions from unrelated forms in the submissions count', function () {
+it('does not count submissions from unrelated forms in the submissions count', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -218,7 +218,7 @@ it('does not count submissions from unrelated forms in the submissions count', f
         ->assertTableColumnStateSet('submissions_count', 2, $form);
 });
 
-it('does not count archived submissions in the submissions count', function () {
+it('does not count archived submissions in the submissions count', function (): void {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -236,7 +236,7 @@ it('does not count archived submissions in the submissions count', function () {
         ->assertTableColumnStateSet('submissions_count', 3, $form);
 });
 
-it('archive bulk action archives all selected forms', function () {
+it('archive bulk action archives all selected forms', function (): void {
     asSuperAdmin();
 
     $formWithSubmissions = Form::factory()->create();
@@ -259,12 +259,12 @@ it('archive bulk action archives all selected forms', function () {
     expect($formWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () {
-    beforeEach(function () {
+describe('duplication', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
     });
 
-    it('gives a duplicated form its own version tree rather than sharing the original', function () {
+    it('gives a duplicated form its own version tree rather than sharing the original', function (): void {
         $form = Form::factory()->create();
 
         Livewire::test(ListForms::class)
@@ -277,7 +277,7 @@ describe('duplication', function () {
             ->and($duplicatedForm->root_id)->not->toBe($form->root_id);
     });
 
-    it('does not show the original form submissions count on the duplicated form', function () {
+    it('does not show the original form submissions count on the duplicated form', function (): void {
         $form = Form::factory()->create();
 
         FormSubmission::factory()->count(3)->create([
@@ -296,7 +296,7 @@ describe('duplication', function () {
             ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedForm);
     });
 
-    it('copies the email auto reply to the duplicated form without adding one to the original', function () {
+    it('copies the email auto reply to the duplicated form without adding one to the original', function (): void {
         $form = Form::factory()->create();
 
         $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for submitting']]]]];
@@ -324,7 +324,7 @@ describe('duplication', function () {
             ->and($duplicatedEmailAutoReply?->is_enabled)->toBeTrue();
     });
 
-    it('copies the email auto reply images to the duplicated form', function () {
+    it('copies the email auto reply images to the duplicated form', function (): void {
         Storage::fake('s3-public');
 
         $form = Form::factory()->create();

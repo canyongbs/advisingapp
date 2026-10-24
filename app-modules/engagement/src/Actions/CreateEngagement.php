@@ -75,7 +75,7 @@ class CreateEngagement
 
         $engagement->body = $data->body;
 
-        DB::transaction(function () use ($data, $engagement, $notifyNow) {
+        DB::transaction(function () use ($data, $engagement, $notifyNow): void {
             $engagement->save();
 
             if ($data->schema) {

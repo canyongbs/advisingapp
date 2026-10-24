@@ -95,7 +95,7 @@ trait CanManageFolders
                             ->where('application', static::APPLICATION);
                     }),
             ])
-            ->action(function (array $arguments, array $data) {
+            ->action(function (array $arguments, array $data): void {
                 $folder = new AiThreadFolder();
                 $folder->name = $data['name'];
                 $folder->application = static::APPLICATION;
@@ -106,7 +106,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')
-            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'));
     }
 
     public function renameFolderAction(): Action
@@ -115,7 +115,7 @@ trait CanManageFolders
             ->modalSubmitActionLabel('Rename')
             ->modalWidth('md')
             ->size(Size::ExtraSmall)
-            ->fillForm(fn (array $arguments) => [
+            ->fillForm(fn (array $arguments): array => [
                 'name' => auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
@@ -133,7 +133,7 @@ trait CanManageFolders
                             ->where('application', static::APPLICATION);
                     }),
             ])
-            ->action(function (array $arguments, array $data) {
+            ->action(function (array $arguments, array $data): void {
                 auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
@@ -143,7 +143,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -156,7 +156,7 @@ trait CanManageFolders
             ->size(Size::ExtraSmall)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
-            ->action(function (array $arguments) {
+            ->action(function (array $arguments): void {
                 auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
@@ -182,7 +182,7 @@ trait CanManageFolders
             ->schema([
                 $this->folderSelect(),
             ])
-            ->action(function (array $arguments, array $data) {
+            ->action(function (array $arguments, array $data): void {
                 $thread = auth()->user()->aiThreads()
                     ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
@@ -199,7 +199,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
-            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',

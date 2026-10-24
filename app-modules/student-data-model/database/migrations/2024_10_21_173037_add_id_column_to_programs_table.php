@@ -42,7 +42,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->uuid('id')
                 ->initial(DB::raw('gen_random_uuid()'))
                 ->default(DB::raw('gen_random_uuid()'))
@@ -52,7 +52,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->dropColumn('id');
         });
     }

@@ -52,6 +52,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Vite;
 
 class RelationManagerDraftWithAiAction extends Action
@@ -67,7 +68,7 @@ class RelationManagerDraftWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->slideOver()
-            ->modalContent(fn (RelationManager $livewire) => view('engagement::filament.actions.draft-with-ai-modal-content', [
+            ->modalContent(fn (RelationManager $livewire): Factory|\Illuminate\Contracts\View\View => view('engagement::filament.actions.draft-with-ai-modal-content', [
                 'recordTitle' => $livewire->getOwnerRecord()->getAttribute($livewire->getOwnerRecord()::displayNameKey()),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
@@ -80,7 +81,7 @@ class RelationManagerDraftWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, ManageRelatedRecords | RelationManager $livewire) {
+            ->action(function (array $data, Get $get, Set $set, ManageRelatedRecords | RelationManager $livewire): void {
                 $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;

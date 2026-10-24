@@ -108,12 +108,12 @@ class ListProspectsController
                 AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
                 AllowedFilter::operator('hsgrad', FilterOperator::DYNAMIC),
                 AllowedFilter::callback('status', function (Builder $query, mixed $value): Builder {
-                    return $query->whereHas('status', function (Builder $query) use ($value) {
+                    return $query->whereHas('status', function (Builder $query) use ($value): void {
                         $query->whereRaw('LOWER(name) = ?', [Str::lower($value)]);
                     });
                 }),
                 AllowedFilter::callback('source', function (Builder $query, mixed $value): Builder {
-                    return $query->whereHas('source', function (Builder $query) use ($value) {
+                    return $query->whereHas('source', function (Builder $query) use ($value): void {
                         $query->whereRaw('LOWER(name) = ?', [Str::lower($value)]);
                     });
                 }),

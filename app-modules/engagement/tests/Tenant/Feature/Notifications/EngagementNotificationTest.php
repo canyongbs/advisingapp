@@ -50,7 +50,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\NotificationSettings;
 
-it('getEmailType returns the engagement email_type value', function () {
+it('getEmailType returns the engagement email_type value', function (): void {
     $engagement = Engagement::factory()
         ->forProspect()
         ->email()
@@ -68,7 +68,7 @@ it('getEmailType returns the engagement email_type value', function () {
     expect($notification->getEmailType())->toBe(EmailType::Transactional);
 });
 
-it('creates an EmailMessage with email_type marketing when engagement is marketing', function () {
+it('creates an EmailMessage with email_type marketing when engagement is marketing', function (): void {
     $prospect = Prospect::factory()->create();
 
     $engagement = Engagement::factory()
@@ -90,7 +90,7 @@ it('creates an EmailMessage with email_type marketing when engagement is marketi
         ->and($emailMessage->email_type)->toBe(EmailType::Marketing);
 });
 
-it('creates an EmailMessage with email_type transactional when engagement is transactional', function () {
+it('creates an EmailMessage with email_type transactional when engagement is transactional', function (): void {
     $prospect = Prospect::factory()->create();
 
     $engagement = Engagement::factory()
@@ -112,7 +112,7 @@ it('creates an EmailMessage with email_type transactional when engagement is tra
         ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
 });
 
-it('uses the notification settings from name when dynamic engagements are disabled', function () {
+it('uses the notification settings from name when dynamic engagements are disabled', function (): void {
     $settings = app(NotificationSettings::class);
     $settings->from_name = 'Advising Team';
     $settings->save();
@@ -131,7 +131,7 @@ it('uses the notification settings from name when dynamic engagements are disabl
     expect($mailMessage->from[1])->toBe('Advising Team');
 });
 
-it('uses the engagement user as the from name when dynamic engagements are enabled', function () {
+it('uses the engagement user as the from name when dynamic engagements are enabled', function (): void {
     $settings = app(NotificationSettings::class);
     $settings->from_name = 'Advising Team';
     $settings->save();
@@ -154,7 +154,7 @@ it('uses the engagement user as the from name when dynamic engagements are enabl
         ->and($mailMessage->viewData['settings'])->toBe($settings);
 });
 
-it('creates a proper Engagement Response for emails when demo mode is turned on', function () {
+it('creates a proper Engagement Response for emails when demo mode is turned on', function (): void {
     $tenantConfig = Tenant::current()->config;
     $tenantConfig->mail->isDemoModeEnabled = true;
     Tenant::current()->update([
@@ -180,7 +180,7 @@ it('creates a proper Engagement Response for emails when demo mode is turned on'
     expect(EngagementResponse::first()->content)->toBe('Thank you for your message. Will get back to you shortly.');
 });
 
-it('creates a proper Engagement Response for SMS when demo mode is turned on', function (string $recipientClass, string $engagementFactoryState) {
+it('creates a proper Engagement Response for SMS when demo mode is turned on', function (string $recipientClass, string $engagementFactoryState): void {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->is_demo_auto_reply_mode_enabled = true;
@@ -207,7 +207,7 @@ it('creates a proper Engagement Response for SMS when demo mode is turned on', f
     'student' => [Student::class, 'forStudent'],
 ]);
 
-it('sends a fake auto-reply Engagement Response back from the recipient when SMS demo mode is turned on with the Telnyx provider', function (string $recipientClass, string $engagementFactoryState) {
+it('sends a fake auto-reply Engagement Response back from the recipient when SMS demo mode is turned on with the Telnyx provider', function (string $recipientClass, string $engagementFactoryState): void {
     $settings = app(TwilioSettings::class);
     $settings->provider = SmsMessagingProvider::Telnyx;
     $settings->telnyx_api_key = 'test_api_key';

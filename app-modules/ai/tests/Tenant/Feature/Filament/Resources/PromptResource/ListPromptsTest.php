@@ -60,7 +60,7 @@ $permissions = [
     'prompt.*.view',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -69,7 +69,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses,
     ));
@@ -78,7 +78,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -88,7 +88,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can list records', function () use ($licenses, $permissions) {
+it('can list records', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -107,7 +107,7 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertCanSeeTableRecords($records);
 });
 
-it('hides the bulk delete action from a user who is not a super admin', function () use ($licenses, $permissions) {
+it('hides the bulk delete action from a user who is not a super admin', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: [...$permissions, 'prompt.*.delete']
@@ -120,7 +120,7 @@ it('hides the bulk delete action from a user who is not a super admin', function
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the bulk delete action to a super admin', function () use ($licenses, $permissions) {
+it('shows the bulk delete action to a super admin', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -133,7 +133,7 @@ it('shows the bulk delete action to a super admin', function () use ($licenses, 
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
+it('Filter prompts based on Smart', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions

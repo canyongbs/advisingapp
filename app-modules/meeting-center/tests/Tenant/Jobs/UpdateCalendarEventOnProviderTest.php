@@ -65,7 +65,7 @@ beforeEach(function (): void {
     Queue::fake();
 });
 
-it('updates the event on the resolved provider driver when already synced', function () use ($makeUpdateJobCalendarEvent) {
+it('updates the event on the resolved provider driver when already synced', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
     $event->updateQuietly(['provider_id' => 'already-synced']);
 
@@ -81,7 +81,7 @@ it('updates the event on the resolved provider driver when already synced', func
     (new UpdateCalendarEventOnProvider($event))->handle();
 });
 
-it('falls back to creating the event when it was never synced', function () use ($makeUpdateJobCalendarEvent) {
+it('falls back to creating the event when it was never synced', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -97,7 +97,7 @@ it('falls back to creating the event when it was never synced', function () use 
     (new UpdateCalendarEventOnProvider($event))->handle();
 });
 
-it('swallows a CouldNotRefreshToken failure', function () use ($makeUpdateJobCalendarEvent) {
+it('swallows a CouldNotRefreshToken failure', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
     $event->updateQuietly(['provider_id' => 'already-synced']);
 
@@ -111,7 +111,7 @@ it('swallows a CouldNotRefreshToken failure', function () use ($makeUpdateJobCal
     (new UpdateCalendarEventOnProvider($event))->handle();
 });
 
-it('releases the job when the provider is rate limited', function () use ($makeUpdateJobCalendarEvent) {
+it('releases the job when the provider is rate limited', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
     $event->updateQuietly(['provider_id' => 'already-synced']);
 
@@ -128,7 +128,7 @@ it('releases the job when the provider is rate limited', function () use ($makeU
     $job->assertReleased(45);
 });
 
-it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($makeUpdateJobCalendarEvent) {
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
     $event->updateQuietly(['provider_id' => 'already-synced']);
 
@@ -143,7 +143,7 @@ it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () u
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('prevents overlaps with other provider jobs for the same event', function () use ($makeUpdateJobCalendarEvent) {
+it('prevents overlaps with other provider jobs for the same event', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     $middleware = (new UpdateCalendarEventOnProvider($event))->middleware();
@@ -159,13 +159,13 @@ it('prevents overlaps with other provider jobs for the same event', function () 
     expect((bool) $shareKey)->toBeTrue();
 });
 
-it('has maxExceptions of 3', function () use ($makeUpdateJobCalendarEvent) {
+it('has maxExceptions of 3', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     expect((new UpdateCalendarEventOnProvider($event))->maxExceptions)->toBe(3);
 });
 
-it('is placed on configured queue', function () use ($makeUpdateJobCalendarEvent) {
+it('is placed on configured queue', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     $job = new UpdateCalendarEventOnProvider($event);
@@ -173,13 +173,13 @@ it('is placed on configured queue', function () use ($makeUpdateJobCalendarEvent
     expect($job->queue)->toBe(config('meeting-center.queue'));
 });
 
-it('uses a backoff of 10 seconds', function () use ($makeUpdateJobCalendarEvent) {
+it('uses a backoff of 10 seconds', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     expect((new UpdateCalendarEventOnProvider($event))->backoff())->toBe(10);
 });
 
-it('retries for an hour', function () use ($makeUpdateJobCalendarEvent) {
+it('retries for an hour', function () use ($makeUpdateJobCalendarEvent): void {
     $event = $makeUpdateJobCalendarEvent();
 
     travelTo(Carbon::parse('2026-09-23 12:00:00'));

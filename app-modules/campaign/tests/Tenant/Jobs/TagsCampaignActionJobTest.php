@@ -53,7 +53,7 @@ use App\Models\Taggable;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the group', function (Educatable $educatable, bool $priorTags, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable, bool $priorTags, bool $removePrior): void {
     Bus::fake();
 
     /** @var Group $group */
@@ -133,7 +133,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
 
     $campaignActionEducatable->related
         // @phpstan-ignore argument.type
-        ->each(function (CampaignActionEducatableRelated $related) use ($tags, $educatable) {
+        ->each(function (CampaignActionEducatableRelated $related) use ($tags, $educatable): void {
             $relatedRelated = $related->related;
 
             expect($relatedRelated)->toBeInstanceOf(Taggable::class);

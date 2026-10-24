@@ -39,7 +39,7 @@ use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\Facades\Validator;
 
-it('renders a different preview when the options are only reordered', function (array $options) {
+it('renders a different preview when the options are only reordered', function (array $options): void {
     $config = ['label' => 'Country', 'isRequired' => false];
 
     $original = SelectFormFieldBlock::toPreviewHtml([...$config, 'options' => $options]);
@@ -54,7 +54,7 @@ it('renders a different preview when the options are only reordered', function (
     ]],
 ]);
 
-it('preserves generated numeric values through serialization and submission validation', function () {
+it('preserves generated numeric values through serialization and submission validation', function (): void {
     $component = collect(SelectFormFieldBlock::fields())->first(fn (mixed $field): bool => $field instanceof OptionsKeyValue);
 
     $options = [
@@ -82,7 +82,7 @@ it('preserves generated numeric values through serialization and submission vali
         ->and(Validator::make(['response' => '0%'], ['response' => $rules])->passes())->toBeFalse();
 });
 
-it('renders and validates legacy option maps with their original values', function (array $options, array $expectedOptions, string $firstValue, string $secondValue, string $invalidValue) {
+it('renders and validates legacy option maps with their original values', function (array $options, array $expectedOptions, string $firstValue, string $secondValue, string $invalidValue): void {
     $field = new FormField();
     $field->label = 'Percentage';
     $field->is_required = true;
@@ -128,7 +128,7 @@ it('renders and validates legacy option maps with their original values', functi
     ],
 ]);
 
-it('displays the submitted option label', function (array $options, string $response, string $label) {
+it('displays the submitted option label', function (array $options, string $response, string $label): void {
     $html = view('form::blocks.submissions.select', [
         'label' => 'Choice',
         'isRequired' => false,

@@ -45,7 +45,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-it('displays correct count for adult learner alerts', function () {
+it('displays correct count for adult learner alerts', function (): void {
     $minimumAge = fake()->numberBetween(24, 30);
     $matchingCount = fake()->numberBetween(2, 5);
     $nonMatchingCount = fake()->numberBetween(1, 3);
@@ -85,7 +85,7 @@ it('displays correct count for adult learner alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for new student alerts', function () {
+it('displays correct count for new student alerts', function (): void {
     $numberOfSemesters = fake()->numberBetween(1, 3);
     $matchingCount = fake()->numberBetween(2, 5);
     $nonMatchingCount = fake()->numberBetween(1, 3);
@@ -143,7 +143,7 @@ it('displays correct count for new student alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for first generation student alerts', function () {
+it('displays correct count for first generation student alerts', function (): void {
     $firstGenCount = fake()->numberBetween(2, 5);
     $nonFirstGenCount = fake()->numberBetween(1, 3);
 
@@ -172,7 +172,7 @@ it('displays correct count for first generation student alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $firstGenCount);
 });
 
-it('displays correct count for D or F grade alerts', function () {
+it('displays correct count for D or F grade alerts', function (): void {
     $matchingCount = fake()->numberBetween(2, 5);
     $nonMatchingCount = fake()->numberBetween(1, 3);
 
@@ -207,7 +207,7 @@ it('displays correct count for D or F grade alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for multiple D or F grades alerts', function () {
+it('displays correct count for multiple D or F grades alerts', function (): void {
     $matchingCount = fake()->numberBetween(2, 4);
     $nonMatchingCount = fake()->numberBetween(1, 3);
 
@@ -247,7 +247,7 @@ it('displays correct count for multiple D or F grades alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for course withdrawal alerts', function () {
+it('displays correct count for course withdrawal alerts', function (): void {
     $matchingCount = fake()->numberBetween(2, 5);
     $nonMatchingCount = fake()->numberBetween(1, 3);
 
@@ -282,7 +282,7 @@ it('displays correct count for course withdrawal alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for multiple course withdrawals alerts', function () {
+it('displays correct count for multiple course withdrawals alerts', function (): void {
     $matchingCount = fake()->numberBetween(2, 4);
     $nonMatchingCount = fake()->numberBetween(1, 3);
 
@@ -322,7 +322,7 @@ it('displays correct count for multiple course withdrawals alerts', function () 
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('displays correct count for repeated course attempt alerts', function () {
+it('displays correct count for repeated course attempt alerts', function (): void {
     $matchingCount = fake()->numberBetween(2, 4);
     $nonMatchingCount = fake()->numberBetween(1, 3);
 
@@ -367,7 +367,7 @@ it('displays correct count for repeated course attempt alerts', function () {
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
-it('shows empty state when no alerts are configured', function () {
+it('shows empty state when no alerts are configured', function (): void {
     $widget = new AlertStats();
     $stats = $widget->getStats();
 
@@ -376,7 +376,7 @@ it('shows empty state when no alerts are configured', function () {
         ->and($stats[0]->getValue())->toBe('Please configure alert presets to see statistics.');
 });
 
-it('only shows enabled alert configurations', function () {
+it('only shows enabled alert configurations', function (): void {
     AlertConfiguration::factory()
         ->has(AdultLearnerAlertConfiguration::factory(), 'configuration')
         ->state([
@@ -392,7 +392,7 @@ it('only shows enabled alert configurations', function () {
         ->and($stats[0]->getLabel())->toBe('No Alerts Configured');
 });
 
-it('calculates stats with population group filter applied', function () {
+it('calculates stats with population group filter applied', function (): void {
     $inGroupCount = fake()->numberBetween(2, 4);
     $outGroupCount = fake()->numberBetween(2, 4);
 
@@ -471,7 +471,7 @@ it('calculates stats with population group filter applied', function () {
         ->and($clearedStats[0]->getValue())->toBe((string) $totalCount);
 });
 
-it('does not count alerts belonging to archived students', function () {
+it('does not count alerts belonging to archived students', function (): void {
     $minimumAge = 25;
 
     $config = AdultLearnerAlertConfiguration::factory()
@@ -497,7 +497,7 @@ it('does not count alerts belonging to archived students', function () {
 
     expect((new AlertStats())->getStats()[0]->getValue())->toBe('5');
 
-    $archived->each(fn (Student $student) => $student->archive());
+    $archived->each(fn (Student $student): bool => $student->archive());
 
     expect((new AlertStats())->getStats()[0]->getValue())->toBe('3');
 });

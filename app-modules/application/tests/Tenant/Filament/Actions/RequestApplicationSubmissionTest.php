@@ -52,13 +52,13 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 });
 
-it('requires application_id to submit the request', function () {
+it('requires application_id to submit the request', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -76,7 +76,7 @@ it('requires application_id to submit the request', function () {
         ->assertHasTableActionErrors(['application_id' => 'required']);
 });
 
-it('can request an application submission via email', function () {
+it('can request an application submission via email', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -107,7 +107,7 @@ it('can request an application submission via email', function () {
         ->and($submission->canceled_at)->toBeNull();
 });
 
-it('defaults request_method to email', function () {
+it('defaults request_method to email', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -130,7 +130,7 @@ it('defaults request_method to email', function () {
         ->and($submission->request_method)->toBe(FormSubmissionRequestDeliveryMethod::Email);
 });
 
-it('allows request_note to be optional', function () {
+it('allows request_note to be optional', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -155,7 +155,7 @@ it('allows request_note to be optional', function () {
         ->and($submission->request_note)->toBeNull();
 });
 
-it('reuses an existing requested submission for the same application instead of creating a new one', function () {
+it('reuses an existing requested submission for the same application instead of creating a new one', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -196,7 +196,7 @@ it('reuses an existing requested submission for the same application instead of 
         ->and($submission->request_note)->toBe('Updated note');
 });
 
-it('creates a new submission when existing one is already submitted', function () {
+it('creates a new submission when existing one is already submitted', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -224,7 +224,7 @@ it('creates a new submission when existing one is already submitted', function (
     expect($student->applicationSubmissions()->count())->toBe(2);
 });
 
-it('associates the current authenticated user as the requester', function () {
+it('associates the current authenticated user as the requester', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -249,7 +249,7 @@ it('associates the current authenticated user as the requester', function () {
         ->and($submission->requester->is($user))->toBeTrue();
 });
 
-it('dispatches the delivery job after creating the submission', function () {
+it('dispatches the delivery job after creating the submission', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -270,7 +270,7 @@ it('dispatches the delivery job after creating the submission', function () {
     Queue::assertPushed(DeliverApplicationSubmissionRequestByEmail::class);
 });
 
-it('dispatches the sms delivery job when sms method is selected', function () {
+it('dispatches the sms delivery job when sms method is selected', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -291,7 +291,7 @@ it('dispatches the sms delivery job when sms method is selected', function () {
     Queue::assertPushed(DeliverApplicationSubmissionRequestBySms::class);
 });
 
-it('sends a success notification after the request is sent', function () {
+it('sends a success notification after the request is sent', function (): void {
     Queue::fake();
 
     asSuperAdmin();
@@ -311,7 +311,7 @@ it('sends a success notification after the request is sent', function () {
         ->assertNotified('Application request sent');
 });
 
-it('hides the request action from a user without the application.create ability', function () {
+it('hides the request action from a user without the application.create ability', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -327,7 +327,7 @@ it('hides the request action from a user without the application.create ability'
         ->assertTableActionHidden('Request');
 });
 
-it('allows a user with the application.create ability to request an application submission', function () {
+it('allows a user with the application.create ability to request an application submission', function (): void {
     Queue::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();

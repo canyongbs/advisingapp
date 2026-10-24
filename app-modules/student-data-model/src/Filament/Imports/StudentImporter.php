@@ -108,8 +108,8 @@ class StudentImporter extends Importer
                     'date',
                 ]),
             ImportColumn::make('hsgrad')
-                ->example(fn () => '2025-11-21')
-                ->rules(fn () => [
+                ->example(fn (): string => '2025-11-21')
+                ->rules(fn (): array => [
                     'nullable',
                     'date',
                 ]),
@@ -212,7 +212,7 @@ class StudentImporter extends Importer
                     'different:care_team_2',
                     'different:care_team_3',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('care_team_role_1')
                 ->label('Care Team Role 1')
                 ->example('Advising')
@@ -221,7 +221,7 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('care_team_2')
                 ->label('Care Team 2')
                 ->example('janesmith@gmail.com')
@@ -233,7 +233,7 @@ class StudentImporter extends Importer
                     'different:care_team_1',
                     'different:care_team_3',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('care_team_role_2')
                 ->label('Care Team Role 2')
                 ->example('Aid')
@@ -242,7 +242,7 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('care_team_3')
                 ->label('Care Team 3')
                 ->rules([
@@ -253,7 +253,7 @@ class StudentImporter extends Importer
                     'different:care_team_1',
                     'different:care_team_2',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('care_team_role_3')
                 ->label('Care Team Role 3')
                 ->rules([
@@ -261,7 +261,7 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ])
-                ->fillRecordUsing(fn () => null),
+                ->fillRecordUsing(fn (): null => null),
             ImportColumn::make('created_at_source')
                 ->label('Create date/time')
                 ->example('2024-10-21 12:00:00')

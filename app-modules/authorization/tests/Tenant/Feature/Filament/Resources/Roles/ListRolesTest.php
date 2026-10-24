@@ -41,7 +41,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('duplicateRole action does not allow duplicate role names case insensitively within a guard', function () {
+test('duplicateRole action does not allow duplicate role names case insensitively within a guard', function (): void {
     asSuperAdmin();
 
     $role = Role::factory()->create(['name' => 'Original Role', 'guard_name' => 'web']);

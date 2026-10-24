@@ -47,14 +47,14 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->earlyAlert = true;
     $settings->save();
 });
 
-it('requires proper access', function () {
+it('requires proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
     $settings = app(LicenseSettings::class);
@@ -87,7 +87,7 @@ it('requires proper access', function () {
         ->assertOk();
 });
 
-it('renders active alerts as table rows', function () {
+it('renders active alerts as table rows', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -133,7 +133,7 @@ it('renders active alerts as table rows', function () {
         ->assertCanSeeTableRecords([$alertConfig]);
 });
 
-it('renders inactive alerts as table rows', function () {
+it('renders inactive alerts as table rows', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');
@@ -177,7 +177,7 @@ it('renders inactive alerts as table rows', function () {
         ->assertTableColumnStateSet('alert_status', StudentAlertStatus::Inactive, $alertConfig);
 });
 
-it('renders disabled alerts as table rows', function () {
+it('renders disabled alerts as table rows', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.*.view');

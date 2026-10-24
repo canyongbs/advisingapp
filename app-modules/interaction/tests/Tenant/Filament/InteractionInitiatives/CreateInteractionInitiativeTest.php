@@ -48,7 +48,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-test('CreateInteractionInitiative is gated with proper access control', function () {
+test('CreateInteractionInitiative is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -65,7 +65,7 @@ test('CreateInteractionInitiative is gated with proper access control', function
         )->assertSuccessful();
 });
 
-test('it can successfully create for student or for prospect', function () {
+test('it can successfully create for student or for prospect', function (): void {
     asSuperAdmin();
 
     $studentInteractionInitiative = InteractionInitiative::factory()->make(['interactable_type' => InteractableType::Student]);
@@ -90,7 +90,7 @@ test('it can successfully create for student or for prospect', function () {
     assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
 
-test('it can only create if the name is unique per type', function () {
+test('it can only create if the name is unique per type', function (): void {
     asSuperAdmin();
 
     $interactionInitiative1 = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
@@ -111,7 +111,7 @@ test('it can only create if the name is unique per type', function () {
     assertDatabaseCount(InteractionInitiative::class, 1);
 });
 
-test('it can successfully create with the same name for different types', function () {
+test('it can successfully create with the same name for different types', function (): void {
     asSuperAdmin();
 
     $studentInteractionInitiative = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
@@ -136,7 +136,7 @@ test('it can successfully create with the same name for different types', functi
     assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
 
-test('it can successfully set a default per type', function () {
+test('it can successfully set a default per type', function (): void {
     asSuperAdmin();
 
     $studentInteractionInitiative = InteractionInitiative::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
@@ -161,14 +161,14 @@ test('it can successfully set a default per type', function () {
     assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
 
-test('it only shows licensed interactable types as options', function () {
+test('it only shows licensed interactable types as options', function (): void {
     $user = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.create');
     actingAs($user);
 
     Livewire::test(CreateInteractionInitiative::class)
-        ->assertFormFieldExists('interactable_type', function (Select $field) {
+        ->assertFormFieldExists('interactable_type', function (Select $field): true {
             expect($field->getOptions())->toBe([
                 InteractableType::Prospect->value => InteractableType::Prospect->getLabel(),
             ]);
@@ -182,7 +182,7 @@ test('it only shows licensed interactable types as options', function () {
     actingAs($user);
 
     Livewire::test(CreateInteractionInitiative::class)
-        ->assertFormFieldExists('interactable_type', function (Select $field) {
+        ->assertFormFieldExists('interactable_type', function (Select $field): true {
             expect($field->getOptions())->toBe([
                 InteractableType::Student->value => InteractableType::Student->getLabel(),
             ]);

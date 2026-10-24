@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('login_magic_links', function (Blueprint $table) {
+        Schema::create('login_magic_links', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->text('code');
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();

@@ -73,7 +73,7 @@ class UsersTable
             ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
-                    ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (User $record): string => UserResource::getUrl('view', ['record' => $record])),
             ]);
     }
 

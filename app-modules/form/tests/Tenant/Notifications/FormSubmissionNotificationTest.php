@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Notifications\FormSubmissionNotification;
@@ -43,7 +44,7 @@ use App\Models\User;
 
 use function Tests\asSuperAdmin;
 
-it('links the author name to their student record', function () {
+it('links the author name to their student record', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -59,10 +60,28 @@ it('links the author name to their student record', function () {
     expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
 });
 
-describe('archiving', function () {
+it('links form and submission details to their canonical tabs', function (): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $submission = FormSubmission::factory()->create(['form_id' => $form->id]);
+
+    $body = (new FormSubmissionNotification($form, $submission))->toDatabase(User::factory()->create())['body'];
+
+    expect($body)->toContain(FormResource::getUrl('view', ['record' => $form, 'tab' => 'edit']))
+        ->and($body)->toContain(FormResource::getUrl('view', [
+            'record' => $form,
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->id,
+        ]));
+});
+
+describe('archiving', function (): void {
     // The student's page no longer resolves, so the notification names them without a link
     // rather than sending the reader to a page that does not exist.
-    it('names an archived author without linking to them', function () {
+    it('names an archived author without linking to them', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

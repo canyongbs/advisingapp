@@ -87,7 +87,7 @@ class EmployeeAdvisorLineChart extends LineChartReportWidget
 
         $monthlyData = $shouldBypassCache
             ? $buildData($startDate, $endDate)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('employee_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('employee_advisor_line_chart_data', now()->addHours(24), function () use ($buildData): array {
                 return $buildData();
             });
 

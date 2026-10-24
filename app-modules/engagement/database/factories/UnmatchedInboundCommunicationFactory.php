@@ -79,7 +79,7 @@ class UnmatchedInboundCommunicationFactory extends Factory
 
     public function email(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'type' => EngagementResponseType::Email,
             'sender' => $this->faker->unique()->email(),
             'subject' => $this->faker->sentence(),
@@ -88,7 +88,7 @@ class UnmatchedInboundCommunicationFactory extends Factory
 
     public function sms(): self
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'type' => EngagementResponseType::Sms,
             'sender' => $this->faker->unique()->e164PhoneNumber(),
             'subject' => null,

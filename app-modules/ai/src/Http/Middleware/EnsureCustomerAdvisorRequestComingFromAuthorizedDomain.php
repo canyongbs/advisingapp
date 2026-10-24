@@ -69,7 +69,7 @@ class EnsureCustomerAdvisorRequestComingFromAuthorizedDomain
 
         if (is_array($authorizedDomains)) {
             $flatAuthorized = [];
-            array_walk_recursive($authorizedDomains, function (string $domain) use (&$flatAuthorized) {
+            array_walk_recursive($authorizedDomains, function (string $domain) use (&$flatAuthorized): void {
                 $flatAuthorized[] = $domain;
             });
             $allowedDomains = array_merge($allowedDomains, $flatAuthorized);

@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+        Schema::table('knowledge_base_articles', function (Blueprint $table): void {
             $table->integer('portal_view_count')->default(0);
         });
     }
 
     public function down(): void
     {
-        Schema::table('knowledge_base_articles', function (Blueprint $table) {
+        Schema::table('knowledge_base_articles', function (Blueprint $table): void {
             $table->dropColumn('portal_view_count');
         });
     }

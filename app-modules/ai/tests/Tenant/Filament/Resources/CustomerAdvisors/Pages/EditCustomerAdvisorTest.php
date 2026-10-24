@@ -49,7 +49,7 @@ use function Pest\Laravel\assertDatabaseHas;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-test('Edit Customer Advisor is gated with proper access control', function () {
+test('Edit Customer Advisor is gated with proper access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -82,7 +82,7 @@ test('Edit Customer Advisor is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('can edit Customer Advisor', function () {
+test('can edit Customer Advisor', function (): void {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);
@@ -127,7 +127,7 @@ test('can edit Customer Advisor', function () {
     );
 });
 
-test('Edit Customer Advisor validates the inputs', function (CustomerAdvisorRequestFactory $data, array $errors) {
+test('Edit Customer Advisor validates the inputs', function (CustomerAdvisorRequestFactory $data, array $errors): void {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);
@@ -177,7 +177,7 @@ test('Edit Customer Advisor validates the inputs', function (CustomerAdvisorRequ
     ]
 );
 
-test('archive action visible when Customer Advisor is not archived', function () {
+test('archive action visible when Customer Advisor is not archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -203,7 +203,7 @@ test('archive action visible when Customer Advisor is not archived', function ()
         ->assertActionHidden('restore');
 });
 
-test('restore action visible when Customer Advisor is archived', function () {
+test('restore action visible when Customer Advisor is archived', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

@@ -45,7 +45,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('EditInteractionInitative is gated with proper access control', function () {
+test('EditInteractionInitative is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $initiative = InteractionInitiative::factory()->create();
@@ -64,7 +64,7 @@ test('EditInteractionInitative is gated with proper access control', function ()
         )->assertSuccessful();
 });
 
-test('it cannot delete instances used by an interaction', function () {
+test('it cannot delete instances used by an interaction', function (): void {
     asSuperAdmin();
 
     $initiative = InteractionInitiative::factory()->create();

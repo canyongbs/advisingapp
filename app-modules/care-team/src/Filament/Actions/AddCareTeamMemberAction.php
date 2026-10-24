@@ -92,7 +92,7 @@ class AddCareTeamMemberAction
             ])
             ->action(function (Collection $records, array $data) {
                 return $records
-                    ->each(function (Model $record) use ($data) {
+                    ->each(function (Model $record) use ($data): void {
                         throw_unless($record instanceof Educatable, new Exception('Record must be of type educatable.'));
 
                         /** @var User $user */

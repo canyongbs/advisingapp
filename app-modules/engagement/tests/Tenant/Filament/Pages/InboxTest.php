@@ -49,13 +49,13 @@ use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
 
-beforeEach(function () {
+beforeEach(function (): void {
     setUnifiedInboxEnabled(true);
 });
 
-it('is gated with proper access control', function () {})->todo();
+it('is gated with proper access control', function (): void {})->todo();
 
-it('requires the unified inbox feature addon to access', function () {
+it('requires the unified inbox feature addon to access', function (): void {
     asSuperAdmin();
 
     setUnifiedInboxEnabled(false);
@@ -67,9 +67,9 @@ it('requires the unified inbox feature addon to access', function () {
     get(Inbox::getUrl())->assertOk();
 });
 
-it('displays the correct details', function () {})->todo();
+it('displays the correct details', function (): void {})->todo();
 
-it('renders the unified inbox as a single page using the native tabs component', function () {
+it('renders the unified inbox as a single page using the native tabs component', function (): void {
     asSuperAdmin();
 
     Livewire::test(Inbox::class)
@@ -78,7 +78,7 @@ it('renders the unified inbox as a single page using the native tabs component',
         ->assertSeeText('Sent Items');
 });
 
-it('syncs the active tab into the component state when switching tabs', function () {
+it('syncs the active tab into the component state when switching tabs', function (): void {
     asSuperAdmin();
 
     Livewire::test(Inbox::class)
@@ -87,7 +87,7 @@ it('syncs the active tab into the component state when switching tabs', function
         ->assertSet('activeTab', 'sent-items');
 });
 
-it('does not render a tab the user cannot access', function () {
+it('does not render a tab the user cannot access', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
 
@@ -98,7 +98,7 @@ it('does not render a tab the user cannot access', function () {
         ->assertDontSeeLivewire(InboxTable::class);
 });
 
-it('can properly filter sender type', function () {
+it('can properly filter sender type', function (): void {
     asSuperAdmin();
 
     $prospectEngagementResponses = EngagementResponse::factory()->count(5)->create(['sender_type' => (new Prospect())->getMorphClass()]);
@@ -116,7 +116,7 @@ it('can properly filter sender type', function () {
         ->assertCanNotSeeTableRecords($studentEngagementResponses);
 });
 
-it('can properly filter engagement response type', function () {
+it('can properly filter engagement response type', function (): void {
     asSuperAdmin();
 
     $emailEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Email]);
@@ -134,7 +134,7 @@ it('can properly filter engagement response type', function () {
         ->assertCanNotSeeTableRecords($smsEngagementResponses);
 });
 
-it('loads the Care Team filter as active when the component first renders', function () {
+it('loads the Care Team filter as active when the component first renders', function (): void {
     asSuperAdmin();
 
     Livewire::test(InboxTable::class)
@@ -142,7 +142,7 @@ it('loads the Care Team filter as active when the component first renders', func
         ->assertSet('tableFilters.care_team.isActive', true);
 });
 
-it('can properly filter by care team', function () {
+it('can properly filter by care team', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);
 

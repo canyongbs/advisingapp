@@ -55,7 +55,7 @@ class EducatableSearch
         $query->whereHasMorph(
             $this->relationship,
             [Student::class, Prospect::class],
-            function (Builder $query, string $type) use ($search) {
+            function (Builder $query, string $type) use ($search): void {
                 $column = app($type)::displayNameKey();
 
                 $query->where(

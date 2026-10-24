@@ -84,9 +84,9 @@ class ProfileInformation extends ProfilePage
                             ->live(),
                         TextInput::make('public_profile_slug')
                             ->label('Url')
-                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
+                            ->visible(fn (Get $get): mixed => $get('has_enabled_public_profile'))
                             //TODO: default doesn't work for some reason
-                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
+                            ->afterStateHydrated(fn (TextInput $component, $state): TextInput => $component->state($state ?? str($user->name)->lower()->slug('')))
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
                             ->required()
@@ -94,7 +94,7 @@ class ProfileInformation extends ProfilePage
                             ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
                             ->suffixAction(
                                 Action::make('viewPublicProfile')
-                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
+                                    ->url(fn (): string => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
                                     ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->openUrlInNewTab()
                                     ->visible(fn () => $user->public_profile_slug),

@@ -55,7 +55,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('renders all students correctly in the retention dashboard', function () {
+it('renders all students correctly in the retention dashboard', function (): void {
     $allStudents = Student::factory()->has(
         Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
         'tasks'
@@ -92,7 +92,7 @@ it('renders all students correctly in the retention dashboard', function () {
         );
 });
 
-it('exposes the advanced filtering population selector on the retention dashboard', function () {
+it('exposes the advanced filtering population selector on the retention dashboard', function (): void {
     $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
 
     ReportUserAccess::factory()->create([
@@ -122,7 +122,7 @@ it('exposes the advanced filtering population selector on the retention dashboar
     ]);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -143,7 +143,7 @@ it('is gated with proper access control', function () {
     get(RetentionCrmDashboard::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a department that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

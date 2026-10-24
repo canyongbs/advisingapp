@@ -55,7 +55,7 @@ class ResourceHubPortalSearchController extends Controller
                 ->public()
                 ->tap(new SearchBy('title', Str::lower($request->get('search'))))
                 ->get()
-                ->map(function (ResourceHubArticle $item) {
+                ->map(function (ResourceHubArticle $item): array {
                     return [
                         'id' => $item->getKey(),
                         'categoryId' => $item->category_id,
@@ -69,7 +69,7 @@ class ResourceHubPortalSearchController extends Controller
             ResourceHubCategory::query()
                 ->tap(new SearchBy('name', Str::lower($request->get('search'))))
                 ->get()
-                ->map(function (ResourceHubCategory $category) {
+                ->map(function (ResourceHubCategory $category): array {
                     return [
                         'id' => $category->getKey(),
                         'name' => $category->name,

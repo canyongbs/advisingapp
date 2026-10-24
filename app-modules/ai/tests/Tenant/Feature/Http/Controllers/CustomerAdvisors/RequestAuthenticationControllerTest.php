@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeader;
 
-beforeEach(function () {
+beforeEach(function (): void {
     withHeader('Origin', config('app.url'));
 });
 
@@ -56,7 +56,7 @@ $advisorDataset = [
     fn () => CustomerAdvisor::factory()->create(['is_embed_enabled' => true]),
 ];
 
-it('throttles repeated code requests for the same target', function (CustomerAdvisor $advisor) {
+it('throttles repeated code requests for the same target', function (CustomerAdvisor $advisor): void {
     $student = Student::factory()->create();
     $email = 'throttle-target@example.com';
 
@@ -77,7 +77,7 @@ it('throttles repeated code requests for the same target', function (CustomerAdv
         ->assertJsonValidationErrors(['email' => 'A code was recently sent to this email address. Please wait a moment before requesting another.']);
 })->with($advisorDataset);
 
-it('invalidates prior codes for the same target', function (CustomerAdvisor $advisor) {
+it('invalidates prior codes for the same target', function (CustomerAdvisor $advisor): void {
     $student = Student::factory()->create();
     $email = 'invalidate-target@example.com';
 
@@ -112,7 +112,7 @@ it('invalidates prior codes for the same target', function (CustomerAdvisor $adv
     expect($liveAuthentications->first()->getKey())->not->toBe($firstId);
 })->with($advisorDataset);
 
-it('invalidates prior codes for the same prospect', function (CustomerAdvisor $advisor) {
+it('invalidates prior codes for the same prospect', function (CustomerAdvisor $advisor): void {
     $prospect = Prospect::factory()->create();
     $email = 'invalidate-prospect@example.com';
 

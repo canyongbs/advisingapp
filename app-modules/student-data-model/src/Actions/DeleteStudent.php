@@ -43,7 +43,7 @@ class DeleteStudent
 {
     public function execute(Student $student): void
     {
-        DB::transaction(function () use ($student) {
+        DB::transaction(function () use ($student): void {
             $student->enrollments()->delete();
             $student->programs()->delete();
             $student->concerns()->delete();

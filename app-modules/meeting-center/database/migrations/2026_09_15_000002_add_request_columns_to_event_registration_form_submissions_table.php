@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+        Schema::table('event_registration_form_submissions', function (Blueprint $table): void {
             $table->timestamp('canceled_at')->nullable();
             $table->string('request_method')->nullable();
             $table->text('request_note')->nullable();
@@ -51,7 +51,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+        Schema::table('event_registration_form_submissions', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('requester_id');
             $table->dropColumn(['canceled_at', 'request_method', 'request_note']);
         });

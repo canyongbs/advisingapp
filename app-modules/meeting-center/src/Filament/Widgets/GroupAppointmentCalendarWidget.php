@@ -84,7 +84,7 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
 
         return $query
             ->get()
-            ->map(fn (BookingGroupAppointment $appointment) => EventData::make()
+            ->map(fn (BookingGroupAppointment $appointment): EventData => EventData::make()
                 ->id($appointment->id)
                 ->title($appointment->name)
                 ->start($appointment->starts_at)

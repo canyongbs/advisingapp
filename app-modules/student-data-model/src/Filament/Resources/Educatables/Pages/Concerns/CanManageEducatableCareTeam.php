@@ -68,7 +68,7 @@ trait CanManageEducatableCareTeam
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
-                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                    ->url(fn ($record): string => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
                 TextColumn::make('job_title'),
                 TextColumn::make('careTeams.studentCareTeamRole.name')
@@ -84,14 +84,14 @@ trait CanManageEducatableCareTeam
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                     ->label('Remove')
-                    ->modalHeading(function (User $record) {
+                    ->modalHeading(function (User $record): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
                         return "Remove {$record->name} from {$student->display_name}'s Care Team";
                     })
                     ->modalSubmitActionLabel('Remove')
-                    ->successNotificationTitle(function (User $record) {
+                    ->successNotificationTitle(function (User $record): string {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
@@ -103,14 +103,14 @@ trait CanManageEducatableCareTeam
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                         ->label('Remove selected')
-                        ->modalHeading(function () {
+                        ->modalHeading(function (): string {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
                             return "Remove selected users from {$student->display_name}'s Care Team";
                         })
                         ->modalSubmitActionLabel('Remove')
-                        ->successNotificationTitle(function () {
+                        ->successNotificationTitle(function (): string {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 

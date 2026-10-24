@@ -157,7 +157,7 @@ class InteractionBlock extends CampaignActionBlock
 
     private function filterByInteractableType(): Closure
     {
-        return function (Builder $query, Get $get, mixed $livewire) {
+        return function (Builder $query, Get $get, mixed $livewire): void {
             $interactableType = $this->resolveInteractableType($get, $livewire);
 
             if (blank($interactableType)) {

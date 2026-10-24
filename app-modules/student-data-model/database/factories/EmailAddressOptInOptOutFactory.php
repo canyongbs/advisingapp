@@ -58,14 +58,14 @@ class EmailAddressOptInOptOutFactory extends Factory
 
     public function optedIn(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => EmailAddressOptInOptOutStatus::OptedIn,
         ]);
     }
 
     public function optedOut(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => EmailAddressOptInOptOutStatus::OptedOut,
         ]);
     }

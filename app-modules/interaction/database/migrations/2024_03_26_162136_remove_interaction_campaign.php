@@ -42,7 +42,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('interactions', function (Blueprint $table) {
+        Schema::table('interactions', function (Blueprint $table): void {
             $table->dropForeign(['interaction_campaign_id']);
             $table->dropColumn('interaction_campaign_id');
         });
@@ -53,7 +53,7 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::create('interaction_campaigns', function (Blueprint $table) {
+        Schema::create('interaction_campaigns', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('name');
@@ -62,7 +62,7 @@ return new class () extends Migration {
             $table->softDeletes();
         });
 
-        Schema::table('interactions', function (Blueprint $table) {
+        Schema::table('interactions', function (Blueprint $table): void {
             $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
         });
     }

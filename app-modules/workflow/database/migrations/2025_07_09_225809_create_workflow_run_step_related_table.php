@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('workflow_run_step_related', function (Blueprint $table) {
+        Schema::create('workflow_run_step_related', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('workflow_run_step_id')->constrained('workflow_run_steps');

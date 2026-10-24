@@ -50,8 +50,9 @@ class EditWorkflow extends BaseEditWorkflow
     {
         return [
             DeleteAction::make()
-                ->successRedirectUrl(function (Workflow $record) {
-                    return FormResource::getUrl('manage-form-workflows', [
+                ->successRedirectUrl(function (Workflow $record): string {
+                    return FormResource::getUrl('view', [
+                        'tab' => 'workflows',
                         'record' => $record->workflowTrigger->related_id,
                     ]);
                 }),

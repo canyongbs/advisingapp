@@ -67,7 +67,7 @@ class EditRole extends EditRecord
                         table: 'roles',
                         column: 'name',
                         ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule) {
+                        modifyRuleUsing: function (Unique $rule): void {
                             /** @var Role $role */
                             $role = $this->record;
 

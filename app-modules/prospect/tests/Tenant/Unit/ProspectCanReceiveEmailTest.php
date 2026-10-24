@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-it('returns true when prospect has a healthy primary email address', function () {
+it('returns true when prospect has a healthy primary email address', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -56,7 +56,7 @@ it('returns true when prospect has a healthy primary email address', function ()
     assertTrue($prospect->canReceiveEmail());
 });
 
-it('returns false when prospect has no primary email address', function () {
+it('returns false when prospect has no primary email address', function (): void {
     $prospect = Prospect::factory()->create();
 
     // Remove the primary email that was auto-created by the factory
@@ -67,7 +67,7 @@ it('returns false when prospect has no primary email address', function () {
     assertFalse($prospect->canReceiveEmail());
 });
 
-it('returns false when prospect primary email address is bounced', function () {
+it('returns false when prospect primary email address is bounced', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -85,7 +85,7 @@ it('returns false when prospect primary email address is bounced', function () {
     assertFalse($prospect->canReceiveEmail());
 });
 
-it('returns false when prospect primary email address is opted out', function () {
+it('returns false when prospect primary email address is opted out', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -103,7 +103,7 @@ it('returns false when prospect primary email address is opted out', function ()
     assertFalse($prospect->canReceiveEmail());
 });
 
-it('returns true when prospect primary email address is opted in', function () {
+it('returns true when prospect primary email address is opted in', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()
@@ -121,7 +121,7 @@ it('returns true when prospect primary email address is opted in', function () {
     assertTrue($prospect->canReceiveEmail());
 });
 
-it('returns false when prospect primary email is both bounced and opted out', function () {
+it('returns false when prospect primary email is both bounced and opted out', function (): void {
     $prospect = Prospect::factory()->create();
 
     $emailAddress = ProspectEmailAddress::factory()

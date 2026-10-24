@@ -44,13 +44,13 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-test('Student model has applied global scope', function () {
+test('Student model has applied global scope', function (): void {
     Student::bootHasGlobalScopes();
 
     expect(Student::hasGlobalScope(RetentionCrmRestrictionScope::class))->toBeTrue();
 });
 
-test('scope does not filter when user has no restriction', function () {
+test('scope does not filter when user has no restriction', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create([
         'retention_crm_restriction' => null,
     ]);
@@ -62,7 +62,7 @@ test('scope does not filter when user has no restriction', function () {
     expect(Student::query()->count())->toBe(5);
 });
 
-test('faculty member restriction only shows students enrolled in their classes', function () {
+test('faculty member restriction only shows students enrolled in their classes', function (): void {
     $facultyEmail = 'faculty@example.com';
 
     $user = User::factory()->licensed(LicenseType::cases())->create([
@@ -104,7 +104,7 @@ test('faculty member restriction only shows students enrolled in their classes',
         ->toEqualCanonicalizing($enrolledStudents->pluck('sisid')->toArray());
 });
 
-test('faculty member restriction is case insensitive for email matching', function () {
+test('faculty member restriction is case insensitive for email matching', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create([
         'email' => 'Faculty@Example.COM',
         'retention_crm_restriction' => RetentionCrmRestriction::FacultyMember,
@@ -122,7 +122,7 @@ test('faculty member restriction is case insensitive for email matching', functi
     expect(Student::query()->count())->toBe(1);
 });
 
-test('care team member restriction only shows students in their care team', function () {
+test('care team member restriction only shows students in their care team', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create([
         'retention_crm_restriction' => RetentionCrmRestriction::CareTeamMember,
     ]);
@@ -160,7 +160,7 @@ test('care team member restriction only shows students in their care team', func
         ->toEqualCanonicalizing($careTeamStudents->pluck('sisid')->toArray());
 });
 
-test('scope does not apply when user is not authenticated', function () {
+test('scope does not apply when user is not authenticated', function (): void {
     Student::factory()->count(5)->create();
 
     expect(Student::query()->count())->toBe(5);

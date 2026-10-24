@@ -44,13 +44,13 @@ use Illuminate\Support\Facades\Queue;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $portalSettings = app(PortalSettings::class);
     $portalSettings->resource_hub_portal_enabled = true;
     $portalSettings->save();
 });
 
-it('starts a guest session and returns no vote and a zero percentage for a first-time guest visitor', function () {
+it('starts a guest session and returns no vote and a zero percentage for a first-time guest visitor', function (): void {
     $article = ResourceHubArticle::factory()->create();
 
     $response = getJson(route('portals.resource-hub.api.article.show', [
@@ -67,7 +67,7 @@ it('starts a guest session and returns no vote and a zero percentage for a first
     expect(PortalGuest::count())->toBe(1);
 });
 
-it('returns the current voter\'s vote and the helpful vote percentage', function () {
+it('returns the current voter\'s vote and the helpful vote percentage', function (): void {
     $student = Student::factory()->create();
 
     $article = ResourceHubArticle::factory()->create();

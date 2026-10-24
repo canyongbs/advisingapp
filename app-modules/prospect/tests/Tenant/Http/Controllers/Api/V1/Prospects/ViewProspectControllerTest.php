@@ -40,12 +40,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $prospect = Prospect::factory()->create();
 
     $user = SystemUser::factory()->create();
@@ -72,7 +72,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a prospect resource', function () {
+it('returns a prospect resource', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.view']);
     Sanctum::actingAs($user, ['api']);
@@ -89,7 +89,7 @@ it('returns a prospect resource', function () {
         ->toBe($prospect->getKey());
 });
 
-it('can include related prospect relationships', function (string $relationship, string $responseKey) {
+it('can include related prospect relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.*.view']);
     Sanctum::actingAs($user, ['api']);

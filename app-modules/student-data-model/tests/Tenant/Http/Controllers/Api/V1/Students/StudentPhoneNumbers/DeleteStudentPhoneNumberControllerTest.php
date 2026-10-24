@@ -43,12 +43,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\deleteJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
     $studentPhoneNumber = StudentPhoneNumber::factory()
         ->for($student)
@@ -88,7 +88,7 @@ it('is gated with proper access control', function () {
         ->assertNoContent();
 });
 
-it('deletes a student phone number', function () {
+it('deletes a student phone number', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -110,7 +110,7 @@ it('deletes a student phone number', function () {
     ]);
 });
 
-it('swaps out the current primary phone number for a student with another when the primary phone number is deleted', function () {
+it('swaps out the current primary phone number for a student with another when the primary phone number is deleted', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

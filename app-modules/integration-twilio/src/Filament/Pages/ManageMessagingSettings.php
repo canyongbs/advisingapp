@@ -105,22 +105,22 @@ class ManageMessagingSettings extends SettingsPage
                             ->required()
                             ->password()
                             ->revealable()
-                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Twilio),
+                            ->visible(fn (Get $get): bool => $get('provider') === SmsMessagingProvider::Twilio),
                         TextInput::make('auth_token')
                             ->string()
                             ->required()
                             ->password()
                             ->revealable()
-                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Twilio),
+                            ->visible(fn (Get $get): bool => $get('provider') === SmsMessagingProvider::Twilio),
                         TextInput::make('telnyx_api_key')
                             ->label('API Key')
                             ->string()
                             ->required()
                             ->password()
                             ->revealable()
-                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Telnyx),
+                            ->visible(fn (Get $get): bool => $get('provider') === SmsMessagingProvider::Telnyx),
                     ])
-                    ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
+                    ->visible(fn (Get $get): bool => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
             ]);
     }
 

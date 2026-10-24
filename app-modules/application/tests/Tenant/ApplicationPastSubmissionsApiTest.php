@@ -49,7 +49,7 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\seed;
 use function Pest\Laravel\withoutMiddleware;
 
-beforeEach(function () {
+beforeEach(function (): void {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
 
     seed(ApplicationSubmissionStateSeeder::class);
@@ -59,7 +59,7 @@ beforeEach(function () {
     $settings->save();
 });
 
-test('view endpoint returns allow_view_past_submissions true when toggle is on', function () {
+test('view endpoint returns allow_view_past_submissions true when toggle is on', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -70,7 +70,7 @@ test('view endpoint returns allow_view_past_submissions true when toggle is on',
     expect($response->json('allow_view_past_submissions'))->toBeTrue();
 });
 
-test('view endpoint returns allow_view_past_submissions false when toggle is off', function () {
+test('view endpoint returns allow_view_past_submissions false when toggle is off', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => false,
     ]);
@@ -81,7 +81,7 @@ test('view endpoint returns allow_view_past_submissions false when toggle is off
     expect($response->json('allow_view_past_submissions'))->toBeFalse();
 });
 
-test('authenticate returns past_submissions_count and url when toggle is on and submissions exist', function () {
+test('authenticate returns past_submissions_count and url when toggle is on and submissions exist', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -119,7 +119,7 @@ test('authenticate returns past_submissions_count and url when toggle is on and 
     expect($response->json('submission_url'))->not->toBeNull();
 });
 
-test('authenticate returns zero past_submissions_count when toggle is on but no submissions exist', function () {
+test('authenticate returns zero past_submissions_count when toggle is on but no submissions exist', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -149,7 +149,7 @@ test('authenticate returns zero past_submissions_count when toggle is on but no 
     expect($response->json('past_submissions_url'))->toBeNull();
 });
 
-test('authenticate returns zero past_submissions_count when toggle is off', function () {
+test('authenticate returns zero past_submissions_count when toggle is off', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => false,
     ]);
@@ -185,7 +185,7 @@ test('authenticate returns zero past_submissions_count when toggle is off', func
     expect($response->json('past_submissions_url'))->toBeNull();
 });
 
-test('getPastSubmissions returns paginated past submissions', function () {
+test('getPastSubmissions returns paginated past submissions', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -221,7 +221,7 @@ test('getPastSubmissions returns paginated past submissions', function () {
     expect($firstSubmission)->toHaveKeys(['id', 'submitted_at', 'view_url']);
 });
 
-test('getPastSubmissions returns empty when toggle is off', function () {
+test('getPastSubmissions returns empty when toggle is off', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => false,
     ]);
@@ -252,7 +252,7 @@ test('getPastSubmissions returns empty when toggle is off', function () {
     expect($response->json('past_submissions'))->toBeEmpty();
 });
 
-test('getPastSubmissions does not return submissions from other authors', function () {
+test('getPastSubmissions does not return submissions from other authors', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -293,7 +293,7 @@ test('getPastSubmissions does not return submissions from other authors', functi
     expect($response->json('meta.total'))->toBe(2);
 });
 
-test('getPastSubmissions returns 401 with expired authentication', function () {
+test('getPastSubmissions returns 401 with expired authentication', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -321,7 +321,7 @@ test('getPastSubmissions returns 401 with expired authentication', function () {
     ))->assertUnauthorized();
 });
 
-test('getPastSubmissions returns 401 without authentication parameter', function () {
+test('getPastSubmissions returns 401 without authentication parameter', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -334,7 +334,7 @@ test('getPastSubmissions returns 401 without authentication parameter', function
     ))->assertUnauthorized();
 });
 
-test('getSubmission returns submission detail data', function () {
+test('getSubmission returns submission detail data', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -368,7 +368,7 @@ test('getSubmission returns submission detail data', function () {
     expect($response->json('schema'))->toBeArray();
 });
 
-test('getSubmission returns 401 with expired authentication', function () {
+test('getSubmission returns 401 with expired authentication', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -403,7 +403,7 @@ test('getSubmission returns 401 with expired authentication', function () {
     ))->assertUnauthorized();
 });
 
-test('getSubmission returns 403 when author does not match', function () {
+test('getSubmission returns 403 when author does not match', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);
@@ -434,7 +434,7 @@ test('getSubmission returns 403 when author does not match', function () {
     ))->assertForbidden();
 });
 
-test('getSubmission returns 404 when submission does not belong to application', function () {
+test('getSubmission returns 404 when submission does not belong to application', function (): void {
     $application = Application::factory()->create([
         'allow_view_past_submissions' => true,
     ]);

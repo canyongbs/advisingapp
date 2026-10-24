@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('student_data_imports', function (Blueprint $table) {
+        Schema::create('student_data_imports', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained();
             $table->foreignUuid('students_import_id')->constrained('imports')->cascadeOnDelete();

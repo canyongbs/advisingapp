@@ -43,12 +43,12 @@ use Laravel\Sanctum\Sanctum;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = SystemUser::factory()->create();
     Sanctum::actingAs($user, ['api']);
     getJson(route('api.v1.prospects.index', [], false))
@@ -61,7 +61,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('returns a paginated list of prospects', function () {
+it('returns a paginated list of prospects', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -78,7 +78,7 @@ it('returns a paginated list of prospects', function () {
         ->toHaveCount(3);
 });
 
-it('can filter prospects by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue) {
+it('can filter prospects by all attributes', function (string $requestKey, mixed $requestValue, array $includedAttributes, array $excludedAttributes, string $responseKey, mixed $responseValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -114,12 +114,12 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
     '`status`' => [
         'status',
         'Interested',
-        function () {
+        function (): array {
             $status = ProspectStatus::factory()->create(['name' => 'Interested']);
 
             return ['status_id' => $status->getKey()];
         },
-        function () {
+        function (): array {
             $status = ProspectStatus::factory()->create(['name' => 'Not Interested']);
 
             return ['status_id' => $status->getKey()];
@@ -131,12 +131,12 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
     '`source`' => [
         'source',
         'Referral',
-        function () {
+        function (): array {
             $source = ProspectSource::factory()->create(['name' => 'Referral']);
 
             return ['source_id' => $source->getKey()];
         },
-        function () {
+        function (): array {
             $source = ProspectSource::factory()->create(['name' => 'Ad Campaign']);
 
             return ['source_id' => $source->getKey()];
@@ -157,23 +157,23 @@ dataset('sorts', [
     '`hsgrad`' => ['hsgrad', ['hsgrad' => '2022'], ['hsgrad' => '2023'], 'hsgrad', '2022', '2023'],
     '`status`' => [
         'status',
-        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Interested'])->getKey()],
-        fn () => ['status_id' => ProspectStatus::factory()->create(['name' => 'Not Interested'])->getKey()],
+        fn (): array => ['status_id' => ProspectStatus::factory()->create(['name' => 'Interested'])->getKey()],
+        fn (): array => ['status_id' => ProspectStatus::factory()->create(['name' => 'Not Interested'])->getKey()],
         'status',
         'Interested',
         'Not Interested',
     ],
     '`source`' => [
         'source',
-        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Ad Campaign'])->getKey()],
-        fn () => ['source_id' => ProspectSource::factory()->create(['name' => 'Referral'])->getKey()],
+        fn (): array => ['source_id' => ProspectSource::factory()->create(['name' => 'Ad Campaign'])->getKey()],
+        fn (): array => ['source_id' => ProspectSource::factory()->create(['name' => 'Referral'])->getKey()],
         'source',
         'Ad Campaign',
         'Referral',
     ],
 ]);
 
-it('can sort prospects by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort prospects by all attributes ascending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -190,7 +190,7 @@ it('can sort prospects by all attributes ascending', function (string $requestKe
         ->toBe($responseSecondValue);
 })->with('sorts');
 
-it('can sort prospects by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue) {
+it('can sort prospects by all attributes descending', function (string $requestKey, array $firstAttributes, array $secondAttributes, string $responseKey, mixed $responseFirstValue, mixed $responseSecondValue): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);
@@ -207,7 +207,7 @@ it('can sort prospects by all attributes descending', function (string $requestK
         ->toBe($responseFirstValue);
 })->with('sorts');
 
-it('can include related prospect relationships', function (string $relationship, string $responseKey) {
+it('can include related prospect relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo('prospect.view-any');
     Sanctum::actingAs($user, ['api']);

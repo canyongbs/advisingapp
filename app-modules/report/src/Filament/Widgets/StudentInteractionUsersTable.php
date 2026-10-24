@@ -99,14 +99,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     return User::query()
                         ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $groupId): Builder {
                             return $query
-                                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+                                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
                                     $query->when(
                                         $groupId,
                                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                                     );
                                 })
                                 ->when(
-                                    $startDate && $endDate,
+                                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                                     function (Builder $query) use ($startDate, $endDate): Builder {
                                         return $query->whereBetween('created_at', [$startDate, $endDate]);
                                     }
@@ -136,12 +136,12 @@ class StudentInteractionUsersTable extends BaseWidget
                         return null;
                     })
                     ->searchable(
-                        query: function (Builder $query, string $search) {
+                        query: function (Builder $query, string $search): void {
                             $search = Str::lower($search);
-                            $query->where(function (Builder $query) use ($search) {
+                            $query->where(function (Builder $query) use ($search): void {
                                 $query->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                                     ->orWhereRaw('LOWER(job_title) LIKE ?', ["%{$search}%"])
-                                    ->orWhereHas('department', function (Builder $departmentQuery) use ($search) {
+                                    ->orWhereHas('department', function (Builder $departmentQuery) use ($search): void {
                                         $departmentQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                                     });
                             });
@@ -154,7 +154,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderBy('created_at')
@@ -169,7 +169,7 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->orderByDesc('created_at')
@@ -184,20 +184,20 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
-                    ->state(function (User $record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate): string {
                         $allInteractions = Interaction::whereHasMorph('interactable', Student::class)->count();
                         $userInteractionsCount = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->count();
@@ -212,16 +212,16 @@ class StudentInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
-                    ->state(function (User $record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate): ?string {
                         $durations = $record
                             ->interactions()
                             ->whereHasMorph('interactable', Student::class)
                             ->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->get()
-                            ->map(function (Interaction $interaction) {
+                            ->map(function (Interaction $interaction): float {
                                 return Carbon::parse($interaction->end_datetime)
                                     ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
                             })->filter();
@@ -244,13 +244,13 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->groupBy('name')
                             ->orderByRaw('LOWER(name)')
                             ->pluck('name')
-                            ->mapWithKeys(fn (?string $option) => $option ? [Str::lower($option) => Str::title($option)] : [])
+                            ->mapWithKeys(fn (?string $option): array => $option ? [Str::lower($option) => Str::title($option)] : [])
                             ->all()
                     )
                     ->multiple()
                     ->placeholder('Select Name')
                     ->searchable()
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         if (! empty($data['values'])) {
                             $query->whereIn(
                                 DB::raw('LOWER(name)'),
@@ -266,13 +266,13 @@ class StudentInteractionUsersTable extends BaseWidget
                             ->groupBy('job_title')
                             ->orderByRaw('LOWER(job_title)')
                             ->pluck('job_title')
-                            ->mapWithKeys(fn (?string $option) => $option ? [Str::lower($option) => Str::title($option)] : [])
+                            ->mapWithKeys(fn (?string $option): array => $option ? [Str::lower($option) => Str::title($option)] : [])
                             ->all()
                     )
                     ->multiple()
                     ->placeholder('Select Job Title')
                     ->searchable()
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         if (! empty($data['values'])) {
                             $query->whereIn(
                                 DB::raw('LOWER(job_title)'),

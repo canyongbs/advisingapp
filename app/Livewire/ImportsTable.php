@@ -96,9 +96,9 @@ class ImportsTable extends Component implements HasActions, HasForms, HasTable
                 Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->tooltip(fn (Import $record) => $record->total_rows ? 'Number of Rows: ' . number_format($record->total_rows) : null)
+                    ->tooltip(fn (Import $record): ?string => $record->total_rows ? 'Number of Rows: ' . number_format($record->total_rows) : null)
                     ->url(fn (Import $record) => url()->signedRoute('imports.download', $record))
-                    ->visible(fn (Import $record) => $canDownload
+                    ->visible(fn (Import $record): bool => $canDownload
                         && $record->completed_at !== null
                         && $this->importFileExists($record)),
             ]);

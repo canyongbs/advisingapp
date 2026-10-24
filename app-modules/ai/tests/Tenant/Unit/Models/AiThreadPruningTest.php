@@ -42,7 +42,7 @@ use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertTrue;
 
-it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune) {
+it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune): void {
     assertTrue($thread->exists);
 
     artisan(PruneCommand::class, [

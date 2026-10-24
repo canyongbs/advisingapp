@@ -43,10 +43,13 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -97,7 +100,7 @@ class CustomerAdvisorReportTable extends TableWidget
 
                     return $customerAdvisorThreadQuery(CustomerAdvisorThread::query())
                         ->when(
-                            $startDate && $endDate,
+                            $startDate instanceof Carbon && $endDate instanceof Carbon,
                             function (Builder $query) use ($startDate, $endDate): Builder {
                                 return $query->whereBetween('created_at', [$startDate, $endDate]);
                             }
@@ -137,7 +140,7 @@ class CustomerAdvisorReportTable extends TableWidget
                             : 'warning'
                     )
                     ->getStateUsing(
-                        fn (CustomerAdvisorThread $record) => filled($record->finished_at)
+                        fn (CustomerAdvisorThread $record): string => filled($record->finished_at)
                         && in_array($record->author?->getMorphClass(), ['prospect', 'student']) && filled($record->interaction_id)
                             ? 'Yes'
                             : 'No'
@@ -148,7 +151,7 @@ class CustomerAdvisorReportTable extends TableWidget
                     ->label('Subscribed Updated')
                     ->badge()
                     ->color(fn (CustomerAdvisorThread $record): string => filled($record->interaction_id) ? 'info' : 'warning')
-                    ->getStateUsing(fn (CustomerAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
+                    ->getStateUsing(fn (CustomerAdvisorThread $record): string => filled($record->interaction_id) ? 'Yes' : 'No'),
                 TextColumn::make('created_at')
                     ->label('Initiated'),
             ])
@@ -158,7 +161,7 @@ class CustomerAdvisorReportTable extends TableWidget
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->modalHeading(fn (CustomerAdvisorThread $record): string => 'Chat Transcript - ' . $record->advisor->name)
                     ->modalWidth('6xl')
-                    ->modalContent(function (CustomerAdvisorThread $record) {
+                    ->modalContent(function (CustomerAdvisorThread $record): Factory|View {
                         $messages = $record->messages()
                             ->orderBy('created_at', 'asc')
                             ->get();

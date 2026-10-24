@@ -42,7 +42,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('returns all new concerns for a given resource hub article by default', function () {
+it('returns all new concerns for a given resource hub article by default', function (): void {
     asSuperAdmin();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
@@ -70,7 +70,7 @@ it('returns all new concerns for a given resource hub article by default', funct
         ->assertCanNotSeeTableRecords($archivedConcerns->merge($resolvedConcerns));
 });
 
-it('can filter concerns by status', function () {
+it('can filter concerns by status', function (): void {
     asSuperAdmin();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
@@ -102,7 +102,7 @@ it('can filter concerns by status', function () {
         ->assertCanNotSeeTableRecords($newConcerns->merge($archivedConcerns));
 });
 
-it('can change the status of a concern properly', function () {
+it('can change the status of a concern properly', function (): void {
     asSuperAdmin();
 
     $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);

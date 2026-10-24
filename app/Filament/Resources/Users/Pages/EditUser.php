@@ -47,6 +47,7 @@ use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -78,22 +79,22 @@ class EditUser extends EditRecord
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->disabled(fn (User $record) => $record->isAdmin()),
+                            ->disabled(fn (User $record): bool => $record->isAdmin()),
                         TextInput::make('email')
                             ->label('Email address')
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->rules(function (?User $record) {
+                            ->rules(function (?User $record): array {
                                 return [
                                     new EmailNotInUseOrSoftDeleted($record?->id),
                                 ];
                             })
-                            ->disabled(fn (User $record) => $record->isAdmin()),
+                            ->disabled(fn (User $record): bool => $record->isAdmin()),
                         TextInput::make('job_title')
                             ->string()
                             ->maxLength(255)
-                            ->disabled(fn (User $record) => $record->isAdmin()),
+                            ->disabled(fn (User $record): bool => $record->isAdmin()),
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
@@ -110,12 +111,12 @@ class EditUser extends EditRecord
 
                                 return null;
                             })
-                            ->disabled(fn (User $record) => $record->isAdmin()),
+                            ->disabled(fn (User $record): bool => $record->isAdmin()),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
                 Section::make('Department')
@@ -126,7 +127,7 @@ class EditUser extends EditRecord
                             ->options(Department::all()->pluck('name', 'id'))
                             ->relationship('department', 'name'),
                     ])
-                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
+                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */
@@ -138,14 +139,14 @@ class EditUser extends EditRecord
                     ->label('Retention CRM Restriction')
                     ->options(RetentionCrmRestriction::class)
                     ->placeholder('No Restrictions')
-                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
+                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
             ]);
     }
 
     public function showSsoModal(): Action
     {
         return Action::make('Warning')
-            ->action(fn () => $this->data['is_external'] = false)
+            ->action(fn (): false => $this->data['is_external'] = false)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
             ->modalSubmitActionLabel('Continue')
@@ -165,7 +166,7 @@ class EditUser extends EditRecord
                 ->requiresConfirmation()
                 ->modalDescription('This will remove the user\'s current password and send them an email with a link to set a new password.')
                 ->hidden($user->is_external)
-                ->action(function () use ($user) {
+                ->action(function () use ($user): void {
                     $user->password = null;
                     $user->save();
 

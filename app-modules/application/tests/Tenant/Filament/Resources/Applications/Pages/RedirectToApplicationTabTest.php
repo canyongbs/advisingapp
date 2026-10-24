@@ -45,11 +45,11 @@ use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('redirects a legacy URL to its tab', function (string $page, string $tab) {
+it('redirects a legacy URL to its tab', function (string $page, string $tab): void {
     asSuperAdmin();
     $application = Application::factory()->create();
 
@@ -60,7 +60,7 @@ it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     ['manage-submissions', 'submissions'],
 ]);
 
-it('keeps the query string and targets the submissions table when redirecting a submission link', function () {
+it('keeps the query string and targets the submissions table when redirecting a submission link', function (): void {
     asSuperAdmin();
     $application = Application::factory()->create();
     $parameters = ['record' => $application, 'tableAction' => 'view', 'tableActionRecord' => $application->submissions()->firstOrFail()->id];
@@ -69,8 +69,8 @@ it('keeps the query string and targets the submissions table when redirecting a 
         ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions', 'actionComponent' => 'submissions']));
 });
 
-describe('authorization', function () {
-    it('denies access to a legacy URL without the `application.view-any` permission', function () {
+describe('authorization', function (): void {
+    it('denies access to a legacy URL without the `application.view-any` permission', function (): void {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
         $application = Application::factory()->create();
 

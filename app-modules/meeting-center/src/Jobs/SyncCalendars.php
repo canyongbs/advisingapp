@@ -41,6 +41,7 @@ use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
@@ -61,7 +62,7 @@ class SyncCalendars implements ShouldQueue
     {
         Calendar::cursor()
             ->each(
-                fn (Calendar $calendar) => dispatch(new SyncCalendar($calendar))
+                fn (Calendar $calendar): PendingDispatch => dispatch(new SyncCalendar($calendar))
             );
     }
 

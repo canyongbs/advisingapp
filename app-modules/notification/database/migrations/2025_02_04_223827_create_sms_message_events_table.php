@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('sms_message_events', function (Blueprint $table) {
+        Schema::create('sms_message_events', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('sms_message_id')->constrained('sms_messages')->cascadeOnDelete();
             $table->string('type');

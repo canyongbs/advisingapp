@@ -41,7 +41,7 @@ use Illuminate\Cache\RateLimiting\Unlimited;
 use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\RateLimiter;
 
-it('has the notification rate limiting applied properly for email notifications', function () {
+it('has the notification rate limiting applied properly for email notifications', function (): void {
     $recipient = Student::factory()->create();
     $notification = new TestEmailNotification();
 
@@ -64,7 +64,7 @@ it('has the notification rate limiting applied properly for email notifications'
         ->decaySeconds->toEqual(1);
 });
 
-it('has the notification rate limiting applied properly for sms notifications', function () {
+it('has the notification rate limiting applied properly for sms notifications', function (): void {
     $recipient = Student::factory()->create();
     $notification = new TestEmailNotification();
 
@@ -81,7 +81,7 @@ it('has the notification rate limiting applied properly for sms notifications', 
     expect($limits)->toBeInstanceOf(Unlimited::class);
 });
 
-it('has the notification rate limiting applied properly for notifications that send to multiple channels', function () {
+it('has the notification rate limiting applied properly for notifications that send to multiple channels', function (): void {
     $recipient = Student::factory()->create();
     $notification = new TestDualNotification();
 

@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->dropColumn('email');
             $table->dropColumn('email_2');
             $table->dropColumn('mobile');
@@ -57,7 +57,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('students', function (Blueprint $table): void {
             $table->string('email')->nullable();
             $table->string('email_2')->nullable();
             $table->string('mobile')->nullable();

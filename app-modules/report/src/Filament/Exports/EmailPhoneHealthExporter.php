@@ -54,28 +54,28 @@ class EmailPhoneHealthExporter extends Exporter
             ExportColumn::make('full_name')
                 ->label('Name'),
             ExportColumn::make('email_status')
-                ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy')
+                ->state(fn (Student $record): string => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy')
                 ->label('Email Status'),
             ExportColumn::make('is_primary_email_set')
-                ->state(fn (Student $record) => filled($record->primaryEmailAddress) ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => filled($record->primaryEmailAddress) ? 'Yes' : 'No')
                 ->label('Institutional Email Set'),
             ExportColumn::make('email_bounced')
-                ->state(fn (Student $record) => $record->primaryEmailAddress && ($record->primaryEmailAddress->bounced !== null) ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => $record->primaryEmailAddress && ($record->primaryEmailAddress->bounced !== null) ? 'Yes' : 'No')
                 ->label('Email Bounce'),
             ExportColumn::make('is_email_opted_out')
-                ->state(fn (Student $record) => $record->primaryEmailAddress && ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => $record->primaryEmailAddress && ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) ? 'Yes' : 'No')
                 ->label('Email Opt Out'),
             ExportColumn::make('phone_status')
-                ->state(fn (Student $record) => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy')
+                ->state(fn (Student $record): string => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy')
                 ->label('Phone Status'),
             ExportColumn::make('is_primary_phone_set')
-                ->state(fn (Student $record) => filled($record->primaryPhoneNumber) ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => filled($record->primaryPhoneNumber) ? 'Yes' : 'No')
                 ->label('Primary Phone Set'),
             ExportColumn::make('is_textable')
-                ->state(fn (Student $record) => $record->primaryPhoneNumber?->isTextable() ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => $record->primaryPhoneNumber?->isTextable() ? 'Yes' : 'No')
                 ->label('SMS Capable'),
             ExportColumn::make('is_sms_opted_out')
-                ->state(fn (Student $record) => $record->primaryPhoneNumber && $record->primaryPhoneNumber->smsOptOut()->exists() ? 'Yes' : 'No')
+                ->state(fn (Student $record): string => $record->primaryPhoneNumber && $record->primaryPhoneNumber->smsOptOut()->exists() ? 'Yes' : 'No')
                 ->label('SMS Opt Out'),
         ];
     }

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-it('returns data', function () {})->todo();
+it('returns data', function (): void {})->todo();
 
-it('can filter for messages', function () {})->todo();
+it('can filter for messages', function (): void {})->todo();
 
-it('can filter for concerns', function () {})->todo();
+it('can filter for concerns', function (): void {})->todo();
 
-it('can filter for tasks', function () {})->todo();
+it('can filter for tasks', function (): void {})->todo();

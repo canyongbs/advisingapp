@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertGuest;
 
-it("sets the user's password", function () {
+it("sets the user's password", function (): void {
     $user = User::factory()->create(['password' => null]);
 
     actingAs($user);
@@ -68,7 +68,7 @@ it("sets the user's password", function () {
     ]))->toBeTrue();
 });
 
-it('regenerates the remember token when the password is set', function () {
+it('regenerates the remember token when the password is set', function (): void {
     $user = User::factory()->create([
         'password' => null,
         'remember_token' => 'original-token',
@@ -87,7 +87,7 @@ it('regenerates the remember token when the password is set', function () {
     expect($rememberToken)->not->toBe('original-token');
 });
 
-it('validates the inputs', function (SetPasswordRequestFactory $data, array $errors) {
+it('validates the inputs', function (SetPasswordRequestFactory $data, array $errors): void {
     $user = User::factory()->create(['password' => null]);
 
     actingAs($user);
@@ -102,22 +102,22 @@ it('validates the inputs', function (SetPasswordRequestFactory $data, array $err
 
     expect($user->refresh()->password)->toBeNull();
 })->with([
-    'password required' => fn () => [
+    'password required' => fn (): array => [
         SetPasswordRequestFactory::new()->state(['password' => null]),
         ['password' => 'required'],
     ],
-    'password must meet the default strength rules' => fn () => [
+    'password must meet the default strength rules' => fn (): array => [
         SetPasswordRequestFactory::new()->state([
             'password' => 'short',
             'passwordConfirmation' => 'short',
         ]),
         ['password' => Password::class],
     ],
-    'passwordConfirmation required' => fn () => [
+    'passwordConfirmation required' => fn (): array => [
         SetPasswordRequestFactory::new()->state(['passwordConfirmation' => null]),
         ['passwordConfirmation' => 'required'],
     ],
-    'password same as passwordConfirmation' => fn () => [
+    'password same as passwordConfirmation' => fn (): array => [
         SetPasswordRequestFactory::new()->state([
             'password' => Str::random(),
             'passwordConfirmation' => Str::random(),
@@ -126,7 +126,7 @@ it('validates the inputs', function (SetPasswordRequestFactory $data, array $err
     ],
 ]);
 
-it('rate limits repeated attempts', function () {
+it('rate limits repeated attempts', function (): void {
     $user = User::factory()->create(['password' => null]);
 
     actingAs($user);
@@ -144,8 +144,8 @@ it('rate limits repeated attempts', function () {
     expect($user->refresh()->password)->toBeNull();
 });
 
-describe('redirects', function () {
-    it('redirects if the user already has a password', function () {
+describe('redirects', function (): void {
+    it('redirects if the user already has a password', function (): void {
         $user = User::factory()->create();
 
         actingAs($user);
@@ -154,7 +154,7 @@ describe('redirects', function () {
             ->assertRedirect();
     });
 
-    it('redirects if the user is external', function () {
+    it('redirects if the user is external', function (): void {
         $user = User::factory()->external()->create(['password' => null]);
 
         actingAs($user);
@@ -163,7 +163,7 @@ describe('redirects', function () {
             ->assertRedirect();
     });
 
-    it('does not redirect if the password is not set', function () {
+    it('does not redirect if the password is not set', function (): void {
         $user = User::factory()->create(['password' => null]);
 
         actingAs($user);

@@ -59,7 +59,7 @@ $listApplicationsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
-it('the duplicate action is gated by the create permission', function () use ($listApplicationsTestUser) {
+it('the duplicate action is gated by the create permission', function () use ($listApplicationsTestUser): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     $user = $listApplicationsTestUser();
@@ -85,7 +85,7 @@ it('the duplicate action is gated by the create permission', function () use ($l
 
 // Permission Tests
 
-test('ListApplications is gated with proper access control', function () {
+test('ListApplications is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -101,7 +101,7 @@ test('ListApplications is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ListApplications is gated with proper feature access control', function () {
+test('ListApplications is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->onlineAdmissions = false;
@@ -127,7 +127,7 @@ test('ListApplications is gated with proper feature access control', function ()
         )->assertSuccessful();
 });
 
-test('submissions count displays the correct count for an application', function () {
+test('submissions count displays the correct count for an application', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
@@ -142,7 +142,7 @@ test('submissions count displays the correct count for an application', function
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
-test('submissions count includes submissions across all versions', function () {
+test('submissions count includes submissions across all versions', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
@@ -162,7 +162,7 @@ test('submissions count includes submissions across all versions', function () {
         ->assertTableColumnStateSet('submissions_count', $existingCount + $archivedCount, $application);
 });
 
-test('submissions count does not include submissions from unrelated applications', function () {
+test('submissions count does not include submissions from unrelated applications', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
@@ -177,7 +177,7 @@ test('submissions count does not include submissions from unrelated applications
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
-test('submissions count does not include archived submissions', function () {
+test('submissions count does not include archived submissions', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
@@ -196,7 +196,7 @@ test('submissions count does not include archived submissions', function () {
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
-it('archive bulk action archives all selected applications', function () {
+it('archive bulk action archives all selected applications', function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
@@ -221,14 +221,14 @@ it('archive bulk action archives all selected applications', function () {
     expect($applicationWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () {
-    beforeEach(function () {
+describe('duplication', function (): void {
+    beforeEach(function (): void {
         seed(ApplicationSubmissionStateSeeder::class);
 
         asSuperAdmin();
     });
 
-    it('can duplicate an application its steps and its fields', function () {
+    it('can duplicate an application its steps and its fields', function (): void {
         $application = Application::factory()->create();
 
         expect(Application::count())->toBe(1);
@@ -245,7 +245,7 @@ describe('duplication', function () {
             ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
     });
 
-    it('does not duplicate application submissions', function () {
+    it('does not duplicate application submissions', function (): void {
         $application = Application::factory()->create();
 
         $submissionCount = ApplicationSubmission::count();
@@ -262,7 +262,7 @@ describe('duplication', function () {
             ->and($duplicatedApplication->submissions()->count())->toBe(0);
     });
 
-    it('gives a duplicated application its own version tree rather than sharing the original', function () {
+    it('gives a duplicated application its own version tree rather than sharing the original', function (): void {
         $application = Application::factory()->create();
 
         Livewire::test(ListApplications::class)
@@ -277,7 +277,7 @@ describe('duplication', function () {
             ->and($application->latestVersion()?->is($application))->toBeTrue();
     });
 
-    it('does not show the original application submissions count on the duplicated application', function () {
+    it('does not show the original application submissions count on the duplicated application', function (): void {
         $application = Application::factory()->create();
 
         $submissionCount = $application->submissions()->count();
@@ -295,7 +295,7 @@ describe('duplication', function () {
             ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedApplication);
     });
 
-    it('copies the application and step content images to the duplicated application', function () {
+    it('copies the application and step content images to the duplicated application', function (): void {
         Storage::fake('s3-public');
 
         $application = Application::factory()->create();

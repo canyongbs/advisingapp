@@ -93,7 +93,7 @@ class ListStudentProgramsController
                 AllowedFilter::partial('sisid'),
                 AllowedFilter::partial('acad_career'),
                 AllowedFilter::partial('division'),
-                AllowedFilter::callback('acad_plan', function (Builder $query, string $value) {
+                AllowedFilter::callback('acad_plan', function (Builder $query, string $value): void {
                     $query->whereRaw('acad_plan::text ILIKE ?', ["%{$value}%"]);
                 }),
                 AllowedFilter::partial('prog_status'),

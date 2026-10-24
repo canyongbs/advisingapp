@@ -47,7 +47,7 @@ $enableGoogleSso = function (): void {
     $googleSsoSettings->save();
 };
 
-it('does not show the switch tenant control or a google unavailable message for a normal browser', function () use ($enableGoogleSso) {
+it('does not show the switch tenant control or a google unavailable message for a normal browser', function () use ($enableGoogleSso): void {
     $enableGoogleSso();
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
@@ -57,20 +57,20 @@ it('does not show the switch tenant control or a google unavailable message for 
         ->assertSee('Google');
 });
 
-it('shows the switch tenant control for the mobile app', function () {
+it('shows the switch tenant control for the mobile app', function (): void {
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
         ->assertSee('Switch tenant')
         ->assertSee(Login::SWITCH_TENANT_URL);
 });
 
-it('does not show the switch tenant control when google sso is not enabled and the user agent is not the mobile app', function () {
+it('does not show the switch tenant control when google sso is not enabled and the user agent is not the mobile app', function (): void {
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
         ->assertDontSee('Switch tenant');
 });
 
-it('replaces the google sign-in button with an unavailable message for the mobile app when google sso is enabled', function () use ($enableGoogleSso) {
+it('replaces the google sign-in button with an unavailable message for the mobile app when google sso is enabled', function () use ($enableGoogleSso): void {
     $enableGoogleSso();
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
@@ -79,7 +79,7 @@ it('replaces the google sign-in button with an unavailable message for the mobil
         ->assertDontSee(route('socialite.redirect', ['provider' => 'google']));
 });
 
-it('does not show a google unavailable message for the mobile app when google sso is not enabled', function () {
+it('does not show a google unavailable message for the mobile app when google sso is not enabled', function (): void {
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
         ->assertDontSee(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE, false);

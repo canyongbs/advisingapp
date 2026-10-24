@@ -110,7 +110,7 @@ $mockAzureCalendarSettings = function (): void {
     app()->instance(AzureCalendarSettings::class, $settings);
 };
 
-it('correctly normalizes the Outlook API event response into an array', function (mixed $apiResponse, int $expectedCount) use ($createOutlookCalendar) {
+it('correctly normalizes the Outlook API event response into an array', function (mixed $apiResponse, int $expectedCount) use ($createOutlookCalendar): void {
     /** @var MockInterface&GraphResponse $response */
     $response = Mockery::mock(GraphResponse::class);
     /** @phpstan-ignore-next-line */
@@ -146,18 +146,18 @@ it('correctly normalizes the Outlook API event response into an array', function
         ->toBeInstanceOf(Event::class);
 })
     ->with([
-        'API returns a single Event object instead of an array' => fn () => [
+        'API returns a single Event object instead of an array' => fn (): array => [
             $createMockOutlookEvent('event-1', 'Single Event'),
             1,
         ],
-        'API returns an array of multiple Event objects' => fn () => [
+        'API returns an array of multiple Event objects' => fn (): array => [
             [
                 $createMockOutlookEvent('event-1', 'First Event'),
                 $createMockOutlookEvent('event-2', 'Second Event'),
             ],
             2,
         ],
-        'API returns an empty array when no events exist' => fn () => [
+        'API returns an empty array when no events exist' => fn (): array => [
             [],
             0,
         ],
@@ -167,7 +167,7 @@ it('correctly normalizes the Outlook API event response into an array', function
 // getEvents – paginated responses
 // ──────────────────────────────────────────────────
 
-it('handles paginated getEvents responses via getNextLink', function () use ($createMockOutlookEvent, $createOutlookCalendar) {
+it('handles paginated getEvents responses via getNextLink', function () use ($createMockOutlookEvent, $createOutlookCalendar): void {
     $page1Response = Mockery::mock(GraphResponse::class);
     $page1Response->shouldReceive('getResponseAsObject') // @phpstan-ignore method.notFound
         ->with(Event::class)
@@ -205,7 +205,7 @@ it('handles paginated getEvents responses via getNextLink', function () use ($cr
 // getEvents – error handling
 // ──────────────────────────────────────────────────
 
-it('catches ClientException 401 in getEvents and refreshes token then retries', function () use ($createMockOutlookEvent, $createOutlookCalendar) {
+it('catches ClientException 401 in getEvents and refreshes token then retries', function () use ($createMockOutlookEvent, $createOutlookCalendar): void {
     $guzzleRequest = new GuzzleRequest('GET', 'https://graph.microsoft.com/v1.0/me/calendar');
     $guzzleResponse = new GuzzleResponse(401);
     $clientException = new ClientException('Unauthorized', $guzzleRequest, $guzzleResponse);
@@ -250,7 +250,7 @@ it('catches ClientException 401 in getEvents and refreshes token then retries', 
     expect($events)->toHaveCount(1); // @phpstan-ignore argument.templateType
 });
 
-it('catches ClientException with Retry-After in getEvents and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar) {
+it('catches ClientException with Retry-After in getEvents and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar): void {
     $guzzleRequest = new GuzzleRequest('GET', 'https://graph.microsoft.com/v1.0/me/calendar');
     $guzzleResponse = new GuzzleResponse(429, ['Retry-After' => '60']);
     $clientException = new ClientException('Too Many Requests', $guzzleRequest, $guzzleResponse);
@@ -266,12 +266,12 @@ it('catches ClientException with Retry-After in getEvents and throws MicrosoftGr
     $manager->shouldReceive('makeClient')->andReturn($graph);
 
     expect(fn () => $manager->getEvents($createOutlookCalendar())) // @phpstan-ignore method.notFound, argument.unresolvableType, function.unresolvableReturnType
-        ->toThrow(function (MicrosoftGraphRateLimited $exception) { // @phpstan-ignore argument.type
+        ->toThrow(function (MicrosoftGraphRateLimited $exception): void { // @phpstan-ignore argument.type
             expect($exception->retryAfterSeconds)->toBe(60);
         });
 });
 
-it('rethrows non-401 ClientException without Retry-After in getEvents', function () use ($createOutlookCalendar) {
+it('rethrows non-401 ClientException without Retry-After in getEvents', function () use ($createOutlookCalendar): void {
     $guzzleRequest = new GuzzleRequest('GET', 'https://graph.microsoft.com/v1.0/me/calendar');
     $guzzleResponse = new GuzzleResponse(403);
     $clientException = new ClientException('Forbidden', $guzzleRequest, $guzzleResponse);
@@ -290,7 +290,7 @@ it('rethrows non-401 ClientException without Retry-After in getEvents', function
         ->toThrow(ClientException::class);
 });
 
-it('catches ServerException in getEvents with Retry-After and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar) {
+it('catches ServerException in getEvents with Retry-After and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar): void {
     $guzzleRequest = new GuzzleRequest('GET', 'https://graph.microsoft.com/v1.0/me/calendar');
     $guzzleResponse = new GuzzleResponse(500, ['Retry-After' => '45']);
     $serverException = new ServerException('Server Error', $guzzleRequest, $guzzleResponse);
@@ -306,12 +306,12 @@ it('catches ServerException in getEvents with Retry-After and throws MicrosoftGr
     $manager->shouldReceive('makeClient')->andReturn($graph);
 
     expect(fn () => $manager->getEvents($createOutlookCalendar())) // @phpstan-ignore method.notFound, argument.unresolvableType, function.unresolvableReturnType
-        ->toThrow(function (MicrosoftGraphRateLimited $exception) { // @phpstan-ignore argument.type
+        ->toThrow(function (MicrosoftGraphRateLimited $exception): void { // @phpstan-ignore argument.type
             expect($exception->retryAfterSeconds)->toBe(45);
         });
 });
 
-it('catches ServerException in getEvents without Retry-After and defaults to 30 seconds', function () use ($createOutlookCalendar) {
+it('catches ServerException in getEvents without Retry-After and defaults to 30 seconds', function () use ($createOutlookCalendar): void {
     $guzzleRequest = new GuzzleRequest('GET', 'https://graph.microsoft.com/v1.0/me/calendar');
     $guzzleResponse = new GuzzleResponse(500);
     $serverException = new ServerException('Server Error', $guzzleRequest, $guzzleResponse);
@@ -327,7 +327,7 @@ it('catches ServerException in getEvents without Retry-After and defaults to 30 
     $manager->shouldReceive('makeClient')->andReturn($graph);
 
     expect(fn () => $manager->getEvents($createOutlookCalendar())) // @phpstan-ignore method.notFound, argument.unresolvableType, function.unresolvableReturnType
-        ->toThrow(function (MicrosoftGraphRateLimited $exception) { // @phpstan-ignore argument.type
+        ->toThrow(function (MicrosoftGraphRateLimited $exception): void { // @phpstan-ignore argument.type
             expect($exception->retryAfterSeconds)->toBe(30);
         });
 });
@@ -336,7 +336,7 @@ it('catches ServerException in getEvents without Retry-After and defaults to 30 
 // createEvent
 // ──────────────────────────────────────────────────
 
-it('creates an event and saves provider_id and provider_uid', function () use ($createMockOutlookEvent, $createOutlookCalendar) {
+it('creates an event and saves provider_id and provider_uid', function () use ($createMockOutlookEvent, $createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $providerEvent = $createMockOutlookEvent('provider-id-123', 'Created Event', 'ical-uid-123');
@@ -365,7 +365,7 @@ it('creates an event and saves provider_id and provider_uid', function () use ($
         ->and($event->provider_uid)->toBe('ical-uid-123');
 });
 
-it('catches ServerException in createEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar) {
+it('catches ServerException in createEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $guzzleRequest = new GuzzleRequest('POST', 'https://graph.microsoft.com/v1.0/me/calendars/x/events');
@@ -394,7 +394,7 @@ it('catches ServerException in createEvent and throws MicrosoftGraphRateLimited'
 // updateEvent
 // ──────────────────────────────────────────────────
 
-it('updates an event and saves provider_id and provider_uid', function () use ($createMockOutlookEvent, $createOutlookCalendar) {
+it('updates an event and saves provider_id and provider_uid', function () use ($createMockOutlookEvent, $createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $providerEvent = $createMockOutlookEvent('provider-id-456', 'Updated Event', 'ical-uid-456');
@@ -425,7 +425,7 @@ it('updates an event and saves provider_id and provider_uid', function () use ($
         ->and($event->provider_uid)->toBe('ical-uid-456');
 });
 
-it('catches ServerException in updateEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar) {
+it('catches ServerException in updateEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $guzzleRequest = new GuzzleRequest('PATCH', 'https://graph.microsoft.com/v1.0/me/calendars/x/events/y');
@@ -456,7 +456,7 @@ it('catches ServerException in updateEvent and throws MicrosoftGraphRateLimited'
 // deleteEvent
 // ──────────────────────────────────────────────────
 
-it('deletes an event successfully', function () use ($createOutlookCalendar) {
+it('deletes an event successfully', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $graphRequest = Mockery::mock(GraphRequest::class);
@@ -480,7 +480,7 @@ it('deletes an event successfully', function () use ($createOutlookCalendar) {
     expect(true)->toBeTrue();
 });
 
-it('catches ServerException in deleteEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar) {
+it('catches ServerException in deleteEvent and throws MicrosoftGraphRateLimited', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $guzzleRequest = new GuzzleRequest('DELETE', 'https://graph.microsoft.com/v1.0/me/calendars/x/events/y');
@@ -510,7 +510,7 @@ it('catches ServerException in deleteEvent and throws MicrosoftGraphRateLimited'
 // syncEvents
 // ──────────────────────────────────────────────────
 
-it('creates new local events from provider events during sync', function () use ($createMockOutlookEvent, $createOutlookCalendar) {
+it('creates new local events from provider events during sync', function () use ($createMockOutlookEvent, $createOutlookCalendar): void {
     $providerEvents = [
         $createMockOutlookEvent('p1', 'Provider Event 1'),
         $createMockOutlookEvent('p2', 'Provider Event 2'),
@@ -532,7 +532,7 @@ it('creates new local events from provider events during sync', function () use 
         ->and($calendar->events()->where('provider_id', 'p2')->exists())->toBeTrue();
 });
 
-it('updates existing local events when provider data changes during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+it('updates existing local events when provider data changes during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -556,7 +556,7 @@ it('updates existing local events when provider data changes during sync', funct
         ->and($calendar->events()->first()->title)->toBe('Updated Title');
 });
 
-it('looks up existing local events once rather than once per provider event during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+it('looks up existing local events once rather than once per provider event during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -589,7 +589,7 @@ it('looks up existing local events once rather than once per provider event duri
         ->and($calendar->events()->where('provider_id', 'p1')->value('title'))->toBe('Updated Title');
 });
 
-it('keeps a single local event when the provider returns a new provider id more than once during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+it('keeps a single local event when the provider returns a new provider id more than once during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -606,7 +606,7 @@ it('keeps a single local event when the provider returns a new provider id more 
         ->and($calendar->events()->where('provider_id', 'repeated')->value('title'))->toBe('Second Title');
 });
 
-it('pushes local events without provider_id to provider during sync', function () use ($createOutlookCalendar) {
+it('pushes local events without provider_id to provider during sync', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -625,7 +625,7 @@ it('pushes local events without provider_id to provider during sync', function (
     $manager->syncEvents($calendar, new DateTime($start->toDateTimeString()), new DateTime($end->toDateTimeString())); // @phpstan-ignore method.notFound
 });
 
-it('deletes orphaned local events within the synced date range', function () use ($createOutlookCalendar) {
+it('deletes orphaned local events within the synced date range', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -645,7 +645,7 @@ it('deletes orphaned local events within the synced date range', function () use
     expect($calendar->events()->count())->toBe(0);
 });
 
-it('does not delete orphaned events outside the synced date range', function () use ($createOutlookCalendar) {
+it('does not delete orphaned events outside the synced date range', function () use ($createOutlookCalendar): void {
     CalendarEvent::unsetEventDispatcher();
 
     $calendar = $createOutlookCalendar();
@@ -669,7 +669,7 @@ it('does not delete orphaned events outside the synced date range', function () 
 // refreshToken
 // ──────────────────────────────────────────────────
 
-it('refreshes token and updates calendar fields', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('refreshes token and updates calendar fields', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     $mockAzureCalendarSettings();
 
     Http::fake([
@@ -693,15 +693,15 @@ it('refreshes token and updates calendar fields', function () use ($mockAzureCal
     expect($calendar->oauth_token)->toBe('new-access-token');
 });
 
-it('throws CouldNotRefreshToken when refresh token is blank', function () use ($createOutlookCalendar) {
+it('throws CouldNotRefreshToken when refresh token is blank', function () use ($createOutlookCalendar): void {
     $calendar = $createOutlookCalendar(['oauth_refresh_token' => null]);
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(CouldNotRefreshToken::class, 'No refresh token available for calendar.');
 });
 
-it('disconnects and notifies user on 401 response during token refresh', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('disconnects and notifies user on 401 response during token refresh', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     Notification::fake();
     $mockAzureCalendarSettings();
 
@@ -712,7 +712,7 @@ it('disconnects and notifies user on 401 response during token refresh', functio
     $calendar = $createOutlookCalendar();
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(CouldNotRefreshToken::class);
 
     $calendar->refresh();
@@ -723,7 +723,7 @@ it('disconnects and notifies user on 401 response during token refresh', functio
     Notification::assertSentTo($calendar->user, CalendarRequiresReconnectNotification::class);
 });
 
-it('disconnects and notifies on invalid_grant with AADSTS50173', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('disconnects and notifies on invalid_grant with AADSTS50173', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     Notification::fake();
     $mockAzureCalendarSettings();
 
@@ -737,7 +737,7 @@ it('disconnects and notifies on invalid_grant with AADSTS50173', function () use
     $calendar = $createOutlookCalendar();
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(CouldNotRefreshToken::class);
 
     $calendar->refresh();
@@ -747,7 +747,7 @@ it('disconnects and notifies on invalid_grant with AADSTS50173', function () use
     Notification::assertSentTo($calendar->user, CalendarRequiresReconnectNotification::class);
 });
 
-it('disconnects and notifies on invalid_grant with AADSTS50057', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('disconnects and notifies on invalid_grant with AADSTS50057', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     Notification::fake();
     $mockAzureCalendarSettings();
 
@@ -761,7 +761,7 @@ it('disconnects and notifies on invalid_grant with AADSTS50057', function () use
     $calendar = $createOutlookCalendar();
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(CouldNotRefreshToken::class);
 
     $calendar->refresh();
@@ -771,7 +771,7 @@ it('disconnects and notifies on invalid_grant with AADSTS50057', function () use
     Notification::assertSentTo($calendar->user, CalendarRequiresReconnectNotification::class);
 });
 
-it('throws RequestException on non-invalid_grant 400 errors during refresh', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('throws RequestException on non-invalid_grant 400 errors during refresh', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     $mockAzureCalendarSettings();
 
     Http::fake([
@@ -784,11 +784,11 @@ it('throws RequestException on non-invalid_grant 400 errors during refresh', fun
     $calendar = $createOutlookCalendar();
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(RequestException::class);
 });
 
-it('skips notification if tokens already cleared by another process', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('skips notification if tokens already cleared by another process', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     Notification::fake();
     $mockAzureCalendarSettings();
 
@@ -802,7 +802,7 @@ it('skips notification if tokens already cleared by another process', function (
     $calendar = $createOutlookCalendar();
 
     // Simulate another process clearing the tokens before disconnectAndNotify runs
-    Calendar::withoutEvents(function () use ($calendar) {
+    Calendar::withoutEvents(function () use ($calendar): void {
         $calendar->newQuery()
             ->where('id', $calendar->id)
             ->update([
@@ -814,7 +814,7 @@ it('skips notification if tokens already cleared by another process', function (
 
     $manager = new OutlookCalendarManager();
 
-    expect(fn () => $manager->refreshToken($calendar))
+    expect(fn (): Calendar => $manager->refreshToken($calendar))
         ->toThrow(CouldNotRefreshToken::class);
 
     Notification::assertNothingSent();
@@ -824,7 +824,7 @@ it('skips notification if tokens already cleared by another process', function (
 // makeClient
 // ──────────────────────────────────────────────────
 
-it('returns Graph client when token is not expired', function () use ($createOutlookCalendar) {
+it('returns Graph client when token is not expired', function () use ($createOutlookCalendar): void {
     $calendar = $createOutlookCalendar([
         'oauth_token_expires_at' => now()->addHour(),
     ]);
@@ -835,7 +835,7 @@ it('returns Graph client when token is not expired', function () use ($createOut
     expect($client)->toBeInstanceOf(Graph::class);
 });
 
-it('refreshes token in makeClient when token is expired', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('refreshes token in makeClient when token is expired', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     $mockAzureCalendarSettings();
 
     Http::fake([
@@ -859,7 +859,7 @@ it('refreshes token in makeClient when token is expired', function () use ($mock
     expect($calendar->oauth_token)->toBe('refreshed-token');
 });
 
-it('refreshes token in makeClient when oauth_token_expires_at is null', function () use ($mockAzureCalendarSettings, $createOutlookCalendar) {
+it('refreshes token in makeClient when oauth_token_expires_at is null', function () use ($mockAzureCalendarSettings, $createOutlookCalendar): void {
     $mockAzureCalendarSettings();
 
     Http::fake([
@@ -887,7 +887,7 @@ it('refreshes token in makeClient when oauth_token_expires_at is null', function
 // revokeToken
 // ──────────────────────────────────────────────────
 
-it('clears all oauth fields when revoking token', function () use ($createOutlookCalendar) {
+it('clears all oauth fields when revoking token', function () use ($createOutlookCalendar): void {
     $calendar = $createOutlookCalendar();
 
     $manager = new OutlookCalendarManager();

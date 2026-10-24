@@ -101,7 +101,7 @@ class EditCustomerAdvisor extends EditRecord
                             ->maxLength(255),
                         Select::make('model')
                             ->live()
-                            ->options(fn (AiModel|string|null $state) => array_unique([
+                            ->options(fn (AiModel|string|null $state): array => array_unique([
                                 ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                                 ...match (true) {
                                     $state instanceof AiModel => [$state->value => $state->getLabel()],
@@ -167,7 +167,7 @@ class EditCustomerAdvisor extends EditRecord
             Action::make('archive')
                 ->authorize(fn (): bool => auth()->user()->can('customer_advisor.*.delete'))
                 ->color('danger')
-                ->action(function () {
+                ->action(function (): void {
                     /** @var CustomerAdvisor $customerAdvisor */
                     $customerAdvisor = $this->getRecord();
                     $customerAdvisor->archived_at = now();
@@ -181,7 +181,7 @@ class EditCustomerAdvisor extends EditRecord
                 ->hidden(fn (CustomerAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->authorize(fn (): bool => auth()->user()->can('customer_advisor.*.restore'))
-                ->action(function () {
+                ->action(function (): void {
                     /** @var CustomerAdvisor $customerAdvisor */
                     $customerAdvisor = $this->getRecord();
                     $customerAdvisor->archived_at = null;

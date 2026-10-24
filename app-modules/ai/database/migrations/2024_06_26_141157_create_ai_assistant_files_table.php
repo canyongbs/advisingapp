@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('ai_assistant_files', function (Blueprint $table) {
+        Schema::create('ai_assistant_files', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('assistant_id')->constrained('ai_assistants')->cascadeOnDelete();
             $table->string('file_id')->nullable();

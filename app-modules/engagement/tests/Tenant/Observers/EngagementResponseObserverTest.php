@@ -46,7 +46,7 @@ use App\Models\User;
 use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 
-it('dispatches a notification to subscribed users when an engagement response is created', function () {
+it('dispatches a notification to subscribed users when an engagement response is created', function (): void {
     Notification::fake();
     Event::fake([SubscriptionCreated::class]);
 
@@ -65,7 +65,7 @@ it('dispatches a notification to subscribed users when an engagement response is
     Notification::assertSentTo(
         $user,
         DatabaseNotification::class,
-        function (DatabaseNotification $notification) use ($response, $educatable) {
+        function (DatabaseNotification $notification) use ($response, $educatable): bool {
             $type = match ($response->type) {
                 EngagementResponseType::Email => 'email',
                 EngagementResponseType::Sms => 'text message',

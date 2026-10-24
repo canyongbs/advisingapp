@@ -60,7 +60,7 @@ class StudentFactory extends Factory
             'otherid' => $this->faker->numerify('##########'),
             'first' => $this->faker->firstName(),
             'last' => $this->faker->lastName(),
-            'full_name' => fn (array $attributes) => "{$attributes['first']} {$attributes['last']}",
+            'full_name' => fn (array $attributes): string => "{$attributes['first']} {$attributes['last']}",
             'preferred' => $this->faker->randomElement([$this->faker->firstName(), null]),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->date(),
@@ -87,7 +87,7 @@ class StudentFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Student $student) {
+        return $this->afterCreating(function (Student $student): void {
             $student->primaryEmailAddress()->associate(StudentEmailAddress::factory()->create([
                 'sisid' => $student->getKey(),
                 'address' => $this->faker->email(),

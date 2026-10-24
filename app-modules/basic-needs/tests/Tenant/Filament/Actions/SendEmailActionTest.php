@@ -65,7 +65,7 @@ $recipientSisids = function (array $options): array {
     return array_map(strval(...), array_keys($options));
 };
 
-it('offers active students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids) {
+it('offers active students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids): void {
     asSuperAdmin();
 
     $student = Student::factory()->create(['full_name' => 'Recipient Alpha']);
@@ -76,7 +76,7 @@ it('offers active students as recipients', function () use ($assertStudentRecipi
     });
 });
 
-it('does not offer archived students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids) {
+it('does not offer archived students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids): void {
     asSuperAdmin();
 
     $student = Student::factory()->create(['full_name' => 'Recipient Beta']);
@@ -88,7 +88,7 @@ it('does not offer archived students as recipients', function () use ($assertStu
     });
 });
 
-it('does not offer an archived student searched by their SIS ID or email address', function () use ($assertStudentRecipientSelect, $recipientSisids) {
+it('does not offer an archived student searched by their SIS ID or email address', function () use ($assertStudentRecipientSelect, $recipientSisids): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -101,7 +101,7 @@ it('does not offer an archived student searched by their SIS ID or email address
     });
 });
 
-it('accepts an active student as the submitted recipient', function () {
+it('accepts an active student as the submitted recipient', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -113,7 +113,7 @@ it('accepts an active student as the submitted recipient', function () {
         ->assertHasNoFormErrors(['recipient_id']);
 });
 
-it('does not send to an archived student even when their id is submitted', function () {
+it('does not send to an archived student even when their id is submitted', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();

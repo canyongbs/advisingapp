@@ -92,7 +92,7 @@ class RequestEventRegistrationFormSubmission extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, Action $action, ManageRelatedRecords | RelationManager $livewire) {
+        $this->action(function (array $data, Action $action, ManageRelatedRecords | RelationManager $livewire): void {
             $owner = $livewire->getOwnerRecord();
             assert($owner instanceof Educatable);
 

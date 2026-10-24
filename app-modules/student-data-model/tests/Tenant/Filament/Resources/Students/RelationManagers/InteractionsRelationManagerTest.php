@@ -48,7 +48,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('renders the InteractionsRelationManager based on proper access', function () {
+it('renders the InteractionsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -75,7 +75,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders only the interactions associated with student', function () {
+it('renders only the interactions associated with student', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -100,7 +100,7 @@ it('renders only the interactions associated with student', function () {
         ->assertCanNotSeeTableRecords($notAssociatedStudent->interactions);
 });
 
-it('renders the initiative select filter', function () {
+it('renders the initiative select filter', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $initiatives = InteractionInitiative::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
@@ -133,7 +133,7 @@ it('renders the initiative select filter', function () {
         ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
-it('renders the driver select filter', function () {
+it('renders the driver select filter', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $drivers = InteractionDriver::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
@@ -166,7 +166,7 @@ it('renders the driver select filter', function () {
         ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
-it('renders the type select filter', function () {
+it('renders the type select filter', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $types = InteractionType::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
@@ -199,7 +199,7 @@ it('renders the type select filter', function () {
         ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
-it('renders the status select filter', function () {
+it('renders the status select filter', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $statuses = InteractionStatus::factory(['interactable_type' => InteractableType::Student])->count(5)->create();
@@ -232,7 +232,7 @@ it('renders the status select filter', function () {
         ->assertCanSeeTableRecords([$nonSelectableInteractions, $selectableInteractions]);
 });
 
-it('renders the created by select filter', function () {
+it('renders the created by select filter', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $users = User::factory()->count(2)->create();

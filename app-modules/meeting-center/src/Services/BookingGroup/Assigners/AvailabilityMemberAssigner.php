@@ -70,7 +70,7 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
 
         $minHours = (float) $memberHours->min();
 
-        $tiedMembers = $memberHours->filter(fn (float $hours) => $hours === $minHours)->keys();
+        $tiedMembers = $memberHours->filter(fn (float $hours): bool => $hours === $minHours)->keys();
 
         if ($tiedMembers->count() === 1) {
             return $eligibleMembers->firstWhere('id', $tiedMembers->first());

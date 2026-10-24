@@ -84,9 +84,9 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                                     ->options(SisSystem::class)
                                     ->enum(SisSystem::class)
                                     ->required()
-                                    ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
+                                    ->dehydrateStateUsing(fn (string|SisSystem $state): ?\AdvisingApp\StudentDataModel\Enums\SisSystem => SisSystem::parse($state)),
                             ])
-                            ->visible(fn (Get $get) => $get('is_enabled')),
+                            ->visible(fn (Get $get): mixed => $get('is_enabled')),
                     ])
                     ->disabled(),
                 Section::make('Student Record Management')

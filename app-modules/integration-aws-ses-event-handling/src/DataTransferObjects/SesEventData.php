@@ -57,7 +57,7 @@ class SesEventData extends Data
         public SesSubscriptionData|Optional $subscription,
     ) {}
 
-    public static function fromRequest(Request $request)
+    public static function fromRequest(Request $request): SesEventData
     {
         $envelope = json_decode($request->getContent(), true);
 

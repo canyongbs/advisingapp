@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\seed;
 
-it('can be sent', function () {
+it('can be sent', function (): void {
     Notification::fake();
 
     seed(ApplicationSubmissionStateSeeder::class);

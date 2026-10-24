@@ -40,14 +40,14 @@ use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-describe('authorization', function () {
-    it('allows a super admin to access the page', function () {
+describe('authorization', function (): void {
+    it('allows a super admin to access the page', function (): void {
         asSuperAdmin();
 
         get(ManageAiIntegrationsSettings::getUrl())->assertSuccessful();
     });
 
-    it('denies a super admin access to the page while Enterprise AI is disabled', function () {
+    it('denies a super admin access to the page while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         setEnterpriseAiEnabled(false);

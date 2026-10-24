@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('campaigns', function (Blueprint $table) {
+        Schema::table('campaigns', function (Blueprint $table): void {
             $table->uuid('created_by_id')->nullable(false)->change();
             $table->string('created_by_type')->nullable(false)->change();
         });
@@ -49,7 +49,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('campaigns', function (Blueprint $table) {
+        Schema::table('campaigns', function (Blueprint $table): void {
             $table->uuid('created_by_id')->nullable(true)->change();
             $table->string('created_by_type')->nullable(true)->change();
         });

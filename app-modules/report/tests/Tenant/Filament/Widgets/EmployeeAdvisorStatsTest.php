@@ -39,7 +39,7 @@ use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorStats;
 use App\Models\User;
 
-it('returns correct total employee advisor stats within the given date range', function () {
+it('returns correct total employee advisor stats within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -118,7 +118,7 @@ it('returns correct total employee advisor stats within the given date range', f
         ->and($stats[2]->getValue())->toEqual(3);
 });
 
-it('returns correct total employee advisor stats without date filters', function () {
+it('returns correct total employee advisor stats without date filters', function (): void {
     $count = random_int(1, 5);
 
     AiAssistant::factory()->count($count)->create(['is_default' => false]);
@@ -160,7 +160,7 @@ it('returns correct total employee advisor stats without date filters', function
         ->and($stats[2]->getValue())->toEqual(3);
 });
 
-it('returns zero stats when no employee advisors exist', function () {
+it('returns zero stats when no employee advisors exist', function (): void {
     AiAssistant::factory()->count(3)->create(['is_default' => true]);
 
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);

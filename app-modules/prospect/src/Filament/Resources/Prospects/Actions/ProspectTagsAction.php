@@ -69,7 +69,7 @@ class ProspectTagsAction extends Action
                     ->default(fn (?Prospect $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
                     ->searchable(),
             ])
-            ->action(function (array $data, Prospect $record) {
+            ->action(function (array $data, Prospect $record): void {
                 $record->tags()->sync($data['tag_ids']);
                 $record->save();
 

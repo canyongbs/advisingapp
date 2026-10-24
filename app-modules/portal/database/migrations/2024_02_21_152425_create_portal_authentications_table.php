@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('portal_authentications', function (Blueprint $table) {
+        Schema::create('portal_authentications', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('educatable_id')->nullable();

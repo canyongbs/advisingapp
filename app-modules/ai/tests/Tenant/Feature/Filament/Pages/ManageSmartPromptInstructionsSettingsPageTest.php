@@ -43,14 +43,14 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-it('renders successfully', function () {
+it('renders successfully', function (): void {
     asSuperAdmin();
 
     Livewire::test(ManageSmartPromptInstructionsSettings::class)
         ->assertStatus(200);
 });
 
-it('does not load if you do not have permission to access', function () {
+it('does not load if you do not have permission to access', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
@@ -59,7 +59,7 @@ it('does not load if you do not have permission to access', function () {
         ->assertStatus(403);
 });
 
-it('does not load without the required license', function () {
+it('does not load without the required license', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -68,7 +68,7 @@ it('does not load without the required license', function () {
         ->assertStatus(403);
 });
 
-it('can update the smart prompt instructions', function () {
+it('can update the smart prompt instructions', function (): void {
     asSuperAdmin();
 
     $instructions = [

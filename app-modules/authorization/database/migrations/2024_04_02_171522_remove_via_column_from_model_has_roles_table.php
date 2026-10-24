@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('model_has_roles', function (Blueprint $table) {
+        Schema::table('model_has_roles', function (Blueprint $table): void {
             $table->dropColumn('via');
         });
     }
 
     public function down(): void
     {
-        Schema::table('model_has_roles', function (Blueprint $table) {
+        Schema::table('model_has_roles', function (Blueprint $table): void {
             $table->string('via', 125)->default('direct');
         });
     }

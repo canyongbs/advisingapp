@@ -66,11 +66,11 @@ class AssignDepartmentBulkAction extends BulkAction
                     ->searchable()
                     ->required(),
             ])
-            ->action(function (array $data, Collection $records) {
+            ->action(function (array $data, Collection $records): void {
                 $success = 0;
                 $fail = 0;
                 /** @var Collection <int, User> $records */
-                $records->each(function (User $record) use ($data, &$success, &$fail) {
+                $records->each(function (User $record) use ($data, &$success, &$fail): void {
                     try {
                         $record->assignDepartment($data['department']);
                         $success++;

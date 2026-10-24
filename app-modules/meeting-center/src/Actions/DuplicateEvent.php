@@ -74,7 +74,7 @@ class DuplicateEvent
     {
         $stepMap = [];
 
-        $this->original->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use (&$stepMap) {
+        $this->original->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use (&$stepMap): void {
             $newStep = $step->replicate();
             $newStep->form_id = $this->replica->eventRegistrationForm->id;
             $newStep->save();
@@ -89,7 +89,7 @@ class DuplicateEvent
     {
         $fieldMap = [];
 
-        $this->original->eventRegistrationForm->fields()->each(function (EventRegistrationFormField $field) use (&$fieldMap, $stepMap) {
+        $this->original->eventRegistrationForm->fields()->each(function (EventRegistrationFormField $field) use (&$fieldMap, $stepMap): void {
             $newField = $field->replicate();
             $newField->form_id = $this->replica->eventRegistrationForm->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -103,7 +103,7 @@ class DuplicateEvent
 
     private function updateStepContent(array $fieldMap): void
     {
-        $this->replica->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap) {
+        $this->replica->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap): void {
             $content = $step->content;
             $step->update([
                 'content' => $this->replaceIdsInContent($content, $fieldMap),
@@ -150,7 +150,11 @@ class DuplicateEvent
         return json_decode($json, true);
     }
 
-    private function replaceIdsInContent(&$content, $fieldMap)
+    /**
+     * @param mixed $content
+     * @param array<int|string, string> $fieldMap
+     */
+    private function replaceIdsInContent(&$content, array $fieldMap)
     {
         if (is_array($content)) {
             foreach ($content as $key => &$value) {

@@ -72,7 +72,7 @@ class EventsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('event.title')
-                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
+                    ->url(fn (EventAttendee $record): string => EventResource::getUrl('view', ['record' => $record->event]))
                     ->color('primary'),
                 TextColumn::make('status')
                     ->badge(),

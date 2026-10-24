@@ -45,7 +45,7 @@ class CreateStudentEmailAddress
 {
     public function execute(Student $student, CreateStudentEmailAddressData $data): StudentEmailAddress
     {
-        return DB::transaction(function () use ($data, $student) {
+        return DB::transaction(function () use ($data, $student): StudentEmailAddress {
             $emailAddress = new StudentEmailAddress();
             $emailAddress->student()->associate($student);
             $emailAddress->fill($data->toArray());

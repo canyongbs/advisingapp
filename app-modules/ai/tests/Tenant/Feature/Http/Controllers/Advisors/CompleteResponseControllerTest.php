@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Queue;
 use function Pest\Laravel\post;
 use function Tests\asSuperAdmin;
 
-it('completes the last response in a thread', function () {
+it('completes the last response in a thread', function (): void {
     Queue::fake([
         CompleteAdvisorResponse::class,
     ]);
@@ -67,7 +67,7 @@ it('completes the last response in a thread', function () {
     Queue::assertPushed(CompleteAdvisorResponse::class);
 });
 
-it('returns a message if the thread is locked', function () {
+it('returns a message if the thread is locked', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -89,7 +89,7 @@ it('returns a message if the thread is locked', function () {
         ]);
 });
 
-it('returns a message if the assistant is archived', function () {
+it('returns a message if the assistant is archived', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()
@@ -109,7 +109,7 @@ it('returns a message if the assistant is archived', function () {
         ]);
 });
 
-it('prevents users who do not own the thread from completing the latest assistant response for it', function () {
+it('prevents users who do not own the thread from completing the latest assistant response for it', function (): void {
     asSuperAdmin();
 
     $thread = AiThread::factory()

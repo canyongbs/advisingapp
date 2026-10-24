@@ -67,7 +67,7 @@ class UpdateTenantTheme implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        $this->tenant->executeWithLandlordJobFailureAndBatching(function () {
+        $this->tenant->executeWithLandlordJobFailureAndBatching(function (): void {
             $settings = app(ThemeSettings::class);
             $settings->color_overrides = $this->config->colorOverrides;
             $settings->has_dark_mode = $this->config->hasDarkMode;

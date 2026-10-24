@@ -44,11 +44,11 @@ use Livewire\Livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
 
-beforeEach(function () {
+beforeEach(function (): void {
     setUnifiedInboxEnabled(true);
 });
 
-it('can mark an engagement response as actioned and create an actioned note', function () {
+it('can mark an engagement response as actioned and create an actioned note', function (): void {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
@@ -63,7 +63,7 @@ it('can mark an engagement response as actioned and create an actioned note', fu
         ->and($record->actionedNotes()->first()->note)->toBe('This is a test call.');
 });
 
-it('can send a success notification after marking an email as actioned', function () {
+it('can send a success notification after marking an email as actioned', function (): void {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
@@ -72,7 +72,7 @@ it('can send a success notification after marking an email as actioned', functio
         ->assertNotified('Email marked as actioned');
 });
 
-it('can send a success notification after marking a text message as actioned', function () {
+it('can send a success notification after marking a text message as actioned', function (): void {
     asSuperAdmin();
     $record = EngagementResponse::factory()->sms()->create(['status' => EngagementResponseStatus::New]);
 
@@ -81,7 +81,7 @@ it('can send a success notification after marking a text message as actioned', f
         ->assertNotified('Text marked as actioned');
 });
 
-it('can require the note field to be filled', function () {
+it('can require the note field to be filled', function (): void {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
@@ -95,7 +95,7 @@ it('can require the note field to be filled', function () {
         ->and($record->actionedNotes()->count())->toBe(0);
 });
 
-it('can not change status when note validation fails', function () {
+it('can not change status when note validation fails', function (): void {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
@@ -108,7 +108,7 @@ it('can not change status when note validation fails', function () {
     expect($record->status)->toBe(EngagementResponseStatus::New);
 });
 
-it('resolves the underlying engagement response from a holistic engagement record', function () {
+it('resolves the underlying engagement response from a holistic engagement record', function (): void {
     asSuperAdmin();
     $engagementResponse = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 

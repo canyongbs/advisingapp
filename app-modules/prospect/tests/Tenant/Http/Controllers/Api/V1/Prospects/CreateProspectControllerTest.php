@@ -43,12 +43,12 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Disable auditing, which causes testing issues when authenticating with a fake Sanctum token.
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $createProspectRequestData = CreateProspectRequestFactory::new()->create();
 
     $user = SystemUser::factory()->create();
@@ -75,7 +75,7 @@ it('is gated with proper access control', function () {
         ->assertCreated();
 });
 
-it('creates a prospect', function () {
+it('creates a prospect', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.create']);
     Sanctum::actingAs($user, ['api']);
@@ -130,7 +130,7 @@ it('creates a prospect', function () {
     );
 });
 
-it('creates prospect email addresses', function () {
+it('creates prospect email addresses', function (): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.create']);
     Sanctum::actingAs($user, ['api']);
@@ -183,7 +183,7 @@ it('creates prospect email addresses', function () {
     }
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.create']);
     Sanctum::actingAs($user, ['api']);
@@ -224,7 +224,7 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`email_addresses.*.type` is max 255 characters' => [['email_addresses' => [['address' => 'test@example.com', 'type' => str_repeat('a', 256)]]], 'email_addresses.0.type', 'The email_addresses.0.type may not be greater than 255 characters.'],
 ]);
 
-it('can include related prospect relationships', function (string $relationship, string $responseKey) {
+it('can include related prospect relationships', function (string $relationship, string $responseKey): void {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['prospect.view-any', 'prospect.create']);
     Sanctum::actingAs($user, ['api']);

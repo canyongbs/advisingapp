@@ -41,7 +41,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-test('CreateProspectTag does not allow for duplicate names of non-deleted prospect tags case insensitively', function () {
+test('CreateProspectTag does not allow for duplicate names of non-deleted prospect tags case insensitively', function (): void {
     asSuperAdmin();
 
     $tag = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
@@ -58,7 +58,7 @@ test('CreateProspectTag does not allow for duplicate names of non-deleted prospe
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-test('CreateProspectTag does allow for non-duplicate names of non-deleted prospect tags', function () {
+test('CreateProspectTag does allow for non-duplicate names of non-deleted prospect tags', function (): void {
     asSuperAdmin();
 
     Tag::factory(['name' => 'Prospect Tag 1', 'type' => TagType::Prospect])->create();
@@ -71,7 +71,7 @@ test('CreateProspectTag does allow for non-duplicate names of non-deleted prospe
         ->assertHasNoFormErrors();
 });
 
-test('CreateProspectTag does allow for duplicate names of student tags', function () {
+test('CreateProspectTag does allow for duplicate names of student tags', function (): void {
     asSuperAdmin();
 
     Tag::factory(['name' => 'Tag', 'type' => TagType::Student])->create();

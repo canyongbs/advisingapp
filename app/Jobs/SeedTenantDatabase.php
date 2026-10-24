@@ -65,7 +65,7 @@ class SeedTenantDatabase implements ShouldQueue, NotTenantAware
 
     public function handle(): void
     {
-        $this->tenant->executeWithLandlordJobFailureAndBatching(function () {
+        $this->tenant->executeWithLandlordJobFailureAndBatching(function (): void {
             Artisan::call(
                 command: 'db:seed --class=NewTenantSeeder --force'
             );

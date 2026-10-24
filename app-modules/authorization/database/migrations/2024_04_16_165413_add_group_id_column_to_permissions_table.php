@@ -41,14 +41,14 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
+        Schema::table('permissions', function (Blueprint $table): void {
             $table->foreignUuid('group_id')->nullable()->constrained('permission_groups')->cascadeOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
+        Schema::table('permissions', function (Blueprint $table): void {
             $table->dropConstrainedForeignId('group_id');
         });
     }

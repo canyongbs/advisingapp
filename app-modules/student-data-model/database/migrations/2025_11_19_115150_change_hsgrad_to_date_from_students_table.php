@@ -40,14 +40,14 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::statement('ALTER TABLE students ALTER COLUMN hsgrad TYPE date USING (NULL) ');
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::statement('ALTER TABLE students ALTER COLUMN hsgrad TYPE integer USING (NULL) ');
         });
     }

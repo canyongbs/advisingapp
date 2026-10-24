@@ -45,7 +45,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 use Worksome\RequestFactories\RequestFactory;
 
-test('Branded theme api test', function () {
+test('Branded theme api test', function (): void {
     $tenant = Tenant::current();
 
     $data = BrandedWebsiteLinksRequestFactory::new()->create();
@@ -60,7 +60,7 @@ test('Branded theme api test', function () {
             'message' => 'Theme updated successfully!',
         ]);
 
-    $tenant->execute(function () use ($data) {
+    $tenant->execute(function () use ($data): void {
         $settings = app(ThemeSettings::class);
 
         expect($settings->is_support_url_enabled)->toEqual($data['is_support_url_enabled']);
@@ -73,7 +73,7 @@ test('Branded theme api test', function () {
     });
 });
 
-it('validates the inputs', function (RequestFactory $requestFactory, array $errors) {
+it('validates the inputs', function (RequestFactory $requestFactory, array $errors): void {
     $tenant = Tenant::current();
 
     $data = $requestFactory->create();

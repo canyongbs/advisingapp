@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Illuminate\Database\UniqueConstraintViolationException;
 
-it('does not allow duplicate category names for the same customer advisor case-insensitively', function () {
+it('does not allow duplicate category names for the same customer advisor case-insensitively', function (): void {
     $advisor = CustomerAdvisor::factory()->create();
 
     CustomerAdvisorCategory::factory()->state([
@@ -52,7 +52,7 @@ it('does not allow duplicate category names for the same customer advisor case-i
     ])->create();
 })->throws(UniqueConstraintViolationException::class);
 
-it('allows duplicate category names for different customer advisors', function () {
+it('allows duplicate category names for different customer advisors', function (): void {
     $advisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
     $advisorTwo = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
 

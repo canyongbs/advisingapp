@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->string('otherid')->nullable()->change();
             $table->string('acad_career')->nullable()->change();
             $table->string('division')->nullable()->change();
@@ -60,7 +60,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
+        Schema::table('programs', function (Blueprint $table): void {
             $table->string('otherid')->nullable(false)->change();
             $table->string('acad_career')->nullable(false)->change();
             $table->string('division')->nullable(false)->change();

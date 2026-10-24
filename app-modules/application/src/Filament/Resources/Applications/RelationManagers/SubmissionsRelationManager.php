@@ -57,6 +57,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -215,7 +216,7 @@ class SubmissionsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")
+                    ->modalHeading(fn (ApplicationSubmission $record): string => "Submission Details: {$record->created_at}")
                     ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
                             ->label('State')
@@ -242,7 +243,7 @@ class SubmissionsRelationManager extends RelationManager
                             ->columnSpanFull(),
                     ])
                     ->modalContent(
-                        fn (ApplicationSubmission $record) => view('application::submission', ['submission' => $record])
+                        fn (ApplicationSubmission $record): Factory|\Illuminate\Contracts\View\View => view('application::submission', ['submission' => $record])
                     )
                     ->extraModalFooterActions(ApplicationAdmissionActions::get()),
                 Action::make('archive')

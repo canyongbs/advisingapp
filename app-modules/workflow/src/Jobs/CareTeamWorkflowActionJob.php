@@ -83,7 +83,7 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionJob
             collect($addedOrUpdatedPivotModels)
                 ->flatten()
                 ->unique()
-                ->each(function (String $addedOrUpdatedPivotModel) use ($educatable) {
+                ->each(function (String $addedOrUpdatedPivotModel) use ($educatable): void {
                     $careTeam = CareTeam::query()
                         ->where('user_id', $addedOrUpdatedPivotModel)
                         ->where('educatable_type', $educatable->getMorphClass())

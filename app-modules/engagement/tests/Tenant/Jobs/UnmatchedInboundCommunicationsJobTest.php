@@ -55,7 +55,7 @@ $unmatchedEmailFrom = function (string $address): UnmatchedInboundCommunication 
     ]);
 };
 
-it('matches an unmatched email to an active student', function () use ($unmatchedEmailFrom) {
+it('matches an unmatched email to an active student', function () use ($unmatchedEmailFrom): void {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()
@@ -74,7 +74,7 @@ it('matches an unmatched email to an active student', function () use ($unmatche
     assertModelMissing($communication);
 });
 
-it('does not match an unmatched email to an archived student', function () use ($unmatchedEmailFrom) {
+it('does not match an unmatched email to an archived student', function () use ($unmatchedEmailFrom): void {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()

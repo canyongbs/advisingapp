@@ -42,7 +42,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineSurveys = true;
     $settings->save();
@@ -50,7 +50,7 @@ beforeEach(function () {
     asSuperAdmin();
 });
 
-it('can create a survey', function () {
+it('can create a survey', function (): void {
     Livewire::test(CreateSurvey::class)
         ->fillForm(['name' => 'My Survey'])
         ->call('create')
@@ -59,7 +59,7 @@ it('can create a survey', function () {
     assertDatabaseHas(Survey::class, ['name' => 'My Survey']);
 });
 
-it('prevents creating a survey with a case-insensitively duplicate name', function () {
+it('prevents creating a survey with a case-insensitively duplicate name', function (): void {
     Survey::factory()->create(['name' => 'Existing Survey']);
 
     Livewire::test(CreateSurvey::class)
@@ -68,7 +68,7 @@ it('prevents creating a survey with a case-insensitively duplicate name', functi
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows reusing the name of a soft-deleted survey', function () {
+it('allows reusing the name of a soft-deleted survey', function (): void {
     Survey::factory()->create(['name' => 'Reusable Name'])->delete();
 
     Livewire::test(CreateSurvey::class)

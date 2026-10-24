@@ -76,7 +76,7 @@ class CreateCampaign extends CreateRecord
                 Action::make('draft')
                     ->label('Save as Draft')
                     ->color('gray')
-                    ->action(function () {
+                    ->action(function (): void {
                         $state = $this->form->getRawState();
                         $state['enabled'] = false;
                         $this->form->fill($state, false, false);
@@ -84,7 +84,7 @@ class CreateCampaign extends CreateRecord
                     })
                     ->cancelParentActions(),
             ])
-            ->action(function () {
+            ->action(function (): void {
                 $this->create();
             });
     }
@@ -103,20 +103,20 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required(),
-                    ...PopulationGroupSelector::make(function (Set $set) {
+                    ...PopulationGroupSelector::make(function (Set $set): void {
                         $set('actions', []);
                     }),
                 ]),
             Step::make('Define Journey')
                 ->schema([
                     Builder::make('actions')
-                        ->label(fn () => new HtmlString('<span class="text-xl">Journey Steps</span>'))
+                        ->label(fn (): HtmlString => new HtmlString('<span class="text-xl">Journey Steps</span>'))
                         ->addActionLabel('Add a new Journey Step')
                         ->minItems(1)
                         ->blocks(CampaignActionType::blocks())
                         ->dehydrated(false)
                         ->validationAttribute('journey steps')
-                        ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
+                        ->saveRelationshipsUsing(function (Builder $component, Campaign $record): void {
                             $executeAt = null;
 
                             foreach ($component->getChildComponentContainers() as $item) {

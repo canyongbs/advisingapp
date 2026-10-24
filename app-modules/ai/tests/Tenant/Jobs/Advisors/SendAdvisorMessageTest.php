@@ -53,7 +53,7 @@ use function Pest\Laravel\travelBack;
 use function Pest\Laravel\travelTo;
 use function Tests\asSuperAdmin;
 
-it('sends a message', function () {
+it('sends a message', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -102,7 +102,7 @@ it('sends a message', function () {
     Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
-it('builds smart prompt content from the editable instructions setting', function () {
+it('builds smart prompt content from the editable instructions setting', function (): void {
     Event::fake([
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
@@ -143,7 +143,7 @@ it('builds smart prompt content from the editable instructions setting', functio
         ->toEndWith($prompt->prompt);
 });
 
-it('dispatches GenerateAiThreadName exactly once, right after the third user message and response', function () {
+it('dispatches GenerateAiThreadName exactly once, right after the third user message and response', function (): void {
     Bus::fake([GenerateAiThreadName::class]);
 
     Event::fake([
@@ -181,7 +181,7 @@ it('dispatches GenerateAiThreadName exactly once, right after the third user mes
     Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
 });
 
-it('does not dispatch GenerateAiThreadName when the thread has already been renamed by the user', function () {
+it('does not dispatch GenerateAiThreadName when the thread has already been renamed by the user', function (): void {
     Bus::fake([GenerateAiThreadName::class]);
 
     Event::fake([
@@ -211,7 +211,7 @@ it('does not dispatch GenerateAiThreadName when the thread has already been rena
     Bus::assertNotDispatched(GenerateAiThreadName::class);
 });
 
-it('sets saved_at and dispatches the AiThreadSaved tracked event when the first message is persisted', function () {
+it('sets saved_at and dispatches the AiThreadSaved tracked event when the first message is persisted', function (): void {
     Bus::fake([RecordTrackedEvent::class]);
 
     Event::fake([
@@ -245,7 +245,7 @@ it('sets saved_at and dispatches the AiThreadSaved tracked event when the first 
     );
 });
 
-it('does not update saved_at or dispatch the AiThreadSaved tracked event again on subsequent messages', function () {
+it('does not update saved_at or dispatch the AiThreadSaved tracked event again on subsequent messages', function (): void {
     Bus::fake([RecordTrackedEvent::class]);
 
     Event::fake([
@@ -289,7 +289,7 @@ it('does not update saved_at or dispatch the AiThreadSaved tracked event again o
     );
 });
 
-it('does not overwrite an already saved_at thread', function () {
+it('does not overwrite an already saved_at thread', function (): void {
     Bus::fake([RecordTrackedEvent::class]);
 
     Event::fake([

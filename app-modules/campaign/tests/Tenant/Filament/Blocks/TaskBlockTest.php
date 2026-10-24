@@ -50,7 +50,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('can edit a non-confidential task campaign journey step without error', function () {
+it('can edit a non-confidential task campaign journey step without error', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()
@@ -103,7 +103,7 @@ it('can edit a non-confidential task campaign journey step without error', funct
         ->and($action->data['is_confidential'])->toBeFalse();
 });
 
-it('can edit a confidential task campaign journey step and persist confidential access data', function () {
+it('can edit a confidential task campaign journey step and persist confidential access data', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()
@@ -158,7 +158,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
         ->and($action->data['department_confidential_task'])->toEqual($departments->pluck('id')->toArray());
 });
 
-it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false', function () {
+it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false', function (): void {
     Config::set('app.filter_admins_from_selection', false);
 
     asSuperAdmin();
@@ -195,7 +195,7 @@ it('assigned_to UserSelect shows all users when filter_admins_from_selection con
         });
 });
 
-it('confidential_task_users select does not show admin users in options by default', function () {
+it('confidential_task_users select does not show admin users in options by default', function (): void {
     asSuperAdmin();
 
     $campaign = Campaign::factory()

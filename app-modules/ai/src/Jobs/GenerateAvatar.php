@@ -81,7 +81,7 @@ class GenerateAvatar implements ShouldQueue
                 prompt: Str::limit($this->instructions, limit: 1000) . PHP_EOL . PHP_EOL . ' Create an avatar image using these instructions. The image should be square and professionally appropriate for use as a profile picture.',
             );
 
-            DB::transaction(function () use ($image, $record) {
+            DB::transaction(function () use ($image, $record): void {
                 $record->clearMediaCollection($this->mediaCollection);
                 $record->addMediaFromBase64($image)
                     ->usingFileName(Str::random() . '.jpg')

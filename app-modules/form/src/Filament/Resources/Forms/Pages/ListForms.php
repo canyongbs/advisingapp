@@ -55,6 +55,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Unique;
 
 class ListForms extends ListRecords
@@ -66,7 +67,7 @@ class ListForms extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): void {
                 $submissionsCountQuery = FormSubmission::query()
                     ->join('forms as version_forms', 'form_submissions.form_id', '=', 'version_forms.id')
                     ->whereColumn('version_forms.root_id', 'forms.root_id')
@@ -87,7 +88,8 @@ class ListForms extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn (Form $record): string => FormResource::getUrl('view', ['record' => $record, 'tab' => 'edit'])),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
                     ->excludeAttributes(['submissions_count'])
@@ -142,10 +144,10 @@ class ListForms extends ListRecords
                     Toggle::make('generate_prospects')
                         ->label('Generate prospects')
                         ->helperText("If enabled, the system will check the email address submitted on the form. If it matches an existing student's institutional email address or prospect's primary email address, the form submission will be linked to that record. If no match is found, a new prospect will be created automatically. Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.")
-                        ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                        ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
+                        ->disabled(fn (): bool => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                        ->hintIcon(fn (): ?string => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
                 ])
-                ->action(fn (array $data) => redirect(FormResource::getUrl('create', [
+                ->action(fn (array $data): RedirectResponse => redirect(FormResource::getUrl('create', [
                     'is_authenticated' => $data['is_authenticated'] ?? false,
                     'generate_prospects' => $data['generate_prospects'] ?? false,
                 ]))),

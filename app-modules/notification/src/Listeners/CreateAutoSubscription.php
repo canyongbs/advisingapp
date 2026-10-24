@@ -38,13 +38,14 @@ namespace AdvisingApp\Notification\Listeners;
 
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreateAutoSubscription implements ShouldQueue
 {
     public function handle(TriggeredAutoSubscription $event): void
     {
-        if (empty($event->subscribable) || empty($event->user)) {
+        if (! $event->subscribable instanceof Subscribable || empty($event->user)) {
             return;
         }
 

@@ -46,7 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Support\Number;
 
-it('returns correct percentages of students with Email missing, Email unhealthy, Phone unhealthy, and Phone missing within the given date range', function () {
+it('returns correct percentages of students with Email missing, Email unhealthy, Phone unhealthy, and Phone missing within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -98,7 +98,7 @@ it('returns correct percentages of students with Email missing, Email unhealthy,
         ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCount / $totalStudents) * 100, 2) . '%');
 });
 
-it('returns correct percentages of students Email missing, Email unhealthy, Phone unhealthy, and Phone missing based on group filters', function () {
+it('returns correct percentages of students Email missing, Email unhealthy, Phone unhealthy, and Phone missing based on group filters', function (): void {
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
@@ -174,7 +174,7 @@ it('returns correct percentages of students Email missing, Email unhealthy, Phon
         ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCountWithoutFilter / $totalStudentsWithoutFilter) * 100, 2) . '%');
 });
 
-it('handles zero students in date range without division errors', function () {
+it('handles zero students in date range without division errors', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -198,7 +198,7 @@ it('handles zero students in date range without division errors', function () {
         ->and($stats[3]->getValue())->toBeString();
 });
 
-it('shows 0% for all metrics when all students are healthy', function () {
+it('shows 0% for all metrics when all students are healthy', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -222,7 +222,7 @@ it('shows 0% for all metrics when all students are healthy', function () {
         ->and($stats[3]->getValue())->toBe('0.00%');
 });
 
-it('shows 100% for all metrics when all students are completely unhealthy', function () {
+it('shows 100% for all metrics when all students are completely unhealthy', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -254,7 +254,7 @@ it('shows 100% for all metrics when all students are completely unhealthy', func
         ->and($stats[3]->getValue())->toBe('100.00%');
 });
 
-it('includes students created exactly on start and end dates', function () {
+it('includes students created exactly on start and end dates', function (): void {
     $startDate = now()->subDays(10)->startOfDay();
     $endDate = now()->subDays(5)->endOfDay();
 
@@ -287,7 +287,7 @@ it('includes students created exactly on start and end dates', function () {
         ->and($stats[2]->getValue())->toBe(Number::format(($phoneMissingCount / $totalStudents) * 100, 2) . '%');
 });
 
-it('correctly excludes healthy students with opted-in emails and valid phones from unhealthy counts', function () {
+it('correctly excludes healthy students with opted-in emails and valid phones from unhealthy counts', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -329,7 +329,7 @@ it('correctly excludes healthy students with opted-in emails and valid phones fr
         ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCount / $totalStudents) * 100, 2) . '%');
 });
 
-it('does not count archived students in the deliverability percentages', function () {
+it('does not count archived students in the deliverability percentages', function (): void {
     $startDate = now()->subDays(10);
     $createdAt = now()->subDays(5);
 
@@ -353,7 +353,7 @@ it('does not count archived students in the deliverability percentages', functio
     // 2 of 4 are missing an email.
     expect($widget->getStats()[0]->getValue())->toBe(Number::format(50.0, 2) . '%');
 
-    $missingEmail->each(fn (Student $student) => $student->archive());
+    $missingEmail->each(fn (Student $student): bool => $student->archive());
 
     // Archiving both of those leaves 0 of 2 missing, so the percentage must move.
     expect($widget->getStats()[0]->getValue())->toBe(Number::format(0.0, 2) . '%');
@@ -361,7 +361,7 @@ it('does not count archived students in the deliverability percentages', functio
 
 // Archiving is not retroactive: a student archived in September was genuinely part of the
 // student body in March, so a March report keeps them in every percentage's denominator.
-it('counts a student archived after the reported period', function () {
+it('counts a student archived after the reported period', function (): void {
     // One student missing an institutional email, one with one — both archived in September.
     $missingEmail = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $missingEmail->primaryEmailAddress()->delete();

@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('workflow_triggers', function (Blueprint $table) {
+        Schema::table('workflow_triggers', function (Blueprint $table): void {
             $table->uuidMorphs('created_by');
         });
     }
 
     public function down(): void
     {
-        Schema::table('workflow_triggers', function (Blueprint $table) {
+        Schema::table('workflow_triggers', function (Blueprint $table): void {
             $table->dropIndex(['created_by_type', 'created_by_id']);
             $table->dropColumn(['created_by_type', 'created_by_id']);
         });

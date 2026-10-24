@@ -62,13 +62,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function PHPUnit\Framework\assertCount;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->customerAdvisors = true;
     $settings->save();
 });
 
-test('Create Customer Advisor Question is gated with proper access control', function () {
+test('Create Customer Advisor Question is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -94,7 +94,7 @@ test('Create Customer Advisor Question is gated with proper access control', fun
         )->assertSuccessful();
 });
 
-test('can create Customer Advisor Question', function () {
+test('can create Customer Advisor Question', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -121,7 +121,7 @@ test('can create Customer Advisor Question', function () {
     );
 });
 
-test('can create multiple Customer Advisor Questions at once', function () {
+test('can create multiple Customer Advisor Questions at once', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -147,7 +147,7 @@ test('can create multiple Customer Advisor Questions at once', function () {
     assertDatabaseHas(CustomerAdvisorQuestion::class, $secondQuestion->toArray());
 });
 
-test('Create Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors) {
+test('Create Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
@@ -162,7 +162,7 @@ test('Create Customer Advisor Question validates the inputs', function (Customer
 
     Livewire::test(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['questions' => [$customerAdvisorQuestion->toArray()]])
-        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["questions.0.{$field}" => $rule])->toArray());
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field): array => ["questions.0.{$field}" => $rule])->toArray());
 
     $undoRepeaterFake();
 
@@ -199,7 +199,7 @@ test('Create Customer Advisor Question validates the inputs', function (Customer
     ]
 );
 
-test('can edit Customer Advisor Question', function () {
+test('can edit Customer Advisor Question', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
@@ -224,7 +224,7 @@ test('can edit Customer Advisor Question', function () {
     );
 });
 
-test('Edit Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors) {
+test('Edit Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
@@ -272,8 +272,8 @@ test('Edit Customer Advisor Question validates the inputs', function (CustomerAd
         ]
     );
 
-describe('export', function () {
-    it('exports customer advisor questions as scoped csv content with category name', function () {
+describe('export', function (): void {
+    it('exports customer advisor questions as scoped csv content with category name', function (): void {
         Storage::fake('s3');
 
         config()->set('filament.default_filesystem_disk', 's3');
@@ -332,8 +332,8 @@ describe('export', function () {
     });
 });
 
-describe('import', function () {
-    it('imports customer advisor questions scoped to the selected advisor with case-insensitive category matching', function () {
+describe('import', function (): void {
+    it('imports customer advisor questions scoped to the selected advisor with case-insensitive category matching', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -388,7 +388,7 @@ describe('import', function () {
         ]);
     });
 
-    it('imports customer advisor questions through the `ImportAction` using the advisor scoped to the page', function () {
+    it('imports customer advisor questions through the `ImportAction` using the advisor scoped to the page', function (): void {
         config()->set('queue.default', 'sync');
 
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
@@ -426,7 +426,7 @@ describe('import', function () {
         ]);
     });
 
-    it('fails customer advisor question import cleanly when category does not exist', function () {
+    it('fails customer advisor question import cleanly when category does not exist', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -458,7 +458,7 @@ describe('import', function () {
         ]))->toThrow(RowImportFailedException::class);
     });
 
-    it('validates required fields during customer advisor question import', function () {
+    it('validates required fields during customer advisor question import', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -508,8 +508,8 @@ describe('import', function () {
     });
 });
 
-describe('authorization', function () {
-    it('shows the `ImportAction` and `ExportAction` to a user with the `customer_advisor.create` permission', function () {
+describe('authorization', function (): void {
+    it('shows the `ImportAction` and `ExportAction` to a user with the `customer_advisor.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
@@ -522,7 +522,7 @@ describe('authorization', function () {
             ->assertActionVisible(TestAction::make(ImportAction::class)->table());
     });
 
-    it('hides the `ImportAction` from a user without the `customer_advisor.create` permission', function () {
+    it('hides the `ImportAction` from a user without the `customer_advisor.create` permission', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
 

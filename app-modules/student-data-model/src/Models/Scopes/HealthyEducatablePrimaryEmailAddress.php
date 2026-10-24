@@ -51,10 +51,10 @@ class HealthyEducatablePrimaryEmailAddress
      */
     public function __invoke(Builder $query): Builder
     {
-        return $query->where(function (Builder $query) {
-            $query->whereHas('primaryEmailAddress', function (Builder $query) {
+        return $query->where(function (Builder $query): void {
+            $query->whereHas('primaryEmailAddress', function (Builder $query): void {
                 $query->whereDoesntHave('bounced')
-                    ->whereDoesntHave('optedOut', function (Builder $query) {
+                    ->whereDoesntHave('optedOut', function (Builder $query): void {
                         $query->where('status', EmailAddressOptInOptOutStatus::OptedOut);
                     });
             });

@@ -46,7 +46,7 @@ use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Support\Facades\Cache;
 
-it('busts the timeline cache for the associated educatable', function () {
+it('busts the timeline cache for the associated educatable', function (): void {
     // Given we have a timelineable record, like an EngagementResponse
     $initialResponse = EngagementResponse::factory()->create();
 
@@ -77,7 +77,7 @@ it('busts the timeline cache for the associated educatable', function () {
     ))->toBeFalse();
 });
 
-it('should remove the specified record to the timeline', function () {
+it('should remove the specified record to the timeline', function (): void {
     expect(Timeline::count())->toBe(0);
 
     $response = EngagementResponse::factory()->createQuietly();

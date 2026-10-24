@@ -67,7 +67,7 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $groupIdsToDelete = [];
 
             $this->eachStudentGroupWithRules(function (object $group, array $filters) use (&$groupIdsToDelete): void {
@@ -124,7 +124,7 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             StudentGroupFilterConsolidationFeature::deactivate();
 
             $legacyTypes = array_flip(self::NAME_ATTRIBUTES);

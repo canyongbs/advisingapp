@@ -41,14 +41,14 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('engagement_responses', function (Blueprint $table) {
+        Schema::table('engagement_responses', function (Blueprint $table): void {
             $table->index(['sender_id', 'sender_type', 'status']);
         });
     }
 
     public function down(): void
     {
-        Schema::table('engagement_responses', function (Blueprint $table) {
+        Schema::table('engagement_responses', function (Blueprint $table): void {
             $table->dropIndex(['sender_id', 'sender_type', 'status']);
         });
     }

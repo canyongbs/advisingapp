@@ -204,7 +204,7 @@ class ListCalendarEvents extends ListRecords
         return [
             CreateAction::make(),
             Action::make('Sync')
-                ->action(function () {
+                ->action(function (): void {
                     /** @var User $user */
                     $user = auth()->user();
 

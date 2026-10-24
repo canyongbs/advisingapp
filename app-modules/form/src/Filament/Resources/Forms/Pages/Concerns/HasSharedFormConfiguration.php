@@ -54,12 +54,16 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 
 trait HasSharedFormConfiguration
 {
+    /**
+     * @return array<int, Component>
+     */
     public function fields(): array
     {
         return [
@@ -96,8 +100,8 @@ trait HasSharedFormConfiguration
                                 ->label('Allowed Domains')
                                 ->helperText('Only these domains will be allowed to embed this form.')
                                 ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                ->hidden(fn (Get $get): bool => ! $get('embed_enabled'))
+                                ->disabled(fn (Get $get): bool => ! $get('embed_enabled'))
                                 ->nestedRecursiveRules(
                                     [
                                         'string',
@@ -115,7 +119,7 @@ trait HasSharedFormConfiguration
                     Toggle::make('allow_view_past_submissions')
                         ->label('Allow viewing past submissions')
                         ->helperText('If enabled, students and prospects can view their past submissions on this form.')
-                        ->visible(fn (Get $get) => $get('is_authenticated')),
+                        ->visible(fn (Get $get): mixed => $get('is_authenticated')),
                     Toggle::make('generate_prospects')
                         ->label('Generate Prospects')
                         ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
@@ -130,7 +134,7 @@ trait HasSharedFormConfiguration
                     Toggle::make('recaptcha_enabled')
                         ->label('Enable reCAPTCHA')
                         ->live()
-                        ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                        ->disabled(fn (GoogleRecaptchaSettings $settings): bool => ! $settings->is_enabled)
                         ->helperText(function (GoogleRecaptchaSettings $settings) {
                             if (! $settings->is_enabled) {
                                 return 'Enable and configure reCAPTCHA in order to use it on your forms.';
@@ -156,7 +160,7 @@ trait HasSharedFormConfiguration
                         ]),
                 ])
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
-                ->hidden(fn (Get $get) => $get('is_wizard')),
+                ->hidden(fn (Get $get): mixed => $get('is_wizard')),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -178,7 +182,7 @@ trait HasSharedFormConfiguration
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                ->visible(fn (Get $get) => $get('is_wizard'))
+                ->visible(fn (Get $get): mixed => $get('is_wizard'))
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->saveRelationshipsUsing(static function (Repeater $component): void {
@@ -236,7 +240,7 @@ trait HasSharedFormConfiguration
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, Form | FormStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, Form | FormStep $record): void {
                 if ($component->isDisabled()) {
                     return;
                 }

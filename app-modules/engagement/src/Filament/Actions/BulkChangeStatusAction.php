@@ -54,7 +54,7 @@ class BulkChangeStatusAction
             ->label('Update Status')
             ->icon('heroicon-s-check-circle')
             ->modalHeading('Bulk assign message status')
-            ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('message', $records->count()) . ' that this change will impact.')
+            ->modalDescription(fn (Collection $records): string => "You have selected {$records->count()} " . Str::plural('message', $records->count()) . ' that this change will impact.')
             ->schema([
                 Select::make('status')
                     ->label('Which status should be applied?')

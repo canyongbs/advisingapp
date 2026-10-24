@@ -40,6 +40,7 @@ use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -64,7 +65,7 @@ class StudentsStats extends StatsOverviewReportWidget
         $studentsCount = $shouldBypassCache
             ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
@@ -80,14 +81,14 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $concernsCount = $shouldBypassCache
             ? Concern::query()
-                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
@@ -99,14 +100,14 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId) {
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
                         fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
-                    $startDate && $endDate,
+                    $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()

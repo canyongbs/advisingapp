@@ -43,7 +43,7 @@ use ReflectionClass;
 
 trait AttachOverrides
 {
-    public function attach($id, array $attributes = [], $touch = true)
+    public function attach($id, array $attributes = [], $touch = true): void
     {
         /** @var Auditable $parentModel */
         $parentModel = $this->getParent();
@@ -134,7 +134,7 @@ trait AttachOverrides
         return $changes;
     }
 
-    private function isAuditable(string $class)
+    private function isAuditable(string $class): bool
     {
         $reflection = new ReflectionClass($class);
 

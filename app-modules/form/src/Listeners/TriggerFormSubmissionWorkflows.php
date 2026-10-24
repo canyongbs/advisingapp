@@ -68,7 +68,7 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 
             $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
-            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
+            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event): void {
                 if (! $workflowTrigger->workflow->is_enabled) {
                     return;
                 }
@@ -80,7 +80,7 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 
                 $previousRunStep = null;
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep): void {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
                     $executeAt = null;

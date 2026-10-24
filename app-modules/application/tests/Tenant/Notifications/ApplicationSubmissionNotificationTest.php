@@ -46,11 +46,11 @@ use App\Models\User;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('links the author name to their student record', function () {
+it('links the author name to their student record', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -66,7 +66,7 @@ it('links the author name to their student record', function () {
     expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
 });
 
-it('links application and submission details to their canonical tabs', function () {
+it('links application and submission details to their canonical tabs', function (): void {
     asSuperAdmin();
     $application = Application::factory()->create();
     $submission = $application->submissions()->firstOrFail();
@@ -83,10 +83,10 @@ it('links application and submission details to their canonical tabs', function 
         ]));
 });
 
-describe('archiving', function () {
+describe('archiving', function (): void {
     // The student's page no longer resolves, so the notification names them without a link
     // rather than sending the reader to a page that does not exist.
-    it('names an archived author without linking to them', function () {
+    it('names an archived author without linking to them', function (): void {
         asSuperAdmin();
 
         $student = Student::factory()->create();

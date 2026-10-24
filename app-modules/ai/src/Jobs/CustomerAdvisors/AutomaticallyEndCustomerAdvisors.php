@@ -60,7 +60,7 @@ class AutomaticallyEndCustomerAdvisors implements ShouldQueue
                 'latestMessage',
                 fn (Builder $query) => $query->where('created_at', '<=', now()->subHour())
             )
-            ->chunkById(100, function (Collection $threads) {
+            ->chunkById(100, function (Collection $threads): void {
                 foreach ($threads as $thread) {
                     try {
                         $thread->finished_at = now();

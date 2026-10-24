@@ -552,7 +552,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
         return cache()
             ->lock('licenses', 5)
-            ->get(function () use ($type) {
+            ->get(function () use ($type): bool {
                 if (! $type->hasAvailableLicenses()) {
                     return false;
                 }

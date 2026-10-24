@@ -51,11 +51,11 @@ class UnhealthyEducatablePrimaryEmailAddress
      */
     public function __invoke(Builder $query): Builder
     {
-        return $query->where(function (Builder $query) {
+        return $query->where(function (Builder $query): void {
             $query->whereDoesntHave('primaryEmailAddress')
-                ->orWhereHas('primaryEmailAddress', function (Builder $query) {
+                ->orWhereHas('primaryEmailAddress', function (Builder $query): void {
                     $query->whereHas('bounced')
-                        ->orWhereHas('optedOut', function (Builder $query) {
+                        ->orWhereHas('optedOut', function (Builder $query): void {
                             $query->where('status', EmailAddressOptInOptOutStatus::OptedOut);
                         });
                 });

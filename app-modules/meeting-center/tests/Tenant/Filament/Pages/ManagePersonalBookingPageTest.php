@@ -47,13 +47,13 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->scheduleAndAppointments = true;
     $settings->save();
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     actingAs($user);
@@ -70,7 +70,7 @@ it('is gated with proper access control', function () {
     get(ManagePersonalBookingPage::getUrl())->assertSuccessful();
 });
 
-it('can render the page', function () {
+it('can render the page', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     actingAs($user);
@@ -79,7 +79,7 @@ it('can render the page', function () {
         ->assertSuccessful();
 });
 
-it('creates a personal booking page when enabled', function () {
+it('creates a personal booking page when enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -117,7 +117,7 @@ it('creates a personal booking page when enabled', function () {
     expect($user->fresh()->office_hours_are_enabled)->toBeTrue();
 });
 
-it('validates slug is required when enabled', function () {
+it('validates slug is required when enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -144,7 +144,7 @@ it('validates slug is required when enabled', function () {
         ->assertHasFormErrors(['slug' => 'required']);
 });
 
-it('validates slug must be unique', function () {
+it('validates slug must be unique', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
     $otherUser = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
@@ -177,7 +177,7 @@ it('validates slug must be unique', function () {
         ->assertHasFormErrors(['slug' => 'unique']);
 });
 
-it('validates slug must be alpha dash', function () {
+it('validates slug must be alpha dash', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -204,7 +204,7 @@ it('validates slug must be alpha dash', function () {
         ->assertHasFormErrors(['slug' => 'alpha_dash']);
 });
 
-it('validates slug max length', function () {
+it('validates slug max length', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -231,7 +231,7 @@ it('validates slug max length', function () {
         ->assertHasFormErrors(['slug' => 'max']);
 });
 
-it('validates default appointment duration is required when enabled', function () {
+it('validates default appointment duration is required when enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -258,7 +258,7 @@ it('validates default appointment duration is required when enabled', function (
         ->assertHasFormErrors(['default_appointment_duration' => 'required']);
 });
 
-it('validates office hours must be enabled when booking page is enabled', function () {
+it('validates office hours must be enabled when booking page is enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -277,7 +277,7 @@ it('validates office hours must be enabled when booking page is enabled', functi
         ->assertHasFormErrors(['office_hours_are_enabled']);
 });
 
-it('validates at least one day must have office hours configured', function () {
+it('validates at least one day must have office hours configured', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -298,7 +298,7 @@ it('validates at least one day must have office hours configured', function () {
         ->assertHasFormErrors(['office_hours_are_enabled']);
 });
 
-it('can update an existing personal booking page', function () {
+it('can update an existing personal booking page', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -337,7 +337,7 @@ it('can update an existing personal booking page', function () {
     expect($bookingPage->default_appointment_duration)->toBe(60);
 });
 
-it('can disable a personal booking page', function () {
+it('can disable a personal booking page', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -364,7 +364,7 @@ it('can disable a personal booking page', function () {
     expect($bookingPage->is_enabled)->toBeFalse();
 });
 
-it('saves office hours configuration to user', function () {
+it('saves office hours configuration to user', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -403,7 +403,7 @@ it('saves office hours configuration to user', function () {
     expect($user->office_hours['thursday']['is_enabled'] ?? false)->toBeFalse();
 });
 
-it('validates office hours must have at least one enabled day with times configured', function () {
+it('validates office hours must have at least one enabled day with times configured', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -430,7 +430,7 @@ it('validates office hours must have at least one enabled day with times configu
         ->assertHasFormErrors(['office_hours_are_enabled']);
 });
 
-it('saves out of office configuration to user', function () {
+it('saves out of office configuration to user', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -469,7 +469,7 @@ it('saves out of office configuration to user', function () {
     expect($user->out_of_office_ends_at->startOfSecond()->eq($outOfOfficeEndsAt->startOfSecond()))->toBeTrue();
 });
 
-it('validates out of office start date is required when out of office enabled', function () {
+it('validates out of office start date is required when out of office enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -499,7 +499,7 @@ it('validates out of office start date is required when out of office enabled', 
         ->assertHasFormErrors(['out_of_office_starts_at' => 'required']);
 });
 
-it('validates out of office end date is required when out of office enabled', function () {
+it('validates out of office end date is required when out of office enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -529,7 +529,7 @@ it('validates out of office end date is required when out of office enabled', fu
         ->assertHasFormErrors(['out_of_office_ends_at' => 'required']);
 });
 
-it('pre-fills form with existing booking page data', function () {
+it('pre-fills form with existing booking page data', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
         'office_hours_are_enabled' => true,
         'office_hours' => [
@@ -563,7 +563,7 @@ it('pre-fills form with existing booking page data', function () {
         ]);
 });
 
-it('generates default slug from user name when no booking page exists', function () {
+it('generates default slug from user name when no booking page exists', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
         'name' => 'John Doe',
         'office_hours' => [
@@ -587,7 +587,7 @@ it('generates default slug from user name when no booking page exists', function
         ]);
 });
 
-it('hides view booking page action when booking page is disabled', function () {
+it('hides view booking page action when booking page is disabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     PersonalBookingPage::factory()->create([
@@ -601,7 +601,7 @@ it('hides view booking page action when booking page is disabled', function () {
         ->assertActionHidden('view_booking_page');
 });
 
-it('shows view booking page action when booking page is enabled', function () {
+it('shows view booking page action when booking page is enabled', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -618,7 +618,7 @@ it('shows view booking page action when booking page is enabled', function () {
         ->assertActionVisible('view_booking_page');
 });
 
-it('can save booking page with office hours on multiple days', function () {
+it('can save booking page with office hours on multiple days', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -657,7 +657,7 @@ it('can save booking page with office hours on multiple days', function () {
     expect($user->office_hours['sunday']['is_enabled'] ?? false)->toBeFalse();
 });
 
-it('can update slug without affecting unique constraint for same user', function () {
+it('can update slug without affecting unique constraint for same user', function (): void {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
         'office_hours_are_enabled' => true,
         'office_hours' => [

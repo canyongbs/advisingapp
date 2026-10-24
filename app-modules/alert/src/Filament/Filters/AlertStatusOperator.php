@@ -88,7 +88,7 @@ class AlertStatusOperator extends Operator
                         ->where('is_enabled', true)
                         ->get()
                         ->sortBy(fn (AlertConfiguration $config) => $config->preset->getDisplayOrder())
-                        ->mapWithKeys(fn (AlertConfiguration $config) => [
+                        ->mapWithKeys(fn (AlertConfiguration $config): array => [
                             $config->getKey() => $config->preset->getLabel(),
                         ])
                         ->all()

@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('requires proper permissions to access', function () {
+it('requires proper permissions to access', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -58,7 +58,7 @@ it('requires proper permissions to access', function () {
         ->assertOk();
 });
 
-it('disables the form without the `settings.*.update` permission', function () {
+it('disables the form without the `settings.*.update` permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('settings.view-any');
@@ -79,7 +79,7 @@ it('disables the form without the `settings.*.update` permission', function () {
         ->assertFormFieldEnabled('color');
 });
 
-it('hides the `save` action without the `settings.*.update` permission', function () {
+it('hides the `save` action without the `settings.*.update` permission', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('settings.view-any');
@@ -94,7 +94,7 @@ it('hides the `save` action without the `settings.*.update` permission', functio
         ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 });
 
-it('requires proper permissions to update settings', function () {
+it('requires proper permissions to update settings', function (): void {
     $user = User::factory()->create();
 
     $user->givePermissionTo('settings.view-any');

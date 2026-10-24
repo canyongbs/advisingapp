@@ -55,7 +55,7 @@ class SyncResourceHubArticlesToCustomerAdvisorVectorStores implements ShouldQueu
     {
         CustomerAdvisor::query()
             ->where('has_resource_hub_knowledge', true)
-            ->eachById(function (CustomerAdvisor $advisor) {
+            ->eachById(function (CustomerAdvisor $advisor): void {
                 UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
             });
     }

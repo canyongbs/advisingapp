@@ -44,7 +44,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('The correct details are displayed on the ListBookingGroups page', function () {
+test('The correct details are displayed on the ListBookingGroups page', function (): void {
     $bookingGroups = BookingGroup::factory()
         ->count(10)
         ->create();
@@ -57,7 +57,7 @@ test('The correct details are displayed on the ListBookingGroups page', function
         ->assertTableColumnExists('name');
 });
 
-test('ListBookingGroups is gated with proper access control', function () {
+test('ListBookingGroups is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -73,7 +73,7 @@ test('ListBookingGroups is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ListBookingGroups page displays correct member count', function () {
+test('ListBookingGroups page displays correct member count', function (): void {
     $otherUsers = User::factory()->count(2)->create();
 
     $department = Department::factory()->create();

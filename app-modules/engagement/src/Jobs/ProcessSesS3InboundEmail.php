@@ -121,15 +121,15 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
             $sender = $parser->getAddresses('from')[0]['address'];
 
-            $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender) {
-                $tenant->execute(function () use ($parser, $content, $sender) {
+            $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender): void {
+                $tenant->execute(function () use ($parser, $content, $sender): void {
                     $students = Student::query()
                         ->tap(new WithoutArchivedStudents())
                         ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 
                     if ($students->isNotEmpty()) {
-                        $students->each(function (Student $student) use ($parser, $content) {
+                        $students->each(function (Student $student) use ($parser, $content): void {
                             $engagementResponse = $student->engagementResponses()
                                 ->create([
                                     'subject' => $parser->getHeader('subject'),
@@ -140,7 +140,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                     'status' => EngagementResponseStatus::New,
                                 ]);
 
-                            collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $student) {
+                            collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $student): void {
                                 $this->storeAttachmentMedia($engagementResponse, $attachment, $student);
                             });
                         });
@@ -166,7 +166,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                             'sender' => $sender,
                         ]);
 
-                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($unmatchedInboundCommunication) {
+                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($unmatchedInboundCommunication): void {
                             $this->storeAttachmentMedia($unmatchedInboundCommunication, $attachment);
                         });
 
@@ -177,7 +177,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         return;
                     }
 
-                    $prospects->each(function (Prospect $prospect) use ($parser, $content) {
+                    $prospects->each(function (Prospect $prospect) use ($parser, $content): void {
                         $engagementResponse = $prospect->engagementResponses()
                             ->create([
                                 'subject' => $parser->getHeader('subject'),
@@ -188,7 +188,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                 'status' => EngagementResponseStatus::New,
                             ]);
 
-                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $prospect) {
+                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $prospect): void {
                             $this->storeAttachmentMedia($engagementResponse, $attachment, $prospect);
                         });
                     });

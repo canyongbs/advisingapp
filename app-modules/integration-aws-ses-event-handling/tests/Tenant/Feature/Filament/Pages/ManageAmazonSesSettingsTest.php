@@ -43,7 +43,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('prevents access to the Amazon SES Settings when you do not have the necessary permissions', function () {
+it('prevents access to the Amazon SES Settings when you do not have the necessary permissions', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -52,7 +52,7 @@ it('prevents access to the Amazon SES Settings when you do not have the necessar
         ->assertForbidden();
 });
 
-it('allows access to the Amazon SES Settings when you do have the necessary permissions', function () {
+it('allows access to the Amazon SES Settings when you do have the necessary permissions', function (): void {
     $user = User::factory()->create();
 
     asSuperAdmin($user);
@@ -61,7 +61,7 @@ it('allows access to the Amazon SES Settings when you do have the necessary perm
         ->assertOk();
 });
 
-it('renders the correct Amazon SES settings for the Tenant', function () {
+it('renders the correct Amazon SES settings for the Tenant', function (): void {
     $user = User::factory()->create();
 
     asSuperAdmin($user);
@@ -78,7 +78,7 @@ it('renders the correct Amazon SES settings for the Tenant', function () {
         ]);
 });
 
-it('correctly edits the Amazon SES settings for the Tenant', function () {
+it('correctly edits the Amazon SES settings for the Tenant', function (): void {
     $user = User::factory()->create();
 
     asSuperAdmin($user);

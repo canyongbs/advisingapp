@@ -42,7 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
 use Livewire\Livewire;
 
-it('returns top engaged prospects based on engagements within the given date range', function () {
+it('returns top engaged prospects based on engagements within the given date range', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -87,7 +87,7 @@ it('returns top engaged prospects based on engagements within the given date ran
         ->assertCanNotSeeTableRecords(collect([$prospect3]));
 });
 
-it('returns top engaged prospects engagements based on group filter', function () {
+it('returns top engaged prospects engagements based on group filter', function (): void {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 

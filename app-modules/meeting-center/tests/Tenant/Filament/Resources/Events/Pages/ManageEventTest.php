@@ -57,7 +57,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
@@ -100,7 +100,7 @@ $getRenderedFormIds = function (Testable $component): array {
     return $ids;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.details.form-actions', schema: 'content');
+$archiveAction = fn (): TestAction => TestAction::make('archive');
 
 $getNewRegistrationFormVersion = fn (EventRegistrationForm $form): EventRegistrationForm => EventRegistrationForm::withoutGlobalScopes()
     ->where('root_id', $form->root_id)
@@ -117,7 +117,7 @@ $makeWizard = function (Event $event): EventRegistrationForm {
     return $form;
 };
 
-it('can render the manage event page', function () {
+it('can render the manage event page', function (): void {
     asSuperAdmin();
 
     $event = Event::factory()->create();
@@ -126,8 +126,8 @@ it('can render the manage event page', function () {
         ->assertSuccessful();
 });
 
-describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds) {
-    it('renders the attendees relation manager only on its own tab', function () {
+describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds): void {
+    it('renders the attendees relation manager only on its own tab', function (): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -139,7 +139,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->assertSeeLivewire(EventAttendeesRelationManager::class);
     });
 
-    it('keeps unsaved edits when switching tabs', function () {
+    it('keeps unsaved edits when switching tabs', function (): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -152,7 +152,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->assertSchemaStateSet(['title' => 'Unsaved title']);
     });
 
-    it('only lists the tabs the user can access', function (array $permissions, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels) {
+    it('only lists the tabs the user can access', function (array $permissions, array $tabs) use ($actingAsUserWithPermissions, $getTabLabels): void {
         $actingAsUserWithPermissions(...$permissions);
 
         $event = Event::factory()->create();
@@ -166,7 +166,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'attendees without view' => [['event_attendee.view-any'], ['Attendees']],
     ]);
 
-    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds) {
+    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -182,7 +182,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'registration form' => ['registration-form', ['registrationForm']],
     ]);
 
-    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds) {
+    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
         $actingAsUserWithPermissions('event.*.view');
 
         $event = Event::factory()->create();
@@ -194,8 +194,8 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
     })->with(['details', 'landing-page', 'registration-form']);
 });
 
-describe('details tab', function () use ($archiveAction) {
-    it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function () {
+describe('details tab', function () use ($archiveAction): void {
+    it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function (): void {
         asSuperAdmin();
 
         Event::factory()->create(['title' => 'Other Event']);
@@ -207,7 +207,7 @@ describe('details tab', function () use ($archiveAction) {
             ->assertHasFormErrors(['title' => 'unique']);
     });
 
-    it('allows updating an event to a title freed up by a soft-deleted event case-insensitively', function () {
+    it('allows updating an event to a title freed up by a soft-deleted event case-insensitively', function (): void {
         asSuperAdmin();
 
         $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
@@ -223,7 +223,7 @@ describe('details tab', function () use ($archiveAction) {
         expect($event->fresh()->title)->toBe('reusable title');
     });
 
-    it('saves the registration form settings alongside the event', function () {
+    it('saves the registration form settings alongside the event', function (): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -255,7 +255,7 @@ describe('details tab', function () use ($archiveAction) {
             ->rounding->toBe(Rounding::Full);
     });
 
-    it('shows the `Archive` action whether or not the event has attendees', function (bool $hasAttendees) use ($archiveAction) {
+    it('shows the `Archive` action whether or not the event has attendees', function (bool $hasAttendees) use ($archiveAction): void {
         asSuperAdmin();
 
         $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
@@ -273,7 +273,7 @@ describe('details tab', function () use ($archiveAction) {
         'without attendees' => false,
     ]);
 
-    it('archives the event and redirects to the index', function () use ($archiveAction) {
+    it('archives the event and redirects to the index', function () use ($archiveAction): void {
         asSuperAdmin();
 
         $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
@@ -289,8 +289,8 @@ describe('details tab', function () use ($archiveAction) {
     });
 });
 
-describe('landing page tab', function () {
-    it('saves the rich description and hero image onto the event', function () {
+describe('landing page tab', function (): void {
+    it('saves the rich description and hero image onto the event', function (): void {
         Storage::fake('s3-public');
 
         asSuperAdmin();
@@ -317,8 +317,8 @@ describe('landing page tab', function () {
     });
 });
 
-describe('registration form tab', function () use ($getNewRegistrationFormVersion, $makeWizard) {
-    it('creates a new version and archives the old one', function () use ($getNewRegistrationFormVersion) {
+describe('registration form tab', function () use ($getNewRegistrationFormVersion, $makeWizard): void {
+    it('creates a new version and archives the old one', function () use ($getNewRegistrationFormVersion): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -345,7 +345,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->and($event->fresh()->eventRegistrationForm->getKey())->toBe($newVersion->getKey());
     });
 
-    it('keeps saved details settings when the registration form is saved afterwards', function () use ($getNewRegistrationFormVersion) {
+    it('keeps saved details settings when the registration form is saved afterwards', function () use ($getNewRegistrationFormVersion): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -364,14 +364,14 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->allowed_domains->toBe(['example.com']);
     });
 
-    it('sets root_id to its own id when a registration form is first created', function () {
+    it('sets root_id to its own id when a registration form is first created', function (): void {
         $event = Event::factory()->create();
         $form = $event->eventRegistrationForm;
 
         expect($form->root_id)->toBe($form->id);
     });
 
-    it('can add a new step to a multi-step registration form', function () use ($makeWizard) {
+    it('can add a new step to a multi-step registration form', function () use ($makeWizard): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -395,7 +395,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->toHaveCount($stepsBefore + 1);
     });
 
-    it('saves edits to an existing wizard step onto the new version', function () use ($getNewRegistrationFormVersion, $makeWizard) {
+    it('saves edits to an existing wizard step onto the new version', function () use ($getNewRegistrationFormVersion, $makeWizard): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -425,7 +425,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->description->toBe('Updated description');
     });
 
-    it('keeps every wizard step on both versions when saving', function (int $stepCount) use ($getNewRegistrationFormVersion, $makeWizard) {
+    it('keeps every wizard step on both versions when saving', function (int $stepCount) use ($getNewRegistrationFormVersion, $makeWizard): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -444,7 +444,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->and($form->steps()->count())->toBe($stepCount);
     })->with([2, 3]);
 
-    it('carries each wizard step its own fields onto the new version when saving', function () use ($getNewRegistrationFormVersion, $makeWizard) {
+    it('carries each wizard step its own fields onto the new version when saving', function () use ($getNewRegistrationFormVersion, $makeWizard): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -482,13 +482,13 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
         expect($newVersion->fields()->count())->toBe(2)
             ->and($newVersion->fields()->whereIn('id', $originalFieldIds)->count())->toBe(0);
 
-        $newVersion->steps()->orderBy('sort')->get()->each(function (EventRegistrationFormStep $step) use ($newVersion) {
+        $newVersion->steps()->orderBy('sort')->get()->each(function (EventRegistrationFormStep $step) use ($newVersion): void {
             expect($newVersion->fields()->where('step_id', $step->getKey())->count())->toBe(1)
                 ->and($newVersion->fields()->whereKey(data_get($step->content, 'content.0.attrs.config.fieldId'))->exists())->toBeTrue();
         });
     });
 
-    it('saves a newly added wizard step and its fields to the new version', function () use ($getNewRegistrationFormVersion, $makeWizard) {
+    it('saves a newly added wizard step and its fields to the new version', function () use ($getNewRegistrationFormVersion, $makeWizard): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -497,7 +497,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
 
         EventRegistrationFormStep::factory()
             ->count(2)
-            ->sequence(fn ($sequence) => ['sort' => $sequence->index, 'label' => "Existing {$sequence->index}"])
+            ->sequence(fn ($sequence): array => ['sort' => $sequence->index, 'label' => "Existing {$sequence->index}"])
             ->create(['form_id' => $form->getKey()]);
 
         $component = Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()]);
@@ -528,7 +528,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->and($newVersion->fields()->where('step_id', $newStep->getKey())->count())->toBe(1);
     });
 
-    it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    it('exposes the mapped block types to the fields rich editor for the custom block badges', function (): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
@@ -539,8 +539,8 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction) {
-    it('denies access to the manage event page without access to any tab', function () use ($actingAsUserWithPermissions) {
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+    it('denies access to the manage event page without access to any tab', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions();
 
         $event = Event::factory()->create();
@@ -549,7 +549,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertForbidden();
     });
 
-    it('allows access to the manage event page with the `event.*.view` permission', function () use ($actingAsUserWithPermissions) {
+    it('allows access to the manage event page with the `event.*.view` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('event.*.view');
 
         $event = Event::factory()->create();
@@ -558,7 +558,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSuccessful();
     });
 
-    it('allows access to the manage event page without the `event.*.view` permission when another tab is accessible', function (string $permission) use ($actingAsUserWithPermissions) {
+    it('allows access to the manage event page without the `event.*.view` permission when another tab is accessible', function (string $permission) use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions($permission);
 
         $event = Event::factory()->create();
@@ -567,7 +567,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSuccessful();
     })->with(['event.*.update', 'event_attendee.view-any']);
 
-    it('does not load the editable forms without the `event.*.update` permission', function () use ($actingAsUserWithPermissions) {
+    it('does not load the editable forms without the `event.*.update` permission', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions('event.*.view');
 
         $event = Event::factory()->create();
@@ -578,7 +578,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSet('registrationFormData', []);
     });
 
-    it('does not save without the `event.*.update` permission', function (string $method) use ($actingAsUserWithPermissions) {
+    it('does not save without the `event.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
         $user = $actingAsUserWithPermissions('event.*.view', 'event.*.update');
 
         $event = Event::factory()->create(['title' => 'Original title']);
@@ -595,12 +595,12 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->and(EventRegistrationForm::withoutGlobalScopes()->where('root_id', $form->root_id)->count())->toBe(1);
     })->with(['save', 'saveLandingPage', 'saveRegistrationForm']);
 
-    it('hides the `Archive` action without the `event.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction) {
+    it('hides the `Archive` action without the `event.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('event.*.view', 'event.*.update');
 
         $event = Event::factory()->create();
 
         Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->assertActionDoesNotExist($archiveAction());
+            ->assertActionHidden($archiveAction());
     });
 });

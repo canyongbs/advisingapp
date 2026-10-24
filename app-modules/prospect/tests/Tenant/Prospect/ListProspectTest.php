@@ -62,7 +62,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('ListProspects is gated with proper access control', function () {
+test('ListProspects is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
@@ -78,7 +78,7 @@ test('ListProspects is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('ListProspects can bulk update characteristics', function () {
+test('ListProspects can bulk update characteristics', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -133,7 +133,7 @@ test('ListProspects can bulk update characteristics', function () {
         );
 });
 
-it('can filter prospects by `subscribed` prospects', function () {
+it('can filter prospects by `subscribed` prospects', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -160,7 +160,7 @@ it('can filter prospects by `subscribed` prospects', function () {
         ->assertCanNotSeeTableRecords($notSubscribedProspects);
 });
 
-it('can filter prospect by concerns', function () {
+it('can filter prospect by concerns', function (): void {
     asSuperAdmin();
 
     $activeStatusConcern = ConcernStatus::factory()
@@ -213,7 +213,7 @@ it('can filter prospect by concerns', function () {
         ->assertCanSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
 });
 
-it('can filter prospects by conversion status via my population groups', function () {
+it('can filter prospects by conversion status via my population groups', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -281,7 +281,7 @@ it('can filter prospects by conversion status via my population groups', functio
         ->toEqualCanonicalizing($notConvertedProspects->pluck('id')->all());
 });
 
-it('renders the bulk create concern action based on proper access', function () {
+it('renders the bulk create concern action based on proper access', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -303,7 +303,7 @@ it('renders the bulk create concern action based on proper access', function () 
         ->assertTableBulkActionVisible('createConcern');
 });
 
-it('shows bulk assign tags action for authorized user', function () {
+it('shows bulk assign tags action for authorized user', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -324,7 +324,7 @@ it('shows bulk assign tags action for authorized user', function () {
         ->assertTableBulkActionVisible('bulkProspectTags');
 });
 
-it('renders the bulk create interaction action based on proper access', function () {
+it('renders the bulk create interaction action based on proper access', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -343,7 +343,7 @@ it('renders the bulk create interaction action based on proper access', function
         ->assertTableBulkActionVisible('createInteraction');
 });
 
-it('shows bulk subscription action for authorized user', function () {
+it('shows bulk subscription action for authorized user', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -365,7 +365,7 @@ it('shows bulk subscription action for authorized user', function () {
         ->assertSuccessful();
 });
 
-test('the delete bulk action is gated by the delete permission', function () {
+test('the delete bulk action is gated by the delete permission', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');

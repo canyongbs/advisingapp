@@ -43,8 +43,8 @@ use Livewire\Livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-describe('enterprise ai', function () {
-    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function () {
+describe('enterprise ai', function (): void {
+    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
         $role = Role::factory()->create(['guard_name' => 'web']);

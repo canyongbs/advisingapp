@@ -58,10 +58,10 @@ $officeHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-beforeEach(function () {
+beforeEach(function (): void {
     $mockDriver = Mockery::mock(CalendarInterface::class);
     /** @phpstan-ignore method.notFound */
-    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event): void {
         $event->updateQuietly([
             'provider_id' => 'mock-provider-id',
             'provider_uid' => 'mock-provider-uid',
@@ -70,14 +70,14 @@ beforeEach(function () {
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
-    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver): void {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
     });
 
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('returns available slots for the current round robin member', function () use ($officeHours) {
+it('returns available slots for the current round robin member', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
@@ -115,7 +115,7 @@ it('returns available slots for the current round robin member', function () use
     expect($blocks[1])->toBe(['start' => '2026-04-07T08:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns empty slots when no members have connected calendars', function () use ($officeHours) {
+it('returns empty slots when no members have connected calendars', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create();
@@ -136,7 +136,7 @@ it('returns empty slots when no members have connected calendars', function () u
     $response->assertJson(['blocks' => []]);
 });
 
-it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours) {
+it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create();
@@ -166,7 +166,7 @@ it('returns 422 when no members have connected calendars at booking time', funct
     ]);
 });
 
-it('creates event on the round robin member calendar and advances cursor', function () use ($officeHours) {
+it('creates event on the round robin member calendar and advances cursor', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
@@ -225,7 +225,7 @@ it('creates event on the round robin member calendar and advances cursor', funct
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($memberA->id);
 });
 
-it('returns 409 with fresh blocks when round robin member has a conflict', function () use ($officeHours) {
+it('returns 409 with fresh blocks when round robin member has a conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
@@ -282,7 +282,7 @@ it('returns 409 with fresh blocks when round robin member has a conflict', funct
     expect($blocks[3])->toBe(['start' => '2026-04-08T08:00:00+00:00', 'end' => '2026-04-08T20:00:00+00:00']);
 });
 
-it('cycles cursor through three members in alphabetical order', function () use ($officeHours) {
+it('cycles cursor through three members in alphabetical order', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -380,7 +380,7 @@ it('cycles cursor through three members in alphabetical order', function () use 
     expect(BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->count())->toBe(3);
 });
 
-it('rejects booking when a prior group appointment for the member conflicts', function () use ($officeHours) {
+it('rejects booking when a prior group appointment for the member conflicts', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()
@@ -430,7 +430,7 @@ it('rejects booking when a prior group appointment for the member conflicts', fu
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns fresh blocks from the next member on conflict', function () use ($officeHours) {
+it('returns fresh blocks from the next member on conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -493,7 +493,7 @@ it('returns fresh blocks from the next member on conflict', function () use ($of
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('only shows availability for the assigned member, not other members', function () use ($officeHours) {
+it('only shows availability for the assigned member, not other members', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -541,7 +541,7 @@ it('only shows availability for the assigned member, not other members', functio
     expect($blocks[1])->toBe(['start' => '2026-04-07T08:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('skips member with no availability and shows next members slots', function () use ($officeHours) {
+it('skips member with no availability and shows next members slots', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -587,7 +587,7 @@ it('skips member with no availability and shows next members slots', function ()
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($alice->id);
 });
 
-it('shows empty calendar when all members have no availability without advancing cursor', function () use ($officeHours) {
+it('shows empty calendar when all members have no availability without advancing cursor', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -637,7 +637,7 @@ it('shows empty calendar when all members have no availability without advancing
     expect($bookingGroup->round_robin_last_assigned_id)->toBeNull();
 });
 
-it('skips multiple unavailable members to find one with availability', function () use ($officeHours) {
+it('skips multiple unavailable members to find one with availability', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -698,7 +698,7 @@ it('skips multiple unavailable members to find one with availability', function 
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($bob->id);
 });
 
-it('skips member who is out of office in round robin rotation', function () use ($officeHours) {
+it('skips member who is out of office in round robin rotation', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -736,10 +736,10 @@ it('skips member who is out of office in round robin rotation', function () use 
     $blocks = collect($blocksData);
 
     // Alice is first in rotation but OOO on Apr 7 — her slots should exclude that day
-    $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
+    $apr7Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-07'));
     expect($apr7Blocks)->toBeEmpty();
 
     // Other days should still have slots
-    $apr8Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-08'));
+    $apr8Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-08'));
     expect($apr8Blocks)->not->toBeEmpty();
 });

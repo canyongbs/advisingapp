@@ -85,7 +85,7 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionJob
             collect($addedOrUpdatedPivotModels)
                 ->flatten()
                 ->unique()
-                ->each(function (string $addedOrUpdatedPivotModel) use ($educatable) {
+                ->each(function (string $addedOrUpdatedPivotModel) use ($educatable): void {
                     $taggable = Taggable::query()
                         ->where('tag_id', $addedOrUpdatedPivotModel)
                         ->where('taggable_type', $educatable->getMorphClass())

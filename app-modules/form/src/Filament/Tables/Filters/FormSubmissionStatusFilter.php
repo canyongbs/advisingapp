@@ -49,7 +49,7 @@ class FormSubmissionStatusFilter extends SelectFilter
 
         $this->options(FormSubmissionStatus::class);
 
-        $this->query(function (array $data, Builder $query) {
+        $this->query(function (array $data, Builder $query): void {
             $value = $data['value'];
 
             if (blank($value)) {

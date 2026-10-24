@@ -132,7 +132,7 @@ class CreateBookingGroup extends CreateRecord
                         ->required(fn (Get $get): bool => $this->isBookWithAll($get))
                         ->rules([
                             function (Get $get): Closure {
-                                return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
                                     if (! $this->isBookWithAll($get)) {
                                         return;
                                     }
@@ -147,7 +147,7 @@ class CreateBookingGroup extends CreateRecord
                                 };
                             },
                             function (Get $get): Closure {
-                                return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
                                     if (! $this->isBookWithAll($get) || blank($value)) {
                                         return;
                                     }

@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('application_submissions_checklist_items', function (Blueprint $table) {
+        Schema::create('application_submissions_checklist_items', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('application_submission_id')->references('id')->on('application_submissions')->onDelete('cascade');
             $table->string('title');

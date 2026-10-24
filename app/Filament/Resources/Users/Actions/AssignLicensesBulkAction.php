@@ -82,10 +82,10 @@ class AssignLicensesBulkAction extends BulkAction
                 ...collect($this->getEnabledLicenseTypes())
                     ->map(fn (LicenseType $licenseType): Toggle => $this->getToggleForLicenseType($licenseType)),
             ])
-            ->action(function (array $data, Collection $records) {
+            ->action(function (array $data, Collection $records): void {
                 /** @var Collection <int, User> $records */
-                $records->each(function (User $record) use ($data) {
-                    collect($this->getEnabledLicenseTypes())->each(function (LicenseType $licenseType) use ($record, $data) {
+                $records->each(function (User $record) use ($data): void {
+                    collect($this->getEnabledLicenseTypes())->each(function (LicenseType $licenseType) use ($record, $data): void {
                         if ($data[$licenseType->value]) {
                             $record->grantLicense($licenseType);
                         } elseif ($data['replace'] && ! $data[$licenseType->value]) {
@@ -125,7 +125,7 @@ class AssignLicensesBulkAction extends BulkAction
             ->hintColor(fn (Get $get): string => $get("{$licenseType->value}_count") > 0 ? 'success' : 'danger')
             ->afterStateUpdated($this->getAfterStateUpdatedCallbackForLicenseType($licenseType))
             ->rules([
-                fn (Get $get): Closure => function (string $attribute, string $value, Closure $fail) use ($licenseType, $get) {
+                fn (Get $get): Closure => function (string $attribute, string $value, Closure $fail) use ($licenseType, $get): void {
                     if ($get("{$licenseType->value}_count") < 0) {
                         $fail("You do not have enough seats for {$licenseType->getLabel()}");
                     }
@@ -136,7 +136,7 @@ class AssignLicensesBulkAction extends BulkAction
 
     private function getAfterStateUpdatedCallbackForLicenseType(LicenseType $licenseType): Closure
     {
-        return function (Get $get, Set $set) use ($licenseType) {
+        return function (Get $get, Set $set) use ($licenseType): void {
             $count = $licenseType->getAvailableSeats();
 
             $existingCount = License::query()

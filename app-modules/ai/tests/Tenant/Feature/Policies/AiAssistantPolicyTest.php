@@ -42,7 +42,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('viewAny', function () {
+test('viewAny', function (): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -67,7 +67,7 @@ test('viewAny', function () {
     expect($user->can('viewAny', AiAssistant::class))->toBeTrue();
 });
 
-test('view', function () {
+test('view', function (): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -86,7 +86,7 @@ test('view', function () {
     expect($user->can('view', $aiAssistant))->toBeTrue();
 });
 
-test('create', function () {
+test('create', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->limits->employeeAdvisorsCount = 0;
@@ -115,7 +115,7 @@ test('create', function () {
     expect($user->can('create', AiAssistant::class))->toBeTrue();
 });
 
-test('update', function () {
+test('update', function (): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -134,7 +134,7 @@ test('update', function () {
     expect($user->can('update', $aiAssistant))->toBeTrue();
 });
 
-test('delete', function () {
+test('delete', function (): void {
     asSuperAdmin();
 
     /** @var User $user */
@@ -145,7 +145,7 @@ test('delete', function () {
     expect($user->can('delete', $aiAssistant))->toBeFalse();
 });
 
-test('restore', function () {
+test('restore', function (): void {
     asSuperAdmin();
 
     /** @var User $user */
@@ -156,7 +156,7 @@ test('restore', function () {
     expect($user->can('restore', $aiAssistant))->toBeFalse();
 });
 
-test('forceDelete', function () {
+test('forceDelete', function (): void {
     asSuperAdmin();
 
     /** @var User $user */

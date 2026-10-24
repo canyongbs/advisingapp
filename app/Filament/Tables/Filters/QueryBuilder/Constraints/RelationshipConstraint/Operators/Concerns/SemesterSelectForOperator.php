@@ -126,7 +126,7 @@ trait SemesterSelectForOperator
 
         $lowerSemesters = array_map(mb_strtolower(...), $semesters);
 
-        return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
+        return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters): void {
             $query->whereIn(DB::raw('lower(semester_name)'), $lowerSemesters);
         }, $this->getQueryOperator(), $count);
     }

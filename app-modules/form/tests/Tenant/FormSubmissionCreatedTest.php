@@ -43,7 +43,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
-it('dispatches FormSubmissionCreated Event when a FormSubmission is created', function () {
+it('dispatches FormSubmissionCreated Event when a FormSubmission is created', function (): void {
     Event::fake(FormSubmissionCreated::class);
 
     $submission = FormSubmission::factory()->create();
@@ -54,7 +54,7 @@ it('dispatches FormSubmissionCreated Event when a FormSubmission is created', fu
     );
 });
 
-it('does not dispatch `FormSubmissionCreated` when a requested `FormSubmission` is created', function () {
+it('does not dispatch `FormSubmissionCreated` when a requested `FormSubmission` is created', function (): void {
     Event::fake(FormSubmissionCreated::class);
 
     FormSubmission::factory()->create(['submitted_at' => null]);
@@ -62,7 +62,7 @@ it('does not dispatch `FormSubmissionCreated` when a requested `FormSubmission` 
     Event::assertNotDispatched(FormSubmissionCreated::class);
 });
 
-it('dispatches `FormSubmissionCreated` when a requested `FormSubmission` is submitted', function () {
+it('dispatches `FormSubmissionCreated` when a requested `FormSubmission` is submitted', function (): void {
     Event::fake(FormSubmissionCreated::class);
 
     $submission = FormSubmission::factory()->create(['submitted_at' => null]);
@@ -78,7 +78,7 @@ it('dispatches `FormSubmissionCreated` when a requested `FormSubmission` is subm
     );
 });
 
-it('does not dispatch `FormSubmissionCreated` again when a submitted `FormSubmission` is saved again', function () {
+it('does not dispatch `FormSubmissionCreated` again when a submitted `FormSubmission` is saved again', function (): void {
     Event::fake(FormSubmissionCreated::class);
 
     $submission = FormSubmission::factory()->create();
@@ -91,7 +91,7 @@ it('does not dispatch `FormSubmissionCreated` again when a submitted `FormSubmis
     Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
 });
 
-it('clears the form submission count cache when a requested `FormSubmission` is created', function () {
+it('clears the form submission count cache when a requested `FormSubmission` is created', function (): void {
     $form = Form::factory()->create();
 
     $cacheKey = "form-submission-count-{$form->root_id}";
@@ -108,7 +108,7 @@ it('clears the form submission count cache when a requested `FormSubmission` is 
     expect(Cache::tags('{form-submission-count}')->has($cacheKey))->toBeFalse();
 });
 
-test('FormSubmissionCreated Event has the proper listeners', function () {
+test('FormSubmissionCreated Event has the proper listeners', function (): void {
     Event::fake();
 
     Event::assertListening(
@@ -117,7 +117,7 @@ test('FormSubmissionCreated Event has the proper listeners', function () {
     );
 });
 
-test('NotifySubscribersOfFormSubmission dispatches the correct Notification', function () {
+test('NotifySubscribersOfFormSubmission dispatches the correct Notification', function (): void {
     Notification::fake();
 
     /** @var FormSubmission $submission */
@@ -132,7 +132,7 @@ test('NotifySubscribersOfFormSubmission dispatches the correct Notification', fu
 
     $submission->save();
 
-    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user) {
+    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user): void {
         Notification::assertSentTo(notifiable: $user, notification: AuthorLinkedFormSubmissionCreatedNotification::class);
     });
 });

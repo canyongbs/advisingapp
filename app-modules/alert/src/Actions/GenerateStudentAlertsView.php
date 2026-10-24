@@ -46,7 +46,7 @@ class GenerateStudentAlertsView
 {
     public function execute(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $alertConfigurations = AlertConfiguration::with('configuration')
                 ->where('is_enabled', true)
                 ->get();

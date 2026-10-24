@@ -72,7 +72,7 @@ trait ImportColumns
                 ->array('|')
                 ->rules(['array'])
                 ->nestedRecursiveRules(['string', 'max:255'])
-                ->fillRecordUsing(function (Program $record, array $state) {
+                ->fillRecordUsing(function (Program $record, array $state): void {
                     $acadPlan = $record->acad_plan ?? [];
 
                     if (! is_array($record->acad_plan)) {
@@ -90,7 +90,7 @@ trait ImportColumns
                 ->array('|')
                 ->rules(['array'])
                 ->nestedRecursiveRules(['string', 'max:255'])
-                ->fillRecordUsing(function (Program $record, array $state) {
+                ->fillRecordUsing(function (Program $record, array $state): void {
                     $acadPlan = $record->acad_plan ?? [];
 
                     if (! is_array($record->acad_plan)) {

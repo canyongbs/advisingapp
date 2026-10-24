@@ -43,7 +43,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
-it('saves a new bounced email address from SES event', function () {
+it('saves a new bounced email address from SES event', function (): void {
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
 
     assertDatabaseMissing(BouncedEmailAddress::class, [
@@ -60,7 +60,7 @@ it('saves a new bounced email address from SES event', function () {
     ]);
 });
 
-it('does not save an existing bounced email address again from SES event', function () {
+it('does not save an existing bounced email address again from SES event', function (): void {
     $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
 
     assertDatabaseMissing(BouncedEmailAddress::class, [

@@ -83,7 +83,7 @@ class RequestFormSubmission extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire) {
+        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire): void {
             $submission = $livewire->getOwnerRecord()->formSubmissions()->requested()->firstOrNew(['form_id' => $data['form_id']]);
             $submission->fill($data);
             $submission->requester()->associate(auth()->user());

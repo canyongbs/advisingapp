@@ -44,7 +44,7 @@ use function Pest\Laravel\freezeTime;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withoutMiddleware;
 
-it('creates and emails a signed one-time login link', function () {
+it('creates and emails a signed one-time login link', function (): void {
     withoutMiddleware(CheckOlympusKey::class);
 
     $user = User::factory()->create();
@@ -62,7 +62,7 @@ it('creates and emails a signed one-time login link', function () {
         ->and(OneTimeLoginCode::query()->where('user_id', $user->getKey())->count())->toBe(1);
 });
 
-it('returns a link that expires after 30 minutes', function () {
+it('returns a link that expires after 30 minutes', function (): void {
     withoutMiddleware(CheckOlympusKey::class);
 
     freezeTime();
@@ -81,7 +81,7 @@ it('returns a link that expires after 30 minutes', function () {
     expect((int) $query['expires'])->toBe(now()->addMinutes(30)->timestamp);
 });
 
-it('validates the inputs', function (array $overrides, array $errors) {
+it('validates the inputs', function (array $overrides, array $errors): void {
     withoutMiddleware(CheckOlympusKey::class);
 
     $user = User::factory()->create();
@@ -100,12 +100,12 @@ it('validates the inputs', function (array $overrides, array $errors) {
 
     expect(OneTimeLoginCode::count())->toBe(0);
 })->with([
-    'email is required' => fn () => [['email' => ''], ['email']],
-    'email must be a valid address' => fn () => [['email' => 'not-an-email'], ['email']],
-    'email must belong to an existing user' => fn () => [['email' => 'unknown@example.com'], ['email']],
+    'email is required' => fn (): array => [['email' => ''], ['email']],
+    'email must be a valid address' => fn (): array => [['email' => 'not-an-email'], ['email']],
+    'email must belong to an existing user' => fn (): array => [['email' => 'unknown@example.com'], ['email']],
 ]);
 
-it('does not create a link for a soft-deleted user', function () {
+it('does not create a link for a soft-deleted user', function (): void {
     withoutMiddleware(CheckOlympusKey::class);
 
     $user = User::factory()->create();
@@ -124,8 +124,8 @@ it('does not create a link for a soft-deleted user', function () {
     expect(OneTimeLoginCode::count())->toBe(0);
 });
 
-describe('authorization', function () {
-    it('rejects requests without a valid Olympus key', function () {
+describe('authorization', function (): void {
+    it('rejects requests without a valid Olympus key', function (): void {
         postJson(
             route('api.one-time-login.url'),
             CreateOneTimeLoginUrlRequestFactory::new()->create(),

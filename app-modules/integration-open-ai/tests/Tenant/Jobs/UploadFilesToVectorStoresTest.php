@@ -41,7 +41,7 @@ use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadFilesToVectorStores;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches vector store uploads only for assistants and advisors with knowledge', function () {
+it('dispatches vector store uploads only for assistants and advisors with knowledge', function (): void {
     Queue::fake();
 
     $assistantWithKnowledge = AiAssistant::factory()->create(['has_resource_hub_knowledge' => true]);
@@ -54,8 +54,8 @@ it('dispatches vector store uploads only for assistants and advisors with knowle
 
     (new UploadFilesToVectorStores())->handle();
 
-    Queue::assertPushed(UploadAssistantFilesToVectorStore::class, fn (UploadAssistantFilesToVectorStore $job) => $job->uniqueId() === $assistantWithKnowledge->getKey());
-    Queue::assertNotPushed(UploadAssistantFilesToVectorStore::class, fn (UploadAssistantFilesToVectorStore $job) => $job->uniqueId() === $assistantWithoutKnowledge->getKey());
-    Queue::assertPushed(UploadCustomerAdvisorFilesToVectorStore::class, fn (UploadCustomerAdvisorFilesToVectorStore $job) => $job->uniqueId() === $advisorWithKnowledge->getKey());
-    Queue::assertNotPushed(UploadCustomerAdvisorFilesToVectorStore::class, fn (UploadCustomerAdvisorFilesToVectorStore $job) => $job->uniqueId() === $advisorWithoutKnowledge->getKey());
+    Queue::assertPushed(UploadAssistantFilesToVectorStore::class, fn (UploadAssistantFilesToVectorStore $job): bool => $job->uniqueId() === $assistantWithKnowledge->getKey());
+    Queue::assertNotPushed(UploadAssistantFilesToVectorStore::class, fn (UploadAssistantFilesToVectorStore $job): bool => $job->uniqueId() === $assistantWithoutKnowledge->getKey());
+    Queue::assertPushed(UploadCustomerAdvisorFilesToVectorStore::class, fn (UploadCustomerAdvisorFilesToVectorStore $job): bool => $job->uniqueId() === $advisorWithKnowledge->getKey());
+    Queue::assertNotPushed(UploadCustomerAdvisorFilesToVectorStore::class, fn (UploadCustomerAdvisorFilesToVectorStore $job): bool => $job->uniqueId() === $advisorWithoutKnowledge->getKey());
 });

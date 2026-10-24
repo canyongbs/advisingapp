@@ -45,7 +45,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
-it('triggers workflows when form submission is created', function () {
+it('triggers workflows when form submission is created', function (): void {
     $form = Form::factory()->create();
     $user = User::factory()->create();
 
@@ -76,7 +76,7 @@ it('triggers workflows when form submission is created', function () {
     expect($workflowRun->related_id)->toBe($submission->author->getKey());
 });
 
-it('does not trigger workflows for submissions without authors', function () {
+it('does not trigger workflows for submissions without authors', function (): void {
     $form = Form::factory()->create();
     $user = User::factory()->create();
 
@@ -105,7 +105,7 @@ it('does not trigger workflows for submissions without authors', function () {
     expect(WorkflowRun::count())->toBe(0);
 });
 
-it('does not trigger disabled workflows', function () {
+it('does not trigger disabled workflows', function (): void {
     $form = Form::factory()->create();
     $user = User::factory()->create();
 
@@ -132,7 +132,7 @@ it('does not trigger disabled workflows', function () {
     expect(WorkflowRun::count())->toBe(0);
 });
 
-test('FormSubmissionCreated event has TriggerFormSubmissionWorkflows listener', function () {
+test('FormSubmissionCreated event has TriggerFormSubmissionWorkflows listener', function (): void {
     Event::fake();
 
     Event::assertListening(

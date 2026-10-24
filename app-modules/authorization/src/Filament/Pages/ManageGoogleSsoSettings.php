@@ -83,15 +83,15 @@ class ManageGoogleSsoSettings extends SettingsPage
                         TextInput::make('client_id')
                             ->label('Client ID')
                             ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         TextInput::make('client_secret')
                             ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
+                            ->required(fn (Get $get): mixed => $get('is_enabled'))
                             ->password()
                             ->revealable(),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
+                    ])->visible(fn (Get $get): mixed => $get('is_enabled')),
             ]);
     }
 }

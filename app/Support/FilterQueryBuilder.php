@@ -46,7 +46,11 @@ class FilterQueryBuilder
 
     protected string $table;
 
-    public function apply($query, $data)
+    /**
+     * @param array<string, mixed> $data
+     * @param mixed $query
+     */
+    public function apply($query, array $data)
     {
         $this->model = $query->getModel();
         $this->table = $this->model->getTable();
@@ -63,20 +67,27 @@ class FilterQueryBuilder
         return $query;
     }
 
-    public function contains($filter, $query)
+    /**
+     * @param array<string, mixed> $filter
+     * @param mixed $query
+     */
+    public function contains(array $filter, $query)
     {
         $filter['query_1'] = addslashes($filter['query_1']);
 
         return $query->where($filter['column'], 'like', '%' . $filter['query_1'] . '%', $filter['match']);
     }
 
-    protected function makeOrder($query, $data)
+    /**
+     * @param array<string, mixed> $data
+     * @param mixed $query
+     */
+    protected function makeOrder($query, array $data)
     {
         if ($this->isNestedColumn($data['order_column'])) {
             [$relationship, $column] = explode('.', $data['order_column']);
             $callable = Str::camel($relationship);
-            $belongs = $this->model->{$callable}(
-            );
+            $belongs = $this->model->{$callable}();
             $relatedModel = $belongs->getModel();
             $relatedTable = $relatedModel->getTable();
             $as = "prefix_{$relatedTable}";
@@ -100,14 +111,18 @@ class FilterQueryBuilder
             ->select("{$this->table}.*");
     }
 
-    protected function makeFilter($query, $filter)
+    /**
+     * @param array<string, mixed> $filter
+     * @param mixed $query
+     */
+    protected function makeFilter($query, array $filter)
     {
         if ($this->isNestedColumn($filter['column'])) {
             [$relation, $filter['column']] = explode('.', $filter['column']);
             $callable = Str::camel($relation);
             $filter['match'] = 'and';
 
-            $query->orWhereHas(Str::camel($callable), function ($query) use ($filter) {
+            $query->orWhereHas(Str::camel($callable), function ($query) use ($filter): void {
                 $this->{Str::camel($filter['operator'])}(
                     $filter,
                     $query

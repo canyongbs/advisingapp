@@ -91,14 +91,14 @@ class Campaign extends BaseModel implements Auditable
 
     public function scopeHasNotBeenExecuted(Builder $query): void
     {
-        $query->whereDoesntHave('actions', function (Builder $query) {
+        $query->whereDoesntHave('actions', function (Builder $query): void {
             $query->whereNotNull('execution_finished_at');
         });
     }
 
     public function hasBeenExecuted(): bool
     {
-        return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
+        return $this->actions->contains(fn (CampaignAction $action): bool => $action->hasBeenExecuted());
     }
 
     /**
@@ -119,7 +119,7 @@ class Campaign extends BaseModel implements Auditable
 
     protected static function booted(): void
     {
-        static::addGlobalScope('licensed', function (Builder $builder) {
+        static::addGlobalScope('licensed', function (Builder $builder): void {
             if (! auth()->guard('web')->check()) {
                 return;
             }

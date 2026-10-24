@@ -55,7 +55,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('CreateResourceHubQuality is gated with proper access control', function () {
+test('CreateResourceHubQuality is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
@@ -86,7 +86,7 @@ test('CreateResourceHubQuality is gated with proper access control', function ()
     assertDatabaseHas(ResourceHubQuality::class, $request->toArray());
 });
 
-test('CreateResourceHubQuality is gated with proper feature ccess control', function () {
+test('CreateResourceHubQuality is gated with proper feature ccess control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -127,7 +127,7 @@ test('CreateResourceHubQuality is gated with proper feature ccess control', func
     assertDatabaseHas(ResourceHubQuality::class, $request->toArray());
 });
 
-test('CreateResourceHubQuality does not allow for duplicate names of non-deleted qualities case insensitively', function () {
+test('CreateResourceHubQuality does not allow for duplicate names of non-deleted qualities case insensitively', function (): void {
     asSuperAdmin();
 
     $quality = ResourceHubQuality::factory(['name' => 'Quality Name'])->create();

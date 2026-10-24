@@ -41,7 +41,7 @@ use function Tests\asSuperAdmin;
 
 // This action is the shared chokepoint for the Resource Hub portal and the customer advisor
 // sign-in, so an archived student must not resolve from it and can no longer request a code.
-it('does not resolve an archived student from their email address', function () {
+it('does not resolve an archived student from their email address', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -54,7 +54,7 @@ it('does not resolve an archived student from their email address', function () 
     expect(app(ResolveEducatableFromEmail::class)($email))->toBeNull();
 });
 
-it('resolves an archived student when asked to include them', function () {
+it('resolves an archived student when asked to include them', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();

@@ -41,7 +41,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint): void {
             try {
                 $blueprint->add('restrictions', null);
             } catch (SettingAlreadyExists $exception) {
@@ -52,7 +52,7 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint) {
+        $this->migrator->inGroup('ai-qna-advisor', function (SettingsBlueprint $blueprint): void {
             $blueprint->delete('restrictions');
         });
     }

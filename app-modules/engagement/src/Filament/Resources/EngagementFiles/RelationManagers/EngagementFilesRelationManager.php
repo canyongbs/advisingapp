@@ -76,7 +76,7 @@ class EngagementFilesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('description'),
                 IconColumn::make('media')
-                    ->tooltip(fn ($record) => match ($record->getMedia('file')?->first()?->mime_type) {
+                    ->tooltip(fn ($record): string => match ($record->getMedia('file')?->first()?->mime_type) {
                         default => 'File',
                         'image/png' => 'Image (.png)',
                         'image/jpeg' => 'Image (.jpeg)',
@@ -95,7 +95,7 @@ class EngagementFilesRelationManager extends RelationManager
                         'video/mp4' => 'MP4',
                         'application/zip' => 'Zip File'
                     })
-                    ->icon(fn ($state) => match ($state->mime_type) {
+                    ->icon(fn ($state): string => match ($state->mime_type) {
                         default => 'heroicon-o-paper-clip',
                         'image/png' => 'heroicon-o-photo',
                         'image/jpeg' => 'heroicon-o-camera',

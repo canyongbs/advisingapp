@@ -46,7 +46,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\setEnterpriseAiEnabled;
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -67,7 +67,7 @@ it('is gated with proper access control', function () {
     get(ArtificialIntelligence::getUrl())->assertSuccessful();
 });
 
-it('denies access while Enterprise AI is disabled', function () {
+it('denies access while Enterprise AI is disabled', function (): void {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     ReportUserAccess::factory()->create([
@@ -84,7 +84,7 @@ it('denies access while Enterprise AI is disabled', function () {
     get(ArtificialIntelligence::getUrl())->assertForbidden();
 });
 
-it('grants access to a user belonging to a department that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function (): void {
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

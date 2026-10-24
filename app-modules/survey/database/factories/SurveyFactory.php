@@ -60,7 +60,7 @@ class SurveyFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Survey $survey) {
+        return $this->afterCreating(function (Survey $survey): void {
             if ($survey->fields()->doesntExist()) {
                 $survey->fields()->createMany(SurveyField::factory()->count(3)->make()->toArray());
 

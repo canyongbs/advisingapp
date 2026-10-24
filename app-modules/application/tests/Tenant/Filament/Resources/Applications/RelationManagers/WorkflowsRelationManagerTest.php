@@ -59,7 +59,7 @@ use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
@@ -68,7 +68,7 @@ $testWorkflows = fn (Application $application): Testable => Livewire::test(Workf
     'pageClass' => ManageApplication::class,
 ]);
 
-test('can successfully create a new workflow for an application through manage workflows page', function () use ($testWorkflows) {
+test('can successfully create a new workflow for an application through manage workflows page', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -95,7 +95,7 @@ test('can successfully create a new workflow for an application through manage w
     expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
 });
 
-test('creates multiple workflows for the same application without conflicts', function () use ($testWorkflows) {
+test('creates multiple workflows for the same application without conflicts', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -126,7 +126,7 @@ test('creates multiple workflows for the same application without conflicts', fu
     }
 });
 
-test('application workflow creation is gated with proper access control', function () use ($testWorkflows) {
+test('application workflow creation is gated with proper access control', function () use ($testWorkflows): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
 
@@ -152,7 +152,7 @@ test('application workflow creation is gated with proper access control', functi
     expect($workflowTrigger->related_id)->toBe($application->id);
 });
 
-test('can successfully edit workflow name through edit workflow page', function () {
+test('can successfully edit workflow name through edit workflow page', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -186,7 +186,7 @@ test('can successfully edit workflow name through edit workflow page', function 
     expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
-test('can enable workflow through edit workflow page', function () {
+test('can enable workflow through edit workflow page', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -218,7 +218,7 @@ test('can enable workflow through edit workflow page', function () {
     expect($workflow->is_enabled)->toBeTrue();
 });
 
-test('can disable workflow through edit workflow page', function () {
+test('can disable workflow through edit workflow page', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -250,7 +250,7 @@ test('can disable workflow through edit workflow page', function () {
     expect($workflow->is_enabled)->toBeFalse();
 });
 
-test('validates workflow name is required when editing', function () {
+test('validates workflow name is required when editing', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -278,7 +278,7 @@ test('validates workflow name is required when editing', function () {
         ->assertHasFormErrors(['name' => 'required']);
 });
 
-test('validates workflow name has maximum length when editing', function () {
+test('validates workflow name has maximum length when editing', function (): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -308,7 +308,7 @@ test('validates workflow name has maximum length when editing', function () {
         ->assertHasFormErrors(['name']);
 });
 
-test('workflow editing succeeds with proper permissions', function () {
+test('workflow editing succeeds with proper permissions', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
     $oldWorkflow = Workflow::factory()
@@ -346,7 +346,7 @@ test('workflow editing succeeds with proper permissions', function () {
     expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
-test('workflow deletion succeeds with proper permissions', function () {
+test('workflow deletion succeeds with proper permissions', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
     $workflow = Workflow::factory()
@@ -385,7 +385,7 @@ test('workflow deletion succeeds with proper permissions', function () {
     expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
 });
 
-test('create action persists Stage and Trigger event from form data', function () use ($testWorkflows) {
+test('create action persists Stage and Trigger event from form data', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -406,7 +406,7 @@ test('create action persists Stage and Trigger event from form data', function (
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Exit);
 });
 
-test('create action defaults Stage to first non-archived state when no tab is active', function () use ($testWorkflows) {
+test('create action defaults Stage to first non-archived state when no tab is active', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -426,7 +426,7 @@ test('create action defaults Stage to first non-archived state when no tab is ac
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Enter);
 });
 
-test('tabs render one per non-archived submission state plus All', function () use ($testWorkflows) {
+test('tabs render one per non-archived submission state plus All', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -449,7 +449,7 @@ test('tabs render one per non-archived submission state plus All', function () u
     expect($tabs)->toHaveKey('all');
 });
 
-test('manage application workflows page links to nested workflow edit route', function () use ($testWorkflows) {
+test('manage application workflows page links to nested workflow edit route', function () use ($testWorkflows): void {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -476,7 +476,7 @@ test('manage application workflows page links to nested workflow edit route', fu
         ->assertActionHasUrl(TestAction::make('edit')->table($workflow), $nestedEditUrl);
 });
 
-test('nested application workflow edit route is scoped to owner application', function () {
+test('nested application workflow edit route is scoped to owner application', function (): void {
     asSuperAdmin();
 
     $ownerApplication = Application::factory()->create();
@@ -507,8 +507,8 @@ test('nested application workflow edit route is scoped to owner application', fu
     ]))->assertNotFound();
 });
 
-describe('authorization', function () use ($testWorkflows) {
-    it('does not create workflows without the `application.*.update` permission', function () use ($testWorkflows) {
+describe('authorization', function () use ($testWorkflows): void {
+    it('does not create workflows without the `application.*.update` permission', function () use ($testWorkflows): void {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('application.view-any', 'application.*.view');
         actingAs($user);

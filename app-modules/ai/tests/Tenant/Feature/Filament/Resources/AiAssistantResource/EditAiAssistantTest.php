@@ -63,7 +63,7 @@ $permissions = [
     'assistant_custom.*.update',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -76,7 +76,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses
     ));
@@ -89,7 +89,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('cannot render without proper features enabled', function () use ($licenses, $permissions) {
+it('cannot render without proper features enabled', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -103,7 +103,7 @@ it('cannot render without proper features enabled', function () use ($licenses, 
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -123,13 +123,19 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can edit a record', function () use ($licenses, $permissions) {
+it('can edit a record without changing its creator', function (bool $isSuperAdmin) use ($licenses, $permissions): void {
     Storage::fake('s3');
 
-    actingAs(user(
+    $editor = user(
         licenses: $licenses,
         permissions: $permissions
-    ));
+    );
+
+    if ($isSuperAdmin) {
+        $editor->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+    }
+
+    actingAs($editor);
 
     $settings = app(LicenseSettings::class);
 
@@ -137,17 +143,24 @@ it('can edit a record', function () use ($licenses, $permissions) {
 
     $settings->save();
 
-    $aiAssistant = AiAssistant::factory()->create();
+    $creator = User::factory()->create();
+
+    $aiAssistant = AiAssistant::factory()->for($creator, 'createdBy')->create();
+
+    expect($aiAssistant->created_by_id)->toBe($creator->getKey());
 
     $request = collect(EditAiAssistantRequestFactory::new()->create());
 
     Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
+        ->assertFormFieldDoesNotExist('created_by_id')
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors()
         ->assertHasNoErrors();
+
+    expect($aiAssistant->refresh()->created_by_id)->toBe($creator->getKey());
 
     assertDatabaseHas(
         AiAssistant::class,
@@ -164,9 +177,12 @@ it('can edit a record', function () use ($licenses, $permissions) {
             'collection_name' => 'avatar',
         ]
     );
-});
+})->with([
+    'regular user' => false,
+    'super admin' => true,
+]);
 
-it('validates the inputs', function (EditAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions) {
+it('validates the inputs', function (EditAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions): void {
     Storage::fake('s3');
 
     actingAs(user(
@@ -227,7 +243,7 @@ it('validates the inputs', function (EditAiAssistantRequestFactory $data, array 
     ]
 );
 
-it('ai_assistant_confidential_users UserSelect does not show admin users in options by default on EditAiAssistant', function () use ($licenses, $permissions) {
+it('ai_assistant_confidential_users UserSelect does not show admin users in options by default on EditAiAssistant', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -253,7 +269,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
         });
 });
 
-it('ai_assistant_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on EditAiAssistant', function () use ($licenses, $permissions) {
+it('ai_assistant_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on EditAiAssistant', function () use ($licenses, $permissions): void {
     Config::set('app.filter_admins_from_selection', false);
 
     actingAs(user(

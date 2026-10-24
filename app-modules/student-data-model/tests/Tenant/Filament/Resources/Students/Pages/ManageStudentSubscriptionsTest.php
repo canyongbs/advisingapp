@@ -40,7 +40,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('serves the followers page at the followers URL', function () {
+it('serves the followers page at the followers URL', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();

@@ -73,11 +73,11 @@ class AuthorizationPlugin implements Plugin
             ->authMiddleware([
                 RedirectIfPasswordNotSet::class,
             ])
-            ->routes(function () {
+            ->routes(function (): void {
                 Route::get('/confirm-code', ConfirmOneTimeLoginCode::class)
                     ->name('auth.one-time-login');
             })
-            ->authenticatedRoutes(function () {
+            ->authenticatedRoutes(function (): void {
                 Route::get('/set-password', SetPassword::class)
                     ->withoutMiddleware(RedirectIfPasswordNotSet::class)
                     ->name('auth.set-password');
@@ -91,7 +91,7 @@ class AuthorizationPlugin implements Plugin
     {
         $panel->userMenuItems(
             [
-                'logout' => fn (Action $action) => $action->label('Log out'),
+                'logout' => fn (Action $action): Action => $action->label('Log out'),
             ]
         );
     }

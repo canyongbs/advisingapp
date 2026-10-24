@@ -59,7 +59,7 @@ Route::prefix('api')
         'api',
         CheckOlympusKey::class,
     ])
-    ->group(function () {
+    ->group(function (): void {
         Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
             ->name('update-sis-settings');
 
@@ -67,10 +67,10 @@ Route::prefix('api')
             ->name('sis-sync-completed');
     });
 
-Route::api(majorVersion: 1, routes: function () {
+Route::api(majorVersion: 1, routes: function (): void {
     Route::name('students.')
         ->prefix('students')
-        ->group(function () {
+        ->group(function (): void {
             Route::get('/', ListStudentsController::class)->name('index');
             Route::post('/', CreateStudentController::class)->name('create');
             Route::get('{student}', ViewStudentController::class)->name('view');
@@ -79,7 +79,7 @@ Route::api(majorVersion: 1, routes: function () {
 
             Route::name('email-addresses.')
                 ->prefix('{student}/email-addresses')
-                ->group(function () {
+                ->group(function (): void {
                     Route::post('/', CreateStudentEmailAddressController::class)->name('create');
                     Route::patch('/{studentEmailAddress}', UpdateStudentEmailAddressController::class)->name('update');
                     Route::delete('/{studentEmailAddress}', DeleteStudentEmailAddressController::class)->name('delete');
@@ -87,7 +87,7 @@ Route::api(majorVersion: 1, routes: function () {
 
             Route::name('phone-numbers.')
                 ->prefix('{student}/phone-numbers')
-                ->group(function () {
+                ->group(function (): void {
                     Route::post('/', CreateStudentPhoneNumberController::class)->name('create');
                     Route::patch('/{studentPhoneNumber}', UpdateStudentPhoneNumberController::class)->name('update');
                     Route::delete('/{studentPhoneNumber}', StudentPhoneNumbersDeleteStudentPhoneNumberController::class)->name('delete');
@@ -95,13 +95,13 @@ Route::api(majorVersion: 1, routes: function () {
 
             Route::name('programs.')
                 ->prefix('{student}/programs')
-                ->group(function () {
+                ->group(function (): void {
                     Route::get('/', ListStudentProgramsController::class)->name('index');
                     Route::put('/', PutStudentProgramsController::class)->name('put');
                 });
             Route::name('enrollments.')
                 ->prefix('{student}/enrollments')
-                ->group(function () {
+                ->group(function (): void {
                     Route::get('/', ListStudentEnrollmentsController::class)->name('index');
                     Route::put('/', PutStudentEnrollmentsController::class)->name('put');
                 });

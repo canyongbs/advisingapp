@@ -51,6 +51,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -95,12 +96,12 @@ class StudentMessagesDetailTable extends BaseWidget
                 HolisticEngagement::query()
                     ->with(['concern', 'record'])
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereBetween('record_sortable_date', [$startDate, $endDate]);
                         }
                     )
-                    ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId) {
+                    ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
                         $query->when(
                             $groupId,
                             fn (Builder $query) => $this->groupFilter($query, $groupId)
@@ -111,7 +112,7 @@ class StudentMessagesDetailTable extends BaseWidget
                 TextColumn::make('direction')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => Str::title($state))
-                    ->icon(fn (HolisticEngagement $record) => match ($record->direction) {
+                    ->icon(fn (HolisticEngagement $record): string => match ($record->direction) {
                         'outbound' => 'heroicon-o-arrow-up-tray',
                         'inbound' => 'heroicon-o-arrow-down-tray',
                         default => throw new Exception('Invalid record type'),
@@ -183,7 +184,7 @@ class StudentMessagesDetailTable extends BaseWidget
                         'sms' => 'Text',
                         default => throw new Exception('Invalid type'),
                     })
-                    ->icon(fn (string $state) => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'email' => 'heroicon-o-envelope',
                         'sms' => 'heroicon-o-chat-bubble-bottom-center-text',
                         default => throw new Exception('Invalid type'),
@@ -232,7 +233,7 @@ class StudentMessagesDetailTable extends BaseWidget
                             : 'N/A'
                     )
                     ->url(
-                        fn (HolisticEngagement $record) => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
+                        fn (HolisticEngagement $record): ?string => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
                             ? CampaignResource::getUrl('view', ['record' => $record->record->source->campaign->getKey()])
                             : null
                     )

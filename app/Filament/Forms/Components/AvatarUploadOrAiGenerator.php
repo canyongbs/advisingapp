@@ -76,7 +76,7 @@ class AvatarUploadOrAiGenerator
                         $get('is_generating_avatar')
                         JS)
                     ->dehydrated(false)
-                    ->saveRelationshipsUsing(function (Textarea $component, Get $get, Set $set, Model $record, ?string $state) {
+                    ->saveRelationshipsUsing(function (Textarea $component, Get $get, Set $set, Model $record, ?string $state): void {
                         if (! $get('is_generating_avatar')) {
                             return;
                         }

@@ -85,7 +85,7 @@ abstract class History extends BaseModel
     {
         return collect($this->new)
             ->keys()
-            ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)]);
+            ->mapWithKeys(fn (string $key): array => [$key => $this->getFormattedValueForKey($key)]);
     }
 
     public function formatted(): Attribute

@@ -239,7 +239,7 @@ class ManageAlerts extends Page implements HasForms
         $currentlyEnabled = AlertConfiguration::query()
             ->where('is_enabled', true)
             ->pluck('id')
-            ->map(fn ($id) => (string) $id);
+            ->map(fn ($id): string => (string) $id);
 
         return $currentlyEnabled->filter(function (string $configId) use ($formData): bool {
             return empty($formData[$configId]['is_enabled']);

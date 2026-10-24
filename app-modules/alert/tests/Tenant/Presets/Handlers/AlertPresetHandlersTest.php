@@ -55,11 +55,11 @@ use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-beforeEach(function () {
+beforeEach(function (): void {
     DB::statement('DROP VIEW IF EXISTS student_alerts');
 });
 
-it('can identify students with D or F grades (DorfGradePresetHandler)', function () {
+it('can identify students with D or F grades (DorfGradePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -106,7 +106,7 @@ it('can identify students with D or F grades (DorfGradePresetHandler)', function
     expect(StudentAlert::where('sisid', $studentWithB->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with multiple D or F grades (MultipleDorfGradesPresetHandler)', function () {
+it('can identify students with multiple D or F grades (MultipleDorfGradesPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::MultipleDorfGrades])
         ->enabled()
@@ -143,7 +143,7 @@ it('can identify students with multiple D or F grades (MultipleDorfGradesPresetH
     expect(StudentAlert::where('sisid', $studentWithoutDorF->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with W grade (CourseWithdrawalPresetHandler)', function () {
+it('can identify students with W grade (CourseWithdrawalPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::CourseWithdrawal])
         ->enabled()
@@ -181,7 +181,7 @@ it('can identify students with W grade (CourseWithdrawalPresetHandler)', functio
     expect(StudentAlert::where('sisid', $studentWithD->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with multiple W grades (MultipleCourseWithdrawalsPresetHandler)', function () {
+it('can identify students with multiple W grades (MultipleCourseWithdrawalsPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::MultipleCourseWithdrawals])
         ->enabled()
@@ -218,7 +218,7 @@ it('can identify students with multiple W grades (MultipleCourseWithdrawalsPrese
     expect(StudentAlert::where('sisid', $studentWithoutW->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with repeated course attempts (RepeatedCourseAttemptPresetHandler)', function () {
+it('can identify students with repeated course attempts (RepeatedCourseAttemptPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::RepeatedCourseAttempt])
         ->enabled()
@@ -259,7 +259,7 @@ it('can identify students with repeated course attempts (RepeatedCourseAttemptPr
     expect(StudentAlert::where('sisid', $studentWithoutRepeatedCourse->sisid)->exists())->toBeFalse();
 });
 
-it('can identify first generation students (FirstGenerationStudentPresetHandler)', function () {
+it('can identify first generation students (FirstGenerationStudentPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::FirstGenerationStudent])
         ->enabled()
@@ -297,7 +297,7 @@ it('can identify first generation students (FirstGenerationStudentPresetHandler)
     expect(StudentAlert::where('sisid', $nonFirstGenStudent2->sisid)->exists())->toBeFalse();
 });
 
-it('can identify adult learners with default minimum age (AdultLearnerPresetHandler)', function () {
+it('can identify adult learners with default minimum age (AdultLearnerPresetHandler)', function (): void {
     $config = AdultLearnerAlertConfiguration::factory()->create(['minimum_age' => 24]);
 
     $alertConfig = AlertConfiguration::factory()
@@ -348,7 +348,7 @@ it('can identify adult learners with default minimum age (AdultLearnerPresetHand
     expect(StudentAlert::where('sisid', $studentNoBirthdate->sisid)->exists())->toBeFalse();
 });
 
-it('can identify adult learners with custom minimum age (AdultLearnerPresetHandler)', function () {
+it('can identify adult learners with custom minimum age (AdultLearnerPresetHandler)', function (): void {
     $config = AdultLearnerAlertConfiguration::factory()->create(['minimum_age' => 30]);
 
     $alertConfig = AlertConfiguration::factory()
@@ -389,7 +389,7 @@ it('can identify adult learners with custom minimum age (AdultLearnerPresetHandl
     expect(StudentAlert::where('sisid', $studentBelowThreshold->sisid)->exists())->toBeFalse();
 });
 
-it('can identify new students with default semester count (NewStudentPresetHandler)', function () {
+it('can identify new students with default semester count (NewStudentPresetHandler)', function (): void {
     $config = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
 
     $alertConfig = AlertConfiguration::factory()
@@ -441,7 +441,7 @@ it('can identify new students with default semester count (NewStudentPresetHandl
     expect(StudentAlert::where('sisid', $studentWith3Semesters->sisid)->exists())->toBeFalse();
 });
 
-it('can identify new students with custom semester count (NewStudentPresetHandler)', function () {
+it('can identify new students with custom semester count (NewStudentPresetHandler)', function (): void {
     $config = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 3]);
 
     $alertConfig = AlertConfiguration::factory()
@@ -499,7 +499,7 @@ it('can identify new students with custom semester count (NewStudentPresetHandle
     expect(StudentAlert::where('sisid', $studentWith4Semesters->sisid)->exists())->toBeFalse();
 });
 
-it('correctly handles multiple enabled alert configurations simultaneously', function () {
+it('correctly handles multiple enabled alert configurations simultaneously', function (): void {
     $dorfConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -559,7 +559,7 @@ it('correctly handles multiple enabled alert configurations simultaneously', fun
     expect(StudentAlert::where('sisid', $multiAlertStudent->sisid)->count())->toBe(3);
 });
 
-it('only includes enabled alert configurations in the view', function () {
+it('only includes enabled alert configurations in the view', function (): void {
     $enabledConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -592,7 +592,7 @@ it('only includes enabled alert configurations in the view', function () {
     expect(StudentAlert::where('alert_configuration_id', $disabledConfig->id)->exists())->toBeFalse();
 });
 
-it('creates an empty view when no alert configurations are enabled', function () {
+it('creates an empty view when no alert configurations are enabled', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->disabled()
@@ -611,7 +611,7 @@ it('creates an empty view when no alert configurations are enabled', function ()
     expect($result)->toBeArray()->toBeEmpty();
 });
 
-it('excludes soft-deleted enrollments from alert detection', function () {
+it('excludes soft-deleted enrollments from alert detection', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -639,7 +639,7 @@ it('excludes soft-deleted enrollments from alert detection', function () {
     expect(StudentAlert::where('sisid', 'TEST123')->exists())->toBeFalse();
 });
 
-it('excludes soft-deleted students from alert detection', function () {
+it('excludes soft-deleted students from alert detection', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::FirstGenerationStudent])
         ->enabled()
@@ -655,7 +655,7 @@ it('excludes soft-deleted students from alert detection', function () {
     expect(StudentAlert::where('sisid', $student->sisid)->exists())->toBeFalse();
 });
 
-it('has correct StudentAlert model relationships', function () {
+it('has correct StudentAlert model relationships', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -684,7 +684,7 @@ it('has correct StudentAlert model relationships', function () {
     expect($alerts->first()->alert_configuration_id)->toBe($alertConfig->id);
 });
 
-it('has correct inverse relationships from Student and AlertConfiguration', function () {
+it('has correct inverse relationships from Student and AlertConfiguration', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -705,7 +705,7 @@ it('has correct inverse relationships from Student and AlertConfiguration', func
     expect($configAlerts->first()->sisid)->toBe($student->sisid);
 });
 
-it('excludes students with null semester_code from new student detection', function () {
+it('excludes students with null semester_code from new student detection', function (): void {
     $config = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
 
     AlertConfiguration::factory()
@@ -726,7 +726,7 @@ it('excludes students with null semester_code from new student detection', funct
     expect(StudentAlert::where('sisid', $studentWithNullSemester->sisid)->exists())->toBeFalse();
 });
 
-it('regenerates view correctly when execute is called multiple times', function () {
+it('regenerates view correctly when execute is called multiple times', function (): void {
     $config1 = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -746,7 +746,7 @@ it('regenerates view correctly when execute is called multiple times', function 
     expect(StudentAlert::count())->toBe(0);
 });
 
-it('excludes students with no enrollments from enrollment-based alerts', function () {
+it('excludes students with no enrollments from enrollment-based alerts', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -759,7 +759,7 @@ it('excludes students with no enrollments from enrollment-based alerts', functio
     expect(StudentAlert::where('sisid', $studentWithoutEnrollments->sisid)->exists())->toBeFalse();
 });
 
-it('handles empty database scenario (no students at all)', function () {
+it('handles empty database scenario (no students at all)', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -778,7 +778,7 @@ it('handles empty database scenario (no students at all)', function () {
     expect($result)->toBeArray()->toBeEmpty();
 });
 
-it('handles scenario where alerts are enabled but no students match criteria', function () {
+it('handles scenario where alerts are enabled but no students match criteria', function (): void {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::DorfGrade])
         ->enabled()
@@ -797,7 +797,7 @@ it('handles scenario where alerts are enabled but no students match criteria', f
     expect($result)->toBeArray()->toBeEmpty();
 });
 
-it('can identify students with new inbound messages (NewInboundMessagePresetHandler)', function () {
+it('can identify students with new inbound messages (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -835,7 +835,7 @@ it('can identify students with new inbound messages (NewInboundMessagePresetHand
     expect(StudentAlert::where('sisid', $studentWithoutMessages->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with multiple new inbound messages (NewInboundMessagePresetHandler)', function () {
+it('can identify students with multiple new inbound messages (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -884,7 +884,7 @@ it('can identify students with multiple new inbound messages (NewInboundMessageP
     expect(StudentAlert::where('sisid', $studentWithMixedMessages->sisid)->count())->toBe(1);
 });
 
-it('excludes deleted engagement responses from new inbound message alerts (NewInboundMessagePresetHandler)', function () {
+it('excludes deleted engagement responses from new inbound message alerts (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -920,7 +920,7 @@ it('excludes deleted engagement responses from new inbound message alerts (NewIn
     ]);
 });
 
-it('excludes deleted students from new inbound message alerts (NewInboundMessagePresetHandler)', function () {
+it('excludes deleted students from new inbound message alerts (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -956,7 +956,7 @@ it('excludes deleted students from new inbound message alerts (NewInboundMessage
     ]);
 });
 
-it('only includes messages from students not prospects (NewInboundMessagePresetHandler)', function () {
+it('only includes messages from students not prospects (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -990,7 +990,7 @@ it('only includes messages from students not prospects (NewInboundMessagePresetH
     expect(StudentAlert::count())->toBe(1);
 });
 
-it('handles scenario when new inbound message alert is disabled (NewInboundMessagePresetHandler)', function () {
+it('handles scenario when new inbound message alert is disabled (NewInboundMessagePresetHandler)', function (): void {
     AlertConfiguration::factory()
         ->state([
             'preset' => AlertPreset::NewInboundMessage,
@@ -1012,7 +1012,7 @@ it('handles scenario when new inbound message alert is disabled (NewInboundMessa
     expect(StudentAlert::count())->toBe(0);
 });
 
-it('correctly updates alerts when engagement response status changes (NewInboundMessagePresetHandler)', function () {
+it('correctly updates alerts when engagement response status changes (NewInboundMessagePresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::NewInboundMessage])
         ->enabled()
@@ -1041,7 +1041,7 @@ it('correctly updates alerts when engagement response status changes (NewInbound
     expect(StudentAlert::where('sisid', $student->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with active concerns (ConcernRaisedPresetHandler)', function () {
+it('can identify students with active concerns (ConcernRaisedPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1101,7 +1101,7 @@ it('can identify students with active concerns (ConcernRaisedPresetHandler)', fu
     expect(StudentAlert::where('sisid', $studentWithNoConcern->sisid)->exists())->toBeFalse();
 });
 
-it('can identify students with multiple active concerns (ConcernRaisedPresetHandler)', function () {
+it('can identify students with multiple active concerns (ConcernRaisedPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1131,7 +1131,7 @@ it('can identify students with multiple active concerns (ConcernRaisedPresetHand
     expect(StudentAlert::where('sisid', $studentWithMultipleConcerns->sisid)->count())->toBe(1);
 });
 
-it('excludes soft-deleted concerns from concern raised detection (ConcernRaisedPresetHandler)', function () {
+it('excludes soft-deleted concerns from concern raised detection (ConcernRaisedPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1156,7 +1156,7 @@ it('excludes soft-deleted concerns from concern raised detection (ConcernRaisedP
     expect(StudentAlert::where('sisid', $studentWithDeletedConcern->sisid)->exists())->toBeFalse();
 });
 
-it('identifies students with concerns of various active classifications (ConcernRaisedPresetHandler)', function () {
+it('identifies students with concerns of various active classifications (ConcernRaisedPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1199,7 +1199,7 @@ it('identifies students with concerns of various active classifications (Concern
     ]);
 });
 
-it('handles students with mixed concern statuses (ConcernRaisedPresetHandler)', function () {
+it('handles students with mixed concern statuses (ConcernRaisedPresetHandler)', function (): void {
     $alertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1239,7 +1239,7 @@ it('handles students with mixed concern statuses (ConcernRaisedPresetHandler)', 
     expect(StudentAlert::where('sisid', $studentWithMixedConcerns->sisid)->count())->toBe(1);
 });
 
-it('correctly combines concern raised alerts with other alert types', function () {
+it('correctly combines concern raised alerts with other alert types', function (): void {
     $concernAlertConfig = AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::ConcernRaised])
         ->enabled()
@@ -1302,7 +1302,7 @@ it('correctly combines concern raised alerts with other alert types', function (
     expect(StudentAlert::where('sisid', $studentWithGradeOnly->sisid)->count())->toBe(1);
 });
 
-it('can identify student with low earned credit percentage (LowEarnedCreditPercentageHandler)', function () {
+it('can identify student with low earned credit percentage (LowEarnedCreditPercentageHandler)', function (): void {
     $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
         'minimum_earned_credit_percentage' => 26,
     ]);
@@ -1363,7 +1363,7 @@ it('can identify student with low earned credit percentage (LowEarnedCreditPerce
     expect(StudentAlert::where('sisid', $studentAboveThreshold->sisid)->exists())->toBeFalse();
 });
 
-it('does not alert students with zero units taken (LowEarnedCreditPercentageHandler)', function () {
+it('does not alert students with zero units taken (LowEarnedCreditPercentageHandler)', function (): void {
     $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
         'minimum_earned_credit_percentage' => 50,
     ]);
@@ -1390,7 +1390,7 @@ it('does not alert students with zero units taken (LowEarnedCreditPercentageHand
     expect(StudentAlert::where('sisid', $studentWithZeroTaken->sisid)->exists())->toBeFalse();
 });
 
-it('can aggregate multiple enrollment rows per student (LowEarnedCreditPercentageHandler)', function () {
+it('can aggregate multiple enrollment rows per student (LowEarnedCreditPercentageHandler)', function (): void {
     $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
         'minimum_earned_credit_percentage' => 60,
     ]);
@@ -1438,7 +1438,7 @@ it('can aggregate multiple enrollment rows per student (LowEarnedCreditPercentag
     expect(StudentAlert::where('sisid', $studentAboveWhenAggregated->sisid)->exists())->toBeFalse();
 });
 
-it('can exclude soft-deleted enrollments when calculating earned credit percentage (LowEarnedCreditPercentageHandler)', function () {
+it('can exclude soft-deleted enrollments when calculating earned credit percentage (LowEarnedCreditPercentageHandler)', function (): void {
     $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
         'minimum_earned_credit_percentage' => 60,
     ]);

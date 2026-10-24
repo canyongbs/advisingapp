@@ -38,7 +38,7 @@ use AdvisingApp\Notification\Models\DatabaseMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestDatabaseNotification;
 use App\Models\User;
 
-it('will create an EmailMessage for the notification', function () {
+it('will create an EmailMessage for the notification', function (): void {
     $notifiable = User::factory()->create();
 
     $notification = new TestDatabaseNotification();

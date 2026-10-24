@@ -213,7 +213,7 @@ class Kernel extends ConsoleKernel
             ->monitorName('Queue Metrics Calculate Baselines');
 
         // Registered last so it only records once a full schedule run has been dispatched; per-node, so never onOneServer().
-        $schedule->call(fn () => touch(storage_path('framework/schedule-heartbeat')))
+        $schedule->call(fn (): bool => touch(storage_path('framework/schedule-heartbeat')))
             ->everyMinute()
             ->name('Schedule Liveness Beacon')
             ->doNotMonitor()

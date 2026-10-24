@@ -68,7 +68,7 @@ class PrepareAiThreadEmailing implements ShouldQueue
             User::query()
                 ->whereKey($this->targetIds)
                 ->get()
-                ->each(function (User $recipient) {
+                ->each(function (User $recipient): void {
                     dispatch(new EmailAiThread($this->thread, $this->sender, $recipient));
 
                     $recipientName = $this->sender->is($recipient) ? 'yourself' : $recipient->name;
@@ -89,14 +89,14 @@ class PrepareAiThreadEmailing implements ShouldQueue
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Department $department) use ($sender) {
+                ->each(function (Department $department) use ($sender): void {
                     Bus::batch(
                         $department->users()->whereKeyNot($this->sender)->get()
-                            ->map(fn (User $recipient) => new EmailAiThread($this->thread, $this->sender, $recipient))
+                            ->map(fn (User $recipient): EmailAiThread => new EmailAiThread($this->thread, $this->sender, $recipient))
                             ->all(),
                     )
                         ->name("PrepareAiThreadEmailing for department {$department->id}")
-                        ->then(function () use ($sender, $department) {
+                        ->then(function () use ($sender, $department): void {
                             FilamentNotification::make()
                                 ->success()
                                 ->title("You emailed an AI chat to users in department {$department->name}.")

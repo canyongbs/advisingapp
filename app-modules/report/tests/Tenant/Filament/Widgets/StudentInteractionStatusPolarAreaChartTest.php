@@ -42,11 +42,11 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-beforeEach(function () {
+beforeEach(function (): void {
     InteractionStatus::query()->forceDelete();
 });
 
-it('checks student interaction status polar area chart', function () {
+it('checks student interaction status polar area chart', function (): void {
     $interactionsCount = rand(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
@@ -73,7 +73,7 @@ it('checks student interaction status polar area chart', function () {
         ->and($stats[$thirdIndex])->toEqual($interactionsCount);
 });
 
-it('returns correct interaction counts by status for students within the selected date range', function () {
+it('returns correct interaction counts by status for students within the selected date range', function (): void {
     $interactionsCount = rand(1, 10);
 
     $interactionStartDate = now()->subDays(90);
@@ -145,7 +145,7 @@ it('returns correct interaction counts by status for students within the selecte
         ->and($stats[$thirdIndex])->toEqual(0);
 });
 
-it('returns correct interaction counts by status for students based on group filter', function () {
+it('returns correct interaction counts by status for students based on group filter', function (): void {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 

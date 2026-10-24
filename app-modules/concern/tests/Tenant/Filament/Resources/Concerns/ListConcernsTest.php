@@ -47,7 +47,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Tests\asSuperAdmin;
 
-it('hides the delete bulk action for users without the delete permission', function () {
+it('hides the delete bulk action for users without the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('concern.view-any');
 
@@ -57,7 +57,7 @@ it('hides the delete bulk action for users without the delete permission', funct
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the delete bulk action for users with the delete permission', function () {
+it('shows the delete bulk action for users with the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('concern.view-any');
     $user->givePermissionTo('concern.*.delete');
@@ -68,7 +68,7 @@ it('shows the delete bulk action for users with the delete permission', function
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('does not create a concern for an archived student even when their id is submitted', function () {
+it('does not create a concern for an archived student even when their id is submitted', function (): void {
     asSuperAdmin();
 
     $archived = Student::factory()->create();

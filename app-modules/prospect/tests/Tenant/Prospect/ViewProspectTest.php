@@ -65,7 +65,7 @@ use function Tests\asSuperAdmin;
 
 // Permission Tests
 
-test('ViewProspect is gated with proper access control', function () {
+test('ViewProspect is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -88,7 +88,7 @@ test('ViewProspect is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('convert action visible when prospect is not converted to student', function () {
+test('convert action visible when prospect is not converted to student', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -107,7 +107,7 @@ test('convert action visible when prospect is not converted to student', functio
         ->assertActionHidden(DisassociateStudent::class);
 });
 
-test('disassociate student action visible when prospect is converted to student', function () {
+test('disassociate student action visible when prospect is converted to student', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $prospect = Prospect::factory()
@@ -128,7 +128,7 @@ test('disassociate student action visible when prospect is converted to student'
         ->assertActionHidden(ConvertToStudent::class);
 });
 
-test('convert prospect to student', function () {
+test('convert prospect to student', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -172,7 +172,7 @@ test('convert prospect to student', function () {
         ->email->toBe($student->email);
 });
 
-test('disassociate student from prospect', function () {
+test('disassociate student from prospect', function (): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -210,7 +210,7 @@ test('disassociate student from prospect', function () {
     expect($prospect->student()->exists())->toBeFalse();
 });
 
-test('can see prospect converted to student badge on', function (string $pages) {
+test('can see prospect converted to student badge on', function (string $pages): void {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -261,7 +261,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ManageProspectCareTeam::class,
     ]);
 
-test('renders the EngagementsRelationManager based on proper access', function () {
+test('renders the EngagementsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -312,7 +312,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
         ->assertSeeLivewire($relationManager);
 });
 
-test('renders the InteractionsRelationManager based on proper access', function () {
+test('renders the InteractionsRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -339,7 +339,7 @@ test('renders the InteractionsRelationManager based on proper access', function 
         ->assertSeeLivewire($relationManager);
 });
 
-test('renders the EngagementFilesRelationManager based on proper access', function () {
+test('renders the EngagementFilesRelationManager based on proper access', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
@@ -366,7 +366,7 @@ test('renders the EngagementFilesRelationManager based on proper access', functi
         ->assertSeeLivewire($relationManager);
 });
 
-test('renders the FormSubmissionsRelationManager based on Feature access', function () {
+test('renders the FormSubmissionsRelationManager based on Feature access', function (): void {
     $prospect = Prospect::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -396,7 +396,7 @@ test('renders the FormSubmissionsRelationManager based on Feature access', funct
         ->assertSeeLivewire($relationManager);
 });
 
-test('renders the EventsRelationManager based on Feature access', function () {
+test('renders the EventsRelationManager based on Feature access', function (): void {
     $prospect = Prospect::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);
@@ -426,7 +426,7 @@ test('renders the EventsRelationManager based on Feature access', function () {
         ->assertSeeLivewire($relationManager);
 });
 
-test('renders the ApplicationSubmissionsRelationManager based on Feature access', function () {
+test('renders the ApplicationSubmissionsRelationManager based on Feature access', function (): void {
     $prospect = Prospect::factory()->create();
 
     $licenseSettings = app(LicenseSettings::class);

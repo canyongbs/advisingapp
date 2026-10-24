@@ -133,7 +133,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
-            ->acceptsFile(function (File $file) {
+            ->acceptsFile(function (File $file): bool {
                 return in_array($file->mimeType, [
                     'image/png',
                     'image/jpeg',

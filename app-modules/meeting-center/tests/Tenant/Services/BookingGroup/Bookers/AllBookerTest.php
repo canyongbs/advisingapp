@@ -59,10 +59,10 @@ $officeHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-beforeEach(function () {
+beforeEach(function (): void {
     $mockDriver = Mockery::mock(CalendarInterface::class);
     /** @phpstan-ignore method.notFound */
-    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event): void {
         $event->updateQuietly([
             'provider_id' => 'mock-provider-id',
             'provider_uid' => 'mock-provider-uid',
@@ -71,14 +71,14 @@ beforeEach(function () {
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
-    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver): void {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
     });
 
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('filters available slots within lead time window', function () use ($officeHours) {
+it('filters available slots within lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -111,7 +111,7 @@ it('filters available slots within lead time window', function () use ($officeHo
     expect($blocks[4])->toBe(['start' => '2026-04-13T08:00:00+00:00', 'end' => '2026-04-13T20:00:00+00:00']);
 });
 
-it('rejects booking within effective lead time window', function () use ($officeHours) {
+it('rejects booking within effective lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -153,7 +153,7 @@ it('rejects booking within effective lead time window', function () use ($office
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside effective lead time window', function () use ($officeHours) {
+it('allows booking outside effective lead time window', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -192,7 +192,7 @@ it('allows booking outside effective lead time window', function () use ($office
     ]);
 });
 
-it('rejects booking beyond effective maximum lead time', function () use ($officeHours) {
+it('rejects booking beyond effective maximum lead time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -234,7 +234,7 @@ it('rejects booking beyond effective maximum lead time', function () use ($offic
     expect($response->json('message'))->toContain('60 days in advance');
 });
 
-it('allows booking within effective maximum lead time', function () use ($officeHours) {
+it('allows booking within effective maximum lead time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -279,7 +279,7 @@ it('allows booking within effective maximum lead time', function () use ($office
     ]);
 });
 
-it('rejects booking when a member has a calendar conflict', function () use ($officeHours) {
+it('rejects booking when a member has a calendar conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -324,7 +324,7 @@ it('rejects booking when a member has a calendar conflict', function () use ($of
     ]);
 });
 
-it('creates calendar event on meeting owner calendar with all members as attendees', function () use ($officeHours) {
+it('creates calendar event on meeting owner calendar with all members as attendees', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -374,7 +374,7 @@ it('creates calendar event on meeting owner calendar with all members as attende
     expect($calendarEvent->attendees)->toContain('visitor@example.com');
 });
 
-it('links the appointment to its calendar event via the FK', function () use ($officeHours) {
+it('links the appointment to its calendar event via the FK', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -414,7 +414,7 @@ it('links the appointment to its calendar event via the FK', function () use ($o
         ->and($appointment?->calendar_event_id)->toBe($calendarEvent?->id);
 });
 
-it('rejects booking when any one of three members has a calendar conflict', function () use ($officeHours) {
+it('rejects booking when any one of three members has a calendar conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -463,7 +463,7 @@ it('rejects booking when any one of three members has a calendar conflict', func
     ]);
 });
 
-it('rejects booking when a prior group appointment exists at the same time', function () use ($officeHours) {
+it('rejects booking when a prior group appointment exists at the same time', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -503,7 +503,7 @@ it('rejects booking when a prior group appointment exists at the same time', fun
     ]);
 });
 
-it('rejects booking when buffer time causes a conflict with a nearby event', function () use ($officeHours) {
+it('rejects booking when buffer time causes a conflict with a nearby event', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -545,7 +545,7 @@ it('rejects booking when buffer time causes a conflict with a nearby event', fun
     ]);
 });
 
-it('skips members without calendars during conflict detection', function () use ($officeHours) {
+it('skips members without calendars during conflict detection', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -585,7 +585,7 @@ it('skips members without calendars during conflict detection', function () use 
     ]);
 });
 
-it('allows a second booking adjacent to the first without conflict', function () use ($officeHours) {
+it('allows a second booking adjacent to the first without conflict', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -636,7 +636,7 @@ it('allows a second booking adjacent to the first without conflict', function ()
     expect(BookingGroupAppointment::count())->toBe(2);
 });
 
-it('excludes days when any member is out of office', function () use ($officeHours) {
+it('excludes days when any member is out of office', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -670,14 +670,14 @@ it('excludes days when any member is out of office', function () use ($officeHou
     assert(is_array($blocksData));
     $blocks = collect($blocksData);
 
-    $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
+    $apr7Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-07'));
     expect($apr7Blocks)->toBeEmpty();
 
-    $apr8Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-08'));
+    $apr8Blocks = $blocks->filter(fn (array $block): bool => str_contains($block['start'], '2026-04-08'));
     expect($apr8Blocks)->not->toBeEmpty();
 });
 
-it('rejects booking when a member is out of office on the requested date', function () use ($officeHours) {
+it('rejects booking when a member is out of office on the requested date', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
@@ -718,7 +718,7 @@ it('rejects booking when a member is out of office on the requested date', funct
     ]);
 });
 
-it('does not use member personal booking availability for group booking slots', function () use ($officeHours) {
+it('does not use member personal booking availability for group booking slots', function () use ($officeHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()
@@ -753,7 +753,7 @@ it('does not use member personal booking availability for group booking slots', 
     assert(is_array($blocksData));
     $blocks = collect($blocksData);
 
-    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-06T08:00'));
+    $mondayBlock = $blocks->first(fn (array $block): bool => str_contains($block['start'], '2026-04-06T08:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T20:00:00+00:00');
 });
@@ -798,7 +798,7 @@ $nzstHours = [
     'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
 ];
 
-it('computes slots correctly for BST positive offset crossing midnight (23:00-07:00 UTC)', function () use ($bstHours) {
+it('computes slots correctly for BST positive offset crossing midnight (23:00-07:00 UTC)', function () use ($bstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -818,17 +818,17 @@ it('computes slots correctly for BST positive offset crossing midnight (23:00-07
 
     // Monday Apr 6: group hours cross midnight, heuristic subDays start
     // Result should be Sun Apr 5 23:00 to Mon Apr 6 07:00 (8 hour block)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T23:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-05T23:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
 
     // Tuesday Apr 7: Mon Apr 6 23:00 to Tue Apr 7 07:00
-    $tuesdayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T23:00'));
+    $tuesdayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-06T23:00'));
     expect($tuesdayBlock)->not->toBeNull();
     expect($tuesdayBlock['end'])->toBe('2026-04-07T07:00:00+00:00');
 });
 
-it('does not produce Saturday slots when Saturday is disabled with BST offset', function () use ($bstHours) {
+it('does not produce Saturday slots when Saturday is disabled with BST offset', function () use ($bstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -845,7 +845,7 @@ it('does not produce Saturday slots when Saturday is disabled with BST offset', 
     $blocks = $action($bookingGroup, 2026, 4);
 
     // Saturday is disabled, so no block should represent Saturday (Fri 23:00 to Sat 07:00)
-    $saturdayBlocks = collect($blocks)->filter(function (array $block) {
+    $saturdayBlocks = collect($blocks)->filter(function (array $block): bool {
         $end = Carbon::parse($block['end']);
 
         return $end->isSaturday() && $end->hour === 7;
@@ -854,7 +854,7 @@ it('does not produce Saturday slots when Saturday is disabled with BST offset', 
     expect($saturdayBlocks)->toBeEmpty();
 });
 
-it('computes slots correctly for HST negative offset crossing midnight (18:00-03:00 UTC)', function () use ($hstHours) {
+it('computes slots correctly for HST negative offset crossing midnight (18:00-03:00 UTC)', function () use ($hstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -874,17 +874,17 @@ it('computes slots correctly for HST negative offset crossing midnight (18:00-03
 
     // Monday Apr 6: heuristic addDays end
     // Result should be Mon Apr 6 18:00 to Tue Apr 7 03:00 (9 hour block)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T18:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-06T18:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-07T03:00:00+00:00');
 
     // Friday Apr 10: Fri Apr 10 18:00 to Sat Apr 11 03:00
-    $fridayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-10T18:00'));
+    $fridayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-10T18:00'));
     expect($fridayBlock)->not->toBeNull();
     expect($fridayBlock['end'])->toBe('2026-04-11T03:00:00+00:00');
 });
 
-it('does not produce Saturday slots when Saturday is disabled with HST offset', function () use ($hstHours) {
+it('does not produce Saturday slots when Saturday is disabled with HST offset', function () use ($hstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -901,12 +901,12 @@ it('does not produce Saturday slots when Saturday is disabled with HST offset', 
     $blocks = $action($bookingGroup, 2026, 4);
 
     // Saturday is disabled, so no block starting on Sat 18:00
-    $saturdayBlocks = collect($blocks)->filter(fn ($block) => Carbon::parse($block['start'])->isSaturday() && str_contains($block['start'], 'T18:00'));
+    $saturdayBlocks = collect($blocks)->filter(fn ($block): bool => Carbon::parse($block['start'])->isSaturday() && str_contains($block['start'], 'T18:00'));
 
     expect($saturdayBlocks)->toBeEmpty();
 });
 
-it('computes slots correctly for AEST large positive offset crossing midnight (22:00-07:00 UTC)', function () use ($aestHours) {
+it('computes slots correctly for AEST large positive offset crossing midnight (22:00-07:00 UTC)', function () use ($aestHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -926,12 +926,12 @@ it('computes slots correctly for AEST large positive offset crossing midnight (2
 
     // Monday Apr 6: heuristic subDays start (startMinFromMidnight=120, endMinFromMidnight=420)
     // Result: Sun Apr 5 22:00 to Mon Apr 6 07:00 (9 hour block)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T22:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-05T22:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
 });
 
-it('computes slots correctly for NZST very large positive offset crossing midnight (20:00-05:00 UTC)', function () use ($nzstHours) {
+it('computes slots correctly for NZST very large positive offset crossing midnight (20:00-05:00 UTC)', function () use ($nzstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -951,12 +951,12 @@ it('computes slots correctly for NZST very large positive offset crossing midnig
 
     // Monday Apr 6: startMinFromMidnight=240, endMinFromMidnight=300, 240<=300 → subDay start
     // Result: Sun Apr 5 20:00 to Mon Apr 6 05:00 (9 hour block)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T20:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-05T20:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T05:00:00+00:00');
 });
 
-it('uses only group hours without intersecting member personal hours', function () use ($bstHours) {
+it('uses only group hours without intersecting member personal hours', function () use ($bstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     // Group has wide hours (22:00-08:00 UTC) and member has narrower BST hours (23:00-07:00 UTC)
@@ -991,12 +991,12 @@ it('uses only group hours without intersecting member personal hours', function 
 
     // Group hours 22:00-08:00 cross midnight, so for Monday: Sun Apr 5 22:00 to Mon Apr 6 08:00
     // Member has narrower office_hours (23:00-07:00) but they should NOT be intersected
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T22:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-05T22:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T08:00:00+00:00');
 });
 
-it('produces correct number of weekday blocks with midnight-crossing hours', function () use ($bstHours) {
+it('produces correct number of weekday blocks with midnight-crossing hours', function () use ($bstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()
@@ -1016,7 +1016,7 @@ it('produces correct number of weekday blocks with midnight-crossing hours', fun
     expect($blocks)->toHaveCount(22);
 });
 
-it('uses full group hours without intersecting member personal hours for non-crossing hours', function () use ($hstHours) {
+it('uses full group hours without intersecting member personal hours for non-crossing hours', function () use ($hstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     // Group has standard non-crossing hours that encompass the full day
@@ -1051,12 +1051,12 @@ it('uses full group hours without intersecting member personal hours for non-cro
     expect($blocks)->not->toBeEmpty();
 
     // Group hours 00:00-23:59 are used directly — member's narrower HST hours are NOT intersected
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T00:00'));
+    $mondayBlock = collect($blocks)->first(fn ($block): bool => str_contains($block['start'], '2026-04-06T00:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T23:59:00+00:00');
 });
 
-it('does not produce slots outside the month boundary with midnight-crossing hours', function () use ($bstHours) {
+it('does not produce slots outside the month boundary with midnight-crossing hours', function () use ($bstHours): void {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     $member = User::factory()

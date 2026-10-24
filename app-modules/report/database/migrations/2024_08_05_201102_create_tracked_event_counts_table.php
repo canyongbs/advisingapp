@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('tracked_event_counts', function (Blueprint $table) {
+        Schema::create('tracked_event_counts', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('type')->unique();
             $table->unsignedBigInteger('count')->default(0);

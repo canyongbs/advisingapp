@@ -64,7 +64,7 @@ $createSyncCalendar = function (array $overrides = []): Calendar {
         ], $overrides));
 };
 
-it('calls syncEvents on the correct driver with correct dates', function () use ($createSyncCalendar) {
+it('calls syncEvents on the correct driver with correct dates', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
     $start = now()->startOfMonth();
     $end = now()->endOfMonth();
@@ -72,7 +72,7 @@ it('calls syncEvents on the correct driver with correct dates', function () use 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('syncEvents') // @phpstan-ignore method.notFound
         ->once()
-        ->withArgs(function (Calendar $cal, DateTime $startArg, DateTime $endArg) use ($calendar, $start, $end) {
+        ->withArgs(function (Calendar $cal, DateTime $startArg, DateTime $endArg) use ($calendar, $start, $end): bool {
             return $cal->is($calendar)
                 && $startArg->format('Y-m-d H:i:s') === $start->toDateTimeString()
                 && $endArg->format('Y-m-d H:i:s') === $end->toDateTimeString();
@@ -93,7 +93,7 @@ it('calls syncEvents on the correct driver with correct dates', function () use 
 // Error handling
 // ──────────────────────────────────────────────────
 
-it('fails permanently on CouldNotRefreshToken', function () use ($createSyncCalendar) {
+it('fails permanently on CouldNotRefreshToken', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -112,13 +112,13 @@ it('fails permanently on CouldNotRefreshToken', function () use ($createSyncCale
     $fakeQueueJob = Mockery::mock(Job::class);
     $fakeQueueJob->shouldReceive('fail') // @phpstan-ignore method.notFound
         ->once()
-        ->withArgs(fn ($exception) => $exception instanceof CouldNotRefreshToken);
+        ->withArgs(fn ($exception): bool => $exception instanceof CouldNotRefreshToken);
     $job->job = $fakeQueueJob; // @phpstan-ignore assign.propertyType
 
     $job->handle();
 });
 
-it('releases the job with retryAfterSeconds on MicrosoftGraphRateLimited', function () use ($createSyncCalendar) {
+it('releases the job with retryAfterSeconds on MicrosoftGraphRateLimited', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -144,7 +144,7 @@ it('releases the job with retryAfterSeconds on MicrosoftGraphRateLimited', funct
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('rethrows MicrosoftGraphRateLimited after releasing', function () use ($createSyncCalendar) {
+it('rethrows MicrosoftGraphRateLimited after releasing', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -172,7 +172,7 @@ it('rethrows MicrosoftGraphRateLimited after releasing', function () use ($creat
 // Job configuration
 // ──────────────────────────────────────────────────
 
-it('has correct uniqueId format', function () use ($createSyncCalendar) {
+it('has correct uniqueId format', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
     $start = now()->startOfMonth();
     $end = now()->endOfMonth();
@@ -184,7 +184,7 @@ it('has correct uniqueId format', function () use ($createSyncCalendar) {
     expect($job->uniqueId())->toBe($expectedId);
 });
 
-it('uses CalendarRequestsConcurrencyLimit middleware', function () use ($createSyncCalendar) {
+it('uses CalendarRequestsConcurrencyLimit middleware', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
 
     $job = new SyncCalendarPeriod($calendar, now()->startOfMonth(), now()->endOfMonth());
@@ -195,7 +195,7 @@ it('uses CalendarRequestsConcurrencyLimit middleware', function () use ($createS
         ->and($middleware[0])->toBeInstanceOf(CalendarRequestsConcurrencyLimit::class);
 });
 
-it('has maxExceptions of 3', function () use ($createSyncCalendar) {
+it('has maxExceptions of 3', function () use ($createSyncCalendar): void {
     $calendar = $createSyncCalendar();
 
     $job = new SyncCalendarPeriod($calendar, now()->startOfMonth(), now()->endOfMonth());

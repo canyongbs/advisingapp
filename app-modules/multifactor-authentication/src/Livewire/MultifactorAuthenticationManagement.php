@@ -48,6 +48,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -63,12 +65,12 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public int $code;
 
-    public function render()
+    public function render(): Factory|View
     {
         return view('multifactor-authentication::livewire.multifactor-authentication-management');
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->user ??= Filament::getCurrentOrDefaultPanel()->auth()->user();
     }
@@ -77,7 +79,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
     {
         return PasswordButtonAction::make('enable')
             ->label('Enable')
-            ->action(function () {
+            ->action(function (): void {
                 $this->user->enableMultifactorAuthentication();
 
                 Notification::make()
@@ -93,7 +95,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             ->label('Disable')
             ->color('primary')
             ->requiresConfirmation()
-            ->action(function () {
+            ->action(function (): void {
                 $this->user->disableMultifactorAuthentication();
 
                 Notification::make()
@@ -118,7 +120,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     ->numeric()
                     ->required(),
             ])
-            ->action(function (array $data, Action $action, self $livewire) {
+            ->action(function (array $data, Action $action, self $livewire): void {
                 if (! app(MultifactorService::class)->verify(code: $data['code'])) {
                     $livewire->addError('mountedActionsData.0.code', 'The code you have entered is invalid.');
                     $action->halt();
@@ -156,7 +158,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
         return PasswordButtonAction::make('regenerateCodes')
             ->label('Regenerate Recovery Codes')
             ->requiresConfirmation()
-            ->action(function () {
+            ->action(function (): void {
                 $this->user->reGenerateRecoveryCodes();
 
                 Notification::make()
@@ -168,12 +170,19 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             });
     }
 
+    /**
+     * @return Collection<int, string>
+     */
     public function getRecoveryCodesProperty(): Collection
     {
-        return collect($this->user->multifactor_recovery_codes ?? []);
+        $recoveryCodes = $this->user->multifactor_recovery_codes ?? [];
+
+        assert(is_array($recoveryCodes));
+
+        return collect($recoveryCodes);
     }
 
-    public function getMultifactorQrCode()
+    public function getMultifactorQrCode(): string
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }
@@ -187,7 +196,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             Toggle::make('is_sso_enabled')
                 ->helperText('Your account is configured using enterprise single sign-on (SSO) so multifactor authentication is handled by
         your institution, rather than by this product.')
-                ->label(fn () => $this->user->is_external ? 'Product MFA Disabled' : 'SSO Enabled')
+                ->label(fn (): string => $this->user->is_external ? 'Product MFA Disabled' : 'SSO Enabled')
                 ->default(false)
                 ->disabled(),
         ];

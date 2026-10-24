@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorLineChart;
 
-it('returns correct monthly employee advisor exchanges data within the given date range', function () {
+it('returns correct monthly employee advisor exchanges data within the given date range', function (): void {
     $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
@@ -86,7 +86,7 @@ it('returns correct monthly employee advisor exchanges data within the given dat
         ->and(array_sum($data['datasets'][0]['data']))->toBe(8);
 });
 
-it('returns correct monthly employee advisor exchanges data without date filters', function () {
+it('returns correct monthly employee advisor exchanges data without date filters', function (): void {
     $employeeAdvisor1 = AiAssistant::factory()->create(['is_default' => false]);
     $employeeAdvisor2 = AiAssistant::factory()->create(['is_default' => false]);
 
@@ -121,7 +121,7 @@ it('returns correct monthly employee advisor exchanges data without date filters
         ->and(array_sum($data['datasets'][0]['data']))->toBe(11);
 });
 
-it('returns empty data when no employee advisor exchanges exist', function () {
+it('returns empty data when no employee advisor exchanges exist', function (): void {
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
     AiAssistantUse::factory()->count(3)->create([

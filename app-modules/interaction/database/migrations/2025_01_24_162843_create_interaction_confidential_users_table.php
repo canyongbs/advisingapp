@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('interaction_confidential_users', function (Blueprint $table) {
+        Schema::create('interaction_confidential_users', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->foreignUuid('interaction_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();

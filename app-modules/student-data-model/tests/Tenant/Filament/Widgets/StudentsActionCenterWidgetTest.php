@@ -40,17 +40,17 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('returns data', function () {})->todo();
+it('returns data', function (): void {})->todo();
 
-it('only shows the alerts count column when the early alert feature is active', function () {})->todo();
+it('only shows the alerts count column when the early alert feature is active', function (): void {})->todo();
 
-it('can filter for messages', function () {})->todo();
+it('can filter for messages', function (): void {})->todo();
 
-it('can filter for concerns', function () {})->todo();
+it('can filter for concerns', function (): void {})->todo();
 
-it('can filter for tasks', function () {})->todo();
+it('can filter for tasks', function (): void {})->todo();
 
-it('does not list archived students', function () {
+it('does not list archived students', function (): void {
     asSuperAdmin();
 
     $active = Student::factory()->count(2)->create();

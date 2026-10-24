@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will create and send an engagement immediately', function () {
+it('will create and send an engagement immediately', function (): void {
     Notification::fake();
 
     assertDatabaseCount(Engagement::class, 0);
@@ -80,7 +80,7 @@ it('will create and send an engagement immediately', function () {
     );
 });
 
-it('will create but not dispatch a scheduled engagement', function () {
+it('will create but not dispatch a scheduled engagement', function (): void {
     Notification::fake();
 
     assertDatabaseCount(Engagement::class, 0);
@@ -115,7 +115,7 @@ it('will create but not dispatch a scheduled engagement', function () {
     );
 });
 
-it('will create a marketing engagement with email_type set to marketing', function () {
+it('will create a marketing engagement with email_type set to marketing', function (): void {
     Notification::fake();
 
     $data = CreateEngagementRequestFactory::new()->email()->create();

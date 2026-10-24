@@ -80,7 +80,7 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
 
         $ethnicityData = $shouldBypassCache
             ? $this->getEthnicityData($startDate, $endDate, $groupId)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_by_ethnicity', now()->addHours(24), function () {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('student_by_ethnicity', now()->addHours(24), function (): Collection {
                 return $this->getEthnicityData();
             });
 
@@ -141,7 +141,7 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
                 DB::raw('COUNT(*) as count')
             )
             ->when(
-                $startDate && $endDate,
+                $startDate instanceof Carbon && $endDate instanceof Carbon,
                 fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
             )
             ->when(
@@ -150,7 +150,7 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
             )
             ->groupBy('ethnicity_lower')
             ->orderBy('ethnicity_lower')
-            ->get()->map(function (Student $student) {
+            ->get()->map(function (Student $student): Student {
                 $student['bg_color'] = $this->getRgbString();
 
                 return $student;

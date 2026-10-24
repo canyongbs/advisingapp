@@ -41,7 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
-it('can be sent', function () {
+it('can be sent', function (): void {
     Notification::fake();
 
     $user = User::factory()->licensed(LicenseType::cases())->create();

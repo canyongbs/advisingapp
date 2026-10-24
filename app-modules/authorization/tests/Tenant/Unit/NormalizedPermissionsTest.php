@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Exceptions;
 
 use function Pest\Laravel\withoutExceptionHandling;
 
-test('All permissions are normalized', function (string $guard) {
+test('All permissions are normalized', function (string $guard): void {
     Exceptions::fake();
 
     $permissionsMatrix = PermissionsMatrix::make('test')

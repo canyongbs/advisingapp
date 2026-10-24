@@ -42,9 +42,15 @@ use Illuminate\Support\ServiceProvider;
 
 class IntegrationMicrosoftClarityServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationMicrosoftClarityPlugin()));
+        Panel::configureUsing(function (Panel $panel): void {
+            if ($panel->getId() !== 'admin') {
+                return;
+            }
+
+            $panel->plugin(new IntegrationMicrosoftClarityPlugin());
+        });
     }
 
     public function boot(): void {}

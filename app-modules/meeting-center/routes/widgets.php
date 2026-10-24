@@ -51,13 +51,13 @@ Route::middleware([
 ])
     ->prefix('widgets/event-registration')
     ->name('widgets.event-registration.')
-    ->group(function () {
+    ->group(function (): void {
         Route::prefix('api/{event}')
             ->name('api.')
             ->middleware([
                 EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
             ])
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [EventRegistrationWidgetController::class, 'assets'])
                     ->name('assets');
 
@@ -95,11 +95,11 @@ Route::middleware([
 ])
     ->prefix('widgets/booking-page')
     ->name('widgets.booking-page.')
-    ->group(function () {
+    ->group(function (): void {
         // Personal booking API routes
         Route::prefix('personal/api/{slug}')
             ->name('personal.api.')
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [PersonalBookingPageWidgetController::class, 'assets'])
                     ->name('assets');
 
@@ -116,7 +116,7 @@ Route::middleware([
         // Group booking API routes
         Route::prefix('group/api/{slug}')
             ->name('group.api.')
-            ->group(function () {
+            ->group(function (): void {
                 Route::get('/', [GroupBookingPageWidgetController::class, 'assets'])
                     ->name('assets');
 

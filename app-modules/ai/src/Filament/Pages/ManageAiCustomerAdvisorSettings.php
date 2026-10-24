@@ -86,7 +86,7 @@ class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],

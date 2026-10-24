@@ -66,12 +66,12 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
         $this->authorize(fn (): bool => auth()->user()->can('create', CareTeam::class))
             ->label('New')
             ->slideOver()
-            ->modalHeading(fn () => "Add Users to {$this->getLivewire()->getOwnerRecord()->display_name}'s Care Team")
+            ->modalHeading(fn (): string => "Add Users to {$this->getLivewire()->getOwnerRecord()->display_name}'s Care Team")
             ->modalSubmitActionLabel('Add')
             ->modalWidth(Width::FourExtraLarge)
             ->attachAnother(false)
             ->color('primary')
-            ->steps(function () {
+            ->steps(function (): array {
                 $careTeamRoleExists = CareTeamRole::where(
                     'type',
                     match (true) {
@@ -86,8 +86,8 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                     Step::make('Add Care Team Members')
                         ->schema([
                             Repeater::make('careTeams')
-                                ->label(fn () => "Please add one or more staff members to the care team for the {$this->getLivewire()->getOwnerRecord()->getMorphClass()} {$this->getLivewire()->getOwnerRecord()->display_name}")
-                                ->table(function () use ($careTeamRoleExists) {
+                                ->label(fn (): string => "Please add one or more staff members to the care team for the {$this->getLivewire()->getOwnerRecord()->getMorphClass()} {$this->getLivewire()->getOwnerRecord()->display_name}")
+                                ->table(function () use ($careTeamRoleExists): array {
                                     $columns = [
                                         TableColumn::make('User')
                                             ->markAsRequired(),
@@ -100,7 +100,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                                     return $columns;
                                 })
                                 ->compact()
-                                ->schema(function () use ($careTeamRoleExists) {
+                                ->schema(function () use ($careTeamRoleExists): array {
                                     return [
                                         Select::make('user_id')
                                             ->searchable()
@@ -162,12 +162,12 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                             ViewField::make('summary')
                                 ->view(
                                     'filament.forms.components.care-teams.summary',
-                                    fn (Get $get) => ['careTeams' => $get('careTeams'), 'educatable' => $this->getLivewire()->getOwnerRecord()]
+                                    fn (Get $get): array => ['careTeams' => $get('careTeams'), 'educatable' => $this->getLivewire()->getOwnerRecord()]
                                 ),
                         ]),
                 ];
             })
-            ->action(function (array $data) {
+            ->action(function (array $data): void {
                 try {
                     DB::beginTransaction();
 
@@ -192,7 +192,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
             })
             ->modalSubmitActionLabel('Confirm')
             ->successNotificationTitle(
-                fn (array $data) => count($data['careTeams']) . ' ' . Str::plural('User', count($data['careTeams'])) . " added to {$this->getLivewire()->getOwnerRecord()->display_name}'s Care Team"
+                fn (array $data): string => count($data['careTeams']) . ' ' . Str::plural('User', count($data['careTeams'])) . " added to {$this->getLivewire()->getOwnerRecord()->display_name}'s Care Team"
             );
     }
 

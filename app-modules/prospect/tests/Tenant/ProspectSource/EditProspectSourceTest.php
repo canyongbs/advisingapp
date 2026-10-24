@@ -46,7 +46,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
-test('A successful action on the EditProspectSource page', function () {
+test('A successful action on the EditProspectSource page', function (): void {
     $prospectSource = ProspectSource::factory()->create();
 
     asSuperAdmin()
@@ -72,7 +72,7 @@ test('A successful action on the EditProspectSource page', function () {
     assertEquals($editRequest['name'], $prospectSource->fresh()->name);
 });
 
-test('EditProspectSource requires valid data', function (EditProspectSourceRequestFactory $data, array $errors) {
+test('EditProspectSource requires valid data', function (EditProspectSourceRequestFactory $data, array $errors): void {
     asSuperAdmin();
 
     $prospectSource = ProspectSource::factory()->create();
@@ -97,7 +97,7 @@ test('EditProspectSource requires valid data', function (EditProspectSourceReque
 
 // Permission Tests
 
-test('EditProspectSource is gated with proper access control', function () {
+test('EditProspectSource is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectSource = ProspectSource::factory()->create();

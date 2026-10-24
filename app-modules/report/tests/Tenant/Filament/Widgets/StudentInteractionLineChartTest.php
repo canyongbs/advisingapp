@@ -43,7 +43,7 @@ use Carbon\Carbon;
 
 use function Pest\Laravel\travelTo;
 
-it('returns correct data when today is a safe mid-month date', function () {
+it('returns correct data when today is a safe mid-month date', function (): void {
     travelTo(Carbon::parse('2024-12-15'));
 
     Student::factory()
@@ -77,7 +77,7 @@ it('returns correct data when today is a safe mid-month date', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data when today falls on an overflow-risk date', function (Carbon $testDate) {
+it('returns correct data when today falls on an overflow-risk date', function (Carbon $testDate): void {
     travelTo($testDate);
 
     Student::factory()
@@ -116,7 +116,7 @@ it('returns correct data when today falls on an overflow-risk date', function (C
         '29th of month' => [Carbon::parse('2024-08-29')],
     ]);
 
-it('returns correct data when today is Feb 28th in a non-leap year', function () {
+it('returns correct data when today is Feb 28th in a non-leap year', function (): void {
     travelTo(Carbon::parse('2025-02-28'));
 
     Student::factory()
@@ -146,7 +146,7 @@ it('returns correct data when today is Feb 28th in a non-leap year', function ()
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data when today is Feb 29th in a leap year', function () {
+it('returns correct data when today is Feb 29th in a leap year', function (): void {
     travelTo(Carbon::parse('2024-02-29'));
 
     Student::factory()
@@ -176,7 +176,7 @@ it('returns correct data when today is Feb 29th in a leap year', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data when filtered by standard days', function () {
+it('returns correct data when filtered by standard days', function (): void {
     Student::factory()
         ->has(
             Interaction::factory()->count(11)->sequence(
@@ -211,7 +211,7 @@ it('returns correct data when filtered by standard days', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data when filtered by non-standard days', function () {
+it('returns correct data when filtered by non-standard days', function (): void {
     Student::factory()
         ->has(
             Interaction::factory()->count(5)->sequence(
@@ -238,7 +238,7 @@ it('returns correct data when filtered by non-standard days', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for student interactions based on group filter', function () {
+it('returns correct data for student interactions based on group filter', function (): void {
     travelTo(Carbon::parse('2024-12-15'));
 
     $group = Group::factory()->create([

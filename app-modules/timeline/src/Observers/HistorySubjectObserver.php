@@ -45,7 +45,7 @@ class HistorySubjectObserver
         $model->processHistory(
             'created',
             collect(),
-            collect($model->getAttributes())->map(fn ($value) => (string) $value),
+            collect($model->getAttributes())->map(fn ($value): string => (string) $value),
         );
     }
 

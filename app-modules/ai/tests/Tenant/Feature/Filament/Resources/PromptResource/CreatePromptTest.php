@@ -60,7 +60,7 @@ $permissions = [
     'prompt.*.view',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -69,7 +69,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses
     ));
@@ -78,7 +78,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -88,7 +88,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can create a record', function () use ($licenses, $permissions) {
+it('can create a record', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -109,7 +109,7 @@ it('can create a record', function () use ($licenses, $permissions) {
     assertDatabaseHas(Prompt::class, $record->toArray());
 });
 
-it('confidential_prompt_users UserSelect does not show admin users in options by default', function () use ($licenses, $permissions) {
+it('confidential_prompt_users UserSelect does not show admin users in options by default', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -127,7 +127,7 @@ it('confidential_prompt_users UserSelect does not show admin users in options by
         });
 });
 
-it('confidential_prompt_users UserSelect shows all users when filter_admins_from_selection config is false', function () use ($licenses, $permissions) {
+it('confidential_prompt_users UserSelect shows all users when filter_admins_from_selection config is false', function () use ($licenses, $permissions): void {
     Config::set('app.filter_admins_from_selection', false);
 
     actingAs(user(
@@ -145,7 +145,7 @@ it('confidential_prompt_users UserSelect shows all users when filter_admins_from
         });
 });
 
-it('prevents creating a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+it('prevents creating a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -164,7 +164,7 @@ it('prevents creating a prompt with a case-insensitively duplicate title', funct
         ->assertHasFormErrors(['title' => 'unique']);
 });
 
-it('allows reusing the title of a soft-deleted prompt', function () use ($licenses, $permissions) {
+it('allows reusing the title of a soft-deleted prompt', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -190,7 +190,7 @@ it('allows reusing the title of a soft-deleted prompt', function () use ($licens
     ]);
 });
 
-it('allows creating a prompt with the same title as one in another type', function () use ($licenses, $permissions) {
+it('allows creating a prompt with the same title as one in another type', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions

@@ -83,7 +83,7 @@ class StateMachine
             ->pluck('to');
     }
 
-    public function transitionTo(Model $relatedModel, BackedEnum|string $newState, array $additionalData = [])
+    public function transitionTo(Model $relatedModel, BackedEnum|string $newState, array $additionalData = []): void
     {
         $newStateVal = $newState;
 
@@ -164,7 +164,7 @@ class StateMachine
         return $this->model->{$this->state}->value;
     }
 
-    private function checkValidEnum(BackedEnum $state)
+    private function checkValidEnum(BackedEnum $state): void
     {
         throw_unless($state instanceof $this->enumClass, UnknownState::make());
     }

@@ -78,7 +78,7 @@ class PopulationGroupSelector
 
                 match ($groupOwnership) {
                     GroupOwnership::Mine => $query->where('user_id', auth()->id()),
-                    GroupOwnership::Department => $query->whereHas('user', function (Builder $query) use ($currentUserDepartmentId) {
+                    GroupOwnership::Department => $query->whereHas('user', function (Builder $query) use ($currentUserDepartmentId): void {
                         $query->when(
                             filled($currentUserDepartmentId),
                             fn (Builder $query) => $query->where('team_id', $currentUserDepartmentId),
@@ -91,7 +91,7 @@ class PopulationGroupSelector
                 return $query->orderBy('name')->pluck('name', 'id');
             })
             ->rule(function (Get $get, ?Campaign $record): Closure {
-                return function (string $attribute, mixed $value, Closure $fail) use ($get, $record) {
+                return function (string $attribute, mixed $value, Closure $fail) use ($get, $record): void {
                     $populationType = self::authoritativePopulationType($record, $get);
 
                     if (blank($populationType) || blank($value)) {
@@ -115,7 +115,7 @@ class PopulationGroupSelector
         return [
             ToggleButtons::make('population_type')
                 ->label('Population Type')
-                ->options(collect($availablePopulationTypes)->mapWithKeys(fn (GroupModel $type) => [
+                ->options(collect($availablePopulationTypes)->mapWithKeys(fn (GroupModel $type): array => [
                     $type->value => Str::ucfirst($type->getPluralLabel()),
                 ]))
                 ->inline()
@@ -123,16 +123,16 @@ class PopulationGroupSelector
                 ->dehydrated(false)
                 ->required()
                 ->hidden(count($availablePopulationTypes) <= 1)
-                ->disabled(fn (?Campaign $record) => $record !== null)
-                ->helperText(fn (?Campaign $record) => $record !== null ? 'The population type cannot be changed once a campaign has been created.' : null)
-                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set(
+                ->disabled(fn (?Campaign $record): bool => $record !== null)
+                ->helperText(fn (?Campaign $record): ?string => $record !== null ? 'The population type cannot be changed once a campaign has been created.' : null)
+                ->afterStateHydrated(fn (Set $set, ?Campaign $record): mixed => $set(
                     'population_type',
                     self::defaultPopulationType($record, $availablePopulationTypes),
                 ))
-                ->afterStateUpdated(fn (Set $set) => $set('segment_id', null)),
+                ->afterStateUpdated(fn (Set $set): mixed => $set('segment_id', null)),
             ToggleButtons::make('group_ownership')
                 ->label('Group Ownership')
-                ->options(function () {
+                ->options(function (): array {
                     $options = [
                         GroupOwnership::Mine->value => GroupOwnership::Mine->getLabel(),
                         GroupOwnership::Department->value => GroupOwnership::Department->getLabel(),
@@ -148,8 +148,8 @@ class PopulationGroupSelector
                 ->live()
                 ->dehydrated(false)
                 ->required()
-                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set('group_ownership', self::defaultGroupOwnership($record)))
-                ->afterStateUpdated(fn (Set $set) => $set('segment_id', null)),
+                ->afterStateHydrated(fn (Set $set, ?Campaign $record): mixed => $set('group_ownership', self::defaultGroupOwnership($record)))
+                ->afterStateUpdated(fn (Set $set): mixed => $set('segment_id', null)),
             $segmentIdField,
         ];
     }

@@ -56,7 +56,7 @@ $permissions = [
     'settings.*.view',
 ];
 
-it('cannot render without a license', function () use ($permissions) {
+it('cannot render without a license', function () use ($permissions): void {
     actingAs(user(
         permissions: $permissions
     ));
@@ -65,7 +65,7 @@ it('cannot render without a license', function () use ($permissions) {
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without permissions', function () use ($licenses): void {
     actingAs(user(
         licenses: $licenses,
     ));
@@ -74,7 +74,7 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permissions) {
+it('can render', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -84,7 +84,7 @@ it('can render', function () use ($licenses, $permissions) {
         ->assertSuccessful();
 });
 
-it('can list records', function () use ($licenses, $permissions) {
+it('can list records', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -103,7 +103,7 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertCanSeeTableRecords($records);
 });
 
-it('hides the bulk delete action from a user without the delete permission', function () use ($licenses, $permissions) {
+it('hides the bulk delete action from a user without the delete permission', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
@@ -116,7 +116,7 @@ it('hides the bulk delete action from a user without the delete permission', fun
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
-it('shows the bulk delete action to a user with the delete permission', function () use ($licenses, $permissions) {
+it('shows the bulk delete action to a user with the delete permission', function () use ($licenses, $permissions): void {
     actingAs(user(
         licenses: $licenses,
         permissions: [...$permissions, 'settings.*.delete']

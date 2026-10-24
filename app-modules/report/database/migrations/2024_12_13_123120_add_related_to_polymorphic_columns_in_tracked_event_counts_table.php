@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('tracked_event_counts', function (Blueprint $table) {
+        Schema::table('tracked_event_counts', function (Blueprint $table): void {
             $table->nullableUuidMorphs('related_to');
             $table->dropUnique(['type']);
             $table->uniqueIndex(['related_to_type', 'related_to_id', 'type'])->nullsNotDistinct();
@@ -50,7 +50,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('tracked_event_counts', function (Blueprint $table) {
+        Schema::table('tracked_event_counts', function (Blueprint $table): void {
             $table->dropUniqueIndex(['related_to_type', 'related_to_id', 'type']);
             $table->dropColumn(['related_to_type', 'related_to_id']);
             $table->unique(['type']);

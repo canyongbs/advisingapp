@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('application_steps', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('application_steps', function (Blueprint $table): void {
                 $table->text('description')->nullable();
             });
         });
@@ -51,8 +51,8 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('application_steps', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('application_steps', function (Blueprint $table): void {
                 $table->dropColumn('description');
             });
         });

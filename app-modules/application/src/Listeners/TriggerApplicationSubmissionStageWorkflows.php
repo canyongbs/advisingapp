@@ -103,7 +103,7 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
         try {
             DB::beginTransaction();
 
-            $matchingTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($submission) {
+            $matchingTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($submission): void {
                 if (! $workflowTrigger->workflow?->is_enabled) {
                     return;
                 }
@@ -115,7 +115,7 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
 
                 $previousRunStep = null;
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($workflowRun, &$previousRunStep) {
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($workflowRun, &$previousRunStep): void {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
                     $executeAt = null;

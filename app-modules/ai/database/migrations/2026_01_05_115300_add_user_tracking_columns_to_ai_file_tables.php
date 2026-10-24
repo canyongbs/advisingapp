@@ -42,13 +42,13 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistant_files', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('ai_assistant_files', function (Blueprint $table): void {
                 $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
             });
 
-            Schema::table('qna_advisor_files', function (Blueprint $table) {
+            Schema::table('qna_advisor_files', function (Blueprint $table): void {
                 $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
             });
@@ -57,13 +57,13 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistant_files', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::table('ai_assistant_files', function (Blueprint $table): void {
                 $table->dropConstrainedForeignId('created_by_id');
                 $table->dropConstrainedForeignId('last_updated_by_id');
             });
 
-            Schema::table('qna_advisor_files', function (Blueprint $table) {
+            Schema::table('qna_advisor_files', function (Blueprint $table): void {
                 $table->dropConstrainedForeignId('created_by_id');
                 $table->dropConstrainedForeignId('last_updated_by_id');
             });

@@ -41,7 +41,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('workflow_engagement_sms_details', function (Blueprint $table) {
+        Schema::create('workflow_engagement_sms_details', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
             $table->string('channel');

@@ -53,7 +53,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the group', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior): void {
     Bus::fake();
 
     /** @var Group $group */
@@ -117,7 +117,7 @@ it('will execute appropriately on each educatable in the group', function (array
 
     $campaignActionEducatable->related
         // @phpstan-ignore argument.type
-        ->each(function (CampaignActionEducatableRelated $related) use ($users) {
+        ->each(function (CampaignActionEducatableRelated $related) use ($users): void {
             $relatedRelated = $related->related;
 
             expect($relatedRelated)->toBeInstanceOf(Subscription::class);

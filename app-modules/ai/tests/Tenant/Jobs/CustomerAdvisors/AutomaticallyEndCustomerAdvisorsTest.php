@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Support\Facades\Event;
 
-it('will only run for advisors that have had no activity in over an hour', function () {
+it('will only run for advisors that have had no activity in over an hour', function (): void {
     $thread = CustomerAdvisorThread::factory()
         ->has(
             CustomerAdvisorMessage::factory()->state([
@@ -59,7 +59,7 @@ it('will only run for advisors that have had no activity in over an hour', funct
     expect($thread->finished_at)->not()->toBeNull();
 });
 
-it('will not run for advisors that have had activity within the last hour', function () {
+it('will not run for advisors that have had activity within the last hour', function (): void {
     $thread = CustomerAdvisorThread::factory()
         ->has(
             CustomerAdvisorMessage::factory()->state([
@@ -78,7 +78,7 @@ it('will not run for advisors that have had activity within the last hour', func
     expect($thread->finished_at)->toBeNull();
 });
 
-it('dispatches websocket event when it automatically finishes a thread', function () {
+it('dispatches websocket event when it automatically finishes a thread', function (): void {
     Event::fake();
 
     CustomerAdvisorThread::factory()

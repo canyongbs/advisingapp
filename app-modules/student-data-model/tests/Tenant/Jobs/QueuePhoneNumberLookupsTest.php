@@ -49,7 +49,7 @@ use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Facades\Bus;
 
-it('queues a lookup for student and prospect numbers that have no existing result', function () {
+it('queues a lookup for student and prospect numbers that have no existing result', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $student = Student::factory()->create();
@@ -90,13 +90,13 @@ it('queues a lookup for student and prospect numbers that have no existing resul
 
     app()->call([new QueuePhoneNumberLookups(), 'handle']);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530001'))->toHaveCount(1)
-        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530003'))->toHaveCount(1)
-        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530002'))->toHaveCount(0)
-        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530004'))->toHaveCount(0);
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530001'))->toHaveCount(1)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530003'))->toHaveCount(1)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530002'))->toHaveCount(0)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530004'))->toHaveCount(0);
 });
 
-it('does not scan when the lookup provider is not configured', function () {
+it('does not scan when the lookup provider is not configured', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     $student = Student::factory()->create();
@@ -113,11 +113,11 @@ it('does not scan when the lookup provider is not configured', function () {
 
     app()->call([new QueuePhoneNumberLookups(), 'handle']);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530009'))
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530009'))
         ->toHaveCount(0);
 });
 
-it('dispatches the aggregate job when a SIS sync completes', function () {
+it('dispatches the aggregate job when a SIS sync completes', function (): void {
     Bus::fake([QueuePhoneNumberLookups::class]);
 
     SisSyncCompleted::dispatch();
@@ -125,7 +125,7 @@ it('dispatches the aggregate job when a SIS sync completes', function () {
     Bus::assertDispatched(QueuePhoneNumberLookups::class);
 });
 
-it('dispatches the aggregate job when a prospect import completes', function () {
+it('dispatches the aggregate job when a prospect import completes', function (): void {
     Bus::fake([QueuePhoneNumberLookups::class]);
 
     $import = new Import();
@@ -136,7 +136,7 @@ it('dispatches the aggregate job when a prospect import completes', function () 
     Bus::assertDispatched(QueuePhoneNumberLookups::class);
 });
 
-it('does not dispatch the aggregate job for an unrelated import', function () {
+it('does not dispatch the aggregate job for an unrelated import', function (): void {
     Bus::fake([QueuePhoneNumberLookups::class]);
 
     $import = new Import();
@@ -147,7 +147,7 @@ it('does not dispatch the aggregate job for an unrelated import', function () {
     Bus::assertNotDispatched(QueuePhoneNumberLookups::class);
 });
 
-it('does not queue a lookup for phone numbers belonging to soft-deleted records', function () {
+it('does not queue a lookup for phone numbers belonging to soft-deleted records', function (): void {
     Bus::fake([LookupPhoneNumber::class]);
 
     // An active record — its number should be queued.
@@ -182,7 +182,7 @@ it('does not queue a lookup for phone numbers belonging to soft-deleted records'
 
     app()->call([new QueuePhoneNumberLookups(), 'handle']);
 
-    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530005'))->toHaveCount(1)
-        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530006'))->toHaveCount(0)
-        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530007'))->toHaveCount(0);
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530005'))->toHaveCount(1)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530006'))->toHaveCount(0)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job): bool => $job->phoneNumber === '+16502530007'))->toHaveCount(0);
 });

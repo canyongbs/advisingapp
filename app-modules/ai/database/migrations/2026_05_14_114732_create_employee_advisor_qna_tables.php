@@ -42,8 +42,8 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('employee_advisor_categories', function (Blueprint $table) {
+        DB::transaction(function (): void {
+            Schema::create('employee_advisor_categories', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
                 $table->string('name');
                 $table->text('description');
@@ -54,7 +54,7 @@ return new class () extends Migration {
                 $table->unique(['employee_advisor_id', 'name']);
             });
 
-            Schema::create('employee_advisor_questions', function (Blueprint $table) {
+            Schema::create('employee_advisor_questions', function (Blueprint $table): void {
                 $table->uuid('id')->primary();
                 $table->string('question');
                 $table->text('answer');
@@ -67,7 +67,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             Schema::dropIfExists('employee_advisor_questions');
             Schema::dropIfExists('employee_advisor_categories');
         });

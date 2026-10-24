@@ -48,7 +48,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('renders the Import Programs Action based on proper access', function () {
+it('renders the Import Programs Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -92,7 +92,7 @@ it('renders the Import Programs Action based on proper access', function () {
         ->assertTableActionVisible(ImportAction::class);
 });
 
-it('renders the Create Program Action based on proper access', function () {
+it('renders the Create Program Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -136,7 +136,7 @@ it('renders the Create Program Action based on proper access', function () {
         ->assertTableActionVisible(CreateAction::class);
 });
 
-it('renders the Edit Program Table Action based on proper access', function () {
+it('renders the Edit Program Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -180,7 +180,7 @@ it('renders the Edit Program Table Action based on proper access', function () {
         ->assertTableActionVisible(EditAction::class, $student->programs->first());
 });
 
-it('renders the Delete Program Table Action based on proper access', function () {
+it('renders the Delete Program Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -224,7 +224,7 @@ it('renders the Delete Program Table Action based on proper access', function ()
         ->assertTableActionVisible(DeleteAction::class, $student->programs->first());
 });
 
-it('renders the Delete Bulk Programs Table Action based on proper access', function () {
+it('renders the Delete Bulk Programs Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()

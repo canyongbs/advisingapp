@@ -78,7 +78,7 @@ class AiAssistantForm
                     ->dehydratedWhenHidden()
                     ->default(AiAssistantApplication::getDefault())
                     ->live()
-                    ->afterStateUpdated(fn (Set $set, $state) => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
+                    ->afterStateUpdated(fn (Set $set, $state): mixed => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
                     ->required()
                     ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
@@ -86,7 +86,7 @@ class AiAssistantForm
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
-                    ->options(fn (AiModel|string|null $state) => array_unique([
+                    ->options(fn (AiModel|string|null $state): array => array_unique([
                         ...AiModelApplicabilityFeature::EmployeeAdvisors->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
@@ -112,10 +112,6 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
-                UserSelect::make('created_by_id')
-                    ->label('Created By')
-                    ->relationship('createdBy', 'name')
-                    ->visible(auth()->user()->isSuperAdmin()),
                 Section::make('Institutional Data')
                     ->columns(2)
                     ->schema([
@@ -158,14 +154,14 @@ class AiAssistantForm
                             ->label('Users')
                             ->multiple()
                             ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         Select::make('ai_assistant_confidential_departments')
                             ->relationship('confidentialAccessDepartments', 'name')
                             ->preload()
                             ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
+                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
                     ]),
             ]);
     }

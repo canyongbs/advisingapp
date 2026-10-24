@@ -61,7 +61,7 @@ testResourceRequiresPermissionForAccess(
     method: 'index'
 );
 
-test('ListResourceHubArticles is gated with proper feature access control', function () {
+test('ListResourceHubArticles is gated with proper feature access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->resourceHub = false;
@@ -87,7 +87,7 @@ test('ListResourceHubArticles is gated with proper feature access control', func
     )->assertSuccessful();
 });
 
-test('ListResourceHubArticles is gated with proper license access control', function () {
+test('ListResourceHubArticles is gated with proper license access control', function (): void {
     $settings = app(LicenseSettings::class);
 
     // When the feature is enabled
@@ -117,7 +117,7 @@ test('ListResourceHubArticles is gated with proper license access control', func
     )->assertSuccessful();
 });
 
-test('The DeleteBulkAction is hidden without the delete permission and visible with it', function () {
+test('The DeleteBulkAction is hidden without the delete permission and visible with it', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('resource_hub_article.view-any');
@@ -135,7 +135,7 @@ test('The DeleteBulkAction is hidden without the delete permission and visible w
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-test('The Duplicate (ReplicateAction) row action is hidden without the create permission and visible with it', function () {
+test('The Duplicate (ReplicateAction) row action is hidden without the create permission and visible with it', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('resource_hub_article.view-any');

@@ -37,10 +37,10 @@
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 
-describe('known overflow-date issues', function () {
+describe('known overflow-date issues', function (): void {
     beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-    it('returns correct cumulative prospect counts grouped by month within the given date range', function () {
+    it('returns correct cumulative prospect counts grouped by month within the given date range', function (): void {
         $startDate = now()->subMonthsNoOverflow(3);
         $endDate = now()->subDays(5);
 
@@ -63,7 +63,7 @@ describe('known overflow-date issues', function () {
     });
 });
 
-it('counts a prospect created before the reported period in every bucket', function () {
+it('counts a prospect created before the reported period in every bucket', function (): void {
     Prospect::factory()->create(['created_at' => '2026-01-10']);
 
     $widget = new ProspectReportLineChart();

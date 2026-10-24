@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('application_submission_states', function (Blueprint $table) {
+        Schema::create('application_submission_states', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('classification');
             $table->string('name');

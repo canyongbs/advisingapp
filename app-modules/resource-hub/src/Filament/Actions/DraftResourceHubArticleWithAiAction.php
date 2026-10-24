@@ -49,6 +49,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Vite;
 
 class DraftResourceHubArticleWithAiAction extends Action
@@ -62,7 +63,7 @@ class DraftResourceHubArticleWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->slideOver()
-            ->modalContent(fn (Page $livewire) => view('resource-hub::filament.actions.draft-with-ai-modal-content-resource-hub', [
+            ->modalContent(fn (Page $livewire): Factory|\Illuminate\Contracts\View\View => view('resource-hub::filament.actions.draft-with-ai-modal-content-resource-hub', [
                 'recordTitle' => (string) data_get($livewire, 'data.title', ''),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
@@ -75,7 +76,7 @@ class DraftResourceHubArticleWithAiAction extends Action
                     ->placeholder('What do you want to write about?')
                     ->required(),
             ])
-            ->action(function (array $data, Get $get, Set $set, Page $livewire) {
+            ->action(function (array $data, Get $get, Set $set, Page $livewire): void {
                 $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;

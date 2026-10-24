@@ -45,7 +45,7 @@ class CreateStudentPhoneNumber
 {
     public function execute(Student $student, CreateStudentPhoneNumberData $data): StudentPhoneNumber
     {
-        return DB::transaction(function () use ($data, $student) {
+        return DB::transaction(function () use ($data, $student): StudentPhoneNumber {
             $phoneNumber = new StudentPhoneNumber();
             $phoneNumber->student()->associate($student);
             $phoneNumber->fill($data->toArray());

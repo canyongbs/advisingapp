@@ -54,8 +54,8 @@ class PhoneNumberLookupFactory extends Factory
             'number' => $this->faker->unique()->e164PhoneNumber(),
             'carrier_type' => $this->faker->randomElement(['mobile', 'fixed line', 'voip', 'toll free']),
             'carrier_name' => $this->faker->company(),
-            'status' => fn (array $attributes) => PhoneNumberLookupStatus::fromTelnyxCarrierType($attributes['carrier_type']),
-            'raw_response' => fn (array $attributes) => $this->carrierLookupResponse($attributes['carrier_name'], $attributes['carrier_type']),
+            'status' => fn (array $attributes): PhoneNumberLookupStatus => PhoneNumberLookupStatus::fromTelnyxCarrierType($attributes['carrier_type']),
+            'raw_response' => fn (array $attributes): array => $this->carrierLookupResponse($attributes['carrier_name'], $attributes['carrier_type']),
         ];
     }
 
@@ -98,7 +98,7 @@ class PhoneNumberLookupFactory extends Factory
      */
     public function unknown(): Factory
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'carrier_type' => $this->faker->randomElement(['other', 'voicemail']),
         ]);
     }

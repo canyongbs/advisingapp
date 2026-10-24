@@ -43,7 +43,7 @@ class DeleteStudentPhoneNumber
 {
     public function execute(StudentPhoneNumber $studentPhoneNumber): void
     {
-        DB::transaction(function () use ($studentPhoneNumber) {
+        DB::transaction(function () use ($studentPhoneNumber): void {
             if ($studentPhoneNumber->student?->primaryPhoneNumber()->is($studentPhoneNumber)) {
                 $studentPhoneNumber->student->primaryPhoneNumber()->associate(
                     $studentPhoneNumber->student->phoneNumbers()->whereKeyNot($studentPhoneNumber)->first(),

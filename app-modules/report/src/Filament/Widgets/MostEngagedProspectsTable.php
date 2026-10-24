@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -57,7 +58,7 @@ class MostEngagedProspectsTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;
     }
@@ -79,7 +80,7 @@ class MostEngagedProspectsTable extends BaseWidget
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->when(
-                                $startDate && $endDate,
+                                $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 function (Builder $query) use ($startDate, $endDate): Builder {
                                     return $query->whereBetween('created_at', [$startDate, $endDate]);
                                 }
@@ -87,7 +88,7 @@ class MostEngagedProspectsTable extends BaseWidget
                         },
                     ])
                     ->when(
-                        $startDate && $endDate,
+                        $startDate instanceof Carbon && $endDate instanceof Carbon,
                         function (Builder $query) use ($startDate, $endDate): Builder {
                             return $query->whereHas(
                                 'engagements',

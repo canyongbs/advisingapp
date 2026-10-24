@@ -44,6 +44,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,7 +52,7 @@ use Illuminate\Database\Query\Expression;
 
 class EngagementSmsBodyInput
 {
-    public static function make(string $context, bool $withTemplateAction = true)
+    public static function make(string $context, bool $withTemplateAction = true): Component
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
@@ -61,7 +62,7 @@ class EngagementSmsBodyInput
             ->toolbarButtons([])
             ->json()
             ->required()
-            ->when($withTemplateAction, fn (RichEditor $component) => $component->hintAction(fn (RichEditor $component) => Action::make('loadSmsTemplate')
+            ->when($withTemplateAction, fn (RichEditor $component): RichEditor => $component->hintAction(fn (RichEditor $component): Action => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')
                 ->schema([
                     Select::make('smsTemplate')
@@ -114,13 +115,13 @@ class EngagementSmsBodyInput
                     Checkbox::make('onlyMyTemplates')
                         ->label('Only show my templates')
                         ->live()
-                        ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                        ->afterStateUpdated(fn (Set $set): mixed => $set('smsTemplate', null)),
                     Checkbox::make('onlyMyDepartmentTemplates')
                         ->label("Only show my department's templates")
                         ->live()
-                        ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                        ->afterStateUpdated(fn (Set $set): mixed => $set('smsTemplate', null)),
                 ])
-                ->action(function (array $data) use ($component) {
+                ->action(function (array $data) use ($component): void {
                     $template = SmsTemplate::find($data['smsTemplate']);
 
                     if (! $template) {
@@ -129,10 +130,10 @@ class EngagementSmsBodyInput
 
                     $component->state($template->content);
                 })))
-            ->when($context === 'create', function (Field $field) {
+            ->when($context === 'create', function (Field $field): void {
                 $field->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Email->value);
             })
-            ->when($context === 'edit', function (Field $field) {
+            ->when($context === 'edit', function (Field $field): void {
                 $field->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Sms);
             })
             ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')

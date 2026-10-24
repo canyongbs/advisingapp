@@ -80,7 +80,7 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
 
         $interactionsByStatus = $shouldBypassCache
             ? $this->getInteractionStatusData($startDate, $endDate, $groupId)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function () {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function (): Collection {
                 return $this->getInteractionStatusData();
             });
 
@@ -131,18 +131,18 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     {
         return InteractionStatus::where('interactable_type', InteractableType::Prospect)
             ->withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId): void {
+                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId): void {
                         $query->when(
                             $groupId,
                             fn (Builder $query) => $this->groupFilter($query, $groupId)
                         );
                     })
-                        ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
+                        ->when($startDate instanceof Carbon && $endDate instanceof Carbon, function (Builder $query) use ($startDate, $endDate): void {
                             $query->whereBetween('created_at', [$startDate, $endDate]);
                         });
                 },
-            ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+            ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus): InteractionStatus {
                 $interactionStatus['bg_color'] = $interactionStatus->color->getRgb();
 
                 return $interactionStatus;

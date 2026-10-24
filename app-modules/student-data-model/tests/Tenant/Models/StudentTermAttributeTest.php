@@ -41,7 +41,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 
 use function Tests\asSuperAdmin;
 
-it('belongs to a student by `sisid`', function () {
+it('belongs to a student by `sisid`', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -50,14 +50,14 @@ it('belongs to a student by `sisid`', function () {
     expect($termAttribute->student->getKey())->toBe($student->getKey());
 });
 
-it('belongs to a term by `sis_term_id`', function () {
+it('belongs to a term by `sis_term_id`', function (): void {
     $term = Term::factory()->create();
     $termAttribute = StudentTermAttribute::factory()->create(['sis_term_id' => $term->sis_term_id]);
 
     expect($termAttribute->term->sis_term_id)->toBe($term->sis_term_id);
 });
 
-it('does not allow two records for the same student and term', function () {
+it('does not allow two records for the same student and term', function (): void {
     $termAttribute = StudentTermAttribute::factory()->create();
 
     StudentTermAttribute::factory()->create([

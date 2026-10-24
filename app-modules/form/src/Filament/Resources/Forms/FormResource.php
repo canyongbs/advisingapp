@@ -37,17 +37,13 @@
 namespace AdvisingApp\Form\Filament\Resources\Forms;
 
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\CreateForm;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormEmailAutoReply;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormNotifications;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormSubmissions;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\SubmissionOnScreenResponse;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageForm;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\RedirectToFormTab;
+use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\SubmissionsRelationManager;
+use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Form\Models\Form;
 use App\Enums\NavigationGroup;
-use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
@@ -75,17 +71,12 @@ class FormResource extends Resource
         return parent::getEloquentQuery()->with(['fields'])->whereNull('archived_at');
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public static function getRelations(): array
     {
-        return $page->generateNavigationItems([
-            ViewForm::class,
-            EditForm::class,
-            SubmissionOnScreenResponse::class,
-            ManageFormWorkflows::class,
-            ManageFormSubmissions::class,
-            ManageFormEmailAutoReply::class,
-            ManageFormNotifications::class,
-        ]);
+        return [
+            'workflows' => WorkflowsRelationManager::class,
+            'submissions' => SubmissionsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
@@ -93,13 +84,9 @@ class FormResource extends Resource
         return [
             'index' => ListForms::route('/'),
             'create' => CreateForm::route('/create'),
-            'edit' => EditForm::route('/{record}/edit'),
-            'view' => ViewForm::route('/{record}'),
-            'manage-on-screen-response' => SubmissionOnScreenResponse::route('/{record}/on-screen-response'),
-            'manage-form-workflows' => ManageFormWorkflows::route('/{record}/workflows'),
-            'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
-            'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
-            'manage-notifications' => ManageFormNotifications::route('/{record}/notifications'),
+            'edit' => RedirectToFormTab::route('/{record}/edit'),
+            'view' => ManageForm::route('/{record}'),
+            'manage-submissions' => RedirectToFormTab::route('/{record}/submissions'),
         ];
     }
 }

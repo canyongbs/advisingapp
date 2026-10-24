@@ -43,7 +43,7 @@ use function Pest\Laravel\travelTo;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('returns correct CustomerAdvisorMessage counts grouped by month within the given date range', function () {
+it('returns correct CustomerAdvisorMessage counts grouped by month within the given date range', function (): void {
     // Freeze now to a fixed date so the snapshot is deterministic and not flaky.
     $fixedNow = Carbon::parse('2025-10-15 12:00:00');
     travelTo($fixedNow);

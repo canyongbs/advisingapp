@@ -60,11 +60,11 @@ class ConcernStatusFactory extends Factory
 
     public function resolved(): self
     {
-        return $this->state(fn () => ['classification' => SystemConcernStatusClassification::Resolved]);
+        return $this->state(fn (): array => ['classification' => SystemConcernStatusClassification::Resolved]);
     }
 
     public function canceled(): self
     {
-        return $this->state(fn () => ['classification' => SystemConcernStatusClassification::Canceled]);
+        return $this->state(fn (): array => ['classification' => SystemConcernStatusClassification::Canceled]);
     }
 }

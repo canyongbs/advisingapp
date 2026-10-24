@@ -49,7 +49,7 @@ class CalendarWidget extends FullCalendarWidget
         //Maybe reuse the shared filter capability of the kanban view
 
         return Event::all()
-            ->map(fn (Event $event) => EventData::make()
+            ->map(fn (Event $event): EventData => EventData::make()
                 ->id($event->id)
                 ->title($event->title)
                 ->start($event->starts_at)
