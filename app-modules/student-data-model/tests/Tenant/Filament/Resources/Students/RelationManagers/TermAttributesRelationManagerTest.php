@@ -126,6 +126,25 @@ it('only offers the terms the student has attributes for, latest first', functio
         ->and(array_values($options))->toBe(['FA-20 (Sep 2020)', 'FA-20 (Aug 2020)', 'Summer TBD']);
 });
 
+it('does not offer deleted terms', function () use ($createTermAttribute) {
+    $student = Student::factory()->create();
+
+    $createTermAttribute($student, Term::factory()->create(['sis_term_id' => '301']));
+    $createTermAttribute($student, Term::factory()->create(['sis_term_id' => '302', 'deleted_at' => now()]));
+
+    $filter = Livewire::test(TermAttributesRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->instance()
+        ->getTable()
+        ->getFilter('sis_term_id');
+
+    assert($filter instanceof SelectFilter);
+
+    expect(array_map(strval(...), array_keys($filter->getOptions())))->toBe(['301']);
+});
+
 it('shows no term attributes when the student has none', function () {
     StudentTermAttribute::factory()->create();
 
