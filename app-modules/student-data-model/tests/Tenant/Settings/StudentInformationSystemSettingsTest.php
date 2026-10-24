@@ -36,7 +36,6 @@
 
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\TermAttributesFeature;
 
 describe('term attributes', function (): void {
     it('reports whether the SIS syncs term attributes', function (bool $isEnabled, ?SisSystem $sisSystem, bool $hasTermAttributes): void {
@@ -52,15 +51,4 @@ describe('term attributes', function (): void {
         'disabled Thesis Elements' => [false, SisSystem::ThesisElements, false],
         'enabled without an SIS system' => [true, null, false],
     ]);
-
-    it('does not report term attributes while `TermAttributesFeature` is inactive', function (): void {
-        $settings = app(StudentInformationSystemSettings::class);
-        $settings->is_enabled = true;
-        $settings->sis_system = SisSystem::ThesisElements;
-        $settings->save();
-
-        TermAttributesFeature::deactivate();
-
-        expect($settings->hasTermAttributes())->toBeFalse();
-    });
 });

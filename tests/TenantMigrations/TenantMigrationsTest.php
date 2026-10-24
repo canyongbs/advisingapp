@@ -43,12 +43,18 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use AdvisingApp\StudentDataModel\Models\Term;
 use App\Features\StudentGroupFilterConsolidationFeature;
+use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\assertNotSoftDeleted;
 use function Pest\Laravel\assertSoftDeleted;
 
@@ -264,6 +270,79 @@ test('2026_10_12_154211_tmp_consolidate_student_group_filters deletes groups usi
             expect($rollback)->toBe(Command::SUCCESS)
                 ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe($legacyRules)
                 ->and(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
+        }
+    );
+});
+
+test('2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms copies the enrollment semesters into terms when there are no SIS terms', function () {
+    isolatedMigration(
+        '2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms',
+        function () {
+            $semester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024', 'order' => 3]);
+            $deletedSemester = EnrollmentSemester::factory()->create(['deleted_at' => now()]);
+
+            assertDatabaseCount(Term::class, 0);
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and(TermsConsolidationFeature::active())->toBeTrue();
+
+            assertDatabaseCount(Term::class, 1);
+            assertDatabaseHas(Term::class, [
+                'id' => $semester->getKey(),
+                'sis_term_id' => null,
+                'name' => 'Fall 2024',
+                'order' => 3,
+                'is_active' => true,
+            ]);
+            assertDatabaseMissing(Term::class, ['id' => $deletedSemester->getKey()]);
+        }
+    );
+});
+
+test('2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms does not copy the enrollment semesters when there are SIS terms', function () {
+    isolatedMigration(
+        '2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms',
+        function () {
+            $sisTerm = Term::factory()->create();
+            EnrollmentSemester::factory()->create();
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and(Term::query()->pluck('id')->all())->toBe([$sisTerm->getKey()])
+                ->and(TermsConsolidationFeature::active())->toBeTrue();
+        }
+    );
+});
+
+test('2026_10_23_212020_remove_enrollment_semester_auto_import_settings removes the auto import settings', function () {
+    isolatedMigration(
+        '2026_10_23_212020_remove_enrollment_semester_auto_import_settings',
+        function () {
+            $settings = [
+                ['group' => 'student_information_system', 'name' => 'is_enrollment_semester_auto_import_enabled'],
+                ['group' => 'student_information_system', 'name' => 'enrollment_semester_auto_import_default_order'],
+            ];
+
+            foreach ($settings as $setting) {
+                assertDatabaseHas('settings', $setting);
+            }
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_212020_remove_enrollment_semester_auto_import_settings.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            foreach ($settings as $setting) {
+                assertDatabaseMissing('settings', $setting);
+            }
         }
     );
 });

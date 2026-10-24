@@ -34,21 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Enums;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
+use AdvisingApp\StudentDataModel\Models\Term;
 
-use Filament\Support\Contracts\HasLabel;
+it('orders terms by start date, then by `order`, then by name', function (): void {
+    $lowestOrderedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Winter 2012', 'order' => 0]);
+    $olderTerm = Term::factory()->create(['start_date' => '2020-09-01']);
+    $secondNamedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Summer 2012', 'order' => 1]);
+    $higherOrderedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2012', 'order' => 2]);
+    $recentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
+    $firstNamedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Spring 2012', 'order' => 1]);
 
-enum EnrollmentSemesterAutoImportDefaultOrder: string implements HasLabel
-{
-    case First = 'first';
-
-    case Last = 'last';
-
-    public function getLabel(): string
-    {
-        return match ($this) {
-            self::First => 'First (Most Recent Semester)',
-            self::Last => 'Last (Oldest Semester)',
-        };
-    }
-}
+    expect(Term::query()->tap(new OrderByMostRecentTerm())->pluck('id')->all())->toBe([
+        $recentTerm->getKey(),
+        $olderTerm->getKey(),
+        $higherOrderedTerm->getKey(),
+        $firstNamedTerm->getKey(),
+        $secondNamedTerm->getKey(),
+        $lowestOrderedTerm->getKey(),
+    ]);
+});
