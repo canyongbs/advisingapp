@@ -38,7 +38,6 @@ use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\TermAttributesFeature;
 use Filament\QueryBuilder\Constraints\Constraint;
 
 it('is registered on the students table regardless of the SIS', function () {
@@ -71,14 +70,3 @@ it('cannot be added for tenants not using Thesis Elements', function (bool $isEn
     'Ellucian Ethos' => [true, SisSystem::EllucianEthos],
     'SIS disabled' => [false, SisSystem::ThesisElements],
 ]);
-
-it('cannot be added while `TermAttributesFeature` is inactive', function () {
-    $sisSettings = app(StudentInformationSystemSettings::class);
-    $sisSettings->is_enabled = true;
-    $sisSettings->sis_system = SisSystem::ThesisElements;
-    $sisSettings->save();
-
-    TermAttributesFeature::deactivate();
-
-    expect(TermAttributeConstraint::make('termAttribute')->getBuilderBlock()->getMaxItems())->toBe(0);
-});

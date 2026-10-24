@@ -49,13 +49,14 @@ it('links student term attributes by `sis_term_id`', function () {
         ->not->toContain($otherTermAttribute->sisid);
 });
 
-it('links enrollments by `sis_term_id`', function () {
-    $term = Term::factory()->create();
-    $enrollments = Enrollment::factory()->count(2)->create(['sis_term_id' => $term->sis_term_id]);
+it('links the enrollments matched to it', function () {
+    $term = Term::factory()->create(['name' => 'FA-20']);
+    $enrollmentMatchedById = Enrollment::factory()->create(['sis_term_id' => $term->sis_term_id]);
+    $enrollmentMatchedByName = Enrollment::factory()->create(['sis_term_id' => null, 'semester_name' => 'fa-20']);
     $otherEnrollment = Enrollment::factory()->create(['sis_term_id' => Term::factory()->create()->sis_term_id]);
 
     expect($term->enrollments->pluck('sisid')->all())
-        ->toEqualCanonicalizing($enrollments->pluck('sisid')->all())
+        ->toEqualCanonicalizing([$enrollmentMatchedById->sisid, $enrollmentMatchedByName->sisid])
         ->not->toContain($otherEnrollment->sisid);
 });
 

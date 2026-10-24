@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use App\Features\TermsConsolidationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use Filament\Actions\BulkActionGroup;
@@ -65,6 +66,11 @@ class EnrollmentSemesterResource extends Resource
     protected static ?string $navigationLabel = 'Semester Order';
 
     protected static ?int $navigationSort = 40;
+
+    public static function canAccess(): bool
+    {
+        return ! TermsConsolidationFeature::active() && parent::canAccess();
+    }
 
     public static function form(Schema $schema): Schema
     {

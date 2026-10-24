@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
-use App\Support\AbstractFeatureFlag;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class TermAttributesFeature extends AbstractFeatureFlag
+/**
+ * Orders terms most recent first: terms synced from the SIS by start date, then terms without one by their manually set `order`.
+ *
+ * It applies to any query that selects from or joins the `terms` table.
+ */
+class OrderByMostRecentTerm
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * @template TModel of Model
+     *
+     * @param Builder<TModel> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return false;
+        $query
+            ->orderByRaw('terms.start_date DESC NULLS LAST')
+            ->orderByRaw('terms."order" DESC NULLS LAST')
+            ->orderBy('terms.name')
+            ->orderBy('terms.id');
     }
 }

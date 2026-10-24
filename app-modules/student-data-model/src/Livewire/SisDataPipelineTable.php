@@ -170,13 +170,13 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
      */
     protected function getTermsProgress(array $record): ?SisPipelineProgress
     {
-        if (($record['total_term'] ?? 0) === 0) {
+        if (($record['total_term'] ?? null) === null) {
             return null;
         }
 
         return new SisPipelineProgress(
             processed: $record['processed_terms'] ?? 0,
-            total: $record['total_term'] ?? 0,
+            total: $record['total_term'],
             successful: $record['successful_terms'] ?? 0,
         );
     }

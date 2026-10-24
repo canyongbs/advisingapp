@@ -38,6 +38,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\En
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Features\TermsConsolidationFeature;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -269,6 +270,8 @@ it('renders the Delete Bulk Enrollments Table Action based on proper access', fu
 });
 
 it('Can filter enrollments by semester', function () {
+    TermsConsolidationFeature::deactivate();
+
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $enrollmentOne = Enrollment::factory()->state([

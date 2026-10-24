@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers;
 
+use AdvisingApp\StudentDataModel\Filament\Filters\EnrollmentTermFilter;
 use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
+use AdvisingApp\StudentDataModel\Filament\Tables\Grouping\EnrollmentTermGroup;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\TermAttributesFeature;
+use App\Features\TermsConsolidationFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -105,11 +107,13 @@ class EnrollmentsRelationManager extends RelationManager
                         ->placeholder('N/A'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
+                        ->state(fn (Enrollment $record): ?string => TermsConsolidationFeature::active()
+                            ? ($record->term?->getDisplayName() ?? $record->semester_name)
+                            : $record->semester_name)
                         ->placeholder('N/A'),
                     TextEntry::make('sis_term_id')
                         ->label('SIS Term ID')
-                        ->placeholder('N/A')
-                        ->visible(fn (): bool => TermAttributesFeature::active()),
+                        ->placeholder('N/A'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
                         ->dateTime()
@@ -124,8 +128,14 @@ class EnrollmentsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        $isTermsConsolidationActive = TermsConsolidationFeature::active();
+
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query) use ($isTermsConsolidationActive) {
+                if ($isTermsConsolidationActive) {
+                    return;
+                }
+
                 $query
                     ->leftJoin('enrollment_semesters', function (JoinClause $join) {
                         $join
@@ -136,10 +146,12 @@ class EnrollmentsRelationManager extends RelationManager
                     ->select('enrollments.*');
             })
             ->recordTitleAttribute('division')
-            ->defaultGroup('semester_name')
+            ->defaultGroup($isTermsConsolidationActive ? 'term.id' : 'semester_name')
             ->groups([
-                Group::make('semester_name')
-                    ->label('Semester'),
+                $isTermsConsolidationActive
+                    ? EnrollmentTermGroup::make()
+                    : Group::make('semester_name')
+                        ->label('Semester'),
             ])
             ->groupingSettingsHidden()
             ->columns([
@@ -175,17 +187,19 @@ class EnrollmentsRelationManager extends RelationManager
                     ->placeholder('N/A'),
             ])
             ->filters([
-                SelectFilter::make('semester_name')
-                    ->label('Semester')
-                    ->options(
-                        fn (): array => $this->getRelationship()->getQuery()
-                            ->whereNotNull('semester_name')
-                            ->distinct()
-                            ->pluck('semester_name', 'semester_name')
-                            ->all()
-                    )
-                    ->multiple()
-                    ->searchable(),
+                $isTermsConsolidationActive
+                    ? EnrollmentTermFilter::make()
+                    : SelectFilter::make('semester_name')
+                        ->label('Semester')
+                        ->options(
+                            fn (): array => $this->getRelationship()->getQuery()
+                                ->whereNotNull('semester_name')
+                                ->distinct()
+                                ->pluck('semester_name', 'semester_name')
+                                ->all()
+                        )
+                        ->multiple()
+                        ->searchable(),
             ])
             ->recordActions([
                 ViewAction::make()
@@ -312,8 +326,7 @@ class EnrollmentsRelationManager extends RelationManager
                 TextInput::make('sis_term_id')
                     ->label('SIS term ID')
                     ->string()
-                    ->maxLength(255)
-                    ->visible(fn (): bool => TermAttributesFeature::active()),
+                    ->maxLength(255),
                 DateTimePicker::make('start_date')
                     ->label('Start date')
                     ->native(false)

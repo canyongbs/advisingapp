@@ -36,36 +36,42 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Database\Factories\TermFactory;
+use AdvisingApp\StudentDataModel\Observers\TermObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperTerm
  */
-class Term extends Model
+#[ObservedBy(TermObserver::class)]
+class Term extends Model implements Auditable
 {
+    use AuditableTrait;
+
     /** @use HasFactory<TermFactory> */
     use HasFactory;
 
+    use HasUuids;
     use UsesTenantConnection;
 
     protected $table = 'terms';
 
     /**
-     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
-     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system. Use `sis_term_id` instead.
+     * Terms synced from the SIS are identified by `sis_term_id`, so use that rather than this ID when relating SIS records to a term.
      */
     protected $primaryKey = 'id';
 
     public $incrementing = false;
 
     protected $keyType = 'string';
-
-    public $timestamps = false;
 
     protected $fillable = [
         'sis_term_id',
@@ -74,13 +80,27 @@ class Term extends Model
         'start_date',
         'end_date',
         'is_active',
+        'order',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'is_active' => 'boolean',
+        'order' => 'integer',
     ];
+
+    /**
+     * Terms are maintained manually, ordered by `order`, until the SIS syncs any.
+     */
+    public static function hasSisTerms(): bool
+    {
+        return static::query()
+            ->whereNotNull('sis_term_id')
+            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+            ->whereNull('deleted_at')
+            ->exists();
+    }
 
     /**
      * Term names are not unique in the SIS, so the start month is included to tell them apart (e.g. `FA-20 (Sep 2020)`).
@@ -101,10 +121,19 @@ class Term extends Model
     }
 
     /**
-     * @return HasMany<Enrollment, $this>
+     * The enrollments matched to this term by the `enrollment_terms` view.
+     *
+     * @return HasManyThrough<Enrollment, EnrollmentTerm, $this>
      */
-    public function enrollments(): HasMany
+    public function enrollments(): HasManyThrough
     {
-        return $this->hasMany(Enrollment::class, 'sis_term_id', 'sis_term_id');
+        return $this->hasManyThrough(
+            Enrollment::class,
+            EnrollmentTerm::class,
+            firstKey: 'term_id',
+            secondKey: 'id',
+            localKey: 'id',
+            secondLocalKey: 'enrollment_id',
+        );
     }
 }

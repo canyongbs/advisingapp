@@ -37,16 +37,9 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\EnrollmentSemesterResource;
-use AdvisingApp\StudentDataModel\Filament\Tables\UnsyncedEnrollmentsTable;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\TableSelect;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
-use Illuminate\Support\Facades\DB;
-use Throwable;
 
 class ManageEnrollmentSemesters extends ManageRecords
 {
@@ -56,49 +49,7 @@ class ManageEnrollmentSemesters extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        $unsyncedEnrollments = UnsyncedEnrollmentsTable::getUnsyncedEnrollments();
-
         return [
-            Action::make('syncAll')
-                ->authorize(fn (): bool => auth()->user()->can('create', EnrollmentSemester::class))
-                ->label('Sync')
-                ->disabled(fn () => ! $unsyncedEnrollments->exists())
-                ->tooltip(fn () => $unsyncedEnrollments->exists() ? '' : 'No additional semesters to sync.')
-                ->slideOver()
-                ->schema([
-                    TableSelect::make('enrollments')
-                        ->hiddenLabel()
-                        ->multiple()
-                        ->required()
-                        ->default(fn () => $unsyncedEnrollments->pluck('id'))
-                        ->tableConfiguration(UnsyncedEnrollmentsTable::class),
-                ])
-                ->action(function (array $data) {
-                    try {
-                        DB::beginTransaction();
-
-                        $enrollments = Enrollment::whereIn('id', $data['enrollments'])->get();
-
-                        $enrollments->lazy()->each(fn (Enrollment $enrollment) => is_null($enrollment->semester_name) ?: EnrollmentSemester::create(['name' => $enrollment->semester_name]));
-
-                        DB::commit();
-
-                        Notification::make()
-                            ->success()
-                            ->title('Sync Successful')
-                            ->send();
-                    } catch (Throwable $throw) {
-                        DB::rollBack();
-
-                        Notification::make()
-                            ->danger()
-                            ->title('Sync Failed')
-                            ->body('Please try again. If this issue persists, reach out to support.')
-                            ->send();
-
-                        report($throw);
-                    }
-                }),
             CreateAction::make()
                 ->label('New')
                 ->modalHeading('Add Semester Manually')

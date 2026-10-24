@@ -34,21 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Enums;
+use App\Features\TermsConsolidationFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum EnrollmentSemesterAutoImportDefaultOrder: string implements HasLabel
-{
-    case First = 'first';
-
-    case Last = 'last';
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return match ($this) {
-            self::First => 'First (Most Recent Semester)',
-            self::Last => 'Last (Oldest Semester)',
-        };
+        DB::transaction(function () {
+            // Tenants whose SIS provides terms use those instead of the semesters derived from enrollments.
+            $hasSisTerms = DB::table('terms')->whereNotNull('sis_term_id')->exists();
+
+            if (! $hasSisTerms) {
+                DB::statement(<<<'SQL'
+                    INSERT INTO terms (id, name, "order", is_active, created_at, updated_at)
+                    SELECT enrollment_semesters.id, enrollment_semesters.name, enrollment_semesters."order", true, enrollment_semesters.created_at, enrollment_semesters.updated_at
+                    FROM enrollment_semesters
+                    WHERE enrollment_semesters.deleted_at IS NULL
+                        AND NOT EXISTS (SELECT 1 FROM terms WHERE terms.id = enrollment_semesters.id)
+                SQL);
+            }
+
+            TermsConsolidationFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            TermsConsolidationFeature::deactivate();
+
+            DB::table('terms')
+                ->whereNull('sis_term_id')
+                ->whereIn('id', DB::table('enrollment_semesters')->select('id'))
+                ->delete();
+        });
+    }
+};

@@ -34,38 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Tables;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class UnsyncedEnrollmentsTable
+/**
+ * A read-only row of the `enrollment_terms` database view, which matches each enrollment to at most one term.
+ *
+ * @mixin IdeHelperEnrollmentTerm
+ */
+class EnrollmentTerm extends Model
 {
-    public static function configure(Table $table): Table
-    {
-        return $table
-            ->query(self::getUnsyncedEnrollments())
-            ->columns([
-                TextColumn::make('semester_name'),
-            ]);
-    }
+    use UsesTenantConnection;
 
-    /**
-     * @return Builder<Enrollment>
-     */
-    public static function getUnsyncedEnrollments(): Builder
-    {
-        return Enrollment::query()
-            ->whereNotNull('semester_name')
-            ->whereNotIn(
-                'semester_name',
-                EnrollmentSemester::query()->select('name')
-            )
-            ->distinct('semester_name')
-            ->orderBy('semester_name')
-            ->orderBy('id');
-    }
+    protected $table = 'enrollment_terms';
+
+    protected $primaryKey = 'enrollment_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
+    protected $fillable = [];
 }
