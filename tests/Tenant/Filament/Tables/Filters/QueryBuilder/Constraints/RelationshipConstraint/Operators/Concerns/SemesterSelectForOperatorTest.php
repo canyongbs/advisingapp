@@ -118,12 +118,14 @@ it('offers the term names, most recent first, and `Unassigned` as semesters', fu
     Term::factory()->create(['name' => 'SP-21', 'start_date' => '2021-01-15']);
     Term::factory()->create(['name' => '2024', 'start_date' => '2020-01-15']);
     Term::factory()->create(['name' => 'fa-20', 'start_date' => '2019-09-01']);
+    Term::factory()->create(['name' => '02024', 'start_date' => '2019-01-15']);
     Term::factory()->create(['name' => 'SU-21', 'start_date' => '2021-06-01', 'deleted_at' => now()]);
 
     expect(EqualsOperatorWithEnrollmentSemester::semesterSelect()->getOptions())->toBe([
         'SP-21' => 'SP-21',
         'FA-20' => 'FA-20',
         '2024' => '2024',
+        '02024' => '02024',
         EqualsOperatorWithEnrollmentSemester::UNASSIGNED_SEMESTER => 'Unassigned',
     ]);
 });

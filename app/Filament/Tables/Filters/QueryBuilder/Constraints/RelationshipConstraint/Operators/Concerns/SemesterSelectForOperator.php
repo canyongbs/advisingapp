@@ -161,7 +161,7 @@ trait SemesterSelectForOperator
             ->whereNull('deleted_at')
             ->tap(new OrderByMostRecentTerm())
             ->pluck('name')
-            ->unique(fn (string $name): string => mb_strtolower($name))
+            ->unique(fn (string $name): string => mb_strtolower($name), strict: true)
             ->mapWithKeys(fn (string $name): array => [$name => $name])
             ->all() + [static::UNASSIGNED_SEMESTER => 'Unassigned'];
     }
