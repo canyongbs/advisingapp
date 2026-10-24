@@ -47,7 +47,7 @@ $createEnrollment = fn (array $attributes): Enrollment => Enrollment::factory()-
     ...$attributes,
 ]);
 
-it('orders enrollments by term, most recent first, with unassigned enrollments last', function () use ($createEnrollment) {
+it('orders enrollments by term, most recent first, with unassigned enrollments last', function () use ($createEnrollment): void {
     $olderTerm = Term::factory()->create(['start_date' => '2020-09-01']);
     $recentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
     $lowerOrderedTerm = Term::factory()->withoutSisTermId()->create(['name' => 'Summer 2012', 'order' => 1]);
@@ -70,7 +70,7 @@ it('orders enrollments by term, most recent first, with unassigned enrollments l
     ]);
 });
 
-it('titles the group with the display name of the term', function () use ($createEnrollment) {
+it('titles the group with the display name of the term', function () use ($createEnrollment): void {
     $term = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
 
     $enrollment = $createEnrollment(['sis_term_id' => $term->sis_term_id]);
@@ -78,7 +78,7 @@ it('titles the group with the display name of the term', function () use ($creat
     expect(EnrollmentTermGroup::make()->getTitle($enrollment))->toBe('FA-20 (Sep 2020)');
 });
 
-it('titles the group `Unassigned` when the enrollment has no term', function () use ($createEnrollment) {
+it('titles the group `Unassigned` when the enrollment has no term', function () use ($createEnrollment): void {
     $enrollment = $createEnrollment(['semester_name' => 'Unmatched']);
 
     expect(EnrollmentTermGroup::make()->getTitle($enrollment))->toBe('Unassigned');

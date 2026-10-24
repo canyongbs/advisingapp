@@ -37,8 +37,8 @@
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 
-describe('term attributes', function () {
-    it('reports whether the SIS syncs term attributes', function (bool $isEnabled, ?SisSystem $sisSystem, bool $hasTermAttributes) {
+describe('term attributes', function (): void {
+    it('reports whether the SIS syncs term attributes', function (bool $isEnabled, ?SisSystem $sisSystem, bool $hasTermAttributes): void {
         $settings = app(StudentInformationSystemSettings::class);
         $settings->is_enabled = $isEnabled;
         $settings->sis_system = $sisSystem;

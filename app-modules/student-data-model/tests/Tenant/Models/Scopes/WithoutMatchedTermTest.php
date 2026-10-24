@@ -46,7 +46,7 @@ $createEnrollment = fn (array $attributes): Enrollment => Enrollment::factory()-
     ...$attributes,
 ]);
 
-it('filters enrollments to those without a matched term, the same as the `enrollment_terms` view', function () use ($createEnrollment) {
+it('filters enrollments to those without a matched term, the same as the `enrollment_terms` view', function () use ($createEnrollment): void {
     $term = Term::factory()->create(['name' => 'FA-20']);
     $deletedTerm = Term::factory()->create(['name' => 'SP-21', 'deleted_at' => now()]);
 

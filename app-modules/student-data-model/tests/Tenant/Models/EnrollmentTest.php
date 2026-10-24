@@ -42,15 +42,15 @@ $createEnrollment = fn (array $attributes): Enrollment => Enrollment::query()
     ->where('sisid', Enrollment::factory()->create($attributes)->sisid)
     ->sole();
 
-describe('term', function () use ($createEnrollment) {
-    it('matches the term with the same `sis_term_id`', function () use ($createEnrollment) {
+describe('term', function () use ($createEnrollment): void {
+    it('matches the term with the same `sis_term_id`', function () use ($createEnrollment): void {
         $term = Term::factory()->create();
         $enrollment = $createEnrollment(['sis_term_id' => $term->sis_term_id]);
 
         expect($enrollment->term->getKey())->toBe($term->getKey());
     });
 
-    it('matches by `sis_term_id` before matching by `semester_name`', function () use ($createEnrollment) {
+    it('matches by `sis_term_id` before matching by `semester_name`', function () use ($createEnrollment): void {
         $termMatchedById = Term::factory()->create(['name' => 'FA-20']);
         Term::factory()->create(['name' => 'SP-21']);
 
@@ -62,21 +62,21 @@ describe('term', function () use ($createEnrollment) {
         expect($enrollment->term->getKey())->toBe($termMatchedById->getKey());
     });
 
-    it('matches by `semester_name` ignoring case when there is no `sis_term_id`', function () use ($createEnrollment) {
+    it('matches by `semester_name` ignoring case when there is no `sis_term_id`', function () use ($createEnrollment): void {
         $term = Term::factory()->create(['name' => 'Fall 2020']);
         $enrollment = $createEnrollment(['sis_term_id' => null, 'semester_name' => 'FALL 2020']);
 
         expect($enrollment->term->getKey())->toBe($term->getKey());
     });
 
-    it('matches by `semester_name` when no term has the `sis_term_id`', function () use ($createEnrollment) {
+    it('matches by `semester_name` when no term has the `sis_term_id`', function () use ($createEnrollment): void {
         $term = Term::factory()->withoutSisTermId()->create(['name' => 'FA-20']);
         $enrollment = $createEnrollment(['sis_term_id' => '267', 'semester_name' => 'FA-20']);
 
         expect($enrollment->term->getKey())->toBe($term->getKey());
     });
 
-    it('prefers a term synced from the SIS when matching by `semester_name`', function () use ($createEnrollment) {
+    it('prefers a term synced from the SIS when matching by `semester_name`', function () use ($createEnrollment): void {
         Term::factory()->withoutSisTermId()->create(['name' => 'FA-20']);
         $sisTerm = Term::factory()->create(['name' => 'FA-20']);
 
@@ -85,7 +85,7 @@ describe('term', function () use ($createEnrollment) {
         expect($enrollment->term->getKey())->toBe($sisTerm->getKey());
     });
 
-    it('prefers the term with the latest start date when several terms share the `semester_name`', function () use ($createEnrollment) {
+    it('prefers the term with the latest start date when several terms share the `semester_name`', function () use ($createEnrollment): void {
         Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-08-24']);
         $latestTerm = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-14']);
         Term::factory()->create(['name' => 'FA-20', 'start_date' => null]);
@@ -95,7 +95,7 @@ describe('term', function () use ($createEnrollment) {
         expect($enrollment->term->getKey())->toBe($latestTerm->getKey());
     });
 
-    it('does not match a deleted term', function () use ($createEnrollment) {
+    it('does not match a deleted term', function () use ($createEnrollment): void {
         $term = Term::factory()->create(['name' => 'FA-20', 'deleted_at' => now()]);
 
         $enrollment = $createEnrollment(['sis_term_id' => $term->sis_term_id, 'semester_name' => 'FA-20']);
@@ -103,7 +103,7 @@ describe('term', function () use ($createEnrollment) {
         expect($enrollment->term)->toBeNull();
     });
 
-    it('has no term when no term matches', function () use ($createEnrollment) {
+    it('has no term when no term matches', function () use ($createEnrollment): void {
         Term::factory()->create(['name' => 'FA-20']);
 
         $enrollment = $createEnrollment(['sis_term_id' => null, 'semester_name' => 'SP-21']);
@@ -111,7 +111,7 @@ describe('term', function () use ($createEnrollment) {
         expect($enrollment->term)->toBeNull();
     });
 
-    it('eager loads the matched term of each enrollment', function () use ($createEnrollment) {
+    it('eager loads the matched term of each enrollment', function () use ($createEnrollment): void {
         $firstTerm = Term::factory()->create();
         $secondTerm = Term::factory()->create(['name' => 'Spring 2021']);
 

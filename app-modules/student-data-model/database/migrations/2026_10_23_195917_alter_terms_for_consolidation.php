@@ -42,10 +42,10 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::statement('ALTER TABLE terms ALTER COLUMN name TYPE citext');
 
-            Schema::table('terms', function (Blueprint $table) {
+            Schema::table('terms', function (Blueprint $table): void {
                 $table->string('sis_term_id')->nullable()->change();
                 $table->boolean('is_active')->default(true)->change();
                 $table->unsignedInteger('order')->nullable();
@@ -83,12 +83,12 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             DB::statement('DROP VIEW IF EXISTS enrollment_terms');
 
             DB::table('terms')->whereNull('sis_term_id')->delete();
 
-            Schema::table('terms', function (Blueprint $table) {
+            Schema::table('terms', function (Blueprint $table): void {
                 $table->dropIndex(['name']);
                 $table->dropSoftDeletes();
                 $table->dropTimestamps();

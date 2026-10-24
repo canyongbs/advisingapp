@@ -51,12 +51,12 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertModelMissing;
 use function Tests\asSuperAdmin;
 
-describe('manually maintained terms', function () {
-    beforeEach(function () {
+describe('manually maintained terms', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
     });
 
-    it('lists the semesters by their order, excluding deleted ones', function () {
+    it('lists the semesters by their order, excluding deleted ones', function (): void {
         $firstTerm = Term::factory()->withoutSisTermId()->create(['order' => 1]);
         $thirdTerm = Term::factory()->withoutSisTermId()->create(['order' => 3]);
         $secondTerm = Term::factory()->withoutSisTermId()->create(['order' => 2]);
@@ -67,7 +67,7 @@ describe('manually maintained terms', function () {
             ->assertCanNotSeeTableRecords([$deletedTerm]);
     });
 
-    it('can create a semester', function () {
+    it('can create a semester', function (): void {
         Livewire::test(ManageTerms::class)
             ->callAction(CreateAction::class, ['name' => 'Fall 2024'])
             ->assertHasNoActionErrors();
@@ -75,7 +75,7 @@ describe('manually maintained terms', function () {
         assertDatabaseHas(Term::class, ['name' => 'Fall 2024', 'sis_term_id' => null]);
     });
 
-    it('can create a semester with the same name as another semester', function () {
+    it('can create a semester with the same name as another semester', function (): void {
         Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2024']);
 
         Livewire::test(ManageTerms::class)
@@ -85,7 +85,7 @@ describe('manually maintained terms', function () {
         expect(Term::query()->where('name', 'Fall 2024')->count())->toBe(2);
     });
 
-    it('suggests the semester names of enrollments that have no semester', function () {
+    it('suggests the semester names of enrollments that have no semester', function (): void {
         Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2024']);
 
         Enrollment::factory()->create(['semester_name' => 'FALL 2024']);
@@ -97,7 +97,7 @@ describe('manually maintained terms', function () {
             ->assertSchemaComponentExists('name', checkComponentUsing: fn (TextInput $input): bool => $input->getDatalistOptions() === ['Spring 2025']);
     });
 
-    it('can update a semester', function () {
+    it('can update a semester', function (): void {
         $term = Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2024']);
 
         Livewire::test(ManageTerms::class)
@@ -107,7 +107,7 @@ describe('manually maintained terms', function () {
         expect($term->refresh()->name)->toBe('Fall 2024 Cohort');
     });
 
-    it('can delete a semester', function () {
+    it('can delete a semester', function (): void {
         $term = Term::factory()->withoutSisTermId()->create();
 
         Livewire::test(ManageTerms::class)
@@ -116,7 +116,7 @@ describe('manually maintained terms', function () {
         assertModelMissing($term);
     });
 
-    it('shows a semester as mapped when an enrollment has its name, ignoring case', function () {
+    it('shows a semester as mapped when an enrollment has its name, ignoring case', function (): void {
         $term = Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2024']);
 
         Enrollment::factory()->create(['semester_name' => 'FALL 2024']);
@@ -125,7 +125,7 @@ describe('manually maintained terms', function () {
             ->assertTableColumnStateSet('is_mapped', true, record: $term);
     });
 
-    it('shows a semester as unmapped when only deleted enrollments have its name', function () {
+    it('shows a semester as unmapped when only deleted enrollments have its name', function (): void {
         $term = Term::factory()->withoutSisTermId()->create(['name' => 'Fall 2024']);
 
         Enrollment::factory()->create(['semester_name' => 'Fall 2024', 'deleted_at' => now()]);
@@ -135,12 +135,12 @@ describe('manually maintained terms', function () {
     });
 });
 
-describe('terms synced from the SIS', function () {
-    beforeEach(function () {
+describe('terms synced from the SIS', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
     });
 
-    it('lists the semesters by start date, most recent first, excluding deleted ones', function () {
+    it('lists the semesters by start date, most recent first, excluding deleted ones', function (): void {
         $olderTerm = Term::factory()->create(['start_date' => '2020-09-01']);
         $recentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
         $deletedTerm = Term::factory()->create(['start_date' => '2022-09-01', 'deleted_at' => now()]);
@@ -150,7 +150,7 @@ describe('terms synced from the SIS', function () {
             ->assertCanNotSeeTableRecords([$deletedTerm]);
     });
 
-    it('does not allow semesters to be added, updated or deleted', function () {
+    it('does not allow semesters to be added, updated or deleted', function (): void {
         Term::factory()->create();
 
         Livewire::test(ManageTerms::class)
@@ -160,14 +160,14 @@ describe('terms synced from the SIS', function () {
     });
 });
 
-describe('authorization', function () {
-    it('denies access to the page without the `settings.view-any` permission', function () {
+describe('authorization', function (): void {
+    it('denies access to the page without the `settings.view-any` permission', function (): void {
         actingAs(User::factory()->create())
             ->get(TermResource::getUrl('index'))
             ->assertForbidden();
     });
 
-    it('allows access to the page with the `settings.view-any` permission', function () {
+    it('allows access to the page with the `settings.view-any` permission', function (): void {
         $user = User::factory()->create();
         $user->givePermissionTo('settings.view-any');
 
@@ -176,7 +176,7 @@ describe('authorization', function () {
             ->assertSuccessful();
     });
 
-    it('denies access to the page while the `TermsConsolidationFeature` is inactive', function () {
+    it('denies access to the page while the `TermsConsolidationFeature` is inactive', function (): void {
         TermsConsolidationFeature::deactivate();
 
         asSuperAdmin()
@@ -184,7 +184,7 @@ describe('authorization', function () {
             ->assertForbidden();
     });
 
-    it('hides the `New` action without the `settings.create` permission', function () {
+    it('hides the `New` action without the `settings.create` permission', function (): void {
         $user = User::factory()->create();
         $user->givePermissionTo('settings.view-any');
 

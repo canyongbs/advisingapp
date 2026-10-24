@@ -78,8 +78,8 @@ it('can filter by name search', function (): void {
         ->assertCanNotSeeTableRecords([$student->enrollments->where('name', 'Regular Course Name')->first()]);
 });
 
-describe('sis term id', function () {
-    beforeEach(function () {
+describe('sis term id', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
 
         $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
@@ -87,7 +87,7 @@ describe('sis term id', function () {
         $studentConfigurationSettings->save();
     });
 
-    it('can create an enrollment with a `sis_term_id`', function () {
+    it('can create an enrollment with a `sis_term_id`', function (): void {
         $student = Student::factory()->create();
 
         Livewire::test(EnrollmentsRelationManager::class, [
@@ -102,7 +102,7 @@ describe('sis term id', function () {
         expect($student->enrollments()->sole()->sis_term_id)->toBe('267');
     });
 
-    it('shows the `sis_term_id` when viewing an enrollment', function () {
+    it('shows the `sis_term_id` when viewing an enrollment', function (): void {
         $student = Student::factory()->has(Enrollment::factory(['sis_term_id' => '267']), 'enrollments')->create();
 
         Livewire::test(EnrollmentsRelationManager::class, [
@@ -114,8 +114,8 @@ describe('sis term id', function () {
     });
 });
 
-describe('terms', function () {
-    beforeEach(function () {
+describe('terms', function (): void {
+    beforeEach(function (): void {
         asSuperAdmin();
     });
 
@@ -128,7 +128,7 @@ describe('terms', function () {
         ...$attributes,
     ]);
 
-    it('lists enrollments grouped by term, most recent first, with unassigned enrollments last', function () use ($createEnrollment) {
+    it('lists enrollments grouped by term, most recent first, with unassigned enrollments last', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $olderTerm = Term::factory()->create(['start_date' => '2020-09-01']);
@@ -145,7 +145,7 @@ describe('terms', function () {
             ->assertCanSeeTableRecords([$recentEnrollment, $olderEnrollment, $unassignedEnrollment], inOrder: true);
     });
 
-    it('can filter by term', function () use ($createEnrollment) {
+    it('can filter by term', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $term = Term::factory()->create();
@@ -164,7 +164,7 @@ describe('terms', function () {
             ->assertCanNotSeeTableRecords([$otherEnrollment, $unassignedEnrollment]);
     });
 
-    it('can filter by unassigned enrollments alongside a term', function () use ($createEnrollment) {
+    it('can filter by unassigned enrollments alongside a term', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $term = Term::factory()->create();
@@ -186,7 +186,7 @@ describe('terms', function () {
             ->assertCanNotSeeTableRecords([$otherEnrollment]);
     });
 
-    it('offers the terms of the student enrollments, most recent first, and `Unassigned` as term filter options', function () use ($createEnrollment) {
+    it('offers the terms of the student enrollments, most recent first, and `Unassigned` as term filter options', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $olderTerm = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
@@ -208,7 +208,7 @@ describe('terms', function () {
             ]);
     });
 
-    it('shows the matched term in place of the semester name when viewing an enrollment', function () use ($createEnrollment) {
+    it('shows the matched term in place of the semester name when viewing an enrollment', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $term = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
@@ -223,7 +223,7 @@ describe('terms', function () {
             ->assertSchemaComponentExists('semester_name', checkComponentUsing: fn (TextEntry $entry): bool => $entry->getState() === 'FA-20 (Sep 2020)');
     });
 
-    it('shows the semester name when viewing an enrollment without a matched term', function () use ($createEnrollment) {
+    it('shows the semester name when viewing an enrollment without a matched term', function () use ($createEnrollment): void {
         $student = Student::factory()->create();
 
         $enrollment = $createEnrollment($student, ['semester_name' => 'Fall 2020']);
@@ -236,12 +236,12 @@ describe('terms', function () {
             ->assertSchemaComponentExists('semester_name', checkComponentUsing: fn (TextEntry $entry): bool => $entry->getState() === 'Fall 2020');
     });
 
-    describe('when the `TermsConsolidationFeature` is inactive', function () use ($createEnrollment) {
-        beforeEach(function () {
+    describe('when the `TermsConsolidationFeature` is inactive', function () use ($createEnrollment): void {
+        beforeEach(function (): void {
             TermsConsolidationFeature::deactivate();
         });
 
-        it('lists enrollments grouped by semester name', function () use ($createEnrollment) {
+        it('lists enrollments grouped by semester name', function () use ($createEnrollment): void {
             $student = Student::factory()->create();
 
             $springEnrollment = $createEnrollment($student, ['semester_name' => 'Spring 2021']);
@@ -254,7 +254,7 @@ describe('terms', function () {
                 ->assertCanSeeTableRecords([$fallEnrollment, $springEnrollment], inOrder: true);
         });
 
-        it('shows the semester name rather than the matched term when viewing an enrollment', function () use ($createEnrollment) {
+        it('shows the semester name rather than the matched term when viewing an enrollment', function () use ($createEnrollment): void {
             $student = Student::factory()->create();
 
             $term = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);

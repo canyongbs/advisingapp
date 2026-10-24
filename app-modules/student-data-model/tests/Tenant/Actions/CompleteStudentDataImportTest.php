@@ -76,12 +76,12 @@ $createStudentDataImportWithEnrollment = function (array $enrollmentAttributes) 
     return $studentDataImport;
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     Queue::fake();
 });
 
-describe('enrollments', function () use ($createStudentDataImportWithEnrollment) {
-    it('replaces the enrollments and keeps matching them to terms', function () use ($createStudentDataImportWithEnrollment) {
+describe('enrollments', function () use ($createStudentDataImportWithEnrollment): void {
+    it('replaces the enrollments and keeps matching them to terms', function () use ($createStudentDataImportWithEnrollment): void {
         $term = Term::factory()->create();
 
         Enrollment::factory()->create(['sisid' => 'S0']);
@@ -96,7 +96,7 @@ describe('enrollments', function () use ($createStudentDataImportWithEnrollment)
             ->and($enrollment->term?->getKey())->toBe($term->getKey());
     });
 
-    it('replaces the enrollments before the `enrollment_terms` view exists', function () use ($createStudentDataImportWithEnrollment) {
+    it('replaces the enrollments before the `enrollment_terms` view exists', function () use ($createStudentDataImportWithEnrollment): void {
         DB::statement('drop view "enrollment_terms"');
 
         $studentDataImport = $createStudentDataImportWithEnrollment([]);

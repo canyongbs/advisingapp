@@ -55,7 +55,7 @@ class ManageEnrollmentSemesters extends ManageRecords
                 ->modalHeading('Add Semester Manually')
                 ->modalDescription('Use this feature to add a semester to your semester list manually.')
                 ->modalSubmitActionLabel('Add')
-                ->createAnotherAction(fn (Action $action) => $action->label('Add & Add Another')),
+                ->createAnotherAction(fn (Action $action): Action => $action->label('Add & Add Another')),
         ];
     }
 }

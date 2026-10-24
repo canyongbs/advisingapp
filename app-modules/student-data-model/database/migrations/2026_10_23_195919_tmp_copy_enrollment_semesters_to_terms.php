@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             // Tenants whose SIS provides terms use those instead of the semesters derived from enrollments.
             $hasSisTerms = DB::table('terms')->whereNotNull('sis_term_id')->exists();
 
@@ -61,7 +61,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             TermsConsolidationFeature::deactivate();
 
             DB::table('terms')

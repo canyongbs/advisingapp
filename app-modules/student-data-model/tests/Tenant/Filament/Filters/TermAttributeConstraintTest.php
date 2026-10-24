@@ -40,7 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTabl
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Filament\QueryBuilder\Constraints\Constraint;
 
-it('is registered on the students table regardless of the SIS', function () {
+it('is registered on the students table regardless of the SIS', function (): void {
     $sisSettings = app(StudentInformationSystemSettings::class);
     $sisSettings->is_enabled = false;
     $sisSettings->sis_system = null;
@@ -50,7 +50,7 @@ it('is registered on the students table regardless of the SIS', function () {
         ->toBeInstanceOf(TermAttributeConstraint::class);
 });
 
-it('can be added for tenants using Thesis Elements', function () {
+it('can be added for tenants using Thesis Elements', function (): void {
     $sisSettings = app(StudentInformationSystemSettings::class);
     $sisSettings->is_enabled = true;
     $sisSettings->sis_system = SisSystem::ThesisElements;
@@ -59,7 +59,7 @@ it('can be added for tenants using Thesis Elements', function () {
     expect(TermAttributeConstraint::make('termAttribute')->getBuilderBlock()->getMaxItems())->toBeNull();
 });
 
-it('cannot be added for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem) {
+it('cannot be added for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem): void {
     $sisSettings = app(StudentInformationSystemSettings::class);
     $sisSettings->is_enabled = $isEnabled;
     $sisSettings->sis_system = $sisSystem;

@@ -46,18 +46,18 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('the page is not accessible while the `TermsConsolidationFeature` is active', function () {
+test('the page is not accessible while the `TermsConsolidationFeature` is active', function (): void {
     asSuperAdmin()
         ->get(EnrollmentSemesterResource::getUrl('index'))
         ->assertForbidden();
 });
 
-describe('when the `TermsConsolidationFeature` is inactive', function () {
-    beforeEach(function () {
+describe('when the `TermsConsolidationFeature` is inactive', function (): void {
+    beforeEach(function (): void {
         TermsConsolidationFeature::deactivate();
     });
 
-    test('the page is gated with proper access control', function () {
+    test('the page is gated with proper access control', function (): void {
         $user = User::factory()->create();
 
         actingAs($user)
@@ -73,7 +73,7 @@ describe('when the `TermsConsolidationFeature` is inactive', function () {
             )->assertSuccessful();
     });
 
-    test('the delete bulk action is gated by the delete permission', function () {
+    test('the delete bulk action is gated by the delete permission', function (): void {
         $user = User::factory()->create();
 
         $user->givePermissionTo('settings.view-any');
@@ -89,7 +89,7 @@ describe('when the `TermsConsolidationFeature` is inactive', function () {
             ->assertTableBulkActionVisible(DeleteBulkAction::class);
     });
 
-    test('the mapping column shows mapped when an enrollment with a matching semester name exists', function () {
+    test('the mapping column shows mapped when an enrollment with a matching semester name exists', function (): void {
         asSuperAdmin();
 
         $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
@@ -100,7 +100,7 @@ describe('when the `TermsConsolidationFeature` is inactive', function () {
             ->assertTableColumnStateSet('is_mapped', true, record: $semester);
     });
 
-    test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function () {
+    test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function (): void {
         asSuperAdmin();
 
         $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
@@ -109,7 +109,7 @@ describe('when the `TermsConsolidationFeature` is inactive', function () {
             ->assertTableColumnStateSet('is_mapped', false, record: $semester);
     });
 
-    test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function () {
+    test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function (): void {
         asSuperAdmin();
 
         $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();

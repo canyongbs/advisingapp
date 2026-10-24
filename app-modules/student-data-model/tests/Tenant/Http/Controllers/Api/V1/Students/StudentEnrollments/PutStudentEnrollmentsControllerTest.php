@@ -44,11 +44,11 @@ use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\putJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('audit.enabled', false);
 });
 
-it('is gated with proper access control', function () {
+it('is gated with proper access control', function (): void {
     $student = Student::factory()->create();
 
     $createStudentEnrollmentRequestData = [
@@ -100,7 +100,7 @@ it('is gated with proper access control', function () {
         ->assertOk();
 });
 
-it('creates a student program', function () {
+it('creates a student program', function (): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
@@ -194,7 +194,7 @@ it('creates a student program', function () {
     ]);
 });
 
-it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
+it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null): void {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();

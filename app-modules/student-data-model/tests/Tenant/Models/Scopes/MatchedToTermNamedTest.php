@@ -47,7 +47,7 @@ $createEnrollment = fn (array $attributes): Enrollment => Enrollment::factory()-
     ...$attributes,
 ]);
 
-it('filters enrollments to those matched to a term with one of the names, ignoring case', function () use ($createEnrollment) {
+it('filters enrollments to those matched to a term with one of the names, ignoring case', function () use ($createEnrollment): void {
     $fallTerm = Term::factory()->create(['name' => 'FA-20']);
     $springTerm = Term::factory()->create(['name' => 'SP-21']);
     Term::factory()->create(['name' => 'SU-21', 'deleted_at' => now()]);

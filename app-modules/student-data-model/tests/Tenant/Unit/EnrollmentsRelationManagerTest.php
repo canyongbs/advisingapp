@@ -49,7 +49,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
-it('renders the Import Enrollments Action based on proper access', function () {
+it('renders the Import Enrollments Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -93,7 +93,7 @@ it('renders the Import Enrollments Action based on proper access', function () {
         ->assertTableActionVisible(ImportAction::class);
 });
 
-it('renders the Create Enrollment Action based on proper access', function () {
+it('renders the Create Enrollment Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -137,7 +137,7 @@ it('renders the Create Enrollment Action based on proper access', function () {
         ->assertTableActionVisible(CreateAction::class);
 });
 
-it('renders the Edit Enrollment Table Action based on proper access', function () {
+it('renders the Edit Enrollment Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -181,7 +181,7 @@ it('renders the Edit Enrollment Table Action based on proper access', function (
         ->assertTableActionVisible(EditAction::class, $student->enrollments->first());
 });
 
-it('renders the Delete Enrollment Table Action based on proper access', function () {
+it('renders the Delete Enrollment Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -225,7 +225,7 @@ it('renders the Delete Enrollment Table Action based on proper access', function
         ->assertTableActionVisible(DeleteAction::class, $student->enrollments->first());
 });
 
-it('renders the Delete Bulk Enrollments Table Action based on proper access', function () {
+it('renders the Delete Bulk Enrollments Table Action based on proper access', function (): void {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()
@@ -269,7 +269,7 @@ it('renders the Delete Bulk Enrollments Table Action based on proper access', fu
         ->assertTableBulkActionVisible(DeleteBulkAction::class, $student->enrollments->first());
 });
 
-it('Can filter enrollments by semester', function () {
+it('Can filter enrollments by semester', function (): void {
     TermsConsolidationFeature::deactivate();
 
     $user = User::factory()->licensed(Student::getLicenseType())->create();

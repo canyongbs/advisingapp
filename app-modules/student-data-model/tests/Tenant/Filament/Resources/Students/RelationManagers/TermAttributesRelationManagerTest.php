@@ -48,7 +48,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     asSuperAdmin();
 
     $sisSettings = app(StudentInformationSystemSettings::class);
@@ -63,7 +63,7 @@ $createTermAttribute = function (Student $student, Term $term): StudentTermAttri
     return $student->termAttributes()->where('sis_term_id', $term->sis_term_id)->sole();
 };
 
-it('shows the attributes for the latest term by default', function () use ($createTermAttribute) {
+it('shows the attributes for the latest term by default', function () use ($createTermAttribute): void {
     $student = Student::factory()->create();
 
     $olderTermAttribute = $createTermAttribute($student, Term::factory()->create(['start_date' => '2020-01-01']));
@@ -77,7 +77,7 @@ it('shows the attributes for the latest term by default', function () use ($crea
         ->assertCanNotSeeTableRecords([$olderTermAttribute]);
 });
 
-it('shows the attributes for the selected term', function () use ($createTermAttribute) {
+it('shows the attributes for the selected term', function () use ($createTermAttribute): void {
     $student = Student::factory()->create();
 
     $olderTerm = Term::factory()->create(['start_date' => '2020-01-01']);
@@ -94,7 +94,7 @@ it('shows the attributes for the selected term', function () use ($createTermAtt
         ->assertCanNotSeeTableRecords([$latestTermAttribute]);
 });
 
-it('only offers the terms the student has attributes for, latest first', function () use ($createTermAttribute) {
+it('only offers the terms the student has attributes for, latest first', function () use ($createTermAttribute): void {
     $student = Student::factory()->create();
 
     $undatedTerm = Term::factory()->create(['sis_term_id' => '302', 'name' => 'Summer TBD', 'start_date' => null]);
@@ -126,7 +126,7 @@ it('only offers the terms the student has attributes for, latest first', functio
         ->and(array_values($options))->toBe(['FA-20 (Sep 2020)', 'FA-20 (Aug 2020)', 'Summer TBD']);
 });
 
-it('does not offer deleted terms', function () use ($createTermAttribute) {
+it('does not offer deleted terms', function () use ($createTermAttribute): void {
     $student = Student::factory()->create();
 
     $createTermAttribute($student, Term::factory()->create(['sis_term_id' => '301']));
@@ -145,7 +145,7 @@ it('does not offer deleted terms', function () use ($createTermAttribute) {
     expect(array_map(strval(...), array_keys($filter->getOptions())))->toBe(['301']);
 });
 
-it('shows no term attributes when the student has none', function () {
+it('shows no term attributes when the student has none', function (): void {
     StudentTermAttribute::factory()->create();
 
     Livewire::test(TermAttributesRelationManager::class, [
@@ -155,12 +155,12 @@ it('shows no term attributes when the student has none', function () {
         ->assertCountTableRecords(0);
 });
 
-describe('visibility', function () {
-    it('is visible for tenants using Thesis Elements', function () {
+describe('visibility', function (): void {
+    it('is visible for tenants using Thesis Elements', function (): void {
         expect(TermAttributesRelationManager::canViewForRecord(Student::factory()->create(), ViewStudent::class))->toBeTrue();
     });
 
-    it('is hidden for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem) {
+    it('is hidden for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem): void {
         $sisSettings = app(StudentInformationSystemSettings::class);
         $sisSettings->is_enabled = $isEnabled;
         $sisSettings->sis_system = $sisSystem;
@@ -173,14 +173,14 @@ describe('visibility', function () {
     ]);
 });
 
-describe('authorization', function () {
-    it('is hidden without the `enrollment.view-any` permission', function () {
+describe('authorization', function (): void {
+    it('is hidden without the `enrollment.view-any` permission', function (): void {
         actingAs(User::factory()->licensed(Student::getLicenseType())->create());
 
         expect(TermAttributesRelationManager::canViewForRecord(Student::factory()->create(), ViewStudent::class))->toBeFalse();
     });
 
-    it('is visible with the `enrollment.view-any` permission', function () {
+    it('is visible with the `enrollment.view-any` permission', function (): void {
         $user = User::factory()->licensed(Student::getLicenseType())->create();
         $user->givePermissionTo('enrollment.view-any');
 

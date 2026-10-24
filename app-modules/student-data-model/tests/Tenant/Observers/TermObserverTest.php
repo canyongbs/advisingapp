@@ -36,7 +36,7 @@
 
 use AdvisingApp\StudentDataModel\Models\Term;
 
-it('orders a new manually maintained term after the existing terms', function () {
+it('orders a new manually maintained term after the existing terms', function (): void {
     Term::factory()->withoutSisTermId()->create(['order' => 5]);
 
     $term = Term::factory()->withoutSisTermId()->create();
@@ -44,13 +44,13 @@ it('orders a new manually maintained term after the existing terms', function ()
     expect($term->refresh()->order)->toBe(6);
 });
 
-it('keeps the given order of a new manually maintained term', function () {
+it('keeps the given order of a new manually maintained term', function (): void {
     $term = Term::factory()->withoutSisTermId()->create(['order' => 2]);
 
     expect($term->refresh()->order)->toBe(2);
 });
 
-it('does not order a new term synced from the SIS', function () {
+it('does not order a new term synced from the SIS', function (): void {
     $term = Term::factory()->create();
 
     expect($term->refresh()->order)->toBeNull();

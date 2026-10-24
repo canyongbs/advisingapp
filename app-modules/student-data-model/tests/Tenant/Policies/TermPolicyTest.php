@@ -37,7 +37,7 @@
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Models\User;
 
-it('allows a manually maintained term to be created, updated and deleted with the settings permissions', function () {
+it('allows a manually maintained term to be created, updated and deleted with the settings permissions', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo(['settings.create', 'settings.*.update', 'settings.*.delete']);
 
@@ -48,7 +48,7 @@ it('allows a manually maintained term to be created, updated and deleted with th
         ->and($user->can('delete', $term))->toBeTrue();
 });
 
-it('does not allow a term to be created while terms are synced from the SIS', function () {
+it('does not allow a term to be created while terms are synced from the SIS', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.create');
 
@@ -57,7 +57,7 @@ it('does not allow a term to be created while terms are synced from the SIS', fu
     expect($user->can('create', Term::class))->toBeFalse();
 });
 
-it('allows a term to be created when the only terms synced from the SIS are deleted', function () {
+it('allows a term to be created when the only terms synced from the SIS are deleted', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.create');
 
@@ -66,7 +66,7 @@ it('allows a term to be created when the only terms synced from the SIS are dele
     expect($user->can('create', Term::class))->toBeTrue();
 });
 
-it('does not allow a term synced from the SIS to be updated or deleted', function () {
+it('does not allow a term synced from the SIS to be updated or deleted', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo(['settings.*.update', 'settings.*.delete']);
 
