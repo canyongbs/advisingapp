@@ -151,21 +151,19 @@ trait SemesterSelectForOperator
     /**
      * The names of the terms, most recent first, with names differing only in case listed once.
      *
-     * @return array<string, string>
+     * @return array<int|string, string>
      */
     protected static function getTermSemesterOptions(): array
     {
-        return [
-            ...Term::query()
-                // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-                ->whereNull('deleted_at')
-                ->tap(new OrderByMostRecentTerm())
-                ->pluck('name')
-                ->unique(fn (string $name): string => mb_strtolower($name))
-                ->mapWithKeys(fn (string $name): array => [$name => $name])
-                ->all(),
-            static::UNASSIGNED_SEMESTER => 'Unassigned',
-        ];
+        // A union rather than a spread, which would renumber numeric names such as `2024`.
+        return Term::query()
+            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+            ->whereNull('deleted_at')
+            ->tap(new OrderByMostRecentTerm())
+            ->pluck('name')
+            ->unique(fn (string $name): string => mb_strtolower($name))
+            ->mapWithKeys(fn (string $name): array => [$name => $name])
+            ->all() + [static::UNASSIGNED_SEMESTER => 'Unassigned'];
     }
 
     /**

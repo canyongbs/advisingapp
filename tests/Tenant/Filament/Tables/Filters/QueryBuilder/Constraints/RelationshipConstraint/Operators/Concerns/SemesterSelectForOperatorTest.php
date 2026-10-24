@@ -116,12 +116,14 @@ it('finds students without enrollments in the selected semesters', function () u
 it('offers the term names, most recent first, and `Unassigned` as semesters', function () {
     Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
     Term::factory()->create(['name' => 'SP-21', 'start_date' => '2021-01-15']);
+    Term::factory()->create(['name' => '2024', 'start_date' => '2020-01-15']);
     Term::factory()->create(['name' => 'fa-20', 'start_date' => '2019-09-01']);
     Term::factory()->create(['name' => 'SU-21', 'start_date' => '2021-06-01', 'deleted_at' => now()]);
 
     expect(EqualsOperatorWithEnrollmentSemester::semesterSelect()->getOptions())->toBe([
         'SP-21' => 'SP-21',
         'FA-20' => 'FA-20',
+        '2024' => '2024',
         EqualsOperatorWithEnrollmentSemester::UNASSIGNED_SEMESTER => 'Unassigned',
     ]);
 });
