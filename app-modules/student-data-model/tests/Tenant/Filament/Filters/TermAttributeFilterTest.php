@@ -79,6 +79,17 @@ it('only offers the terms that have term attributes, latest first', function ():
         ->and(array_values($options))->toBe(['FA-21 (Aug 2021)', 'FA-20 (Aug 2020)', 'Summer TBD']);
 });
 
+it('does not offer deleted terms', function (): void {
+    $term = Term::factory()->create(['sis_term_id' => '301']);
+    $deletedTerm = Term::factory()->create(['sis_term_id' => '302', 'deleted_at' => now()]);
+
+    foreach ([$term, $deletedTerm] as $termWithAttributes) {
+        StudentTermAttribute::factory()->create(['sis_term_id' => $termWithAttributes->sis_term_id]);
+    }
+
+    expect(array_map(strval(...), array_keys(TermAttributeFilter::getTermOptions())))->toBe(['301']);
+});
+
 it('offers the existing values of the selected attribute for the selected term', function (): void {
     $term = Term::factory()->create();
     $otherTerm = Term::factory()->create();

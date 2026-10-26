@@ -34,14 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Support\AbstractFeatureFlag;
-
-class TermAttributesFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return false;
+        DB::transaction(function (): void {
+            $this->migrator->deleteIfExists('student_information_system.is_enrollment_semester_auto_import_enabled');
+            $this->migrator->deleteIfExists('student_information_system.enrollment_semester_auto_import_default_order');
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function (): void {
+            try {
+                $this->migrator->add('student_information_system.is_enrollment_semester_auto_import_enabled', false);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('student_information_system.enrollment_semester_auto_import_default_order', 'first');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
+    }
+};

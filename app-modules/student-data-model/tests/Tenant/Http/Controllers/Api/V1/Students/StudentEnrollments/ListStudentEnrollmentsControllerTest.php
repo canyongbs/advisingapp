@@ -36,7 +36,6 @@
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\TermAttributesFeature;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
@@ -191,51 +190,3 @@ it('can sort student enrollments by all attributes descending', function (string
     expect($response['data'][1][$responseKey])
         ->toBe($responseFirstValue);
 })->with('sorts');
-
-describe('while `TermAttributesFeature` is inactive', function (): void {
-    it('does not return the `sis_term_id`', function (): void {
-        $user = SystemUser::factory()->create();
-        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
-        Sanctum::actingAs($user, ['api']);
-
-        $student = Student::factory()->create();
-
-        Enrollment::factory()->for($student, 'student')->create(['sis_term_id' => '267']);
-
-        TermAttributesFeature::deactivate();
-
-        $response = getJson(route('api.v1.students.enrollments.index', ['student' => $student], false));
-        $response->assertOk();
-
-        expect($response['data'][0])->not->toHaveKey('sis_term_id');
-    });
-
-    it('does not allow filtering by `sis_term_id`', function (): void {
-        $user = SystemUser::factory()->create();
-        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
-        Sanctum::actingAs($user, ['api']);
-
-        $student = Student::factory()->create();
-
-        TermAttributesFeature::deactivate();
-
-        getJson(route('api.v1.students.enrollments.index', ['student' => $student, 'filter' => ['sis_term_id' => '267']], false))
-            ->assertBadRequest();
-    });
-
-    it('does not allow sorting by `sis_term_id`', function (string $sort): void {
-        $user = SystemUser::factory()->create();
-        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
-        Sanctum::actingAs($user, ['api']);
-
-        $student = Student::factory()->create();
-
-        TermAttributesFeature::deactivate();
-
-        getJson(route('api.v1.students.enrollments.index', ['student' => $student, 'sort' => $sort], false))
-            ->assertBadRequest();
-    })->with([
-        'ascending' => ['sis_term_id'],
-        'descending' => ['-sis_term_id'],
-    ]);
-});

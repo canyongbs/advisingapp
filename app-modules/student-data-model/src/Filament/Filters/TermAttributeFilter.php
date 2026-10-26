@@ -37,9 +37,11 @@
 namespace AdvisingApp\StudentDataModel\Filament\Filters;
 
 use AdvisingApp\StudentDataModel\Enums\StudentTermAttributeField;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermsConsolidationFeature;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
@@ -156,9 +158,19 @@ class TermAttributeFilter
      */
     public static function getTermOptions(): array
     {
-        return Term::query()
-            ->whereIn('sis_term_id', StudentTermAttribute::query()->select('sis_term_id'))
-            ->orderByRaw('start_date DESC NULLS LAST')
+        $query = Term::query()
+            ->whereIn('sis_term_id', StudentTermAttribute::query()->select('sis_term_id'));
+
+        if (TermsConsolidationFeature::active()) {
+            $query
+                // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+                ->whereNull('deleted_at')
+                ->tap(new OrderByMostRecentTerm());
+        } else {
+            $query->orderByRaw('start_date DESC NULLS LAST');
+        }
+
+        return $query
             ->get(['sis_term_id', 'name', 'start_date'])
             ->mapWithKeys(fn (Term $term): array => [$term->sis_term_id => $term->getDisplayName()])
             ->all();

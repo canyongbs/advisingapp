@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentE
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\TermAttributesFeature;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\QueryParameter;
@@ -121,7 +120,7 @@ class ListStudentEnrollmentsController
                 AllowedFilter::partial('faculty_email'),
                 AllowedFilter::partial('semester_code'),
                 AllowedFilter::partial('semester_name'),
-                ...(TermAttributesFeature::active() ? [AllowedFilter::exact('sis_term_id')] : []),
+                AllowedFilter::exact('sis_term_id'),
                 AllowedFilter::operator('start_date', FilterOperator::DYNAMIC),
                 AllowedFilter::operator('end_date', FilterOperator::DYNAMIC),
             ])
@@ -139,7 +138,7 @@ class ListStudentEnrollmentsController
                 AllowedSort::field('faculty_email'),
                 AllowedSort::field('semester_code'),
                 AllowedSort::field('semester_name'),
-                ...(TermAttributesFeature::active() ? [AllowedSort::field('sis_term_id')] : []),
+                AllowedSort::field('sis_term_id'),
                 AllowedSort::field('start_date'),
                 AllowedSort::field('end_date'),
             ])

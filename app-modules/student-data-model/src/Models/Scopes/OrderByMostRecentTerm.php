@@ -34,38 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Tables;
+namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class UnsyncedEnrollmentsTable
+/**
+ * Orders terms most recent first: terms synced from the SIS by start date, then terms without one by their manually set `order`.
+ *
+ * It applies to any query that selects from or joins the `terms` table.
+ */
+class OrderByMostRecentTerm
 {
-    public static function configure(Table $table): Table
-    {
-        return $table
-            ->query(self::getUnsyncedEnrollments())
-            ->columns([
-                TextColumn::make('semester_name'),
-            ]);
-    }
-
     /**
-     * @return Builder<Enrollment>
+     * @template TModel of Model
+     *
+     * @param Builder<TModel> $query
      */
-    public static function getUnsyncedEnrollments(): Builder
+    public function __invoke(Builder $query): void
     {
-        return Enrollment::query()
-            ->whereNotNull('semester_name')
-            ->whereNotIn(
-                'semester_name',
-                EnrollmentSemester::query()->select('name')
-            )
-            ->distinct('semester_name')
-            ->orderBy('semester_name')
-            ->orderBy('id');
+        $query
+            ->orderByRaw('terms.start_date DESC NULLS LAST')
+            ->orderByRaw('terms."order" DESC NULLS LAST')
+            ->orderBy('terms.name')
+            ->orderBy('terms.id');
     }
 }

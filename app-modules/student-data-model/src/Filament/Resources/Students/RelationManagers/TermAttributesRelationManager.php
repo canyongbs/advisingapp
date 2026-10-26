@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermsConsolidationFeature;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -112,9 +114,19 @@ class TermAttributesRelationManager extends RelationManager
 
         assert($student instanceof Student);
 
-        return Term::query()
-            ->whereIn('sis_term_id', $student->termAttributes()->select('sis_term_id'))
-            ->orderByRaw('start_date DESC NULLS LAST')
+        $query = Term::query()
+            ->whereIn('sis_term_id', $student->termAttributes()->select('sis_term_id'));
+
+        if (TermsConsolidationFeature::active()) {
+            $query
+                // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+                ->whereNull('deleted_at')
+                ->tap(new OrderByMostRecentTerm());
+        } else {
+            $query->orderByRaw('start_date DESC NULLS LAST');
+        }
+
+        return $query
             ->get(['sis_term_id', 'name', 'start_date'])
             ->mapWithKeys(fn (Term $term): array => [$term->sis_term_id => $term->getDisplayName()])
             ->all();
