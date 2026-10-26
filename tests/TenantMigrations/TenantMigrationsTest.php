@@ -382,6 +382,28 @@ describe('basic needs categories name citext change', function () {
             }
         );
     });
+
+    it('can be rolled back when a live category reuses a soft-deleted category name', function () {
+        isolatedMigration(
+            '2026_10_26_113602_convert_basic_needs_categories_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113602_convert_basic_needs_categories_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+                $deletedCategory->delete();
+                BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113602_convert_basic_needs_categories_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
 });
 
 // TODO: Cleanup Task (basic-needs-citext) - Delete this describe and everything contained within
@@ -416,6 +438,30 @@ describe('basic needs programs name citext change', function () {
                 expect($program3->refresh()->name)->toBe('MEAL SUPPORT-3');
                 // Untouched: excluded from the live dedup group entirely, despite the name collision
                 expect($deletedProgram->refresh()->name)->toBe('Meal support');
+            }
+        );
+    });
+
+    it('can be rolled back when a live program reuses a soft-deleted program name', function () {
+        isolatedMigration(
+            '2026_10_26_113604_convert_basic_needs_programs_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113604_convert_basic_needs_programs_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $category = BasicNeedsCategory::factory()->create();
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedProgram = BasicNeedsProgram::factory()->create(['name' => 'Meal Support', 'basic_needs_category_id' => $category->getKey()]);
+                $deletedProgram->delete();
+                BasicNeedsProgram::factory()->create(['name' => 'Meal Support', 'basic_needs_category_id' => $category->getKey()]);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113604_convert_basic_needs_programs_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
             }
         );
     });
