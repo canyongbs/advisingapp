@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
+use App\Features\BasicNeedsProgramNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -44,6 +45,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditBasicNeedsProgram extends EditRecord
@@ -61,7 +63,12 @@ class EditBasicNeedsProgram extends EditRecord
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => BasicNeedsProgramNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535)
