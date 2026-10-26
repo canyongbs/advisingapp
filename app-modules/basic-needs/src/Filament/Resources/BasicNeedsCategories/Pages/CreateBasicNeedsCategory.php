@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
+use App\Features\BasicNeedsCategoryNameCitextFeature;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -57,7 +58,9 @@ class CreateBasicNeedsCategory extends CreateRecord
                     ->string()
                     ->maxLength(255)
                     ->unique(
-                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        modifyRuleUsing: fn (Unique $rule): Unique => BasicNeedsCategoryNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
                     ),
                 Textarea::make('description')
                     ->label('Description')
