@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Features\BasicNeedsProgramNameCitextFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -72,12 +73,16 @@ return new class () extends Migration {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
+
+            BasicNeedsProgramNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
+            BasicNeedsProgramNameCitextFeature::deactivate();
+
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });

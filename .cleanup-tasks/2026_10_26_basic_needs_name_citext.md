@@ -5,6 +5,9 @@ created: 2026-10-26
 
 ## Feature Flags
 
+- App\Features\BasicNeedsCategoryNameCitextFeature
+- App\Features\BasicNeedsProgramNameCitextFeature
+
 ## Temporary Migrations
 
 ## Additional Cleanup
