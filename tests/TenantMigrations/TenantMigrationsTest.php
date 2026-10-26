@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -345,4 +347,76 @@ test('2026_10_23_212020_remove_enrollment_semester_auto_import_settings removes 
             }
         }
     );
+});
+
+// TODO: Cleanup Task (basic-needs-citext) - Delete this describe and everything contained within
+describe('basic needs categories name citext change', function () {
+    it('renames case-insensitive duplicate basic needs category names', function () {
+        isolatedMigration(
+            '2026_10_26_113602_convert_basic_needs_categories_name_to_citext',
+            function () {
+                // Setup data before migration
+                $category1 = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry', 'created_at' => now()->subMinutes(3)]);
+                $category2 = BasicNeedsCategory::factory()->create(['name' => 'food pantry', 'created_at' => now()->subMinutes(2)]);
+                $category3 = BasicNeedsCategory::factory()->create(['name' => 'FOOD PANTRY', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted category sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself. It uses a distinct exact string (differing only by
+                // case) so the pre-migration case-sensitive unique index is not violated.
+                $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food pantry', 'created_at' => now()->subMinutes(4)]);
+                $deletedCategory->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113602_convert_basic_needs_categories_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($category1->refresh()->name)->toBe('Food Pantry');
+                expect($category2->refresh()->name)->toBe('food pantry-2');
+                expect($category3->refresh()->name)->toBe('FOOD PANTRY-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedCategory->refresh()->name)->toBe('Food pantry');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (basic-needs-citext) - Delete this describe and everything contained within
+describe('basic needs programs name citext change', function () {
+    it('renames case-insensitive duplicate basic needs program names', function () {
+        isolatedMigration(
+            '2026_10_26_113604_convert_basic_needs_programs_name_to_citext',
+            function () {
+                // Setup data before migration
+                $category = BasicNeedsCategory::factory()->create();
+
+                $program1 = BasicNeedsProgram::factory()->create(['name' => 'Meal Support', 'basic_needs_category_id' => $category->getKey(), 'created_at' => now()->subMinutes(3)]);
+                $program2 = BasicNeedsProgram::factory()->create(['name' => 'meal support', 'basic_needs_category_id' => $category->getKey(), 'created_at' => now()->subMinutes(2)]);
+                $program3 = BasicNeedsProgram::factory()->create(['name' => 'MEAL SUPPORT', 'basic_needs_category_id' => $category->getKey(), 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted program sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself. It uses a distinct exact string (differing only by
+                // case) so the pre-migration case-sensitive unique index is not violated.
+                $deletedProgram = BasicNeedsProgram::factory()->create(['name' => 'Meal support', 'basic_needs_category_id' => $category->getKey(), 'created_at' => now()->subMinutes(4)]);
+                $deletedProgram->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113604_convert_basic_needs_programs_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($program1->refresh()->name)->toBe('Meal Support');
+                expect($program2->refresh()->name)->toBe('meal support-2');
+                expect($program3->refresh()->name)->toBe('MEAL SUPPORT-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedProgram->refresh()->name)->toBe('Meal support');
+            }
+        );
+    });
 });

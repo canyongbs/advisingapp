@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditBasicNeedsCategory extends EditRecord
 {
@@ -59,7 +60,11 @@ class EditBasicNeedsCategory extends EditRecord
                     ->label('Category Name')
                     ->required()
                     ->maxLength(255)
-                    ->string(),
+                    ->string()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
                 Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535)

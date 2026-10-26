@@ -464,3 +464,87 @@ it('returns server-side search results for contact persons beyond the initial 40
                 && array_key_exists($searchTarget, $searchResults);
         });
 });
+
+it('does not allow creating a program whose name matches another non-deleted program case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('support_program.view-any');
+    $user->givePermissionTo('support_program.create');
+
+    $existingProgram = BasicNeedsProgram::factory()->create(['name' => 'Meal Support']);
+
+    Livewire::test(CreateBasicNeedsProgram::class)
+        ->fillForm([
+            'name' => 'meal support',
+            'basic_needs_category_id' => $existingProgram->basic_needs_category_id,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a program whose name is freed up by a soft-deleted program case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('support_program.view-any');
+    $user->givePermissionTo('support_program.create');
+
+    $deletedProgram = BasicNeedsProgram::factory()->create(['name' => 'Meal Support']);
+    $deletedProgram->delete();
+
+    Livewire::test(CreateBasicNeedsProgram::class)
+        ->fillForm([
+            'name' => 'meal support',
+            'basic_needs_category_id' => $deletedProgram->basic_needs_category_id,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+
+    assertDatabaseHas(BasicNeedsProgram::class, [
+        'name' => 'meal support',
+        'deleted_at' => null,
+    ]);
+});
+
+it('does not allow updating a program to a name matching another non-deleted program case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('support_program.view-any');
+    $user->givePermissionTo('support_program.*.update');
+
+    BasicNeedsProgram::factory()->create(['name' => 'Meal Support']);
+    $program = BasicNeedsProgram::factory()->create(['name' => 'Housing Assistance']);
+
+    Livewire::test(EditBasicNeedsProgram::class, [
+        'record' => $program->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'meal support'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows updating a program to a name freed up by a soft-deleted program case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('support_program.view-any');
+    $user->givePermissionTo('support_program.*.update');
+
+    $deletedProgram = BasicNeedsProgram::factory()->create(['name' => 'Meal Support']);
+    $deletedProgram->delete();
+
+    $program = BasicNeedsProgram::factory()->create(['name' => 'Housing Assistance']);
+
+    Livewire::test(EditBasicNeedsProgram::class, [
+        'record' => $program->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'meal support'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+});
