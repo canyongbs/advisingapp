@@ -49,9 +49,6 @@ return new class () extends Migration {
 
     protected string $column = 'name';
 
-    /** @var array<int, string> */
-    protected array $groupByColumns = [];
-
     // TODO: Cleanup Task (basic-needs-citext) - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
 
