@@ -67,14 +67,21 @@ class SendEventRegistrationFormEmailAutoReply implements ShouldQueue
             return;
         }
 
+        $form = $this->attendee->event->eventRegistrationForm;
+
+        if (! $form) {
+            return;
+        }
+
         if (
             ($this->requiredDeliveryPreference === EmailAutoReplyDeliveryPreference::WhenInvited)
             && ($this->attendee->status === EventAttendeeStatus::NotAttending)
+            && (! $this->attendee->hasPendingInvitationTo($form))
         ) {
             return;
         }
 
-        $emailAutoReply = $this->attendee->event->eventRegistrationForm?->emailAutoReply;
+        $emailAutoReply = $form->emailAutoReply;
 
         if (! $emailAutoReply?->is_enabled) {
             return;

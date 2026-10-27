@@ -39,7 +39,9 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Notifications\EventRegistrationFormEmailAutoReplyNotification;
+use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
 $createAttendee = function (bool $isEnabled, EmailAutoReplyDeliveryPreference $deliveryPreference): EventAttendee {
@@ -104,6 +106,26 @@ it('does not send the email auto reply when invited to an attendee who declined 
     (new SendEventRegistrationFormEmailAutoReply($attendee, EmailAutoReplyDeliveryPreference::WhenInvited))->handle();
 
     Notification::assertNotSentTo($attendee, EventRegistrationFormEmailAutoReplyNotification::class);
+});
+
+it('sends the email auto reply when invited to an attendee who declined before but has a new pending request', function () use ($createAttendee): void {
+    $attendee = $createAttendee(true, EmailAutoReplyDeliveryPreference::WhenInvited);
+    $attendee->status = EventAttendeeStatus::NotAttending;
+    $attendee->save();
+
+    EventRegistrationFormSubmission::factory()->create([
+        'form_id' => $attendee->event->eventRegistrationForm->getKey(),
+        'event_attendee_id' => $attendee->getKey(),
+        'attendee_status' => EventAttendeeStatus::Invited,
+        'submitted_at' => null,
+        'requester_id' => User::factory()->create()->getKey(),
+    ]);
+
+    Notification::fake();
+
+    (new SendEventRegistrationFormEmailAutoReply($attendee, EmailAutoReplyDeliveryPreference::WhenInvited))->handle();
+
+    Notification::assertSentToTimes($attendee, EventRegistrationFormEmailAutoReplyNotification::class, 1);
 });
 
 it('does not send the email auto reply when the event was archived before it was sent', function () use ($createAttendee): void {
