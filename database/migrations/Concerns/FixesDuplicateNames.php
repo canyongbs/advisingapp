@@ -207,9 +207,9 @@ trait FixesDuplicateNames
             while (
                 isset($existingNames[Str::lower($newName)])
                 || (
-                     ! Str::startsWith(Str::lower($newName), $existingExact . '-')
+                    ! Str::startsWith(Str::lower($newName), $existingExact . '-')
                      && $this->liveValueExists($newName, $groupValues, $groupByColumns)
-                 )
+                )
             ) {
                 $counter++;
                 $newName = $this->buildDeduplicatedValue($originalName, $counter);
