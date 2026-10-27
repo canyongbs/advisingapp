@@ -36,7 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
+use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
+use AdvisingApp\MeetingCenter\Events\EventRegistrationFormSubmissionCreated;
 use AdvisingApp\MeetingCenter\Listeners\HandleUserDepartmentChanged;
+use AdvisingApp\MeetingCenter\Listeners\SendEmailAutoReplyToInvitedAttendee;
+use AdvisingApp\MeetingCenter\Listeners\SendEmailAutoReplyToRegisteredAttendee;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
@@ -99,6 +103,16 @@ class MeetingCenterServiceProvider extends ServiceProvider
         EventFacade::listen(
             UserDepartmentChanged::class,
             HandleUserDepartmentChanged::class,
+        );
+
+        EventFacade::listen(
+            EventAttendeeInvited::class,
+            SendEmailAutoReplyToInvitedAttendee::class,
+        );
+
+        EventFacade::listen(
+            EventRegistrationFormSubmissionCreated::class,
+            SendEmailAutoReplyToRegisteredAttendee::class,
         );
     }
 }

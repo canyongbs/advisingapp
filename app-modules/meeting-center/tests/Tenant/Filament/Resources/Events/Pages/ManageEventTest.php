@@ -35,8 +35,10 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
@@ -45,6 +47,7 @@ use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -101,6 +104,11 @@ $getRenderedFormIds = function (Testable $component): array {
 };
 
 $archiveAction = fn (): TestAction => TestAction::make('archive');
+
+$richText = fn (string $text): array => [
+    'type' => 'doc',
+    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
+];
 
 $getNewRegistrationFormVersion = fn (EventRegistrationForm $form): EventRegistrationForm => EventRegistrationForm::withoutGlobalScopes()
     ->where('root_id', $form->root_id)
@@ -160,9 +168,9 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getTabLabels(Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])))->toBe($tabs);
     })->with([
         'view' => [['event.*.view'], ['Overview']],
-        'update' => [['event.*.view', 'event.*.update'], ['Overview', 'Details', 'Landing Page', 'Registration Form']],
+        'update' => [['event.*.view', 'event.*.update'], ['Overview', 'Details', 'Landing Page', 'Registration Form', 'Email Auto Reply']],
         'attendees' => [['event.*.view', 'event_attendee.view-any'], ['Overview', 'Attendees']],
-        'update without view' => [['event.*.update'], ['Details', 'Landing Page', 'Registration Form']],
+        'update without view' => [['event.*.update'], ['Details', 'Landing Page', 'Registration Form', 'Email Auto Reply']],
         'attendees without view' => [['event_attendee.view-any'], ['Attendees']],
     ]);
 
@@ -180,6 +188,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'details' => ['details', ['form']],
         'landing page' => ['landing-page', ['landingPageForm']],
         'registration form' => ['registration-form', ['registrationForm']],
+        'email auto reply' => ['email-auto-reply', ['emailAutoReplyForm']],
     ]);
 
     it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
@@ -191,7 +200,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->test(ManageEvent::class, ['record' => $event->getRouteKey()]);
 
         expect($getRenderedFormIds($component))->toBe([]);
-    })->with(['details', 'landing-page', 'registration-form']);
+    })->with(['details', 'landing-page', 'registration-form', 'email-auto-reply']);
 });
 
 describe('details tab', function () use ($archiveAction): void {
@@ -343,6 +352,44 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->and($newVersion->embed_enabled)->toBeTrue()
             ->and($newVersion->allowed_domains)->toBe(['example.com'])
             ->and($event->fresh()->eventRegistrationForm->getKey())->toBe($newVersion->getKey());
+    });
+
+    it('moves the email auto reply onto the new version', function () use ($getNewRegistrationFormVersion): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $form = $event->eventRegistrationForm;
+        $emailAutoReply = $form->emailAutoReply()->firstOrFail();
+        $emailAutoReply->update(['is_enabled' => true]);
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->call('saveRegistrationForm')
+            ->assertHasNoErrors();
+
+        $newVersion = $getNewRegistrationFormVersion($form);
+
+        expect($newVersion->emailAutoReply?->getKey())->toBe($emailAutoReply->getKey())
+            ->and($newVersion->emailAutoReply?->is_enabled)->toBeTrue()
+            ->and($form->emailAutoReply()->exists())->toBeFalse();
+    });
+
+    it('does not move the email auto reply onto the new version when the feature is inactive', function () use ($getNewRegistrationFormVersion): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $form = $event->eventRegistrationForm;
+        $emailAutoReply = $form->emailAutoReply()->firstOrFail();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->call('saveRegistrationForm')
+            ->assertHasNoErrors();
+
+        $newVersion = $getNewRegistrationFormVersion($form);
+
+        expect($newVersion->emailAutoReply()->exists())->toBeFalse()
+            ->and($emailAutoReply->refresh()->form_id)->toBe($form->getKey());
     });
 
     it('keeps saved details settings when the registration form is saved afterwards', function () use ($getNewRegistrationFormVersion): void {
@@ -539,7 +586,220 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
     });
 });
 
-describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction): void {
+describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
+    it('displays the email auto reply data', function (): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $event->eventRegistrationForm->emailAutoReply()->firstOrFail()->update([
+            'is_enabled' => true,
+            'delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+        ]);
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->assertSchemaStateSet([
+                'emailAutoReply.is_enabled' => true,
+                'emailAutoReply.delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+            ], 'emailAutoReplyForm');
+    });
+
+    it('can save the email auto reply', function () use ($richText): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+
+        expect($emailAutoReply->is_enabled)->toBeFalse()
+            ->and($emailAutoReply->delivery_preference)->toBe(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation);
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+                    'subject' => $richText('Thanks for registering'),
+                    'body' => $richText('We look forward to seeing you.'),
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm')
+            ->assertNotified();
+
+        $emailAutoReply->refresh();
+
+        expect($emailAutoReply->is_enabled)->toBeTrue()
+            ->and($emailAutoReply->delivery_preference)->toBe(EmailAutoReplyDeliveryPreference::WhenInvited)
+            ->and($emailAutoReply->getSubject(null))->toBe('Thanks for registering')
+            ->and($emailAutoReply->getBody(null))->toContain('We look forward to seeing you.');
+    });
+
+    it('creates the email auto reply sent after attendance confirmation by default for a registration form that does not have one yet', function () use ($richText): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $event->eventRegistrationForm->emailAutoReply()->forceDelete();
+
+        expect($event->eventRegistrationForm->emailAutoReply()->exists())->toBeFalse();
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for registering'),
+                    'body' => $richText('We look forward to seeing you.'),
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+
+        expect($emailAutoReply->is_enabled)->toBeTrue()
+            ->and($emailAutoReply->delivery_preference)->toBe(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation);
+    });
+
+    it('saves uploaded images in the email auto reply body', function () use ($richText): void {
+        asSuperAdmin();
+        $disk = Storage::fake('s3-public');
+
+        $event = Event::factory()->create();
+        $statePath = 'emailAutoReplyData.emailAutoReply.body';
+
+        expect($event->eventRegistrationForm->emailAutoReply()->firstOrFail()->getMedia('body'))->toBeEmpty();
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->set('emailAutoReplyData.emailAutoReply.is_enabled', true)
+            ->set('emailAutoReplyData.emailAutoReply.subject', $richText('Thanks for registering'))
+            ->set($statePath, [
+                'type' => 'doc',
+                'content' => [[
+                    'type' => 'image',
+                    'attrs' => ['id' => 'uploaded-image', 'src' => 'temporary-image.png'],
+                ]],
+            ])
+            ->set("componentFileAttachments.{$statePath}.uploaded-image", UploadedFile::fake()->image('image.png'))
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+        $media = $emailAutoReply->getFirstMedia('body');
+        assert($media !== null);
+
+        expect(data_get($emailAutoReply->body, 'content.0.attrs.id'))->toBe($media->uuid)
+            ->and($media->uuid)->not->toBe('uploaded-image');
+        $disk->assertExists($media->getPathRelativeToRoot());
+    });
+
+    it('removes the merge tags the email auto reply cannot fill when loading an email template', function (): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        $emailTemplate = EmailTemplate::factory()->create([
+            'content' => [
+                'type' => 'doc',
+                'content' => [[
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Hi '],
+                        ['type' => 'mergeTag', 'attrs' => ['id' => 'recipient first name']],
+                        ['type' => 'text', 'text' => ', we will email '],
+                        ['type' => 'mergeTag', 'attrs' => ['id' => 'recipient email']],
+                    ],
+                ]],
+            ],
+        ]);
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->callAction(
+                TestAction::make('loadEmailTemplate')->schemaComponent('emailAutoReply.body', schema: 'emailAutoReplyForm'),
+                data: ['emailTemplate' => $emailTemplate->getKey()],
+            )
+            ->assertSchemaStateSet([
+                'emailAutoReply.body' => [
+                    'type' => 'doc',
+                    'content' => [[
+                        'type' => 'paragraph',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'Hi '],
+                            ['type' => 'text', 'text' => ', we will email '],
+                            ['type' => 'mergeTag', 'attrs' => ['id' => 'recipient email']],
+                        ],
+                    ]],
+                ],
+            ], 'emailAutoReplyForm');
+    });
+
+    it('validates the inputs', function (array $data, array $errors) use ($richText): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+                    'subject' => $richText('Thanks for registering'),
+                    'body' => $richText('We look forward to seeing you.'),
+                    ...$data,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasFormErrors($errors, 'emailAutoReplyForm');
+    })->with([
+        'subject required' => [['subject' => null], ['emailAutoReply.subject' => 'The subject field is required.']],
+        'body required' => [['body' => null], ['emailAutoReply.body' => 'The body field is required.']],
+        'delivery preference required' => [['delivery_preference' => null], ['emailAutoReply.delivery_preference' => 'required']],
+    ]);
+
+    it('does not require the subject and body when the email auto reply is disabled', function (): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => false,
+                    'subject' => null,
+                    'body' => null,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+    });
+
+    it('does not create a new registration form version', function (): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+        $form = $event->eventRegistrationForm;
+
+        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm(['emailAutoReply' => ['is_enabled' => false]], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply');
+
+        expect(EventRegistrationForm::withoutGlobalScopes()->where('root_id', $form->root_id)->count())->toBe(1)
+            ->and($form->fresh()?->archived_at)->toBeNull();
+    });
+
+    it('does not show or save the email auto reply when the feature is inactive', function () use ($getTabLabels): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        $component = Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()]);
+
+        expect($getTabLabels($component))->not->toContain('Email Auto Reply');
+
+        $component->call('saveEmailAutoReply')->assertNotFound();
+    });
+});
+
+describe('authorization', function () use ($actingAsUserWithPermissions, $archiveAction, $richText): void {
     it('denies access to the manage event page without access to any tab', function () use ($actingAsUserWithPermissions): void {
         $actingAsUserWithPermissions();
 
@@ -575,7 +835,8 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
             ->assertSet('data', [])
             ->assertSet('landingPageData', [])
-            ->assertSet('registrationFormData', []);
+            ->assertSet('registrationFormData', [])
+            ->assertSet('emailAutoReplyData', []);
     });
 
     it('does not save without the `event.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
@@ -594,6 +855,27 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         expect($event->fresh()->title)->toBe('Original title')
             ->and(EventRegistrationForm::withoutGlobalScopes()->where('root_id', $form->root_id)->count())->toBe(1);
     })->with(['save', 'saveLandingPage', 'saveRegistrationForm']);
+
+    it('does not save the email auto reply without the `event.*.update` permission', function () use ($actingAsUserWithPermissions, $richText): void {
+        $user = $actingAsUserWithPermissions('event.*.view', 'event.*.update');
+
+        $event = Event::factory()->create();
+
+        $component = Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $richText('Thanks for registering'),
+                    'body' => $richText('We look forward to seeing you.'),
+                ],
+            ], 'emailAutoReplyForm');
+
+        $user->revokePermissionTo('event.*.update');
+
+        $component->call('saveEmailAutoReply')->assertForbidden();
+
+        expect($event->eventRegistrationForm->emailAutoReply()->firstOrFail()->is_enabled)->toBeFalse();
+    });
 
     it('hides the `Archive` action without the `event.*.delete` permission', function () use ($actingAsUserWithPermissions, $archiveAction): void {
         $actingAsUserWithPermissions('event.*.view', 'event.*.update');

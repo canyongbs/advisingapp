@@ -34,13 +34,16 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Notifications\EventRegistrationFormEmailAutoReplyNotification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\postJson;
@@ -194,4 +197,43 @@ describe('store', function () use ($createAuthenticatedAttendee, $submitUrl): vo
         expect(EventRegistrationFormSubmission::query()->where('event_attendee_id', $attendee->getKey())->exists())->toBeFalse()
             ->and($attendee->refresh()->status)->toBe(EventAttendeeStatus::Pending);
     });
+
+    it('sends the email auto reply to an attendee who registers as attending', function (EventAttendeeStatus $status, EmailAutoReplyDeliveryPreference $deliveryPreference, array $data) use ($createAuthenticatedAttendee, $submitUrl): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee($status);
+
+        $event->eventRegistrationForm->emailAutoReply()->firstOrFail()->update([
+            'is_enabled' => true,
+            'delivery_preference' => $deliveryPreference,
+        ]);
+
+        Notification::fake();
+
+        postJson($submitUrl($event, $authentication), $data)
+            ->assertSuccessful();
+
+        Notification::assertSentToTimes($attendee, EventRegistrationFormEmailAutoReplyNotification::class, 1);
+    })->with([
+        'invited attendee answering `yes` after attendance confirmation' => [EventAttendeeStatus::Invited, EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation, ['attending' => 'yes']],
+        'registering through the public link after attendance confirmation' => [EventAttendeeStatus::Pending, EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation, []],
+        'registering through the public link when invited' => [EventAttendeeStatus::Pending, EmailAutoReplyDeliveryPreference::WhenInvited, []],
+    ]);
+
+    it('does not send the email auto reply at registration when it is sent when invited or to an attendee who is not attending', function (EmailAutoReplyDeliveryPreference $deliveryPreference, array $data) use ($createAuthenticatedAttendee, $submitUrl): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee(EventAttendeeStatus::Invited);
+
+        $event->eventRegistrationForm->emailAutoReply()->firstOrFail()->update([
+            'is_enabled' => true,
+            'delivery_preference' => $deliveryPreference,
+        ]);
+
+        Notification::fake();
+
+        postJson($submitUrl($event, $authentication), $data)
+            ->assertSuccessful();
+
+        Notification::assertNotSentTo($attendee, EventRegistrationFormEmailAutoReplyNotification::class);
+    })->with([
+        'invited attendee answering `yes` when invited' => [EmailAutoReplyDeliveryPreference::WhenInvited, ['attending' => 'yes']],
+        'invited attendee answering `no`' => [EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation, ['attending' => 'no']],
+    ]);
 });
