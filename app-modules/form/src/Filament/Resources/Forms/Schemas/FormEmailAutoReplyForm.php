@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
+use AdvisingApp\Form\Filament\Forms\Components\EmailAutoReplySection;
 use Filament\Schemas\Schema;
 
 class FormEmailAutoReplyForm

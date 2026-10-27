@@ -398,6 +398,16 @@ describe('email auto reply tab', function (): void {
         'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
     ];
 
+    it('displays the email auto reply data', function (): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+        $form->emailAutoReply->update(['is_enabled' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSchemaStateSet(['emailAutoReply.is_enabled' => true], 'emailAutoReplyForm');
+    });
+
     it('can save the email auto reply of an authenticated form', function () use ($paragraph): void {
         asSuperAdmin();
 
@@ -425,6 +435,44 @@ describe('email auto reply tab', function (): void {
             ->and($autoReply->subject)->toEqual($paragraph('Thanks'))
             ->and($autoReply->body)->toEqual($paragraph('We received your submission.'))
             ->and(Form::query()->where('root_id', $form->root_id)->count())->toBe(1);
+    });
+
+    it('validates the inputs', function (array $data, array $errors) use ($paragraph): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $paragraph('Thanks'),
+                    'body' => $paragraph('We received your submission.'),
+                    ...$data,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasFormErrors($errors, 'emailAutoReplyForm');
+    })->with([
+        'subject required' => [['subject' => null], ['emailAutoReply.subject' => 'The subject field is required.']],
+        'body required' => [['body' => null], ['emailAutoReply.body' => 'The body field is required.']],
+    ]);
+
+    it('does not require the subject and body when the email auto reply is disabled', function (): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => false,
+                    'subject' => null,
+                    'body' => null,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
     });
 
     it('cannot be saved for a form that is not authenticated', function (): void {
