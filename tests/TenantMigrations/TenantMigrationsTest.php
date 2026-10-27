@@ -521,4 +521,34 @@ describe('campaigns name citext change', function () {
             }
         );
     });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_27_130340_convert_campaigns_name_to_citext',
+            function () {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $campaign1 = Campaign::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $campaign2 = Campaign::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $campaign3 = Campaign::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/campaign/database/migrations/2026_10_27_130340_convert_campaigns_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($campaign1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($campaign2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($campaign3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
 });
