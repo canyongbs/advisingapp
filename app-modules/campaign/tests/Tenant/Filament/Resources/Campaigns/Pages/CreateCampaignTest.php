@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Enums\GroupOwnership;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Enums\InteractableType;
@@ -49,6 +50,7 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Team\Models\Department;
+use App\Features\CampaignNameCitextFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
@@ -300,4 +302,35 @@ it('clears the selected population group when the group ownership changes', func
         ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
         ->fillForm(['group_ownership' => GroupOwnership::All->value])
         ->assertSchemaStateSet(['segment_id' => null]);
+});
+
+it('does not allow creating a campaign whose name matches another non-deleted campaign case-insensitively', function (): void {
+    Campaign::factory()->create(['name' => 'Fall Outreach']);
+
+    Livewire::test(CreateCampaign::class)
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a campaign whose name is freed up by a soft-deleted campaign case-insensitively', function (): void {
+    $deletedCampaign = Campaign::factory()->create(['name' => 'Fall Outreach']);
+    $deletedCampaign->delete();
+
+    Livewire::test(CreateCampaign::class)
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+});
+
+it('rejects creating a campaign with a soft-deleted name before the citext migration activates', function (): void {
+    CampaignNameCitextFeature::deactivate();
+
+    $deletedCampaign = Campaign::factory()->create(['name' => 'Fall Outreach']);
+    $deletedCampaign->delete();
+
+    Livewire::test(CreateCampaign::class)
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

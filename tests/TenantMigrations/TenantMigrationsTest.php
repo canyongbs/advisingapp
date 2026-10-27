@@ -466,3 +466,59 @@ describe('basic needs programs name citext change', function () {
         );
     });
 });
+
+// TODO: Cleanup Task (campaign-name-citext) - Delete this describe and everything contained within
+describe('campaigns name citext change', function () {
+    it('renames case-insensitive duplicate campaign names', function () {
+        isolatedMigration(
+            '2026_10_27_130340_convert_campaigns_name_to_citext',
+            function () {
+                // Setup data before migration
+                $campaign1 = Campaign::factory()->create(['name' => 'Fall Outreach', 'created_at' => now()->subMinutes(3)]);
+                $campaign2 = Campaign::factory()->create(['name' => 'fall outreach', 'created_at' => now()->subMinutes(2)]);
+                $campaign3 = Campaign::factory()->create(['name' => 'FALL OUTREACH', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted campaign sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedCampaign = Campaign::factory()->create(['name' => 'Fall outreach', 'created_at' => now()->subMinutes(4)]);
+                $deletedCampaign->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/campaign/database/migrations/2026_10_27_130340_convert_campaigns_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($campaign1->refresh()->name)->toBe('Fall Outreach');
+                expect($campaign2->refresh()->name)->toBe('fall outreach-2');
+                expect($campaign3->refresh()->name)->toBe('FALL OUTREACH-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedCampaign->refresh()->name)->toBe('Fall outreach');
+            }
+        );
+    });
+
+    it('can be rolled back when a live campaign reuses a soft-deleted campaign name', function () {
+        isolatedMigration(
+            '2026_10_27_130340_convert_campaigns_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/campaign/database/migrations/2026_10_27_130340_convert_campaigns_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedCampaign = Campaign::factory()->create(['name' => 'Fall Outreach']);
+                $deletedCampaign->delete();
+                Campaign::factory()->create(['name' => 'Fall Outreach']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/campaign/database/migrations/2026_10_27_130340_convert_campaigns_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
