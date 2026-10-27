@@ -206,7 +206,10 @@ trait FixesDuplicateNames
             // the live table as well so a generated name never collides with an existing one.
             while (
                 isset($existingNames[Str::lower($newName)])
-                || $this->liveValueExists($newName, $groupValues, $groupByColumns)
+                || (
+                     ! Str::startsWith(Str::lower($newName), $existingExact . '-')
+                     && $this->liveValueExists($newName, $groupValues, $groupByColumns)
+                 )
             ) {
                 $counter++;
                 $newName = $this->buildDeduplicatedValue($originalName, $counter);
