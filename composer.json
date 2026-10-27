@@ -55,7 +55,7 @@
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^2.46.0",
+        "canyongbs/common": "^2.46.1",
         "canyongbs/model-state-machine": "^2.1.0",
         "cboxdk/laravel-queue-autoscale": "4.6.0",
         "cboxdk/laravel-queue-metrics": "3.5.1",

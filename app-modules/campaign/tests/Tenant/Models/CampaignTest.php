@@ -93,3 +93,51 @@ it('archives an already disabled campaign without re-enabling it', function (): 
     expect($campaign->enabled)->toBeFalse()
         ->and($campaign->archived_at)->not->toBeNull();
 });
+
+describe('audits', function (): void {
+    it('records an updated audit for the disable and one archived audit when an enabled campaign is archived', function (): void {
+        asSuperAdmin();
+
+        $campaign = Campaign::factory()->enabled()->create();
+
+        expect($campaign->audits()->where('event', 'archived')->exists())->toBeFalse()
+            ->and($campaign->audits()->where('event', 'updated')->exists())->toBeFalse();
+
+        $campaign->archive();
+
+        $archivedAudits = $campaign->audits()->where('event', 'archived')->get();
+        $updatedAudits = $campaign->audits()->where('event', 'updated')->get();
+
+        expect($archivedAudits)->toHaveCount(1)
+            ->and($updatedAudits)->toHaveCount(1)
+            ->and($updatedAudits->first()->new_values)->toHaveKey('enabled')
+            ->and($updatedAudits->first()->new_values)->not->toHaveKey('archived_at');
+    });
+
+    it('records one archived audit and no updated audit when a disabled campaign is archived', function (): void {
+        asSuperAdmin();
+
+        $campaign = Campaign::factory()->disabled()->create();
+
+        expect($campaign->audits()->where('event', 'archived')->exists())->toBeFalse();
+
+        $campaign->archive();
+
+        expect($campaign->audits()->where('event', 'archived')->count())->toBe(1)
+            ->and($campaign->audits()->where('event', 'updated')->exists())->toBeFalse();
+    });
+
+    it('records one unarchived audit and no updated audit when a campaign is unarchived', function (): void {
+        asSuperAdmin();
+
+        $campaign = Campaign::factory()->disabled()->create();
+        $campaign->archive();
+
+        expect($campaign->audits()->where('event', 'unarchived')->exists())->toBeFalse();
+
+        $campaign->unarchive();
+
+        expect($campaign->audits()->where('event', 'unarchived')->count())->toBe(1)
+            ->and($campaign->audits()->where('event', 'updated')->exists())->toBeFalse();
+    });
+});
