@@ -215,6 +215,21 @@ class AiIntegrationsSettings extends Settings
      */
     public array $open_ai_gpt_56_luna_applicable_features = [];
 
+    public ?string $open_ai_gpt_6_luna_model_name = null;
+
+    public ?string $open_ai_gpt_6_luna_base_uri = null;
+
+    public ?string $open_ai_gpt_6_luna_api_key = null;
+
+    public ?string $open_ai_gpt_6_luna_model = null;
+
+    public ?string $open_ai_gpt_6_luna_image_generation_deployment = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_6_luna_applicable_features = [];
+
     /**
      * @var array<string>
      */
@@ -292,6 +307,10 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_56_luna_api_key',
             'open_ai_gpt_56_luna_model',
             'open_ai_gpt_56_luna_image_generation_deployment',
+            'open_ai_gpt_6_luna_base_uri',
+            'open_ai_gpt_6_luna_api_key',
+            'open_ai_gpt_6_luna_model',
+            'open_ai_gpt_6_luna_image_generation_deployment',
             'jina_deepsearch_v1_api_key',
             'llamaparse_api_key',
         ];
