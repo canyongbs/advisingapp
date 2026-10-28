@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
+use App\Features\CustomerAdvisorNameCitextFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -55,6 +56,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
 
 class EditCustomerAdvisor extends EditRecord
@@ -98,7 +100,14 @@ class EditCustomerAdvisor extends EditRecord
                         TextInput::make('name')
                             ->required()
                             ->string()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->unique(
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule): Unique => CustomerAdvisorNameCitextFeature::active()
+                                    ? $rule->withoutTrashed()
+                                    : $rule,
+                            )
+                            ->validationMessages(['unique' => 'A Customer Advisor with this name already exists.']),
                         Select::make('model')
                             ->live()
                             ->options(fn (AiModel|string|null $state): array => array_unique([

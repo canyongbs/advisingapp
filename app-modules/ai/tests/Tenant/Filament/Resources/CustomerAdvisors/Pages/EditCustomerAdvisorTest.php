@@ -230,3 +230,55 @@ test('restore action visible when Customer Advisor is archived', function (): vo
         ->assertActionVisible('restore')
         ->assertActionHidden('archive');
 });
+
+test('Edit Customer Advisor does not allow renaming to a name matching another advisor case-insensitively', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
+    $customerAdvisor = CustomerAdvisor::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(EditCustomerAdvisor::class, [
+        'record' => $customerAdvisor->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('Edit Customer Advisor allows a name freed up by a soft-deleted advisor and its own name', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+    $customerAdvisor = CustomerAdvisor::factory()->create(['name' => 'Financial Aid Helper']);
+
+    foreach (['admissions helper', 'ADMISSIONS HELPER'] as $name) {
+        $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => $name]));
+
+        Livewire::test(EditCustomerAdvisor::class, [
+            'record' => $customerAdvisor->getRouteKey(),
+        ])
+            ->fillForm($request->toArray())
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+    }
+});

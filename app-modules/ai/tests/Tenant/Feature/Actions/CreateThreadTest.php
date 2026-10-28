@@ -325,3 +325,23 @@ it('creates a new assistant if no default assistant exists', function (): void {
         ->is_default->toBeTrue()
         ->wasRecentlyCreated->toBeTrue();
 });
+
+it('gives the auto-created default assistant a unique name when a custom assistant already uses it', function (): void {
+    asSuperAdmin();
+
+    AiAssistant::factory()->create([
+        'name' => 'institutional advisor',
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => false,
+    ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $thread = app(CreateThread::class)(AiAssistantApplication::PersonalAssistant);
+
+    expect($thread->assistant)
+        ->name->toBe('Institutional Advisor-2')
+        ->is_default->toBeTrue();
+});

@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
+use App\Features\EmployeeAdvisorNameCitextFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
@@ -55,6 +56,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 
 class AiAssistantForm
 {
@@ -70,6 +72,13 @@ class AiAssistantForm
                     ->required()
                     ->string()
                     ->maxLength(255)
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => EmployeeAdvisorNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    )
+                    ->validationMessages(['unique' => 'An Employee Advisor with this name already exists.'])
                     ->columnSpanFull(),
                 Select::make('application')
                     ->options([

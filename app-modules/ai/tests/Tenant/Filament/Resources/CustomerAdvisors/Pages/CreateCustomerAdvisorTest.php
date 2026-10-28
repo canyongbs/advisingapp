@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CreateCustomerAdvis
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\CustomerAdvisorNameCitextFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
@@ -180,3 +181,75 @@ test('Create Customer Advisor validates the inputs', function (CustomerAdvisorRe
         ],
     ]
 );
+
+test('Create Customer Advisor does not allow a name matching another advisor case-insensitively', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(CreateCustomerAdvisor::class)
+        ->fillForm($request->except(['model'])->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    assertDatabaseCount(CustomerAdvisor::class, 1);
+});
+
+test('Create Customer Advisor allows a name freed up by a soft-deleted advisor', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(CreateCustomerAdvisor::class)
+        ->fillForm($request->except(['model'])->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+
+    assertDatabaseHas(CustomerAdvisor::class, ['name' => 'admissions helper']);
+});
+
+test('Create Customer Advisor rejects a name freed up by a soft-deleted advisor before the citext migration activates', function (): void {
+    Storage::fake('s3');
+
+    CustomerAdvisorNameCitextFeature::deactivate();
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'Admissions Helper']));
+
+    Livewire::test(CreateCustomerAdvisor::class)
+        ->fillForm($request->except(['model'])->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});

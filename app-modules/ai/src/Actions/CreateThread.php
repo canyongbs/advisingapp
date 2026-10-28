@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Settings\DisplaySettings;
+use Illuminate\Support\Str;
 
 class CreateThread
 {
@@ -98,6 +99,7 @@ class CreateThread
             $assistant->name = "{$tenant->name} AI Assistant";
             $assistant->description = "An AI Assistant for {$tenant->name}";
         }
+        $assistant->name = $this->getUniqueAssistantName($assistant->name);
         $assistant->instructions = $settings->prompt_system_context;
         $assistant->application = $application;
         $assistant->model = $application->getDefaultModel();
@@ -105,5 +107,27 @@ class CreateThread
         $assistant->save();
 
         return $assistant;
+    }
+
+    /**
+     * Assistant names are unique (case-insensitively), so avoid colliding with a user-created assistant.
+     */
+    protected function getUniqueAssistantName(string $name): string
+    {
+        $uniqueName = $name;
+        $counter = 2;
+
+        while (
+            AiAssistant::query()
+                ->withoutGlobalScopes()
+                ->whereNull('deleted_at')
+                ->whereRaw('LOWER(name) = ?', [Str::lower($uniqueName)])
+                ->exists()
+        ) {
+            $uniqueName = "{$name}-{$counter}";
+            $counter++;
+        }
+
+        return $uniqueName;
     }
 }

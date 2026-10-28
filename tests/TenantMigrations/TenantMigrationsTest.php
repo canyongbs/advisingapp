@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -548,6 +550,147 @@ describe('campaigns name citext change', function () {
                 expect($campaign2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 // The pre-existing truncated row is in its own group and is left untouched.
                 expect($campaign3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (advisor-name-citext) - Delete this describe and everything contained within
+describe('advisor names citext change', function () {
+    it('renames case-insensitive duplicate employee advisor names and ignores soft-deleted ones', function () {
+        isolatedMigration(
+            '2026_10_28_164257_convert_ai_assistants_name_to_citext',
+            function () {
+                $advisor1 = AiAssistant::factory()->create(['name' => 'Admissions Helper', 'created_at' => now()->subMinutes(3)]);
+                $advisor2 = AiAssistant::factory()->create(['name' => 'admissions helper', 'created_at' => now()->subMinutes(2)]);
+                $advisor3 = AiAssistant::factory()->create(['name' => 'ADMISSIONS HELPER', 'created_at' => now()->subMinutes(1)]);
+
+                $deletedAdvisor = AiAssistant::factory()->create(['name' => 'Admissions helper', 'created_at' => now()->subMinutes(4)]);
+                $deletedAdvisor->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164257_convert_ai_assistants_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($advisor1->refresh()->name)->toBe('Admissions Helper');
+                expect($advisor2->refresh()->name)->toBe('admissions helper-2');
+                expect($advisor3->refresh()->name)->toBe('ADMISSIONS HELPER-3');
+                expect(AiAssistant::withTrashed()->findOrFail($deletedAdvisor->getKey())->name)->toBe('Admissions helper');
+            }
+        );
+    });
+
+    it('can roll back the employee advisor migration when a live advisor reuses a soft-deleted name', function () {
+        isolatedMigration(
+            '2026_10_28_164257_convert_ai_assistants_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164257_convert_ai_assistants_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                AiAssistant::factory()->create(['name' => 'Admissions Helper'])->delete();
+                AiAssistant::factory()->create(['name' => 'Admissions Helper']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164257_convert_ai_assistants_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+
+                // The rolled-back schema must still support running the migration again.
+                $remigrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164257_convert_ai_assistants_name_to_citext.php']);
+
+                expect($remigrate)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate employee advisor onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_164257_convert_ai_assistants_name_to_citext',
+            function () {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $advisor1 = AiAssistant::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $advisor2 = AiAssistant::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $advisor3 = AiAssistant::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164257_convert_ai_assistants_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($advisor1->refresh()->name)->toBe($maxLengthUpper);
+                expect($advisor2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($advisor3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+
+    it('renames case-insensitive duplicate customer advisor names and ignores soft-deleted ones', function () {
+        isolatedMigration(
+            '2026_10_28_164258_convert_customer_advisors_name_to_citext',
+            function () {
+                $advisor1 = CustomerAdvisor::factory()->create(['name' => 'Admissions Helper', 'created_at' => now()->subMinutes(3)]);
+                $advisor2 = CustomerAdvisor::factory()->create(['name' => 'admissions helper', 'created_at' => now()->subMinutes(2)]);
+                $advisor3 = CustomerAdvisor::factory()->create(['name' => 'ADMISSIONS HELPER', 'created_at' => now()->subMinutes(1)]);
+
+                $deletedAdvisor = CustomerAdvisor::factory()->create(['name' => 'Admissions helper', 'created_at' => now()->subMinutes(4)]);
+                $deletedAdvisor->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164258_convert_customer_advisors_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($advisor1->refresh()->name)->toBe('Admissions Helper');
+                expect($advisor2->refresh()->name)->toBe('admissions helper-2');
+                expect($advisor3->refresh()->name)->toBe('ADMISSIONS HELPER-3');
+                expect(CustomerAdvisor::withTrashed()->findOrFail($deletedAdvisor->getKey())->name)->toBe('Admissions helper');
+            }
+        );
+    });
+
+    it('can roll back the customer advisor migration when a live advisor reuses a soft-deleted name', function () {
+        isolatedMigration(
+            '2026_10_28_164258_convert_customer_advisors_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164258_convert_customer_advisors_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+                CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164258_convert_customer_advisors_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+
+                // The rolled-back schema must still support running the migration again.
+                $remigrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164258_convert_customer_advisors_name_to_citext.php']);
+
+                expect($remigrate)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate customer advisor onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_164258_convert_customer_advisors_name_to_citext',
+            function () {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $advisor1 = CustomerAdvisor::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $advisor2 = CustomerAdvisor::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $advisor3 = CustomerAdvisor::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_10_28_164258_convert_customer_advisors_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($advisor1->refresh()->name)->toBe($maxLengthUpper);
+                expect($advisor2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($advisor3->refresh()->name)->toBe($truncatedCollision);
             }
         );
     });

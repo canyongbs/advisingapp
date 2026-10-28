@@ -39,6 +39,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories\CreateAiAssistantRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\EmployeeAdvisorNameCitextFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -278,4 +279,76 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
         ->assertFormFieldExists('ai_assistant_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
         });
+});
+
+it('does not allow creating an assistant whose name matches another one case-insensitively', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper']);
+
+    $request = collect(CreateAiAssistantRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(CreateAiAssistant::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    assertDatabaseCount(AiAssistant::class, 1);
+});
+
+it('allows creating an assistant whose name was freed up by a soft-deleted one', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper'])->delete();
+
+    $request = collect(CreateAiAssistantRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(CreateAiAssistant::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+
+    expect(AiAssistant::query()->where('name', 'admissions helper')->exists())->toBeTrue();
+});
+
+it('rejects an assistant name freed up by a soft-deleted one before the citext migration activates', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    EmployeeAdvisorNameCitextFeature::deactivate();
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper'])->delete();
+
+    $request = collect(CreateAiAssistantRequestFactory::new()->create(['name' => 'Admissions Helper']));
+
+    Livewire::test(CreateAiAssistant::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

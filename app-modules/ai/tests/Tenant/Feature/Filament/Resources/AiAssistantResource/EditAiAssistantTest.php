@@ -294,3 +294,62 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
             return ! empty($field->getSearchResults($adminUser->name));
         });
 });
+
+it('does not allow renaming an assistant to a name matching another one case-insensitively', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper']);
+    $aiAssistant = AiAssistant::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(EditAiAssistantRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows renaming an assistant to a name freed up by a soft-deleted one and to its own name', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper'])->delete();
+    $aiAssistant = AiAssistant::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(EditAiAssistantRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    $request = collect(EditAiAssistantRequestFactory::new()->create(['name' => 'ADMISSIONS HELPER']));
+
+    Livewire::test(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+});
