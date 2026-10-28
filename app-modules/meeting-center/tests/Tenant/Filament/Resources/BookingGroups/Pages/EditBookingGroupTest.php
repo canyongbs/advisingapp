@@ -323,12 +323,12 @@ test('allows updating a booking group to a name freed up by a soft-deleted booki
 
     Livewire::test(EditBookingGroup::class, ['record' => $bookingGroup->getRouteKey()])
         ->fillForm([
-             'name' => 'advising team',
-             'book_with' => BookingGroupBookWith::Availability->value,
-         ])
+            'name' => 'advising team',
+            'book_with' => BookingGroupBookWith::Availability->value,
+        ])
         ->call('save')
         ->assertHasNoFormErrors();
-     expect($bookingGroup->refresh()->name)->toBe('advising team');
+    expect($bookingGroup->refresh()->name)->toBe('advising team');
 });
 
 test('rejects updating a booking group to a soft-deleted name before the citext migration activates', function (): void {

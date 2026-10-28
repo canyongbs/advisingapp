@@ -271,9 +271,9 @@ it('allows creating a booking group whose name is freed up by a soft-deleted boo
 
     Livewire::test(CreateBookingGroup::class)
         ->fillForm(CreateBookingGroupRequestFactory::new()->state([
-             'name' => 'advising team',
-             'book_with' => BookingGroupBookWith::Availability->value,
-         ])->create())
+            'name' => 'advising team',
+            'book_with' => BookingGroupBookWith::Availability->value,
+        ])->create())
         ->call('create')
         ->assertHasNoFormErrors();
 
