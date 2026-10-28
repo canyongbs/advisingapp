@@ -59,21 +59,6 @@ return new class () extends Migration {
 
     private string $lengthConstraint = 'prospect_statuses_name_length';
 
-    /**
-     * Prefer retaining system-protected statuses (e.g. the default "New" and
-     * "Converted" rows) so de-duplication never renames them. Those rows are
-     * looked up by name + is_system_protected by ConvertToStudent and
-     * DisassociateStudent, which would break if they were suffixed.
-     */
-    // TODO: Cleanup Task (prospect-source-status-citext) - remove this duplicate ordering override
-    protected function orderDuplicateRecords(Builder $query): Builder
-    {
-        return $query
-            ->orderByDesc('is_system_protected')
-            ->orderBy('created_at', 'asc')
-            ->orderBy('id', 'asc');
-    }
-
     public function up(): void
     {
         DB::transaction(function (): void {
@@ -114,5 +99,20 @@ return new class () extends Migration {
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });
+    }
+
+    /**
+     * Prefer retaining system-protected statuses (e.g. the default "New" and
+     * "Converted" rows) so de-duplication never renames them. Those rows are
+     * looked up by name + is_system_protected by ConvertToStudent and
+     * DisassociateStudent, which would break if they were suffixed.
+     */
+    // TODO: Cleanup Task (prospect-source-status-citext) - remove this duplicate ordering override
+    protected function orderDuplicateRecords(Builder $query): Builder
+    {
+        return $query
+            ->orderByDesc('is_system_protected')
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
     }
 };
