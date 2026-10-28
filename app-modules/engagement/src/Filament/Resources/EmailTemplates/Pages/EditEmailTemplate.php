@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
+use App\Features\EmailTemplateNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
@@ -52,6 +53,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rules\Unique;
 
 class EditEmailTemplate extends EditRecord
 {
@@ -65,7 +67,14 @@ class EditEmailTemplate extends EditRecord
                 TextInput::make('name')
                     ->string()
                     ->required()
-                    ->autocomplete(false),
+                    ->autocomplete(false)
+                    ->when(
+                        EmailTemplateNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
+                    ),
                 Textarea::make('description')
                     ->string(),
                 RichEditor::make('content')

@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
+use App\Features\EmailTemplateNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -52,6 +53,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateEmailTemplate extends CreateRecord
 {
@@ -65,7 +67,12 @@ class CreateEmailTemplate extends CreateRecord
                 TextInput::make('name')
                     ->string()
                     ->required()
-                    ->autocomplete(false),
+                    ->autocomplete(false)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => EmailTemplateNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Textarea::make('description')
                     ->string(),
                 RichEditor::make('content')

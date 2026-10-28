@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Features\SmsTemplateNameCitextFeature;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -47,6 +48,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateSmsTemplate extends CreateRecord
 {
@@ -60,7 +62,12 @@ class CreateSmsTemplate extends CreateRecord
                 TextInput::make('name')
                     ->string()
                     ->required()
-                    ->autocomplete(false),
+                    ->autocomplete(false)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => SmsTemplateNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Textarea::make('description')
                     ->string(),
                 // TODO Implement length validation (320 characters max)
