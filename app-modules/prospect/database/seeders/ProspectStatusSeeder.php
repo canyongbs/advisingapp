@@ -45,42 +45,47 @@ class ProspectStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        ProspectStatus::factory()
-            ->createMany(
-                [
-                    [
-                        'classification' => SystemProspectClassification::New,
-                        'name' => 'New',
-                        'color' => Color::Sky->value,
-                        'is_system_protected' => true,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Assigned,
-                        'name' => 'Assigned',
-                        'color' => Color::Yellow->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::InProgress,
-                        'name' => 'In-Progress',
-                        'color' => Color::Blue->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Converted,
-                        'name' => 'Converted',
-                        'color' => Color::Green->value,
-                        'is_system_protected' => true,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Recycled,
-                        'name' => 'Recycled',
-                        'color' => Color::Gray->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::NotInterested,
-                        'name' => 'Not Interested',
-                        'color' => Color::Red->value,
-                    ],
-                ]
-            );
+        $statuses = [
+            [
+                'classification' => SystemProspectClassification::New,
+                'name' => 'New',
+                'color' => Color::Sky->value,
+                'is_system_protected' => true,
+            ],
+            [
+                'classification' => SystemProspectClassification::Assigned,
+                'name' => 'Assigned',
+                'color' => Color::Yellow->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::InProgress,
+                'name' => 'In-Progress',
+                'color' => Color::Blue->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::Converted,
+                'name' => 'Converted',
+                'color' => Color::Green->value,
+                'is_system_protected' => true,
+            ],
+            [
+                'classification' => SystemProspectClassification::Recycled,
+                'name' => 'Recycled',
+                'color' => Color::Gray->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::NotInterested,
+                'name' => 'Not Interested',
+                'color' => Color::Red->value,
+            ],
+        ];
+
+        foreach ($statuses as $status) {
+            if (ProspectStatus::query()->where('name', $status['name'])->exists()) {
+                continue;
+            }
+
+            ProspectStatus::factory()->create($status);
+        }
     }
 }
