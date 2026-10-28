@@ -38,6 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResou
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\CreateProspectStatusRequestFactory;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -115,4 +116,43 @@ test('CreateProspectStatus is gated with proper access control', function (): vo
     assertCount(1, ProspectStatus::all());
 
     assertDatabaseHas(ProspectStatus::class, $request->toArray());
+});
+
+// Case-insensitive uniqueness
+
+it('does not allow creating a prospect status whose name matches another non-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+    Livewire::test(CreateProspectStatus::class)
+        ->fillForm(['name' => 'engaged'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a prospect status whose name is freed up by a soft-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    Livewire::test(CreateProspectStatus::class)
+        ->fillForm(['name' => 'engaged'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+});
+
+it('rejects creating a prospect status with a soft-deleted name before the citext migration activates', function (): void {
+    asSuperAdmin();
+
+    ProspectSourceAndStatusNameCitextFeature::deactivate();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    Livewire::test(CreateProspectStatus::class)
+        ->fillForm(['name' => 'engaged'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

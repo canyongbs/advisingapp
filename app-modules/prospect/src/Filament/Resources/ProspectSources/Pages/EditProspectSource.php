@@ -37,11 +37,13 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditProspectSource extends EditRecord
 {
@@ -54,7 +56,13 @@ class EditProspectSource extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
             ]);
     }
 

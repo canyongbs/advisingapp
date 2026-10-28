@@ -45,6 +45,8 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Features\StudentGroupFilterConsolidationFeature;
@@ -548,6 +550,178 @@ describe('campaigns name citext change', function () {
                 expect($campaign2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 // The pre-existing truncated row is in its own group and is left untouched.
                 expect($campaign3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (prospect-source-status-citext) - Delete this describe and everything contained within
+describe('prospect sources name citext change', function () {
+    it('renames case-insensitive duplicate prospect source names', function () {
+        isolatedMigration(
+            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            function () {
+                // Setup data before migration
+                $source1 = ProspectSource::factory()->create(['name' => 'Referral', 'created_at' => now()->subMinutes(3)]);
+                $source2 = ProspectSource::factory()->create(['name' => 'referral', 'created_at' => now()->subMinutes(2)]);
+                $source3 = ProspectSource::factory()->create(['name' => 'REFERRAL', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted prospect source sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedSource = ProspectSource::factory()->create(['name' => 'Referral', 'created_at' => now()->subMinutes(4)]);
+                DB::table('prospect_sources')->where('id', $deletedSource->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($source1->refresh()->name)->toBe('Referral');
+                expect($source2->refresh()->name)->toBe('referral-2');
+                expect($source3->refresh()->name)->toBe('REFERRAL-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedSource->refresh()->name)->toBe('Referral');
+            }
+        );
+    });
+
+    it('can be rolled back when a live prospect source reuses a soft-deleted prospect source name', function () {
+        isolatedMigration(
+            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedSource = ProspectSource::factory()->create(['name' => 'Referral']);
+                DB::table('prospect_sources')->where('id', $deletedSource->getKey())->update(['deleted_at' => now()]);
+                ProspectSource::factory()->create(['name' => 'Referral']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate prospect source onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            function () {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $source1 = ProspectSource::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $source2 = ProspectSource::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $source3 = ProspectSource::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($source1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($source2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($source3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (prospect-source-status-citext) - Delete this describe and everything contained within
+describe('prospect statuses name citext change', function () {
+    it('renames case-insensitive duplicate prospect status names', function () {
+        isolatedMigration(
+            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            function () {
+                // Setup data before migration
+                $status1 = ProspectStatus::factory()->create(['name' => 'Engaged', 'created_at' => now()->subMinutes(3)]);
+                $status2 = ProspectStatus::factory()->create(['name' => 'engaged', 'created_at' => now()->subMinutes(2)]);
+                $status3 = ProspectStatus::factory()->create(['name' => 'ENGAGED', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted prospect status sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedStatus = ProspectStatus::factory()->create(['name' => 'Engaged', 'created_at' => now()->subMinutes(4)]);
+                DB::table('prospect_statuses')->where('id', $deletedStatus->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($status1->refresh()->name)->toBe('Engaged');
+                expect($status2->refresh()->name)->toBe('engaged-2');
+                expect($status3->refresh()->name)->toBe('ENGAGED-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedStatus->refresh()->name)->toBe('Engaged');
+            }
+        );
+    });
+
+    it('can be rolled back when a live prospect status reuses a soft-deleted prospect status name', function () {
+        isolatedMigration(
+            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+                DB::table('prospect_statuses')->where('id', $deletedStatus->getKey())->update(['deleted_at' => now()]);
+                ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate prospect status onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            function () {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $status1 = ProspectStatus::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $status2 = ProspectStatus::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $status3 = ProspectStatus::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($status1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($status2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($status3->refresh()->name)->toBe($truncatedCollision);
             }
         );
     });

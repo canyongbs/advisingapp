@@ -39,6 +39,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResou
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -184,4 +185,58 @@ test('EditProspectStatus is gated with proper system protection access control',
     assertEquals($request['name'], $prospectStatus->fresh()->name);
 
     assertEquals($request['color'], $prospectStatus->fresh()->color->value);
+});
+
+// Case-insensitive uniqueness
+
+test('does not allow updating a prospect status to a name matching another non-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows updating a prospect status to a name freed up by a soft-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
+});
+
+test('rejects updating a prospect status to a soft-deleted name before the citext migration activates', function (): void {
+    ProspectSourceAndStatusNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($prospectStatus->refresh()->name)->toBe('Nurturing');
 });
