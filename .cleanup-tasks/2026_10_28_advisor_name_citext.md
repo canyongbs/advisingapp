@@ -5,7 +5,7 @@ created: 2026-10-28
 
 ## Feature Flags
 
-    -   
+- App\Features\AdvisorNameCitextFeature
 
 ## Temporary Migrations
 

@@ -39,11 +39,13 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories\EditAiAssistantRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\AdvisorNameCitextFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -344,7 +346,40 @@ it('allows renaming an assistant to a name freed up by a soft-deleted one and to
         ->call('save')
         ->assertHasNoFormErrors(['name']);
 
+    expect($aiAssistant->refresh()->name)->toBe('admissions helper');
+
     $request = collect(EditAiAssistantRequestFactory::new()->create(['name' => 'ADMISSIONS HELPER']));
+
+    Livewire::test(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($aiAssistant->refresh()->name)->toBe('ADMISSIONS HELPER');
+});
+
+it('does not apply name uniqueness validation before the citext migration activates', function () use ($licenses, $permissions): void {
+    Storage::fake('s3');
+
+    AdvisorNameCitextFeature::deactivate();
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    DB::statement('DROP INDEX IF EXISTS ai_assistants_name_unique');
+
+    AiAssistant::factory()->create(['name' => 'Admissions Helper']);
+    $aiAssistant = AiAssistant::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(EditAiAssistantRequestFactory::new()->create(['name' => 'Admissions Helper']));
 
     Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),

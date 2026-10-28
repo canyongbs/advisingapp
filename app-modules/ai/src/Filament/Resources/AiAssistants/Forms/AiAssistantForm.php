@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
-use App\Features\EmployeeAdvisorNameCitextFeature;
+use App\Features\AdvisorNameCitextFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
@@ -72,13 +72,14 @@ class AiAssistantForm
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    ->unique(
-                        ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule): Unique => EmployeeAdvisorNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                    // TODO: Cleanup Task (advisor-name-citext) - replace ->when() with a plain ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
+                    ->when(
+                        AdvisorNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     )
-                    ->validationMessages(['unique' => 'An Employee Advisor with this name already exists.'])
                     ->columnSpanFull(),
                 Select::make('application')
                     ->options([

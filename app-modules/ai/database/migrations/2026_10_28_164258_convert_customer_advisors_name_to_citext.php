@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use App\Features\CustomerAdvisorNameCitextFeature;
+use App\Features\AdvisorNameCitextFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -60,8 +60,8 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function (): void {
-            // Block concurrent writes so no case-variant duplicate can appear between de-duplication and index creation.
-            DB::statement("LOCK TABLE {$this->table} IN SHARE ROW EXCLUSIVE MODE");
+            // Prevents a concurrent insert between the duplicate scan and the unique index creation
+            DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
 
             // TODO: Cleanup Task (advisor-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             $this->fixDuplicates();
@@ -73,14 +73,15 @@ return new class () extends Migration {
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            CustomerAdvisorNameCitextFeature::activate();
+            // Shared by the employee and customer advisor migrations; activated here as the later one so it only turns on once both tables are converted
+            AdvisorNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            CustomerAdvisorNameCitextFeature::deactivate();
+            AdvisorNameCitextFeature::deactivate();
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);

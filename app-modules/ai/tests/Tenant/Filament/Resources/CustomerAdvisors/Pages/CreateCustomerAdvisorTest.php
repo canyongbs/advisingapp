@@ -40,9 +40,10 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CreateCustomerAdvis
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\CustomerAdvisorNameCitextFeature;
+use App\Features\AdvisorNameCitextFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -227,13 +228,13 @@ test('Create Customer Advisor allows a name freed up by a soft-deleted advisor',
         ->call('create')
         ->assertHasNoFormErrors(['name']);
 
-    assertDatabaseHas(CustomerAdvisor::class, ['name' => 'admissions helper']);
+    assertDatabaseHas(CustomerAdvisor::class, ['name' => 'admissions helper', 'deleted_at' => null]);
 });
 
-test('Create Customer Advisor rejects a name freed up by a soft-deleted advisor before the citext migration activates', function (): void {
+test('Create Customer Advisor does not apply name uniqueness validation before the citext migration activates', function (): void {
     Storage::fake('s3');
 
-    CustomerAdvisorNameCitextFeature::deactivate();
+    AdvisorNameCitextFeature::deactivate();
 
     $settings = app(LicenseSettings::class);
     $settings->data->addons->customerAdvisors = true;
@@ -244,12 +245,14 @@ test('Create Customer Advisor rejects a name freed up by a soft-deleted advisor 
 
     actingAs($user);
 
-    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+    DB::statement('DROP INDEX IF EXISTS customer_advisors_name_unique');
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
 
     $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'Admissions Helper']));
 
     Livewire::test(CreateCustomerAdvisor::class)
         ->fillForm($request->except(['model'])->toArray())
         ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors(['name']);
 });
