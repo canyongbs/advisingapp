@@ -199,7 +199,18 @@ trait FixesDuplicateNames
             $originalName = $record->{$this->column};
             $newName = $this->buildDeduplicatedValue($originalName, $counter);
 
-            while (isset($existingNames[Str::lower($newName)])) {
+            // The in-memory $existingNames set is seeded from names sharing $baseName's prefix,
+            // but truncation in buildDeduplicatedValue() can shrink a candidate onto a live name
+            // that the seed query never loaded (e.g. a 255-char name truncated to 253 chars plus
+            // "-2" can collide with an unrelated live "…-2" row). Confirm each candidate against
+            // the live table as well so a generated name never collides with an existing one.
+            while (
+                isset($existingNames[Str::lower($newName)])
+                || (
+                    ! Str::startsWith(Str::lower($newName), $existingExact . '-')
+                     && $this->liveValueExists($newName, $groupValues, $groupByColumns)
+                )
+            ) {
                 $counter++;
                 $newName = $this->buildDeduplicatedValue($originalName, $counter);
             }
@@ -217,6 +228,29 @@ trait FixesDuplicateNames
         if (! empty($updates)) {
             $this->batchUpdate($updates);
         }
+    }
+
+    /**
+     * Determine whether a candidate value already exists on a live (non-removed) row,
+     * compared case-insensitively within the same group scope.
+     *
+     * @param  array<string, mixed>  $groupValues
+     * @param  array<int, string>  $groupByColumns
+     */
+    private function liveValueExists(string $value, array $groupValues, array $groupByColumns): bool
+    {
+        $query = DB::table($this->table)
+            ->whereRaw("LOWER({$this->column}) = ?", [Str::lower($value)]);
+
+        foreach ($groupByColumns as $col) {
+            $query->where($col, $groupValues[$col]);
+        }
+
+        if ($this->usesSoftDeletes) {
+            $query->whereNull($this->softDeleteColumn());
+        }
+
+        return $query->exists();
     }
 
     /**

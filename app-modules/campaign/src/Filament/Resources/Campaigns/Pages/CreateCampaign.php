@@ -41,6 +41,7 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Features\CampaignNameCitextFeature;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
@@ -54,6 +55,7 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateCampaign extends CreateRecord
 {
@@ -102,7 +104,12 @@ class CreateCampaign extends CreateRecord
                 ->schema([
                     TextInput::make('name')
                         ->autocomplete(false)
-                        ->required(),
+                        ->required()
+                        ->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => CampaignNameCitextFeature::active()
+                                ? $rule->withoutTrashed()
+                                : $rule,
+                        ),
                     ...PopulationGroupSelector::make(function (Set $set): void {
                         $set('actions', []);
                     }),

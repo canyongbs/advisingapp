@@ -44,6 +44,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Team\Models\Department;
+use App\Features\CampaignNameCitextFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Livewire\Livewire;
@@ -256,4 +257,48 @@ test('rejects a segment_id that does not match the campaign\'s original populati
         ->assertHasFormErrors(['segment_id']);
 
     expect($campaign->fresh()->segment_id)->toBe($studentGroup->getKey());
+});
+
+test('does not allow updating a campaign to a name matching another non-deleted campaign case-insensitively', function (): void {
+    asSuperAdmin();
+
+    Campaign::factory()->enabled()->create(['name' => 'Fall Outreach']);
+    $campaign = Campaign::factory()->enabled()->create(['name' => 'Spring Outreach']);
+
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows updating a campaign to a name freed up by a soft-deleted campaign case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedCampaign = Campaign::factory()->enabled()->create(['name' => 'Fall Outreach']);
+    $deletedCampaign->delete();
+
+    $campaign = Campaign::factory()->enabled()->create(['name' => 'Spring Outreach']);
+
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+});
+
+test('rejects updating a campaign to a soft-deleted name before the citext migration activates', function (): void {
+    CampaignNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $deletedCampaign = Campaign::factory()->enabled()->create(['name' => 'Fall Outreach']);
+    $deletedCampaign->delete();
+
+    $campaign = Campaign::factory()->enabled()->create(['name' => 'Spring Outreach']);
+
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->fillForm(['name' => 'fall outreach'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($campaign->refresh()->name)->toBe('Spring Outreach');
 });
