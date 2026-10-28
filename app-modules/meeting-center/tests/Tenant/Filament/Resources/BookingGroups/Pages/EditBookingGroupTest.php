@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -321,9 +322,13 @@ test('allows updating a booking group to a name freed up by a soft-deleted booki
     $bookingGroup = BookingGroup::factory()->create(['name' => 'Enrollment Team']);
 
     Livewire::test(EditBookingGroup::class, ['record' => $bookingGroup->getRouteKey()])
-        ->fillForm(['name' => 'advising team'])
+        ->fillForm([
+             'name' => 'advising team',
+             'book_with' => BookingGroupBookWith::Availability->value,
+         ])
         ->call('save')
-        ->assertHasNoFormErrors(['name']);
+        ->assertHasNoFormErrors();
+     expect($bookingGroup->refresh()->name)->toBe('advising team');
 });
 
 test('rejects updating a booking group to a soft-deleted name before the citext migration activates', function (): void {

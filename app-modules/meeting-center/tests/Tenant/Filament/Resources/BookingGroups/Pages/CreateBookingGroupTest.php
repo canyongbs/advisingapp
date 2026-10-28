@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -50,6 +51,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
@@ -268,9 +270,17 @@ it('allows creating a booking group whose name is freed up by a soft-deleted boo
     DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
 
     Livewire::test(CreateBookingGroup::class)
-        ->fillForm(['name' => 'advising team'])
+        ->fillForm(CreateBookingGroupRequestFactory::new()->state([
+             'name' => 'advising team',
+             'book_with' => BookingGroupBookWith::Availability->value,
+         ])->create())
         ->call('create')
-        ->assertHasNoFormErrors(['name']);
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas('booking_groups', [
+        'name' => 'advising team',
+        'deleted_at' => null,
+    ]);
 });
 
 it('rejects creating a booking group with a soft-deleted name before the citext migration activates', function (): void {
