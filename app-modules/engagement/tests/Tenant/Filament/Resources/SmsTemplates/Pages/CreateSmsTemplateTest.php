@@ -36,7 +36,8 @@
 
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\CreateSmsTemplate;
 use AdvisingApp\Engagement\Models\SmsTemplate;
-use App\Features\SmsTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -66,13 +67,15 @@ it('allows creating a sms template whose name is freed up by a soft-deleted temp
     assertDatabaseHas(SmsTemplate::class, ['name' => 'welcome message', 'deleted_at' => null]);
 });
 
-it('rejects creating a sms template with a soft-deleted name before the citext migration activates', function (): void {
-    SmsTemplateNameCitextFeature::deactivate();
+it('does not apply name uniqueness validation before the citext migration activates', function (): void {
+    TemplateNameCitextFeature::deactivate();
 
-    SmsTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
+    DB::statement('DROP INDEX IF EXISTS sms_templates_name_unique');
+
+    SmsTemplate::factory()->create(['name' => 'Welcome Message']);
 
     Livewire::test(CreateSmsTemplate::class)
-        ->fillForm(['name' => 'welcome message', 'content' => 'Hello there'])
+        ->fillForm(['name' => 'Welcome Message', 'content' => 'Hello there'])
         ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors();
 });

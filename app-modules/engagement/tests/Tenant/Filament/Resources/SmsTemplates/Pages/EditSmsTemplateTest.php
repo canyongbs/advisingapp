@@ -36,7 +36,7 @@
 
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\EditSmsTemplate;
 use AdvisingApp\Engagement\Models\SmsTemplate;
-use App\Features\SmsTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -78,7 +78,7 @@ it('allows renaming a sms template to a name freed up by a soft-deleted template
 });
 
 it('allows editing a sms template that has an exact duplicate name before the citext migration activates', function (): void {
-    SmsTemplateNameCitextFeature::deactivate();
+    TemplateNameCitextFeature::deactivate();
 
     DB::statement('DROP INDEX IF EXISTS sms_templates_name_unique');
 

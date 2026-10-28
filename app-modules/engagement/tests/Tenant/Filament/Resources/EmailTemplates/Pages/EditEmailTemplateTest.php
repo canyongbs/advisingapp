@@ -36,7 +36,7 @@
 
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\EditEmailTemplate;
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Features\EmailTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -78,7 +78,7 @@ it('allows renaming a email template to a name freed up by a soft-deleted templa
 });
 
 it('allows editing a email template that has an exact duplicate name before the citext migration activates', function (): void {
-    EmailTemplateNameCitextFeature::deactivate();
+    TemplateNameCitextFeature::deactivate();
 
     DB::statement('DROP INDEX IF EXISTS email_templates_name_unique');
 

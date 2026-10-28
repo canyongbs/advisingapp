@@ -40,7 +40,7 @@ use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Features\SmsTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -63,10 +63,12 @@ class CreateSmsTemplate extends CreateRecord
                     ->string()
                     ->required()
                     ->autocomplete(false)
-                    ->unique(
-                        modifyRuleUsing: fn (Unique $rule): Unique => SmsTemplateNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                    // TODO: Cleanup Task (template-name-citext) - replace ->when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
+                    ->when(
+                        TemplateNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     ),
                 Textarea::make('description')
                     ->string(),

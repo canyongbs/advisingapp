@@ -38,7 +38,7 @@ namespace App\Features;
 
 use App\Support\AbstractFeatureFlag;
 
-class EmailTemplateNameCitextFeature extends AbstractFeatureFlag
+class TemplateNameCitextFeature extends AbstractFeatureFlag
 {
     public function resolve(mixed $scope): mixed
     {

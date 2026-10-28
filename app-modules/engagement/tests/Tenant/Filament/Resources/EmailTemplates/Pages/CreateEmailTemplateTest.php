@@ -36,7 +36,8 @@
 
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\CreateEmailTemplate;
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Features\EmailTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -66,13 +67,15 @@ it('allows creating a email template whose name is freed up by a soft-deleted te
     assertDatabaseHas(EmailTemplate::class, ['name' => 'welcome message', 'deleted_at' => null]);
 });
 
-it('rejects creating a email template with a soft-deleted name before the citext migration activates', function (): void {
-    EmailTemplateNameCitextFeature::deactivate();
+it('does not apply name uniqueness validation before the citext migration activates', function (): void {
+    TemplateNameCitextFeature::deactivate();
 
-    EmailTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
+    DB::statement('DROP INDEX IF EXISTS email_templates_name_unique');
+
+    EmailTemplate::factory()->create(['name' => 'Welcome Message']);
 
     Livewire::test(CreateEmailTemplate::class)
-        ->fillForm(['name' => 'welcome message', 'content' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Hello there']]]]]])
+        ->fillForm(['name' => 'Welcome Message', 'content' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Hello there']]]]]])
         ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors();
 });

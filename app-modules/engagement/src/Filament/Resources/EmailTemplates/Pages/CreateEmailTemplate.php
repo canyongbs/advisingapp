@@ -42,7 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
-use App\Features\EmailTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -68,10 +68,12 @@ class CreateEmailTemplate extends CreateRecord
                     ->string()
                     ->required()
                     ->autocomplete(false)
-                    ->unique(
-                        modifyRuleUsing: fn (Unique $rule): Unique => EmailTemplateNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                    // TODO: Cleanup Task (template-name-citext) - replace ->when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
+                    ->when(
+                        TemplateNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     ),
                 Textarea::make('description')
                     ->string(),

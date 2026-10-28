@@ -42,7 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
-use App\Features\EmailTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
@@ -68,8 +68,9 @@ class EditEmailTemplate extends EditRecord
                     ->string()
                     ->required()
                     ->autocomplete(false)
+                    // TODO: Cleanup Task (template-name-citext) - replace ->when() with a plain ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
                     ->when(
-                        EmailTemplateNameCitextFeature::active(),
+                        TemplateNameCitextFeature::active(),
                         fn (TextInput $field): TextInput => $field->unique(
                             ignoreRecord: true,
                             modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),

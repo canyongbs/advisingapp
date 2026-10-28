@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use App\Features\EmailTemplateNameCitextFeature;
+use App\Features\TemplateNameCitextFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -73,14 +73,14 @@ return new class () extends Migration {
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
-            EmailTemplateNameCitextFeature::activate();
+            TemplateNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            EmailTemplateNameCitextFeature::deactivate();
+            TemplateNameCitextFeature::deactivate();
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
