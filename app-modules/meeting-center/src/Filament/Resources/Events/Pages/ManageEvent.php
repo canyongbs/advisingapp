@@ -36,19 +36,26 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
+use AdvisingApp\Form\Filament\Schemas\EmailAutoReplyForm;
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns\HasEventRegistrationForm;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventDetailsForm;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventInfolist;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventLandingPageForm;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Radio;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -59,6 +66,7 @@ use Livewire\Attributes\Url;
 /**
  * @property-read Schema $landingPageForm
  * @property-read Schema $registrationForm
+ * @property-read Schema $emailAutoReplyForm
  */
 class ManageEvent extends EditRecord
 {
@@ -71,6 +79,9 @@ class ManageEvent extends EditRecord
 
     /** @var array<string, mixed>|null */
     public ?array $landingPageData = [];
+
+    /** @var array<string, mixed>|null */
+    public ?array $emailAutoReplyData = [];
 
     public function getTitle(): string
     {
@@ -118,6 +129,11 @@ class ManageEvent extends EditRecord
                 ->schema([
                     $this->makeFormContentComponent('registrationForm', 'saveRegistrationForm'),
                 ]),
+            'email-auto-reply' => Tab::make('Email Auto Reply')
+                ->visible(fn (): bool => $this->canManageEmailAutoReply())
+                ->schema([
+                    $this->makeFormContentComponent('emailAutoReplyForm', 'saveEmailAutoReply'),
+                ]),
             'attendees' => $this->getRelationManagerTabComponent('attendees'),
         ];
     }
@@ -141,6 +157,28 @@ class ManageEvent extends EditRecord
             ->statePath('landingPageData');
     }
 
+    public function emailAutoReplyForm(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make()
+                    ->relationship('emailAutoReply')
+                    ->schema([
+                        Radio::make('delivery_preference')
+                            ->label('Delivery Preference')
+                            ->helperText('Choose when invited attendees receive the email auto reply.')
+                            ->options(EmailAutoReplyDeliveryPreference::class)
+                            ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
+                            ->required(),
+                        Group::make()
+                            ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema)),
+                    ]),
+            ])
+            ->model($this->getEventRegistrationForm())
+            ->operation('edit')
+            ->statePath('emailAutoReplyData');
+    }
+
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         EventResource::authorizeEdit($this->getRecord());
@@ -162,6 +200,17 @@ class ManageEvent extends EditRecord
         EventResource::authorizeEdit($record);
 
         DB::transaction(fn () => $record->update($this->landingPageForm->getState()));
+
+        $this->getSavedNotification()?->send();
+    }
+
+    public function saveEmailAutoReply(): void
+    {
+        EventResource::authorizeEdit($this->getRecord());
+
+        abort_unless($this->canManageEmailAutoReply(), 404);
+
+        DB::transaction(fn () => $this->emailAutoReplyForm->getState());
 
         $this->getSavedNotification()?->send();
     }
@@ -192,6 +241,25 @@ class ManageEvent extends EditRecord
 
         $this->landingPageForm->fill($data);
         $this->registrationForm->fill($data);
+
+        if ($this->canManageEmailAutoReply()) {
+            $this->emailAutoReplyForm->fill([]);
+        }
+    }
+
+    protected function getEventRegistrationForm(): ?EventRegistrationForm
+    {
+        $event = $this->getRecord();
+        assert($event instanceof Event);
+
+        return $event->eventRegistrationForm;
+    }
+
+    protected function canManageEmailAutoReply(): bool
+    {
+        return AdmissionsAndEventsEmailAutoReplyFeature::active()
+            && EventResource::canEdit($this->getRecord())
+            && $this->getEventRegistrationForm() !== null;
     }
 
     protected function makeFormContentComponent(string $schema, string $submitHandler): Component

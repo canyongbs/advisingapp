@@ -130,6 +130,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags($mergeTags);
     }
 }

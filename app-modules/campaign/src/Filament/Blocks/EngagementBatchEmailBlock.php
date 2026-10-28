@@ -39,22 +39,16 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Engagement\Filament\Actions\LoadEmailTemplateAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
@@ -101,72 +95,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->resizableImages()
                 ->json()
                 ->required()
-                ->hintAction(fn (RichEditor $component): Action => Action::make('loadEmailTemplate')
-                    ->schema([
-                        Select::make('emailTemplate')
-                            ->searchable()
-                            ->options(function (Get $get): array {
-                                return EmailTemplate::query()
-                                    ->when(
-                                        $get('onlyMyTemplates'),
-                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                    )
-                                    ->orderBy('name')
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->toArray();
-                            })
-                            ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                return EmailTemplate::query()
-                                    ->when(
-                                        $get('onlyMyTemplates'),
-                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                    )
-                                    ->when(
-                                        $get('onlyMyDepartmentTemplates'),
-                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->department->users->pluck('id'))
-                                    )
-                                    ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                    ->orderBy('name')
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->toArray();
-                            })
-                            ->getOptionLabelUsing(function (Get $get, string|int|null $value): ?string {
-                                if (blank($value)) {
-                                    return null;
-                                }
-
-                                return EmailTemplate::query()
-                                    ->when(
-                                        $get('onlyMyTemplates'),
-                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                    )
-                                    ->when(
-                                        $get('onlyMyDepartmentTemplates'),
-                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->department->users->pluck('id'))
-                                    )
-                                    ->whereKey($value)
-                                    ->value('name');
-                            }),
-                        Checkbox::make('onlyMyTemplates')
-                            ->label('Only show my templates')
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
-                        Checkbox::make('onlyMyDepartmentTemplates')
-                            ->label("Only show my department's templates")
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set): mixed => $set('emailTemplate', null)),
-                    ])
-                    ->action(function (array $data) use ($component): void {
-                        $template = EmailTemplate::find($data['emailTemplate']);
-
-                        if (! $template) {
-                            return;
-                        }
-
-                        $component->state($template->content);
-                    }))
+                ->hintAction(LoadEmailTemplateAction::make())
                 ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
                     return Media::query()
                         ->where('uuid', $file)

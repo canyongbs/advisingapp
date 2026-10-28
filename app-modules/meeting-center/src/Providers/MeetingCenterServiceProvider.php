@@ -36,7 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
+use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
+use AdvisingApp\MeetingCenter\Events\EventRegistrationFormSubmissionCreated;
 use AdvisingApp\MeetingCenter\Listeners\HandleUserDepartmentChanged;
+use AdvisingApp\MeetingCenter\Listeners\SendEmailAutoReplyToInvitedAttendee;
+use AdvisingApp\MeetingCenter\Listeners\SendEmailAutoReplyToRegisteredAttendee;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
@@ -46,6 +50,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -83,6 +88,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
             'event_attendee' => EventAttendee::class,
             'event_registration_form' => EventRegistrationForm::class,
             'event_registration_form_authentication' => EventRegistrationFormAuthentication::class,
+            'event_registration_form_email_auto_reply' => EventRegistrationFormEmailAutoReply::class,
             'event_registration_form_field' => EventRegistrationFormField::class,
             'event_registration_form_field_submission' => EventRegistrationFormFieldSubmission::class,
             'event_registration_form_step' => EventRegistrationFormStep::class,
@@ -97,6 +103,16 @@ class MeetingCenterServiceProvider extends ServiceProvider
         EventFacade::listen(
             UserDepartmentChanged::class,
             HandleUserDepartmentChanged::class,
+        );
+
+        EventFacade::listen(
+            EventAttendeeInvited::class,
+            SendEmailAutoReplyToInvitedAttendee::class,
+        );
+
+        EventFacade::listen(
+            EventRegistrationFormSubmissionCreated::class,
+            SendEmailAutoReplyToRegisteredAttendee::class,
         );
     }
 }

@@ -39,11 +39,13 @@ namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\ConcernStatusResource;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use App\Features\AlertStatusNameCitextFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateConcernStatus extends CreateRecord
 {
@@ -58,7 +60,12 @@ class CreateConcernStatus extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => AlertStatusNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()

@@ -40,7 +40,10 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
@@ -52,6 +55,7 @@ use AdvisingApp\StudentDataModel\Models\Term;
 use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -550,6 +554,207 @@ describe('campaigns name citext change', function () {
                 expect($campaign2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 // The pre-existing truncated row is in its own group and is left untouched.
                 expect($campaign3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (template-name-citext) - Delete this describe and everything contained within
+describe('email templates name citext change', function (): void {
+    it('renames case-insensitive duplicate email template names', function (): void {
+        isolatedMigration(
+            '2026_10_28_130001_convert_email_templates_name_to_citext',
+            function (): void {
+                $template1 = EmailTemplate::factory()->create(['name' => 'Welcome Message', 'created_at' => now()->subMinutes(3)]);
+                $template2 = EmailTemplate::factory()->create(['name' => 'welcome message', 'created_at' => now()->subMinutes(2)]);
+                $template3 = EmailTemplate::factory()->create(['name' => 'WELCOME MESSAGE', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted template is excluded from de-duplication and must be left untouched.
+                $deletedTemplate = EmailTemplate::factory()->create(['name' => 'Welcome message', 'created_at' => now()->subMinutes(4)]);
+                $deletedTemplate->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130001_convert_email_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($template1->refresh()->name)->toBe('Welcome Message');
+                expect($template2->refresh()->name)->toBe('welcome message-2');
+                expect($template3->refresh()->name)->toBe('WELCOME MESSAGE-3');
+                expect($deletedTemplate->refresh()->name)->toBe('Welcome message');
+
+                expect(fn () => EmailTemplate::factory()->create(['name' => 'welcome MESSAGE']))
+                    ->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live email template reuses a soft-deleted template name', function (): void {
+        isolatedMigration(
+            '2026_10_28_130001_convert_email_templates_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130001_convert_email_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The partial unique index ignores soft-deleted rows, so down() must restore a
+                // partial (not all-row) index for this valid post-migration data.
+                EmailTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
+                EmailTemplate::factory()->create(['name' => 'Welcome Message']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130001_convert_email_templates_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function (): void {
+        isolatedMigration(
+            '2026_10_28_130001_convert_email_templates_name_to_citext',
+            function (): void {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $template1 = EmailTemplate::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $template2 = EmailTemplate::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $template3 = EmailTemplate::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130001_convert_email_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($template1->refresh()->name)->toBe($maxLengthUpper);
+                expect($template2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($template3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (template-name-citext) - Delete this describe and everything contained within
+describe('sms templates name citext change', function (): void {
+    it('renames case-insensitive duplicate sms template names', function (): void {
+        isolatedMigration(
+            '2026_10_28_130002_convert_sms_templates_name_to_citext',
+            function (): void {
+                $template1 = SmsTemplate::factory()->create(['name' => 'Welcome Message', 'created_at' => now()->subMinutes(3)]);
+                $template2 = SmsTemplate::factory()->create(['name' => 'welcome message', 'created_at' => now()->subMinutes(2)]);
+                $template3 = SmsTemplate::factory()->create(['name' => 'WELCOME MESSAGE', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted template is excluded from de-duplication and must be left untouched.
+                $deletedTemplate = SmsTemplate::factory()->create(['name' => 'Welcome message', 'created_at' => now()->subMinutes(4)]);
+                $deletedTemplate->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130002_convert_sms_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($template1->refresh()->name)->toBe('Welcome Message');
+                expect($template2->refresh()->name)->toBe('welcome message-2');
+                expect($template3->refresh()->name)->toBe('WELCOME MESSAGE-3');
+                expect($deletedTemplate->refresh()->name)->toBe('Welcome message');
+
+                expect(fn () => SmsTemplate::factory()->create(['name' => 'welcome MESSAGE']))
+                    ->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live sms template reuses a soft-deleted template name', function (): void {
+        isolatedMigration(
+            '2026_10_28_130002_convert_sms_templates_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130002_convert_sms_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The partial unique index ignores soft-deleted rows, so down() must restore a
+                // partial (not all-row) index for this valid post-migration data.
+                SmsTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
+                SmsTemplate::factory()->create(['name' => 'Welcome Message']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130002_convert_sms_templates_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function (): void {
+        isolatedMigration(
+            '2026_10_28_130002_convert_sms_templates_name_to_citext',
+            function (): void {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $template1 = SmsTemplate::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $template2 = SmsTemplate::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $template3 = SmsTemplate::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_10_28_130002_convert_sms_templates_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($template1->refresh()->name)->toBe($maxLengthUpper);
+                expect($template2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($template3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (alert-status-name-citext) - Delete this describe and everything contained within
+describe('alert statuses name citext change', function () {
+    it('renames case-insensitive duplicate alert status names', function () {
+        isolatedMigration(
+            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
+            function () {
+                // Setup data before migration
+                $concernStatus1 = ConcernStatus::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
+                $concernStatus2 = ConcernStatus::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
+                $concernStatus3 = ConcernStatus::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted alert status sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
+                $deletedConcernStatus->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($concernStatus1->refresh()->name)->toBe('Under Review');
+                expect($concernStatus2->refresh()->name)->toBe('under review-2');
+                expect($concernStatus3->refresh()->name)->toBe('UNDER REVIEW-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedConcernStatus->refresh()->name)->toBe('Under review');
+            }
+        );
+    });
+
+    it('can be rolled back when a live alert status reuses a soft-deleted alert status name', function () {
+        isolatedMigration(
+            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one.
+                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
+                $deletedConcernStatus->delete();
+                ConcernStatus::factory()->create(['name' => 'Under Review']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
             }
         );
     });
