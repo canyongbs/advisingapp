@@ -47,7 +47,7 @@ beforeEach(function (): void {
     asSuperAdmin();
 });
 
-it('does not allow creating a email template whose name matches another non-deleted template case-insensitively', function (): void {
+it('does not allow creating an email template whose name matches another non-deleted template case-insensitively', function (): void {
     EmailTemplate::factory()->create(['name' => 'Welcome Message']);
 
     Livewire::test(CreateEmailTemplate::class)
@@ -56,7 +56,7 @@ it('does not allow creating a email template whose name matches another non-dele
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows creating a email template whose name is freed up by a soft-deleted template case-insensitively', function (): void {
+it('allows creating an email template whose name is freed up by a soft-deleted template case-insensitively', function (): void {
     EmailTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
 
     Livewire::test(CreateEmailTemplate::class)

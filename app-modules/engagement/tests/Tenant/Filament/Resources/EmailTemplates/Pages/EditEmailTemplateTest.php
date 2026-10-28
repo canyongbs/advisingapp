@@ -46,7 +46,7 @@ beforeEach(function (): void {
     asSuperAdmin();
 });
 
-it('does not allow renaming a email template to a name matching another non-deleted template case-insensitively', function (): void {
+it('does not allow renaming an email template to a name matching another non-deleted template case-insensitively', function (): void {
     EmailTemplate::factory()->create(['name' => 'Welcome Message']);
     $template = EmailTemplate::factory()->create(['name' => 'Goodbye Message']);
 
@@ -56,7 +56,7 @@ it('does not allow renaming a email template to a name matching another non-dele
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-it('allows saving a email template without changing its name', function (): void {
+it('allows saving an email template without changing its name', function (): void {
     $template = EmailTemplate::factory()->create(['name' => 'Welcome Message']);
 
     Livewire::test(EditEmailTemplate::class, ['record' => $template->getRouteKey()])
@@ -65,7 +65,7 @@ it('allows saving a email template without changing its name', function (): void
         ->assertHasNoFormErrors();
 });
 
-it('allows renaming a email template to a name freed up by a soft-deleted template case-insensitively', function (): void {
+it('allows renaming an email template to a name freed up by a soft-deleted template case-insensitively', function (): void {
     EmailTemplate::factory()->create(['name' => 'Welcome Message'])->delete();
     $template = EmailTemplate::factory()->create(['name' => 'Goodbye Message']);
 
@@ -77,7 +77,7 @@ it('allows renaming a email template to a name freed up by a soft-deleted templa
     expect($template->refresh()->name)->toBe('welcome message');
 });
 
-it('allows editing a email template that has an exact duplicate name before the citext migration activates', function (): void {
+it('allows editing an email template that has an exact duplicate name before the citext migration activates', function (): void {
     TemplateNameCitextFeature::deactivate();
 
     DB::statement('DROP INDEX IF EXISTS email_templates_name_unique');
