@@ -78,11 +78,9 @@ class ViewBookingGroup extends ViewRecord
                     TextEntry::make('description')
                         ->label('Description'),
                     TextEntry::make('users.name')
-                        ->placeholder('N/A')
                         ->badge()
                         ->label('Users'),
                     TextEntry::make('departments.name')
-                        ->placeholder('N/A')
                         ->badge()
                         ->label('Departments'),
                     Callout::make('Some group members do not have a connected calendar and will be skipped during bookings.')

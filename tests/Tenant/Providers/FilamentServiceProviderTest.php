@@ -76,6 +76,7 @@ it('renders N/A for missing display values', function (TextEntry | TextColumn | 
     'empty string' => [''],
     'whitespace' => ['   '],
     'empty list' => [[]],
+    'empty collection' => fn () => [collect()],
 ]);
 
 it('allows an explicit placeholder override', function (TextEntry | TextColumn | ColorColumn | IconColumn $component) {
