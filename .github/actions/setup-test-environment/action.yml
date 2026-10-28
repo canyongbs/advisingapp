@@ -20,7 +20,7 @@ runs:
           shell: bash
           run: |
               docker run -d --name redis --network host \
-                redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                redis:7.4.12@sha256:bd28fff4b665fdf1b73e8b5b73ec05d2f858f4fa3c8ea0d7c9bc09f7f6bf7039 \
                 sh -c '
                   for port in 7000 7001 7002; do
                     redis-server --daemonize yes --port "$port" --appendonly no --save "" \
