@@ -73,6 +73,7 @@ return new class () extends Migration {
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
+            // Shared by the email and SMS template migrations; activated here as the later one so it only turns on once both tables are converted
             TemplateNameCitextFeature::activate();
         });
     }
