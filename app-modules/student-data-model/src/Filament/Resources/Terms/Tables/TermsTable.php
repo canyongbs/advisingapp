@@ -66,14 +66,11 @@ class TermsTable
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->tap(new OrderByMostRecentTerm()))
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('code')
-                    ->placeholder('N/A'),
+                TextColumn::make('code'),
                 TextColumn::make('start_date')
-                    ->date()
-                    ->placeholder('N/A'),
+                    ->date(),
                 TextColumn::make('end_date')
-                    ->date()
-                    ->placeholder('N/A'),
+                    ->date(),
             ]);
     }
 

@@ -66,23 +66,17 @@ class TermAttributesRelationManager extends RelationManager
             ->recordTitleAttribute('sis_term_id')
             ->columns([
                 TextColumn::make('enrollment_status')
-                    ->label('Enrollment Status')
-                    ->placeholder('N/A'),
+                    ->label('Enrollment Status'),
                 TextColumn::make('academic_status')
-                    ->label('Academic Status')
-                    ->placeholder('N/A'),
+                    ->label('Academic Status'),
                 TextColumn::make('campus')
-                    ->label('Campus')
-                    ->placeholder('N/A'),
+                    ->label('Campus'),
                 TextColumn::make('college_level')
-                    ->label('College Level')
-                    ->placeholder('N/A'),
+                    ->label('College Level'),
                 TextColumn::make('commuter')
-                    ->label('Commuter')
-                    ->placeholder('N/A'),
+                    ->label('Commuter'),
                 TextColumn::make('student_registered')
-                    ->label('Student Registered')
-                    ->placeholder('N/A'),
+                    ->label('Student Registered'),
             ])
             ->filters([
                 SelectFilter::make('sis_term_id')
