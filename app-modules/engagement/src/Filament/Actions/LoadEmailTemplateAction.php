@@ -86,8 +86,41 @@ class LoadEmailTemplateAction
                     return;
                 }
 
-                $component->state($template->content);
+                $supportedMergeTags = array_keys($component->getMergeTags());
+
+                $component->state(
+                    (is_array($template->content) && filled($supportedMergeTags))
+                        ? self::removeUnsupportedMergeTags($template->content, $supportedMergeTags)
+                        : $template->content,
+                );
             });
+    }
+
+    /**
+     * Email templates can use merge tags that the editor cannot fill, which would be sent blank, so they are
+     * removed when the template is loaded and the user can review the content before saving. Editors that do not
+     * declare any merge tags keep the template content unchanged.
+     *
+     * @param array<string, mixed> $node
+     * @param array<string> $supportedMergeTags
+     *
+     * @return array<string, mixed>
+     */
+    private static function removeUnsupportedMergeTags(array $node, array $supportedMergeTags): array
+    {
+        if (! is_array($node['content'] ?? null)) {
+            return $node;
+        }
+
+        $node['content'] = collect($node['content'])
+            ->reject(fn (mixed $child): bool => is_array($child)
+                && in_array($child['type'] ?? null, ['mergeTag', 'rawHtmlMergeTag'], true)
+                && (! in_array($child['attrs']['id'] ?? null, $supportedMergeTags, true)))
+            ->map(fn (mixed $child): mixed => is_array($child) ? self::removeUnsupportedMergeTags($child, $supportedMergeTags) : $child)
+            ->values()
+            ->all();
+
+        return $node;
     }
 
     /**

@@ -44,7 +44,9 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
@@ -221,3 +223,48 @@ it('will not duplicate an invite if the group educatable was already invited', f
             fn () => Prospect::factory()->create(),
         ],
     ]);
+
+it('queues the email auto reply for the invited educatable', function (): void {
+    Bus::fake();
+    Notification::fake();
+
+    $student = Student::factory()->create();
+
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => GroupModel::Student,
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $event = Event::factory()->create();
+
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::Event,
+            'data' => [
+                'event' => $event->id,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        ->for($student, 'educatable')
+        ->create();
+
+    [$job] = (new EventCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    $attendee = $event->attendees()->where('email', $student->primaryEmailAddress?->address)->sole();
+
+    Bus::assertDispatched(
+        SendEventRegistrationFormEmailAutoReply::class,
+        fn (SendEventRegistrationFormEmailAutoReply $job): bool => $job->attendee->is($attendee)
+            && ($job->requiredDeliveryPreference === EmailAutoReplyDeliveryPreference::WhenInvited),
+    );
+});
