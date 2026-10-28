@@ -36,7 +36,8 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
-use AdvisingApp\Form\Filament\Forms\Components\EmailAutoReplySection;
+use AdvisingApp\Form\Filament\Schemas\EmailAutoReplyForm;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class FormEmailAutoReplyForm
@@ -45,8 +46,9 @@ class FormEmailAutoReplyForm
     {
         return $schema
             ->components([
-                EmailAutoReplySection::make()
-                    ->relationship('emailAutoReply'),
+                Section::make()
+                    ->relationship('emailAutoReply')
+                    ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema)),
             ]);
     }
 }
