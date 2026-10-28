@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Filament\Forms\Components\EmailAutoReplySection;
+use AdvisingApp\Form\Filament\Schemas\EmailAutoReplyForm;
 use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns\HasEventRegistrationForm;
@@ -54,6 +54,8 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -159,15 +161,18 @@ class ManageEvent extends EditRecord
     {
         return $schema
             ->components([
-                EmailAutoReplySection::make([
-                    Radio::make('delivery_preference')
-                        ->label('Delivery Preference')
-                        ->helperText('Please indicate your delivery preference for invited team members.')
-                        ->options(EmailAutoReplyDeliveryPreference::class)
-                        ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
-                        ->required(),
-                ])
-                    ->relationship('emailAutoReply'),
+                Section::make()
+                    ->relationship('emailAutoReply')
+                    ->schema([
+                        Radio::make('delivery_preference')
+                            ->label('Delivery Preference')
+                            ->helperText('Please indicate your delivery preference for invited team members.')
+                            ->options(EmailAutoReplyDeliveryPreference::class)
+                            ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
+                            ->required(),
+                        Group::make()
+                            ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema)),
+                    ]),
             ])
             ->model($this->getEventRegistrationForm())
             ->operation('edit')
