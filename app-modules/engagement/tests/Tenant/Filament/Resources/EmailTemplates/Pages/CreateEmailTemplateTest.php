@@ -63,7 +63,7 @@ it('allows creating a email template whose name is freed up by a soft-deleted te
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(EmailTemplate::class, ['name' => 'welcome message']);
+    assertDatabaseHas(EmailTemplate::class, ['name' => 'welcome message', 'deleted_at' => null]);
 });
 
 it('rejects creating a email template with a soft-deleted name before the citext migration activates', function (): void {
