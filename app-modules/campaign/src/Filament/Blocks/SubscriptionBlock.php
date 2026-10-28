@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 
 class SubscriptionBlock extends CampaignActionBlock
 {
@@ -52,6 +53,9 @@ class SubscriptionBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         return [

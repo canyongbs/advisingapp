@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Component;
 
 class EventBlock extends CampaignActionBlock
 {
@@ -53,6 +54,9 @@ class EventBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         return [

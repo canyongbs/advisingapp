@@ -99,6 +99,12 @@ trait AttachOverrides
         return empty($results) ? 0 : $results;
     }
 
+    /**
+     * @param mixed $ids
+     * @param mixed $detaching
+     *
+     * @return array<string, array<int|string, mixed>>
+     */
     public function sync($ids, $detaching = true)
     {
         /** @var Auditable $parentModel */
