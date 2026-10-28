@@ -45,7 +45,7 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
-use AdvisingApp\Form\Filament\Forms\Components\EmailAutoReplySection;
+use AdvisingApp\Form\Filament\Schemas\EmailAutoReplyForm;
 use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
@@ -56,6 +56,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -167,8 +168,9 @@ class ManageApplication extends EditRecord
     {
         return $schema
             ->components([
-                EmailAutoReplySection::make()
-                    ->relationship('emailAutoReply'),
+                Section::make()
+                    ->relationship('emailAutoReply')
+                    ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema)),
             ])
             ->model($this->getRecord())
             ->operation('edit')

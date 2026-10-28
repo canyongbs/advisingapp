@@ -572,14 +572,22 @@ describe('notifications tab', function (): void {
 });
 
 describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
-    it('displays the email auto reply data', function (): void {
+    it('displays the email auto reply data', function () use ($richText): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
-        $application->emailAutoReply()->firstOrFail()->update(['is_enabled' => true]);
+        $application->emailAutoReply()->firstOrFail()->update([
+            'is_enabled' => true,
+            'subject' => $richText('Thanks for applying'),
+            'body' => $richText('We have received your application.'),
+        ]);
 
         Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
-            ->assertSchemaStateSet(['emailAutoReply.is_enabled' => true], 'emailAutoReplyForm');
+            ->assertSchemaStateSet([
+                'emailAutoReply.is_enabled' => true,
+                'emailAutoReply.subject' => $richText('Thanks for applying'),
+                'emailAutoReply.body' => $richText('We have received your application.'),
+            ], 'emailAutoReplyForm');
     });
 
     it('can save the email auto reply', function () use ($richText): void {
