@@ -57,6 +57,23 @@ return new class () extends Migration {
 
     private string $uniqueConstraint = 'prospect_statuses_name_unique';
 
+    private string $lengthConstraint = 'prospect_statuses_name_length';
+
+    /**
+     * Prefer retaining system-protected statuses (e.g. the default "New" and
+     * "Converted" rows) so de-duplication never renames them. Those rows are
+     * looked up by name + is_system_protected by ConvertToStudent and
+     * DisassociateStudent, which would break if they were suffixed.
+     */
+    // TODO: Cleanup Task (prospect-source-status-citext) - remove this duplicate ordering override
+    protected function orderDuplicateRecords(Builder $query): Builder
+    {
+        return $query
+            ->orderByDesc('is_system_protected')
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
+    }
+
     public function up(): void
     {
         DB::transaction(function (): void {
@@ -69,6 +86,11 @@ return new class () extends Migration {
             DB::statement("ALTER TABLE {$this->table} ENABLE TRIGGER prevent_modification_of_system_protected_rows");
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
+
+            // citext has no length modifier, so preserve the original varchar(255) limit with a
+            // CHECK constraint. Without it, names longer than 255 chars could be stored here but
+            // would be rejected by the prospect create/update APIs' max:255 rule.
+            DB::statement("ALTER TABLE {$this->table} ADD CONSTRAINT {$this->lengthConstraint} CHECK (char_length({$this->column}) <= 255)");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
@@ -87,6 +109,8 @@ return new class () extends Migration {
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
+
+            DB::statement("ALTER TABLE {$this->table} DROP CONSTRAINT {$this->lengthConstraint}");
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });

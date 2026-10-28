@@ -60,6 +60,7 @@ class EditProspectStatus extends EditRecord
                     ->label('Name')
                     ->required()
                     ->string()
+                    ->maxLength(255)
                     ->unique(
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()

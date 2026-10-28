@@ -101,6 +101,7 @@ test('EditProspectStatus requires valid data', function (EditProspectStatusReque
     [
         'name missing' => [EditProspectStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [EditProspectStatusRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
         'color missing' => [EditProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
         'color not within enum' => [EditProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]

@@ -80,6 +80,7 @@ test('CreateProspectSource requires valid data', function (CreateProspectSourceR
     [
         'name missing' => [CreateProspectSourceRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateProspectSourceRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [CreateProspectSourceRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
     ]
 );
 

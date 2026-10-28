@@ -93,6 +93,7 @@ test('EditProspectSource requires valid data', function (EditProspectSourceReque
     [
         'name missing' => [EditProspectSourceRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditProspectSourceRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [EditProspectSourceRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
     ]
 );
 

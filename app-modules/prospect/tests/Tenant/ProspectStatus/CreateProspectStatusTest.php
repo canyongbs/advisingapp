@@ -80,6 +80,7 @@ test('CreateProspectStatus requires valid data', function (CreateProspectStatusR
     [
         'name missing' => [CreateProspectStatusRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [CreateProspectStatusRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
         'color missing' => [CreateProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
         'color not within enum' => [CreateProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
@@ -138,9 +139,13 @@ it('allows creating a prospect status whose name is freed up by a soft-deleted p
     $deletedProspectStatus->delete();
 
     Livewire::test(CreateProspectStatus::class)
-        ->fillForm(['name' => 'engaged'])
+        ->fillForm(CreateProspectStatusRequestFactory::new()->state(['name' => 'engaged'])->create())
         ->call('create')
-        ->assertHasNoFormErrors(['name']);
+        ->assertHasNoFormErrors();
+    assertDatabaseHas(ProspectStatus::class, [
+        'name' => 'engaged',
+        'deleted_at' => null,
+    ]);
 });
 
 it('rejects creating a prospect status with a soft-deleted name before the citext migration activates', function (): void {

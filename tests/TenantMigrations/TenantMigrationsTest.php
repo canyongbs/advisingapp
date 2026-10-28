@@ -639,6 +639,55 @@ describe('prospect sources name citext change', function () {
             }
         );
     });
+
+    it('does not rename a case-variant duplicate prospect source onto a live name containing LIKE special characters', function () {
+        isolatedMigration(
+            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            function () {
+                // Regression: the seed query that loads existing "<base>-<n>" names uses a SQL LIKE
+                // pattern. A base value containing LIKE special characters (\, %, _) must be escaped,
+                // otherwise e.g. "a\b-%" treats "\b" as an escaped literal and silently misses the
+                // live "a\b-2" row, so the de-duplicator regenerates "a\b-2" and breaks the unique index.
+                $source1 = ProspectSource::factory()->create(['name' => 'A\\B', 'created_at' => now()->subMinutes(2)]);
+                $source2 = ProspectSource::factory()->create(['name' => 'a\\b', 'created_at' => now()->subMinutes(1)]);
+                $source3 = ProspectSource::factory()->create(['name' => 'a\\b-2', 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($source1->refresh()->name)->toBe('A\\B');
+                // "-2" would collide with the pre-existing live row, so the next suffix is used.
+                expect($source2->refresh()->name)->toBe('a\\b-3');
+                // The pre-existing suffixed row is in its own group and is left untouched.
+                expect($source3->refresh()->name)->toBe('a\\b-2');
+            }
+        );
+    });
+
+    it('retains the canonical Advising App source even when an older custom source precedes it', function () {
+        isolatedMigration(
+            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            function () {
+                // Regression: form and application registrations resolve their source by the exact
+                // name "Advising App". If an older custom row shares that name case-insensitively,
+                // keeping the oldest row would rename the seeded canonical row and silently reassign
+                // the source of new prospects. The seeded canonical row must be preserved.
+                $olderCustom = ProspectSource::factory()->create(['name' => 'advising app', 'created_at' => now()->subMinutes(2)]);
+                $canonical = ProspectSource::factory()->create(['name' => 'Advising App', 'created_at' => now()->subMinutes(1)]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The canonical "Advising App" row keeps its exact name despite being newer.
+                expect($canonical->refresh()->name)->toBe('Advising App');
+                // The older custom row is the one that gets suffixed.
+                expect($olderCustom->refresh()->name)->toBe('advising app-2');
+            }
+        );
+    });
 });
 
 // TODO: Cleanup Task (prospect-source-status-citext) - Delete this describe and everything contained within
@@ -722,6 +771,61 @@ describe('prospect statuses name citext change', function () {
                 expect($status2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 // The pre-existing truncated row is in its own group and is left untouched.
                 expect($status3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate prospect status onto a live name containing LIKE special characters', function () {
+        isolatedMigration(
+            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            function () {
+                // Regression: the seed query that loads existing "<base>-<n>" names uses a SQL LIKE
+                // pattern. A base value containing LIKE special characters (\, %, _) must be escaped,
+                // otherwise e.g. "a\b-%" treats "\b" as an escaped literal and silently misses the
+                // live "a\b-2" row, so the de-duplicator regenerates "a\b-2" and breaks the unique index.
+                $status1 = ProspectStatus::factory()->create(['name' => 'A\\B', 'created_at' => now()->subMinutes(2)]);
+                $status2 = ProspectStatus::factory()->create(['name' => 'a\\b', 'created_at' => now()->subMinutes(1)]);
+                $status3 = ProspectStatus::factory()->create(['name' => 'a\\b-2', 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($status1->refresh()->name)->toBe('A\\B');
+                // "-2" would collide with the pre-existing live row, so the next suffix is used.
+                expect($status2->refresh()->name)->toBe('a\\b-3');
+                // The pre-existing suffixed row is in its own group and is left untouched.
+                expect($status3->refresh()->name)->toBe('a\\b-2');
+            }
+        );
+    });
+
+    it('keeps system-protected statuses and renames their non-protected duplicates', function () {
+        isolatedMigration(
+            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            function () {
+                // Regression: the default "New" and "Converted" statuses are system-protected and are
+                // looked up by name + is_system_protected by ConvertToStudent and DisassociateStudent.
+                // A non-protected duplicate created BEFORE the protected row must NOT win the
+                // oldest-first retention tie-break, otherwise the protected row would be suffixed and
+                // those actions would break. Protected rows must always keep their exact name.
+                $userNew = ProspectStatus::factory()->create(['name' => 'New', 'is_system_protected' => false, 'created_at' => now()->subMinutes(5)]);
+                $protectedNew = ProspectStatus::factory()->create(['name' => 'New', 'is_system_protected' => true, 'created_at' => now()->subMinutes(1)]);
+
+                $userConverted = ProspectStatus::factory()->create(['name' => 'Converted', 'is_system_protected' => false, 'created_at' => now()->subMinutes(5)]);
+                $protectedConverted = ProspectStatus::factory()->create(['name' => 'Converted', 'is_system_protected' => true, 'created_at' => now()->subMinutes(1)]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Protected defaults retain their exact names despite being newer.
+                expect($protectedNew->refresh()->name)->toBe('New');
+                expect($protectedConverted->refresh()->name)->toBe('Converted');
+                // The non-protected duplicates are renamed instead.
+                expect($userNew->refresh()->name)->toBe('New-2');
+                expect($userConverted->refresh()->name)->toBe('Converted-2');
             }
         );
     });

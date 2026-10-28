@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProspectStatusSeeder extends Seeder
 {
@@ -81,11 +82,38 @@ class ProspectStatusSeeder extends Seeder
         ];
 
         foreach ($statuses as $status) {
-            if (ProspectStatus::query()->where('name', $status['name'])->exists()) {
+            $desiredClassification = $status['classification'];
+            $desiredProtection = $status['is_system_protected'] ?? false;
+
+            $existingStatus = ProspectStatus::query()->where('name', $status['name'])->first();
+
+            if ($existingStatus === null) {
+                ProspectStatus::factory()->create($status);
+
                 continue;
             }
 
-            ProspectStatus::factory()->create($status);
+            // An earlier data migration provisions "New" and "Converted" with the default
+            // is_system_protected = false. Reconcile existing rows to the required
+            // classification and protection so lookups in ConvertToStudent and
+            // DisassociateStudent (name + is_system_protected) keep working, instead of
+            // skipping them and leaving a non-protected default behind.
+            if (
+                $existingStatus->classification === $desiredClassification
+                && $existingStatus->is_system_protected === $desiredProtection
+            ) {
+                continue;
+            }
+
+            // Use a direct update to bypass the is_system_protected mass-assignment guard.
+            // The modification-prevention trigger only blocks already-protected rows, so
+            // promoting a currently non-protected default to protected is permitted.
+            DB::table('prospect_statuses')
+                ->where('id', $existingStatus->getKey())
+                ->update([
+                    'classification' => $desiredClassification->value,
+                    'is_system_protected' => $desiredProtection,
+                ]);
         }
     }
 }

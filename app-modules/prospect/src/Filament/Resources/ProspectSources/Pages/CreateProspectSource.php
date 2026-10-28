@@ -55,6 +55,7 @@ class CreateProspectSource extends CreateRecord
                     ->label('Name')
                     ->required()
                     ->string()
+                    ->maxLength(255)
                     ->unique(
                         modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()
                             ? $rule->withoutTrashed()
