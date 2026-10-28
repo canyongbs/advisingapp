@@ -91,11 +91,9 @@ trait TaskViewActionInfoList
                             ->badge(),
                         TextEntry::make('due')
                             ->label('Due Date')
-                            ->dateTime()
-                            ->placeholder('N/A'),
+                            ->dateTime(),
                         TextEntry::make('createdBy.name')
                             ->label('Created By')
-                            ->placeholder('N/A')
                             ->url(fn (Task $record): ?string => $record->createdBy ? UserResource::getUrl('view', ['record' => $record->createdBy]) : null),
                     ]),
             ])->from('md'),

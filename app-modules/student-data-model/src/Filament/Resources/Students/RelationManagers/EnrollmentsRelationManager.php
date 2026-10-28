@@ -88,40 +88,30 @@ class EnrollmentsRelationManager extends RelationManager
                     TextEntry::make('unt_earned')
                         ->label('Earned'),
                     TextEntry::make('section')
-                        ->label('Section')
-                        ->placeholder('N/A'),
+                        ->label('Section'),
                     TextEntry::make('name')
-                        ->label('Name')
-                        ->placeholder('N/A'),
+                        ->label('Name'),
                     TextEntry::make('department')
-                        ->label('Department')
-                        ->placeholder('N/A'),
+                        ->label('Department'),
                     TextEntry::make('faculty_name')
-                        ->label('Faculty Name')
-                        ->placeholder('N/A'),
+                        ->label('Faculty Name'),
                     TextEntry::make('faculty_email')
-                        ->label('Faculty Email')
-                        ->placeholder('N/A'),
+                        ->label('Faculty Email'),
                     TextEntry::make('semester_code')
-                        ->label('Semester Code')
-                        ->placeholder('N/A'),
+                        ->label('Semester Code'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
                         ->state(fn (Enrollment $record): ?string => TermsConsolidationFeature::active()
                             ? ($record->term?->getDisplayName() ?? $record->semester_name)
-                            : $record->semester_name)
-                        ->placeholder('N/A'),
+                            : $record->semester_name),
                     TextEntry::make('sis_term_id')
-                        ->label('SIS Term ID')
-                        ->placeholder('N/A'),
+                        ->label('SIS Term ID'),
                     TextEntry::make('start_date')
                         ->label('Start Date')
-                        ->dateTime()
-                        ->placeholder('N/A'),
+                        ->dateTime(),
                     TextEntry::make('end_date')
                         ->label('End Date')
-                        ->dateTime()
-                        ->placeholder('N/A'),
+                        ->dateTime(),
                 ]
             );
     }
@@ -157,7 +147,6 @@ class EnrollmentsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make(name: 'name')
                     ->label('Name')
-                    ->placeholder('N/A')
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->whereRaw('LOWER(enrollments.name) LIKE ?', [
                             '%' . strtolower($search) . '%',
@@ -165,26 +154,20 @@ class EnrollmentsRelationManager extends RelationManager
                     }),
                 TextColumn::make('class_nbr')
                     ->label('Course')
-                    ->placeholder('N/A')
                     ->searchable(),
                 TextColumn::make('faculty_name')
                     ->label('Instructor')
-                    ->placeholder('N/A')
                     ->searchable(),
                 TextColumn::make('section')
                     ->label('Section')
-                    ->placeholder('N/A')
                     ->searchable(),
                 TextColumn::make('crse_grade_off')
                     ->label('Grade')
-                    ->placeholder('N/A')
                     ->searchable(),
                 TextColumn::make('unt_taken')
-                    ->label('Attempted')
-                    ->placeholder('N/A'),
+                    ->label('Attempted'),
                 TextColumn::make('unt_earned')
-                    ->label('Earned')
-                    ->placeholder('N/A'),
+                    ->label('Earned'),
             ])
             ->filters([
                 $isTermsConsolidationActive
