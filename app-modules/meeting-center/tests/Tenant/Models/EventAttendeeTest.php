@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
@@ -55,26 +56,36 @@ it('has a pending invitation when the attendee is still invited', function (): v
     $event = Event::factory()->create();
     $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => EventAttendeeStatus::Invited]);
 
-    expect($attendee->hasPendingInvitationTo($event->eventRegistrationForm))->toBeTrue();
+    expect($attendee->hasPendingInvitation())->toBeTrue();
 });
 
 it('has a pending invitation when a registration form request is pending', function () use ($createRequestedSubmission): void {
     $event = Event::factory()->create();
-    $form = $event->eventRegistrationForm;
     $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => EventAttendeeStatus::Attending]);
 
-    expect($attendee->hasPendingInvitationTo($form))->toBeFalse();
+    expect($attendee->hasPendingInvitation())->toBeFalse();
 
-    $createRequestedSubmission($attendee, $form);
+    $createRequestedSubmission($attendee, $event->eventRegistrationForm);
 
-    expect($attendee->hasPendingInvitationTo($form))->toBeTrue();
+    expect($attendee->hasPendingInvitation())->toBeTrue();
+});
+
+it('has a pending invitation when the request was sent before the registration form was edited', function () use ($createRequestedSubmission): void {
+    $event = Event::factory()->create();
+    $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => EventAttendeeStatus::Attending]);
+
+    $createRequestedSubmission($attendee, $event->eventRegistrationForm);
+
+    app(CreateEventRegistrationFormVersion::class)->execute($event->eventRegistrationForm, []);
+
+    expect($attendee->hasPendingInvitation())->toBeTrue();
 });
 
 it('does not have a pending invitation when the attendee was not invited', function (EventAttendeeStatus $status): void {
     $event = Event::factory()->create();
     $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => $status]);
 
-    expect($attendee->hasPendingInvitationTo($event->eventRegistrationForm))->toBeFalse();
+    expect($attendee->hasPendingInvitation())->toBeFalse();
 })->with([
     'registering through the public link' => EventAttendeeStatus::Pending,
     'already answered yes' => EventAttendeeStatus::Attending,
@@ -83,23 +94,12 @@ it('does not have a pending invitation when the attendee was not invited', funct
 
 it('does not have a pending invitation when the registration form request is no longer pending', function (array $attributes) use ($createRequestedSubmission): void {
     $event = Event::factory()->create();
-    $form = $event->eventRegistrationForm;
     $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => EventAttendeeStatus::Attending]);
 
-    $createRequestedSubmission($attendee, $form, $attributes);
+    $createRequestedSubmission($attendee, $event->eventRegistrationForm, $attributes);
 
-    expect($attendee->hasPendingInvitationTo($form))->toBeFalse();
+    expect($attendee->hasPendingInvitation())->toBeFalse();
 })->with([
     'submitted' => fn (): array => ['submitted_at' => now()],
     'canceled' => fn (): array => ['canceled_at' => now()],
 ]);
-
-it('does not have a pending invitation from a registration form request for another event', function () use ($createRequestedSubmission): void {
-    $event = Event::factory()->create();
-    $otherEvent = Event::factory()->create();
-    $attendee = EventAttendee::factory()->create(['event_id' => $event->getKey(), 'status' => EventAttendeeStatus::Attending]);
-
-    $createRequestedSubmission($attendee, $otherEvent->eventRegistrationForm);
-
-    expect($attendee->hasPendingInvitationTo($event->eventRegistrationForm))->toBeFalse();
-});

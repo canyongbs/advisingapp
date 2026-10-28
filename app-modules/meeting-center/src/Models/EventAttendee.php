@@ -115,11 +115,10 @@ class EventAttendee extends BaseModel implements CanBeNotified
     /**
      * Whether this attendee was invited to the event and has not responded yet, either because
      * they are still in the `Invited` status or because a registration form request is pending.
-     *
-     * Only attendees with a pending invitation are asked whether they will attend. Anyone else is
-     * registering on their own, so the registration form treats them as attending.
+     * An attendee belongs to a single event, so a request on any version of its registration
+     * form counts, including one sent before the form was last edited.
      */
-    public function hasPendingInvitationTo(EventRegistrationForm $form): bool
+    public function hasPendingInvitation(): bool
     {
         if ($this->status === EventAttendeeStatus::Invited) {
             return true;
@@ -127,7 +126,6 @@ class EventAttendee extends BaseModel implements CanBeNotified
 
         return $this->submissions()
             ->tap(new Requested())
-            ->where('form_id', $form->getKey())
             ->exists();
     }
 

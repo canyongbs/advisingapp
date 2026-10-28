@@ -43,7 +43,6 @@ use AdvisingApp\MeetingCenter\Actions\GenerateEventRegistrationFormKitSchema;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
@@ -205,9 +204,6 @@ class EventRegistrationWidgetController extends Controller
             'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
         ]);
 
-        $form = $authentication->submissible;
-        assert($form instanceof EventRegistrationForm);
-
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.event-registration.api.submit',
@@ -216,7 +212,7 @@ class EventRegistrationWidgetController extends Controller
                     'event' => $authentication->submissible->event,
                 ],
             ),
-            'is_attendance_question_required' => $authentication->author->hasPendingInvitationTo($form),
+            'is_attendance_question_required' => $this->isAttendanceQuestionRequired($authentication->author),
         ]);
     }
 
@@ -244,7 +240,7 @@ class EventRegistrationWidgetController extends Controller
                 abort(Response::HTTP_UNAUTHORIZED);
             }
 
-            $isAttendanceQuestionRequired = $authentication->author->hasPendingInvitationTo($form);
+            $isAttendanceQuestionRequired = $this->isAttendanceQuestionRequired($authentication->author);
 
             $attending = $isAttendanceQuestionRequired ? $request->get('attending') : 'yes';
 
@@ -337,5 +333,15 @@ class EventRegistrationWidgetController extends Controller
                 'message' => 'Event registration submitted successfully.',
             ]
         );
+    }
+
+    /**
+     * Only attendees registering for the first time through the public link skip the attendance
+     * question and are registered as attending. Anyone who was invited, or has already responded,
+     * is asked, so they can still decline or change their answer.
+     */
+    private function isAttendanceQuestionRequired(EventAttendee $attendee): bool
+    {
+        return ($attendee->status !== EventAttendeeStatus::Pending) || $attendee->hasPendingInvitation();
     }
 }

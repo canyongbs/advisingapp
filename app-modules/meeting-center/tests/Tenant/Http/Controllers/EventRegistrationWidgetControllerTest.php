@@ -94,8 +94,29 @@ describe('authenticate', function () use ($createAuthenticatedAttendee): void {
             ->assertJson(['is_attendance_question_required' => $isRequired]);
     })->with([
         'invited' => [EventAttendeeStatus::Invited, true],
-        'registering through the public link' => [EventAttendeeStatus::Pending, false],
+        'registering through the public link for the first time' => [EventAttendeeStatus::Pending, false],
+        'already answered `yes`' => [EventAttendeeStatus::Attending, true],
+        'already answered `no`' => [EventAttendeeStatus::NotAttending, true],
     ]);
+
+    it('requires the attendance question from a first time registrant who was sent a registration request', function () use ($createAuthenticatedAttendee): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee(EventAttendeeStatus::Pending);
+
+        EventRegistrationFormSubmission::factory()->create([
+            'form_id' => $event->eventRegistrationForm->getKey(),
+            'event_attendee_id' => $attendee->getKey(),
+            'attendee_status' => EventAttendeeStatus::Invited,
+            'submitted_at' => null,
+            'canceled_at' => null,
+        ]);
+
+        postJson(URL::signedRoute(
+            name: 'widgets.event-registration.api.authenticate',
+            parameters: ['event' => $event, 'authentication' => $authentication],
+        ), ['code' => 123456])
+            ->assertSuccessful()
+            ->assertJson(['is_attendance_question_required' => true]);
+    });
 });
 
 describe('store', function () use ($createAuthenticatedAttendee, $submitUrl): void {
@@ -120,8 +141,8 @@ describe('store', function () use ($createAuthenticatedAttendee, $submitUrl): vo
             ->and($attendee->refresh()->status)->toBe(EventAttendeeStatus::Invited);
     });
 
-    it('registers an attendee who was not invited as attending without asking', function (EventAttendeeStatus $status, array $data) use ($createAuthenticatedAttendee, $submitUrl): void {
-        [$event, $attendee, $authentication] = $createAuthenticatedAttendee($status);
+    it('registers a first time registrant as attending without asking', function (array $data) use ($createAuthenticatedAttendee, $submitUrl): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee(EventAttendeeStatus::Pending);
 
         postJson($submitUrl($event, $authentication), $data)
             ->assertSuccessful();
@@ -129,12 +150,34 @@ describe('store', function () use ($createAuthenticatedAttendee, $submitUrl): vo
         expect(EventRegistrationFormSubmission::query()->where('event_attendee_id', $attendee->getKey())->sole()->attendee_status)->toBe(EventAttendeeStatus::Attending)
             ->and($attendee->refresh()->status)->toBe(EventAttendeeStatus::Attending);
     })->with([
-        'registering through the public link' => [EventAttendeeStatus::Pending, []],
-        'registering through the public link while sending `no`' => [EventAttendeeStatus::Pending, ['attending' => 'no']],
-        'previously answered `no` to an invitation' => [EventAttendeeStatus::NotAttending, []],
+        'without an answer' => [[]],
+        'while sending `no`' => [['attending' => 'no']],
     ]);
 
-    it('still requires the registration form fields from an attendee who was not invited', function () use ($createAuthenticatedAttendee, $submitUrl): void {
+    it('lets an attendee who already responded change their answer', function (EventAttendeeStatus $status, string $answer, EventAttendeeStatus $expectedStatus) use ($createAuthenticatedAttendee, $submitUrl): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee($status);
+
+        postJson($submitUrl($event, $authentication), ['attending' => $answer])
+            ->assertSuccessful();
+
+        expect(EventRegistrationFormSubmission::query()->where('event_attendee_id', $attendee->getKey())->sole()->attendee_status)->toBe($expectedStatus)
+            ->and($attendee->refresh()->status)->toBe($expectedStatus);
+    })->with([
+        'cancelling a registration' => [EventAttendeeStatus::Attending, 'no', EventAttendeeStatus::NotAttending],
+        'attending after declining' => [EventAttendeeStatus::NotAttending, 'yes', EventAttendeeStatus::Attending],
+    ]);
+
+    it('requires an attendee who already responded to answer the attendance question', function () use ($createAuthenticatedAttendee, $submitUrl): void {
+        [$event, $attendee, $authentication] = $createAuthenticatedAttendee(EventAttendeeStatus::Attending);
+
+        postJson($submitUrl($event, $authentication), [])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.attending.0', 'The attending field is required.');
+
+        expect($attendee->refresh()->status)->toBe(EventAttendeeStatus::Attending);
+    });
+
+    it('still requires the registration form fields from a first time registrant', function () use ($createAuthenticatedAttendee, $submitUrl): void {
         [$event, $attendee, $authentication] = $createAuthenticatedAttendee(EventAttendeeStatus::Pending);
 
         $field = $event->eventRegistrationForm->fields()->create([
