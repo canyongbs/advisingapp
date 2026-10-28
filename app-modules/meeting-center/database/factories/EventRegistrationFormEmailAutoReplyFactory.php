@@ -65,14 +65,4 @@ class EventRegistrationFormEmailAutoReplyFactory extends Factory
             ],
         ];
     }
-
-    public function configure(): static
-    {
-        return $this->afterCreating(function (EventRegistrationFormEmailAutoReply $emailAutoReply): void {
-            EventRegistrationFormEmailAutoReply::query()
-                ->where('form_id', $emailAutoReply->form_id)
-                ->whereKeyNot($emailAutoReply->getKey())
-                ->forceDelete();
-        });
-    }
 }

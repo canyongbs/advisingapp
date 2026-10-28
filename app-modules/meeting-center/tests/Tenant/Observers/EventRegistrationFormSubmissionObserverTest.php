@@ -41,7 +41,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
-it('dispatches `EventRegistrationFormSubmissionCreated` with whether the attendee was invited when a submission is submitted', function (EventAttendeeStatus $status, bool $wasInvited): void {
+it('dispatches `EventRegistrationFormSubmissionCreated` with the previous status of the attendee when a submission is submitted', function (EventAttendeeStatus $status): void {
     $attendee = EventAttendee::factory()->create(['status' => $status]);
 
     Event::fake([EventRegistrationFormSubmissionCreated::class]);
@@ -55,12 +55,13 @@ it('dispatches `EventRegistrationFormSubmissionCreated` with whether the attende
 
     Event::assertDispatched(
         EventRegistrationFormSubmissionCreated::class,
-        fn (EventRegistrationFormSubmissionCreated $event): bool => $event->submission->is($submission) && ($event->wasInvited === $wasInvited),
+        fn (EventRegistrationFormSubmissionCreated $event): bool => $event->submission->is($submission) && ($event->previousAttendeeStatus === $status),
     );
 })->with([
-    'invited attendee' => [EventAttendeeStatus::Invited, true],
-    'attendee registering on their own' => [EventAttendeeStatus::Pending, false],
-    'attendee who declined an invitation before' => [EventAttendeeStatus::NotAttending, false],
+    'invited attendee' => [EventAttendeeStatus::Invited],
+    'attendee registering on their own' => [EventAttendeeStatus::Pending],
+    'attendee who declined before' => [EventAttendeeStatus::NotAttending],
+    'attendee who is already attending' => [EventAttendeeStatus::Attending],
 ]);
 
 it('dispatches `EventRegistrationFormSubmissionCreated` for a requested submission only once it is submitted', function (): void {
@@ -83,6 +84,6 @@ it('dispatches `EventRegistrationFormSubmissionCreated` for a requested submissi
     Event::assertDispatchedTimes(EventRegistrationFormSubmissionCreated::class, 1);
     Event::assertDispatched(
         EventRegistrationFormSubmissionCreated::class,
-        fn (EventRegistrationFormSubmissionCreated $event): bool => $event->submission->is($submission) && $event->wasInvited,
+        fn (EventRegistrationFormSubmissionCreated $event): bool => $event->submission->is($submission) && ($event->previousAttendeeStatus === EventAttendeeStatus::Pending),
     );
 });

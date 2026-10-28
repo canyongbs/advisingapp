@@ -46,10 +46,12 @@ use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 class SendEmailAutoReplyToRegisteredAttendee
 {
     /**
-     * Only attendees who confirm they will attend receive the email auto reply. Invited attendees
-     * receive it now only when it is sent after attendance confirmation, because otherwise it was
-     * already sent with their invitation. Attendees who registered on their own were never
-     * invited, so they receive it now whichever delivery preference is chosen.
+     * Only attendees who change their response to attending receive the email auto reply, so
+     * confirming again does not send it twice, unless they were invited again with a new request.
+     * Attendees registering through the public link for the first time were never invited, so
+     * they receive it now whichever delivery preference is chosen. Anyone else was invited or
+     * has responded before, and already received it with their invitation unless it is sent
+     * after attendance confirmation.
      */
     public function handle(EventRegistrationFormSubmissionCreated $event): void
     {
@@ -63,15 +65,21 @@ class SendEmailAutoReplyToRegisteredAttendee
             return;
         }
 
+        if (($event->previousAttendeeStatus === EventAttendeeStatus::Attending) && blank($submission->requester_id)) {
+            return;
+        }
+
         $attendee = $submission->getRelationValue('author');
 
         if (! $attendee instanceof EventAttendee) {
             return;
         }
 
+        $isFirstRegistration = ($event->previousAttendeeStatus === EventAttendeeStatus::Pending) && blank($submission->requester_id);
+
         dispatch(new SendEventRegistrationFormEmailAutoReply(
             attendee: $attendee,
-            requiredDeliveryPreference: $event->wasInvited ? EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation : null,
+            requiredDeliveryPreference: $isFirstRegistration ? null : EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation,
         ))->afterCommit();
     }
 }

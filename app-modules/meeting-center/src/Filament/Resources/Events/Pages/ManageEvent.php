@@ -166,7 +166,7 @@ class ManageEvent extends EditRecord
                     ->schema([
                         Radio::make('delivery_preference')
                             ->label('Delivery Preference')
-                            ->helperText('Please indicate your delivery preference for invited team members.')
+                            ->helperText('Choose when invited attendees receive the email auto reply.')
                             ->options(EmailAutoReplyDeliveryPreference::class)
                             ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
                             ->required(),

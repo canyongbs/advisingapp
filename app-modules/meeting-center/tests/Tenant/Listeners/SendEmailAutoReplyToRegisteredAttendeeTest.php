@@ -40,6 +40,7 @@ use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
+use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
 $submit = fn (EventAttendee $attendee, EventAttendeeStatus $attendeeStatus): EventRegistrationFormSubmission => EventRegistrationFormSubmission::factory()->create([
@@ -63,7 +64,42 @@ it('queues the `SendEventRegistrationFormEmailAutoReply` job when an attendee re
 })->with([
     'invited attendee' => [EventAttendeeStatus::Invited, EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation],
     'attendee registering on their own' => [EventAttendeeStatus::Pending, null],
+    'attendee who declined before' => [EventAttendeeStatus::NotAttending, EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation],
 ]);
+
+it('only queues the `SendEventRegistrationFormEmailAutoReply` job after attendance confirmation for a requested submission', function (EventAttendeeStatus $status): void {
+    $attendee = EventAttendee::factory()->create(['status' => $status]);
+
+    $submission = EventRegistrationFormSubmission::factory()->create([
+        'form_id' => $attendee->event->eventRegistrationForm->getKey(),
+        'event_attendee_id' => $attendee->getKey(),
+        'attendee_status' => EventAttendeeStatus::Invited,
+        'submitted_at' => null,
+        'requester_id' => User::factory()->create()->getKey(),
+    ]);
+
+    Queue::fake([SendEventRegistrationFormEmailAutoReply::class]);
+
+    $submission->update(['submitted_at' => now(), 'attendee_status' => EventAttendeeStatus::Attending]);
+
+    Queue::assertPushed(
+        SendEventRegistrationFormEmailAutoReply::class,
+        fn (SendEventRegistrationFormEmailAutoReply $job): bool => $job->requiredDeliveryPreference === EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation,
+    );
+})->with([
+    'attendee registering for the first time' => [EventAttendeeStatus::Pending],
+    'attendee who is already attending and was invited again' => [EventAttendeeStatus::Attending],
+]);
+
+it('does not queue the `SendEventRegistrationFormEmailAutoReply` job when an attendee who is already attending confirms again', function () use ($submit): void {
+    $attendee = EventAttendee::factory()->create(['status' => EventAttendeeStatus::Attending]);
+
+    Queue::fake([SendEventRegistrationFormEmailAutoReply::class]);
+
+    $submit($attendee, EventAttendeeStatus::Attending);
+
+    Queue::assertNotPushed(SendEventRegistrationFormEmailAutoReply::class);
+});
 
 it('does not queue the `SendEventRegistrationFormEmailAutoReply` job when an attendee registers as not attending', function () use ($submit): void {
     $attendee = EventAttendee::factory()->create(['status' => EventAttendeeStatus::Invited]);

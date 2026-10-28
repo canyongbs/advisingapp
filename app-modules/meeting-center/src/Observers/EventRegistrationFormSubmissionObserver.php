@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Observers;
 
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Events\EventRegistrationFormSubmissionCreated;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
@@ -64,10 +63,11 @@ class EventRegistrationFormSubmissionObserver
     {
         $attendee = $submission->getRelationValue('author');
 
+        // The attendee's status is only updated after the submission is saved, so it is still their previous status here.
         Event::dispatch(
             event: new EventRegistrationFormSubmissionCreated(
                 submission: $submission,
-                wasInvited: filled($submission->requester_id) || (($attendee instanceof EventAttendee) && ($attendee->status === EventAttendeeStatus::Invited)),
+                previousAttendeeStatus: ($attendee instanceof EventAttendee) ? $attendee->status : null,
             )
         );
     }

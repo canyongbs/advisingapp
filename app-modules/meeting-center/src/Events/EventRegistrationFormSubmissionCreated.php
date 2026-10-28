@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Events;
 
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -48,10 +49,10 @@ class EventRegistrationFormSubmissionCreated
     use SerializesModels;
 
     /**
-     * @param bool $wasInvited Whether the attendee had been invited when they submitted the registration form.
+     * @param ?EventAttendeeStatus $previousAttendeeStatus The status of the attendee before this submission was submitted.
      */
     public function __construct(
         public EventRegistrationFormSubmission $submission,
-        public bool $wasInvited,
+        public ?EventAttendeeStatus $previousAttendeeStatus,
     ) {}
 }
