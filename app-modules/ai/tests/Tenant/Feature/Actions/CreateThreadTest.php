@@ -345,3 +345,79 @@ it('gives the auto-created default assistant a unique name when a custom assista
         ->name->toBe('Institutional Advisor-2')
         ->is_default->toBeTrue();
 });
+
+it('uses the default assistant created by a concurrent request instead of failing on the unique name', function (): void {
+    asSuperAdmin();
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $concurrentAssistant = AiAssistant::factory()->create([
+        'name' => 'Institutional Advisor',
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => true,
+    ]);
+
+    // Simulates the lookup happening before the concurrent request committed its default assistant.
+    $action = new class () extends CreateThread {
+        private bool $hasLookedUp = false;
+
+        protected function findDefaultAiAssistant(AiAssistantApplication $application): ?AiAssistant
+        {
+            if (! $this->hasLookedUp) {
+                $this->hasLookedUp = true;
+
+                return null;
+            }
+
+            return parent::findDefaultAiAssistant($application);
+        }
+
+        protected function getUniqueAssistantName(string $name): string
+        {
+            return $name;
+        }
+    };
+
+    $thread = $action(AiAssistantApplication::PersonalAssistant);
+
+    expect($thread->assistant->is($concurrentAssistant))->toBeTrue()
+        ->and(AiAssistant::query()->where('is_default', true)->count())->toBe(1);
+});
+
+it('retries with a free name when a custom assistant takes the default assistant name before it is saved', function (): void {
+    asSuperAdmin();
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    AiAssistant::factory()->create([
+        'name' => 'Institutional Advisor',
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => false,
+    ]);
+
+    // Simulates the custom assistant being created after the first name was chosen.
+    $action = new class () extends CreateThread {
+        private bool $hasAllocatedName = false;
+
+        protected function getUniqueAssistantName(string $name): string
+        {
+            if (! $this->hasAllocatedName) {
+                $this->hasAllocatedName = true;
+
+                return $name;
+            }
+
+            return parent::getUniqueAssistantName($name);
+        }
+    };
+
+    $thread = $action(AiAssistantApplication::PersonalAssistant);
+
+    expect($thread->assistant)
+        ->name->toBe('Institutional Advisor-2')
+        ->is_default->toBeTrue();
+});

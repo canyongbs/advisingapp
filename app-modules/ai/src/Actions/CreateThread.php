@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Settings\DisplaySettings;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Str;
 
 class CreateThread
@@ -78,10 +79,7 @@ class CreateThread
 
     protected function getDefaultAiAssistant(AiAssistantApplication $application): AiAssistant
     {
-        $assistant = AiAssistant::query()
-            ->where('application', $application)
-            ->where('is_default', true)
-            ->first();
+        $assistant = $this->findDefaultAiAssistant($application);
 
         if ($assistant) {
             return $assistant;
@@ -90,23 +88,47 @@ class CreateThread
         $tenant = Tenant::current();
         $settings = app(AiSettings::class);
 
-        $assistant = new AiAssistant();
-
         if ($application === AiAssistantApplication::PersonalAssistant) {
-            $assistant->name = 'Institutional Advisor';
-            $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
+            $name = 'Institutional Advisor';
+            $description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
         } else {
-            $assistant->name = "{$tenant->name} AI Assistant";
-            $assistant->description = "An AI Assistant for {$tenant->name}";
+            $name = "{$tenant->name} AI Assistant";
+            $description = "An AI Assistant for {$tenant->name}";
         }
-        $assistant->name = $this->getUniqueAssistantName($assistant->name);
-        $assistant->instructions = $settings->prompt_system_context;
-        $assistant->application = $application;
-        $assistant->model = $application->getDefaultModel();
-        $assistant->is_default = true;
-        $assistant->save();
 
-        return $assistant;
+        for ($attempt = 1; ; $attempt++) {
+            $assistant = new AiAssistant();
+            $assistant->name = $this->getUniqueAssistantName($name);
+            $assistant->description = $description;
+            $assistant->instructions = $settings->prompt_system_context;
+            $assistant->application = $application;
+            $assistant->model = $application->getDefaultModel();
+            $assistant->is_default = true;
+
+            try {
+                // A transaction (savepoint when nested) keeps a failed insert from aborting an outer transaction.
+                $assistant->getConnection()->transaction(fn () => $assistant->save());
+
+                return $assistant;
+            } catch (UniqueConstraintViolationException $exception) {
+                // A concurrent request created the default assistant, or took the name we picked.
+                $existingAssistant = $this->findDefaultAiAssistant($application);
+
+                if ($existingAssistant) {
+                    return $existingAssistant;
+                }
+
+                throw_if($attempt >= 3, $exception);
+            }
+        }
+    }
+
+    protected function findDefaultAiAssistant(AiAssistantApplication $application): ?AiAssistant
+    {
+        return AiAssistant::query()
+            ->where('application', $application)
+            ->where('is_default', true)
+            ->first();
     }
 
     /**
