@@ -34,8 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormEmailAutoReply;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 $richText = fn (array $content): array => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => $content]]];
 
@@ -96,4 +99,19 @@ it('returns empty strings when the subject and body are empty', function (): voi
 
     expect($emailAutoReply->getSubject(null))->toBe('')
         ->and($emailAutoReply->getBody(null))->toBe('');
+});
+
+it('renders body images with permanent urls so they keep working in sent emails', function (): void {
+    Storage::fake('s3-public');
+    Storage::disk('s3-public')->buildTemporaryUrlsUsing(fn (string $path): string => "https://temporary.example.com/{$path}");
+
+    $emailAutoReply = Event::factory()->create()->eventRegistrationForm->emailAutoReply;
+    $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+    $emailAutoReply->update([
+        'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+    ]);
+
+    expect($emailAutoReply->refresh()->getBody(null))
+        ->toContain($image->getUrl())
+        ->not->toContain('temporary.example.com');
 });

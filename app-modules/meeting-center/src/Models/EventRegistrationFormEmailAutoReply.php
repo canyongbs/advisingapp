@@ -67,11 +67,6 @@ class EventRegistrationFormEmailAutoReply extends BaseModel implements HasMedia,
         'delivery_preference',
     ];
 
-    protected $attributes = [
-        'is_enabled' => false,
-        'delivery_preference' => EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation->value,
-    ];
-
     protected $casts = [
         'body' => 'array',
         'delivery_preference' => EmailAutoReplyDeliveryPreference::class,
@@ -130,6 +125,7 @@ class EventRegistrationFormEmailAutoReply extends BaseModel implements HasMedia,
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags($mergeTags);
     }
 }
