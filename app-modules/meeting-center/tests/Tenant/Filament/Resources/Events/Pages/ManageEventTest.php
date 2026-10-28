@@ -587,19 +587,23 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
 });
 
 describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
-    it('displays the email auto reply data', function (): void {
+    it('displays the email auto reply data', function () use ($richText): void {
         asSuperAdmin();
 
         $event = Event::factory()->create();
         $event->eventRegistrationForm->emailAutoReply()->firstOrFail()->update([
             'is_enabled' => true,
             'delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+            'subject' => $richText('Thanks for registering'),
+            'body' => $richText('We look forward to seeing you.'),
         ]);
 
         Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
             ->assertSchemaStateSet([
                 'emailAutoReply.is_enabled' => true,
                 'emailAutoReply.delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+                'emailAutoReply.subject' => $richText('Thanks for registering'),
+                'emailAutoReply.body' => $richText('We look forward to seeing you.'),
             ], 'emailAutoReplyForm');
     });
 
