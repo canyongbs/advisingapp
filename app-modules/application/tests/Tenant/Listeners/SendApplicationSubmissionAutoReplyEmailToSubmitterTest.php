@@ -34,11 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Actions\CreateApplicationVersion;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Application\Jobs\SendApplicationSubmissionAutoReplyEmail;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\seed;
 
@@ -46,35 +50,109 @@ beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job when an application is submitted', function (): void {
-    Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
+$createApplicationWithEnabledEmailAutoReply = function (): Application {
+    $application = Application::factory()->create();
+    $application->emailAutoReply()->firstOrFail()->update(['is_enabled' => true]);
 
-    $submission = ApplicationSubmission::factory()->create();
+    return $application;
+};
 
-    Queue::assertPushed(
-        SendApplicationSubmissionAutoReplyEmail::class,
-        fn (SendApplicationSubmissionAutoReplyEmail $job): bool => $job->submission->is($submission),
-    );
+$submit = fn (Application $application, ?Student $author, array $attributes = []): ApplicationSubmission => ApplicationSubmission::factory()->create([
+    'application_id' => $application->getKey(),
+    'author_type' => $author?->getMorphClass(),
+    'author_id' => $author?->getKey(),
+    ...$attributes,
+]);
+
+it('sends the email auto reply to the author when an application is submitted', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
+    $student = Student::factory()->create();
+    $application = $createApplicationWithEnabledEmailAutoReply();
+
+    Notification::fake();
+
+    $submit($application, $student);
+
+    Notification::assertSentToTimes($student, ApplicationSubmissionAutoReplyNotification::class, 1);
 });
 
-it('dispatches the `SendApplicationSubmissionAutoReplyEmail` job for a requested application only once it is submitted', function (): void {
-    Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
+it('sends the email auto reply for a requested application only once it is submitted', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
+    $student = Student::factory()->create();
+    $application = $createApplicationWithEnabledEmailAutoReply();
 
-    $submission = ApplicationSubmission::factory()->create(['submitted_at' => null]);
+    Notification::fake();
 
-    Queue::assertNotPushed(SendApplicationSubmissionAutoReplyEmail::class);
+    $submission = $submit($application, $student, ['submitted_at' => null]);
+
+    Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
 
     $submission->update(['submitted_at' => now()]);
 
-    Queue::assertPushed(SendApplicationSubmissionAutoReplyEmail::class, 1);
+    Notification::assertSentToTimes($student, ApplicationSubmissionAutoReplyNotification::class, 1);
 });
 
-it('does not dispatch the `SendApplicationSubmissionAutoReplyEmail` job when the feature is inactive', function (): void {
+it('sends the email auto reply of the latest application version', function () use ($submit): void {
+    $student = Student::factory()->create();
+    $oldVersion = Application::factory()->create();
+
+    Notification::fake();
+
+    $submission = $submit($oldVersion, $student, ['submitted_at' => null]);
+
+    $newVersion = app(CreateApplicationVersion::class)->execute($oldVersion->refresh(), ['name' => $oldVersion->name]);
+    $newVersion->emailAutoReply()->firstOrFail()->update(['is_enabled' => true]);
+
+    expect($oldVersion->fresh()->emailAutoReply)->toBeNull();
+
+    $submission->update(['submitted_at' => now()]);
+
+    Notification::assertSentToTimes($student, ApplicationSubmissionAutoReplyNotification::class, 1);
+});
+
+it('does not send the email auto reply when it is disabled', function () use ($submit): void {
+    $student = Student::factory()->create();
+    $application = Application::factory()->create();
+
+    Notification::fake();
+
+    $submit($application, $student);
+
+    Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
+});
+
+it('does not send the email auto reply when the submission has no author', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
+    $application = $createApplicationWithEnabledEmailAutoReply();
+
+    Notification::fake();
+
+    $submit($application, null);
+
+    Notification::assertNothingSent();
+});
+
+it('does not send the email auto reply when the author cannot receive email', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
+    $student = Student::factory()->create();
+    BouncedEmailAddress::factory()->create(['address' => $student->primaryEmailAddress?->address]);
+
+    $application = $createApplicationWithEnabledEmailAutoReply();
+
+    expect($student->canReceiveEmail())->toBeFalse();
+
+    Notification::fake();
+
+    $submit($application, $student);
+
+    Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
+});
+
+it('does not send the email auto reply when the feature is inactive', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
+    $student = Student::factory()->create();
+    $application = $createApplicationWithEnabledEmailAutoReply();
+
     AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
 
-    Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
+    Notification::fake();
 
-    ApplicationSubmission::factory()->create();
+    $submit($application, $student);
 
-    Queue::assertNotPushed(SendApplicationSubmissionAutoReplyEmail::class);
+    Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
 });

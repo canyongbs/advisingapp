@@ -36,19 +36,15 @@
 
 use AdvisingApp\Application\Actions\CreateApplicationVersion;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Application\Jobs\SendApplicationSubmissionAutoReplyEmail;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\seed;
 
 beforeEach(function (): void {
     seed(ApplicationSubmissionStateSeeder::class);
-
-    Queue::fake([SendApplicationSubmissionAutoReplyEmail::class]);
 });
 
 $richText = fn (array $content): array => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => $content]]];

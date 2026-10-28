@@ -37,10 +37,12 @@
 namespace AdvisingApp\Application\Listeners;
 
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
-use AdvisingApp\Application\Jobs\SendApplicationSubmissionAutoReplyEmail;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
 use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class SendApplicationSubmissionAutoReplyEmailToSubmitter
+class SendApplicationSubmissionAutoReplyEmailToSubmitter implements ShouldQueueAfterCommit
 {
     public function handle(ApplicationSubmissionCreated $event): void
     {
@@ -48,6 +50,26 @@ class SendApplicationSubmissionAutoReplyEmailToSubmitter
             return;
         }
 
-        dispatch(new SendApplicationSubmissionAutoReplyEmail($event->submission))->afterCommit();
+        $submission = $event->submission;
+        $author = $submission->author;
+
+        if (! $author) {
+            return;
+        }
+
+        $application = $submission->submissible;
+        assert($application instanceof Application);
+
+        $application = $application->latestVersion() ?? $application;
+
+        if (! $application->emailAutoReply?->is_enabled) {
+            return;
+        }
+
+        if (! $author->canReceiveEmail()) {
+            return;
+        }
+
+        $author->notify(new ApplicationSubmissionAutoReplyNotification($submission));
     }
 }
