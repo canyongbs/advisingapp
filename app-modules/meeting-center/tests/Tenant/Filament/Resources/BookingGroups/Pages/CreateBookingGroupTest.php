@@ -39,11 +39,13 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\CreateBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Department;
+use App\Features\BookingGroupNameCitextFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -246,4 +248,41 @@ it('users UserSelect shows all users when filter_admins_from_selection config is
         ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
         });
+});
+
+it('does not allow creating a booking group whose name matches another booking group case-insensitively', function (): void {
+    asSuperAdmin();
+
+    BookingGroup::factory()->create(['name' => 'Advising Team']);
+
+    Livewire::test(CreateBookingGroup::class)
+        ->fillForm(['name' => 'advising team'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a booking group whose name is freed up by a soft-deleted booking group case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+    DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+    Livewire::test(CreateBookingGroup::class)
+        ->fillForm(['name' => 'advising team'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+});
+
+it('rejects creating a booking group with a soft-deleted name before the citext migration activates', function (): void {
+    asSuperAdmin();
+
+    BookingGroupNameCitextFeature::deactivate();
+
+    $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+    DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+    Livewire::test(CreateBookingGroup::class)
+        ->fillForm(['name' => 'advising team'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });
