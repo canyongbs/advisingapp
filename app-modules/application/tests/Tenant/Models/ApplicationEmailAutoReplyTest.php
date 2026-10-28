@@ -34,9 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationEmailAutoReply;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
+use function Pest\Laravel\seed;
 
 /**
  * @param  array<int, array<string, mixed>>  $content
@@ -133,4 +139,20 @@ it('returns empty strings when the subject and body are empty', function (): voi
 
     expect($emailAutoReply->getSubject(null))->toBe('')
         ->and($emailAutoReply->getBody(null))->toBe('');
+});
+
+it('renders body images with permanent urls so they keep working in sent emails', function (): void {
+    seed(ApplicationSubmissionStateSeeder::class);
+    Storage::fake('s3-public');
+    Storage::disk('s3-public')->buildTemporaryUrlsUsing(fn (string $path): string => "https://temporary.example.com/{$path}");
+
+    $emailAutoReply = Application::factory()->create()->emailAutoReply;
+    $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+    $emailAutoReply->update([
+        'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+    ]);
+
+    expect($emailAutoReply->refresh()->getBody(null))
+        ->toContain($image->getUrl())
+        ->not->toContain('temporary.example.com');
 });
