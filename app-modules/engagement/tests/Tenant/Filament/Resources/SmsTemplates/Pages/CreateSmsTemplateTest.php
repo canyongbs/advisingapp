@@ -63,7 +63,7 @@ it('allows creating a sms template whose name is freed up by a soft-deleted temp
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(SmsTemplate::class, ['name' => 'welcome message']);
+    assertDatabaseHas(SmsTemplate::class, ['name' => 'welcome message', 'deleted_at' => null]);
 });
 
 it('rejects creating a sms template with a soft-deleted name before the citext migration activates', function (): void {
