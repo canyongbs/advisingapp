@@ -35,7 +35,7 @@
         "resolve-url-loader": "^5.0.0",
         "tailwindcss": "^4.3.3",
         "tippy.js": "^6.3.7",
-        "vite": "^8.3.4",
+        "vite": "^8.3.5",
         "vue-filepond": "^7.0.4"
     },
     "devDependencies": {
@@ -56,7 +56,7 @@
         "@tiptap/starter-kit": "^3.32.0",
         "@tiptap/suggestion": "^3.32.0",
         "@vitejs/plugin-vue": "^6.0.10",
-        "alpinejs": "^3.17.4",
+        "alpinejs": "^3.17.5",
         "axios": "^1.20.0",
         "chokidar": "^3.6.0",
         "cross-env": "^7.0.3",
