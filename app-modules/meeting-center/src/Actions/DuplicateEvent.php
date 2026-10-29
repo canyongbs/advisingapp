@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Actions;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class DuplicateEvent
 {
@@ -55,6 +56,10 @@ class DuplicateEvent
         $this->updateStepContent($fieldMap);
         $this->replicateDescriptionMedia();
         $this->replicateHeroImage();
+
+        if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+            $this->replicateEmailAutoReply();
+        }
     }
 
     private function replicateEventRegistrationForm(): void
@@ -130,6 +135,35 @@ class DuplicateEvent
     private function replicateHeroImage(): void
     {
         $this->original->getFirstMedia('hero_image')?->copy($this->replica, 'hero_image', 's3-public');
+    }
+
+    private function replicateEmailAutoReply(): void
+    {
+        $originalEmailAutoReply = $this->original->eventRegistrationForm->emailAutoReply;
+
+        if (! $originalEmailAutoReply) {
+            return;
+        }
+
+        $replicaEmailAutoReply = $this->replica->eventRegistrationForm->emailAutoReply()->updateOrCreate([], [
+            'subject' => $originalEmailAutoReply->subject,
+            'body' => $originalEmailAutoReply->body,
+            'is_enabled' => $originalEmailAutoReply->is_enabled,
+            'delivery_preference' => $originalEmailAutoReply->delivery_preference,
+        ]);
+
+        $mediaUuidMap = [];
+
+        foreach ($originalEmailAutoReply->getMedia('body') as $media) {
+            $mediaUuidMap[$media->uuid] = $media->copy($replicaEmailAutoReply, 'body', 's3-public')->uuid;
+        }
+
+        if ($mediaUuidMap === []) {
+            return;
+        }
+
+        $replicaEmailAutoReply->body = $this->remapMediaUuids($replicaEmailAutoReply->body, $mediaUuidMap);
+        $replicaEmailAutoReply->save();
     }
 
     /**

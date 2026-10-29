@@ -40,7 +40,9 @@ use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Jobs\DeliverEventRegistrationFormSubmissionRequestByEmail;
+use AdvisingApp\MeetingCenter\Observers\EventRegistrationFormSubmissionObserver;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -48,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @mixin IdeHelperEventRegistrationFormSubmission
  */
+#[ObservedBy([EventRegistrationFormSubmissionObserver::class])]
 class EventRegistrationFormSubmission extends Submission
 {
     protected $fillable = [

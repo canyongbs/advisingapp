@@ -43,9 +43,11 @@ use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
 use AdvisingApp\Application\Filament\Forms\ApplicationWorkflowForm;
 use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
+use AdvisingApp\Application\Listeners\SendApplicationSubmissionAutoReplyEmailToSubmitter;
 use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionStageWorkflows;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationEmailAutoReply;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationStep;
@@ -76,6 +78,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application' => Application::class,
             'application_field' => ApplicationField::class,
             'application_submission' => ApplicationSubmission::class,
+            'application_email_auto_reply' => ApplicationEmailAutoReply::class,
             'application_step' => ApplicationStep::class,
             'application_authentication' => ApplicationAuthentication::class,
             'application_submission_state' => ApplicationSubmissionState::class,
@@ -95,6 +98,11 @@ class ApplicationServiceProvider extends ServiceProvider
         Event::listen(
             events: ApplicationSubmissionCreated::class,
             listener: NotifySubscribersOfApplicationSubmission::class
+        );
+
+        Event::listen(
+            events: ApplicationSubmissionCreated::class,
+            listener: SendApplicationSubmissionAutoReplyEmailToSubmitter::class
         );
 
         Event::listen(

@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -109,6 +110,23 @@ class EventAttendee extends BaseModel implements CanBeNotified
             'sisid',
             'email',
         );
+    }
+
+    /**
+     * Whether this attendee was invited to the event and has not responded yet, either because
+     * they are still in the `Invited` status or because a registration form request is pending.
+     * An attendee belongs to a single event, so a request on any version of its registration
+     * form counts, including one sent before the form was last edited.
+     */
+    public function hasPendingInvitation(): bool
+    {
+        if ($this->status === EventAttendeeStatus::Invited) {
+            return true;
+        }
+
+        return $this->submissions()
+            ->tap(new Requested())
+            ->exists();
     }
 
     public function canReceiveSms(): bool

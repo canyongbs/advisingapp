@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageForm;
@@ -46,6 +47,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
@@ -398,6 +401,24 @@ describe('email auto reply tab', function (): void {
         'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
     ];
 
+    it('displays the email auto reply data', function () use ($paragraph): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+        $form->emailAutoReply->update([
+            'is_enabled' => true,
+            'subject' => $paragraph('Thanks'),
+            'body' => $paragraph('We received your submission.'),
+        ]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSchemaStateSet([
+                'emailAutoReply.is_enabled' => true,
+                'emailAutoReply.subject' => $paragraph('Thanks'),
+                'emailAutoReply.body' => $paragraph('We received your submission.'),
+            ], 'emailAutoReplyForm');
+    });
+
     it('can save the email auto reply of an authenticated form', function () use ($paragraph): void {
         asSuperAdmin();
 
@@ -425,6 +446,74 @@ describe('email auto reply tab', function (): void {
             ->and($autoReply->subject)->toEqual($paragraph('Thanks'))
             ->and($autoReply->body)->toEqual($paragraph('We received your submission.'))
             ->and(Form::query()->where('root_id', $form->root_id)->count())->toBe(1);
+    });
+
+    it('copies the images of a loaded email template onto the email auto reply', function () use ($paragraph): void {
+        asSuperAdmin();
+        Storage::fake('s3-public');
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+
+        $emailTemplate = EmailTemplate::factory()->create();
+        $templateImage = $emailTemplate->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('content', 's3-public');
+        $emailTemplate->update([
+            'content' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $templateImage->uuid]]]],
+        ]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm(['emailAutoReply' => ['is_enabled' => true, 'subject' => $paragraph('Thanks')]], 'emailAutoReplyForm')
+            ->callAction(
+                TestAction::make('loadEmailTemplate')->schemaComponent('emailAutoReply.body', schema: 'emailAutoReplyForm'),
+                data: ['emailTemplate' => $emailTemplate->getKey()],
+            )
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
+
+        $emailAutoReply = $form->fresh()->emailAutoReply;
+        $emailAutoReplyImage = $emailAutoReply->getFirstMedia('body');
+
+        expect($emailAutoReplyImage)->not->toBeNull()
+            ->and($emailAutoReplyImage->uuid)->not->toBe($templateImage->uuid)
+            ->and(data_get($emailAutoReply->body, 'content.0.attrs.id'))->toBe($emailAutoReplyImage->uuid)
+            ->and($emailTemplate->fresh()->getMedia('content')->pluck('uuid')->all())->toBe([$templateImage->uuid]);
+    });
+
+    it('validates the inputs', function (array $data, array $errors) use ($paragraph): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => true,
+                    'subject' => $paragraph('Thanks'),
+                    'body' => $paragraph('We received your submission.'),
+                    ...$data,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasFormErrors($errors, 'emailAutoReplyForm');
+    })->with([
+        'subject required' => [['subject' => null], ['emailAutoReply.subject' => 'The subject field is required.']],
+        'body required' => [['body' => null], ['emailAutoReply.body' => 'The body field is required.']],
+    ]);
+
+    it('does not require the subject and body when the email auto reply is disabled', function (): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['is_authenticated' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm([
+                'emailAutoReply' => [
+                    'is_enabled' => false,
+                    'subject' => null,
+                    'body' => null,
+                ],
+            ], 'emailAutoReplyForm')
+            ->call('saveEmailAutoReply')
+            ->assertHasNoFormErrors(form: 'emailAutoReplyForm');
     });
 
     it('cannot be saved for a form that is not authenticated', function (): void {
