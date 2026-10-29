@@ -699,7 +699,7 @@ it('breaks email occurred_at ties by id', function (): void {
         'occurred_at' => '2025-03-14 10:15:00',
     ]));
 
-    // Eager-loaded like the Sent Items and Unified Inbox tables load it.
+    // Eager-loaded like the student and prospect Messages tab loads it.
     $engagement = Engagement::query()->with('latestEmailMessage.events')->findOrFail($engagement->getKey());
 
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe(EngagementDisplayStatus::Sent);
@@ -740,7 +740,7 @@ it('breaks SMS occurred_at ties by id', function (): void {
         'occurred_at' => '2025-03-14 10:15:00',
     ]));
 
-    // Eager-loaded like the Sent Items and Unified Inbox tables load it.
+    // Eager-loaded like the student and prospect Messages tab loads it.
     $engagement = Engagement::query()->with('latestSmsMessage.events')->findOrFail($engagement->getKey());
 
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe(EngagementDisplayStatus::Sent);
