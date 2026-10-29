@@ -360,6 +360,7 @@ it('allows renaming an assistant to a name freed up by a soft-deleted one and to
     expect($aiAssistant->refresh()->name)->toBe('ADMISSIONS HELPER');
 });
 
+// TODO: Cleanup Task (advisor-name-citext) - Delete this test (the unique index always applies once the feature flag is removed)
 it('does not apply name uniqueness validation before the citext migration activates', function () use ($licenses, $permissions): void {
     Storage::fake('s3');
 

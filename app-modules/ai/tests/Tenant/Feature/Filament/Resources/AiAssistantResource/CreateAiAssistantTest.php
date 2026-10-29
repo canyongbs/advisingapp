@@ -330,6 +330,7 @@ it('allows creating an assistant whose name was freed up by a soft-deleted one',
     assertDatabaseHas(AiAssistant::class, ['name' => 'admissions helper', 'deleted_at' => null]);
 });
 
+// TODO: Cleanup Task (advisor-name-citext) - Delete this test (the unique index always applies once the feature flag is removed)
 it('does not apply name uniqueness validation before the citext migration activates', function () use ($licenses, $permissions): void {
     Storage::fake('s3');
 

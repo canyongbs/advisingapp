@@ -231,6 +231,7 @@ test('Create Customer Advisor allows a name freed up by a soft-deleted advisor',
     assertDatabaseHas(CustomerAdvisor::class, ['name' => 'admissions helper', 'deleted_at' => null]);
 });
 
+// TODO: Cleanup Task (advisor-name-citext) - Delete this test (the unique index always applies once the feature flag is removed)
 test('Create Customer Advisor does not apply name uniqueness validation before the citext migration activates', function (): void {
     Storage::fake('s3');
 
