@@ -7,7 +7,8 @@ created: 2026-10-29
 
 ## Temporary Migrations
 
-- database/migrations/2026_10_29_215229_tmp_backfill_message_events_occurred_at.php
+- database/migrations/2026_10_29_215229_tmp_backfill_email_message_events_occurred_at.php
+- database/migrations/2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at.php
 
 ## Additional Cleanup
 

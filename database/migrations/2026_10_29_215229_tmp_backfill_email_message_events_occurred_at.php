@@ -39,7 +39,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
-    // Each batch commits separately so the events tables are never held in one long transaction.
+    // Each batch commits separately so the events table is never held in one long transaction.
     public $withinTransaction = false;
 
     public function up(): void
@@ -71,22 +71,6 @@ return new class () extends Migration {
                 from timestamps
                 where email_message_events.id = timestamps.id
                     and timestamps.value ~ ?
-                SQL, [
-                $ids->first(),
-                $ids->last(),
-                '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})$',
-            ]);
-        });
-
-        DB::table('sms_message_events')->select('id')->chunkById(5000, function (Collection $events) {
-            $ids = $events->pluck('id');
-
-            // Telnyx reports occurred_at as ISO 8601 with an offset; Twilio payloads carry no event time.
-            DB::update(<<<'SQL'
-                update sms_message_events
-                set occurred_at = (payload ->> 'occurred_at')::timestamptz at time zone 'UTC'
-                where id between ? and ?
-                    and payload ->> 'occurred_at' ~ ?
                 SQL, [
                 $ids->first(),
                 $ids->last(),
