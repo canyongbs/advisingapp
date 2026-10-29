@@ -59,21 +59,6 @@ return new class () extends Migration {
 
     private string $lengthConstraint = 'prospect_sources_name_length';
 
-    /**
-     * Prefer retaining the seeded canonical "Advising App" source so de-duplication
-     * never renames it. Form and application registrations resolve their source by
-     * this exact name, so suffixing it would silently reassign the source of new
-     * prospects to an unrelated older row.
-     */
-    // TODO: Cleanup Task (prospect-source-status-citext) - remove this duplicate ordering override
-    protected function orderDuplicateRecords(Builder $query): Builder
-    {
-        return $query
-            ->orderByRaw("({$this->column} = ?) DESC", ['Advising App'])
-            ->orderBy('created_at', 'asc')
-            ->orderBy('id', 'asc');
-    }
-
     public function up(): void
     {
         DB::transaction(function (): void {
@@ -111,5 +96,20 @@ return new class () extends Migration {
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });
+    }
+
+    /**
+     * Prefer retaining the seeded canonical "Advising App" source so de-duplication
+     * never renames it. Form and application registrations resolve their source by
+     * this exact name, so suffixing it would silently reassign the source of new
+     * prospects to an unrelated older row.
+     */
+    // TODO: Cleanup Task (prospect-source-status-citext) - remove this duplicate ordering override
+    protected function orderDuplicateRecords(Builder $query): Builder
+    {
+        return $query
+            ->orderByRaw("({$this->column} = ?) DESC", ['Advising App'])
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
     }
 };
