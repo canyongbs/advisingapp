@@ -37,7 +37,7 @@ jobs:
                   permission-administration: read
 
             - name: Run Renovate
-              uses: renovatebot/github-action@f0f41e5f2e706165f6814b1d0f0d0e319de7d1d9 # v46.3.8
+              uses: renovatebot/github-action@a63d9a7bc606f7336fd20b47f2f32259a35e6213 # v46.3.9
               with:
                   configurationFile: renovate-config.json
                   token: ${{ steps.app-token.outputs.token }}
