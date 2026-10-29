@@ -47,6 +47,7 @@ use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowNameCitextFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
@@ -121,9 +122,11 @@ test('creates multiple workflows for the same application without conflicts', fu
     }
 
     foreach ($workflows as $workflow) {
-        expect($workflow->name)->toBe('Application Workflow');
         expect($workflow->is_enabled)->toBeFalse();
     }
+
+    // The second workflow is auto-renamed so it does not collide, case-insensitively, with the first.
+    expect($workflows->pluck('name')->all())->toEqualCanonicalizing(['Application Workflow', 'Application Workflow-2']);
 });
 
 test('application workflow creation is gated with proper access control', function () use ($testWorkflows): void {
@@ -523,4 +526,139 @@ describe('authorization', function () use ($testWorkflows): void {
         expect(Workflow::query()->count())->toBe(0)
             ->and(WorkflowTrigger::query()->count())->toBe(0);
     });
+});
+
+test('auto-renames a created application workflow when the name collides case-insensitively with a live workflow', function () use ($testWorkflows): void {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    Workflow::factory()->create(['name' => 'application workflow']);
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    $createdWorkflow = Workflow::query()
+        ->whereHas('workflowTrigger', fn ($query) => $query->where('related_id', $application->getKey()))
+        ->sole();
+
+    expect($createdWorkflow->name)->toBe('Application Workflow-2');
+});
+
+test('reuses an application workflow name freed up by a soft-deleted workflow case-insensitively', function () use ($testWorkflows): void {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'application workflow']);
+    $deletedWorkflow->delete();
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    $createdWorkflow = Workflow::query()
+        ->whereHas('workflowTrigger', fn ($query) => $query->where('related_id', $application->getKey()))
+        ->sole();
+
+    expect($createdWorkflow->name)->toBe('Application Workflow');
+});
+
+test('does not allow editing an application workflow to a name matching another workflow case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    Workflow::factory()->create(['name' => 'Advising Team']);
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($workflow->refresh()->name)->toBe('Enrollment Team');
+});
+
+test('allows editing an application workflow to a name freed up by a soft-deleted workflow case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'Advising Team']);
+    $deletedWorkflow->delete();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($workflow->refresh()->name)->toBe('advising team');
+});
+
+test('rejects editing an application workflow to a soft-deleted name before the citext migration activates', function (): void {
+    WorkflowNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'Advising Team']);
+    $deletedWorkflow->delete();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($workflow->refresh()->name)->toBe('Enrollment Team');
 });

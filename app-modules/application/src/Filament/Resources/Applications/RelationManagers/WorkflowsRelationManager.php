@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowNameCitextFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -56,6 +57,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Throwable;
 
@@ -203,7 +205,7 @@ class WorkflowsRelationManager extends RelationManager
                     $workflowTrigger->save();
 
                     $workflow = new Workflow([
-                        'name' => 'Application Workflow',
+                        'name' => $this->resolveUniqueWorkflowName('Application Workflow'),
                         'is_enabled' => false,
                     ]);
 
@@ -235,5 +237,34 @@ class WorkflowsRelationManager extends RelationManager
             ->withoutArchived()
             ->oldest('id')
             ->value('id');
+    }
+
+    /**
+     * Resolve a workflow name that does not collide, case-insensitively, with an
+     * existing live (non-soft-deleted) workflow once case-insensitive uniqueness is
+     * enforced. A name freed up by a soft-deleted workflow may be reused.
+     */
+    private function resolveUniqueWorkflowName(string $baseName): string
+    {
+        if (! WorkflowNameCitextFeature::active()) {
+            return $baseName;
+        }
+
+        $nameExists = fn (string $name): bool => Workflow::query()
+            ->whereRaw('LOWER(name) = ?', [Str::lower($name)])
+            ->exists();
+
+        if (! $nameExists($baseName)) {
+            return $baseName;
+        }
+
+        $counter = 2;
+
+        do {
+            $candidate = "{$baseName}-{$counter}";
+            $counter++;
+        } while ($nameExists($candidate));
+
+        return $candidate;
     }
 }
