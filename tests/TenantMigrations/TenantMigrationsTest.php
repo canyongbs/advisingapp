@@ -788,9 +788,9 @@ test('2026_10_29_215004_increase_occurred_at_precision_on_message_events_tables 
     );
 });
 
-test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills email occurred_at from the event\'s own payload timestamp', function (EmailMessageEventType $type, ?string $path, string $expected) {
+test('2026_10_29_215229_tmp_backfill_email_message_events_occurred_at backfills email occurred_at from the event\'s own payload timestamp', function (EmailMessageEventType $type, ?string $path, string $expected) {
     isolatedMigration(
-        '2026_10_29_215229_tmp_backfill_message_events_occurred_at',
+        '2026_10_29_215229_tmp_backfill_email_message_events_occurred_at',
         function () use ($type, $path, $expected) {
             $payload = ['mail' => ['timestamp' => '2016-10-19T23:20:52.240Z']];
 
@@ -805,7 +805,7 @@ test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills email 
             ]));
 
             $migrate = Artisan::call('migrate', [
-                '--path' => 'database/migrations/2026_10_29_215229_tmp_backfill_message_events_occurred_at.php',
+                '--path' => 'database/migrations/2026_10_29_215229_tmp_backfill_email_message_events_occurred_at.php',
             ]);
 
             expect($migrate)->toBe(Command::SUCCESS)
@@ -825,9 +825,9 @@ test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills email 
     'delivery delay' => [EmailMessageEventType::DeliveryDelay, 'deliveryDelay', '2016-10-19 23:21:04.133'],
 ]);
 
-test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills SMS occurred_at from the Telnyx payload', function (string $payloadOccurredAt) {
+test('2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at backfills SMS occurred_at from the Telnyx payload', function (string $payloadOccurredAt) {
     isolatedMigration(
-        '2026_10_29_215229_tmp_backfill_message_events_occurred_at',
+        '2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at',
         function () use ($payloadOccurredAt) {
             $event = SmsMessage::factory()->create()->events()->save(SmsMessageEvent::factory()->make([
                 'payload' => ['occurred_at' => $payloadOccurredAt],
@@ -835,7 +835,7 @@ test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills SMS oc
             ]));
 
             $migrate = Artisan::call('migrate', [
-                '--path' => 'database/migrations/2026_10_29_215229_tmp_backfill_message_events_occurred_at.php',
+                '--path' => 'database/migrations/2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at.php',
             ]);
 
             expect($migrate)->toBe(Command::SUCCESS)
@@ -847,41 +847,48 @@ test('2026_10_29_215229_tmp_backfill_message_events_occurred_at backfills SMS oc
     'non-UTC offset' => '2019-12-09T16:32:14.148-05:00',
 ]);
 
-test('2026_10_29_215229_tmp_backfill_message_events_occurred_at leaves occurred_at unchanged when the payload has no usable timestamp', function () {
+test('2026_10_29_215229_tmp_backfill_email_message_events_occurred_at leaves occurred_at unchanged when the payload has no usable timestamp', function (EmailMessageEventType $type, array $payload) {
     isolatedMigration(
-        '2026_10_29_215229_tmp_backfill_message_events_occurred_at',
-        function () {
-            $emailMessage = EmailMessage::factory()->create();
-
-            $events = collect([
-                $emailMessage->events()->save(EmailMessageEvent::factory()->make([
-                    'type' => EmailMessageEventType::Dispatched,
-                    'payload' => ['mail' => ['timestamp' => '2016-10-19T23:20:52.240Z']],
-                    'occurred_at' => '2026-05-06 07:08:09',
-                ])),
-                $emailMessage->events()->save(EmailMessageEvent::factory()->make([
-                    'type' => EmailMessageEventType::DeliveryDelay,
-                    'payload' => ['mail' => ['timestamp' => '2016-10-19T23:20:52.240Z']],
-                    'occurred_at' => '2026-05-06 07:08:09',
-                ])),
-                $emailMessage->events()->save(EmailMessageEvent::factory()->make([
-                    'type' => EmailMessageEventType::Delivery,
-                    'payload' => ['delivery' => ['timestamp' => 'not-a-date']],
-                    'occurred_at' => '2026-05-06 07:08:09',
-                ])),
-                SmsMessage::factory()->create()->events()->save(SmsMessageEvent::factory()->make([
-                    'payload' => [],
-                    'occurred_at' => '2026-05-06 07:08:09',
-                ])),
-            ]);
+        '2026_10_29_215229_tmp_backfill_email_message_events_occurred_at',
+        function () use ($type, $payload) {
+            $event = EmailMessage::factory()->create()->events()->save(EmailMessageEvent::factory()->make([
+                'type' => $type,
+                'payload' => $payload,
+                'occurred_at' => '2026-05-06 07:08:09',
+            ]));
 
             $migrate = Artisan::call('migrate', [
-                '--path' => 'database/migrations/2026_10_29_215229_tmp_backfill_message_events_occurred_at.php',
+                '--path' => 'database/migrations/2026_10_29_215229_tmp_backfill_email_message_events_occurred_at.php',
             ]);
 
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $events->each(fn (EmailMessageEvent|SmsMessageEvent $event) => expect($event->refresh()->occurred_at->format('Y-m-d H:i:s.v'))->toBe('2026-05-06 07:08:09.000'));
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and($event->refresh()->occurred_at->format('Y-m-d H:i:s.v'))->toBe('2026-05-06 07:08:09.000');
         }
     );
-});
+})->with([
+    'type without a provider timestamp' => [EmailMessageEventType::Dispatched, ['mail' => ['timestamp' => '2016-10-19T23:20:52.240Z']]],
+    'missing event object' => [EmailMessageEventType::DeliveryDelay, ['mail' => ['timestamp' => '2016-10-19T23:20:52.240Z']]],
+    'unparseable timestamp' => [EmailMessageEventType::Delivery, ['delivery' => ['timestamp' => 'not-a-date']]],
+]);
+
+test('2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at leaves occurred_at unchanged when the payload has no usable timestamp', function (array $payload) {
+    isolatedMigration(
+        '2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at',
+        function () use ($payload) {
+            $event = SmsMessage::factory()->create()->events()->save(SmsMessageEvent::factory()->make([
+                'payload' => $payload,
+                'occurred_at' => '2026-05-06 07:08:09',
+            ]));
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'database/migrations/2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and($event->refresh()->occurred_at->format('Y-m-d H:i:s.v'))->toBe('2026-05-06 07:08:09.000');
+        }
+    );
+})->with([
+    'empty payload' => [[]],
+    'unparseable occurred_at' => [['occurred_at' => 'not-a-date']],
+]);
