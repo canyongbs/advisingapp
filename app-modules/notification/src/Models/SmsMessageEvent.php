@@ -55,6 +55,8 @@ class SmsMessageEvent extends BaseModel
     /** @use HasBuilder<SmsMessageEventBuilder<self>> */
     use HasBuilder;
 
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
     protected $fillable = [
         'type',
         'payload',

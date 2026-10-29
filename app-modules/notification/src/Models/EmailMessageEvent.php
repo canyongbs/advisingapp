@@ -60,6 +60,8 @@ class EmailMessageEvent extends BaseModel
     /** @use HasFactory<EmailMessageEventFactory> */
     use HasFactory;
 
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
     protected $fillable = [
         'type',
         'payload',

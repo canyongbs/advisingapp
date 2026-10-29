@@ -48,6 +48,8 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Features\StudentGroupFilterConsolidationFeature;
@@ -756,4 +758,32 @@ describe('alert statuses name citext change', function () {
             }
         );
     });
+});
+
+test('2026_10_29_215004_increase_occurred_at_precision_on_message_events_tables keeps fractional seconds on message event occurred_at', function () {
+    isolatedMigration(
+        '2026_10_29_215004_increase_occurred_at_precision_on_message_events_tables',
+        function () {
+            $emailMessage = EmailMessage::factory()->create();
+            $smsMessage = SmsMessage::factory()->create();
+
+            // New code writes microseconds before the migration has run; Postgres rounds them away.
+            $emailEventBefore = $emailMessage->events()->save(EmailMessageEvent::factory()->make(['occurred_at' => '2026-01-01 10:00:00.123456']));
+            $smsEventBefore = $smsMessage->events()->save(SmsMessageEvent::factory()->make(['occurred_at' => '2026-01-01 10:00:00.123456']));
+
+            expect($emailEventBefore->refresh()->occurred_at->format('Y-m-d H:i:s.u'))->toBe('2026-01-01 10:00:00.000000')
+                ->and($smsEventBefore->refresh()->occurred_at->format('Y-m-d H:i:s.u'))->toBe('2026-01-01 10:00:00.000000');
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/notification/database/migrations/2026_10_29_215004_increase_occurred_at_precision_on_message_events_tables.php',
+            ]);
+
+            $emailEventAfter = $emailMessage->events()->save(EmailMessageEvent::factory()->make(['occurred_at' => '2026-01-01 10:00:00.123456']));
+            $smsEventAfter = $smsMessage->events()->save(SmsMessageEvent::factory()->make(['occurred_at' => '2026-01-01 10:00:00.123456']));
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and($emailEventAfter->refresh()->occurred_at->format('Y-m-d H:i:s.u'))->toBe('2026-01-01 10:00:00.123456')
+                ->and($smsEventAfter->refresh()->occurred_at->format('Y-m-d H:i:s.u'))->toBe('2026-01-01 10:00:00.123456');
+        }
+    );
 });
