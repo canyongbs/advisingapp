@@ -55,14 +55,14 @@ $createSmsMessageEventsForBuilderOrdering = function (array $tiedIdsInInsertionO
     return ['message' => $message, 'early' => $early];
 };
 
-it('orders events by occurred_at then id ascending', function () use ($createSmsMessageEventsForBuilderOrdering) {
+it('orders events by occurred_at then id ascending', function () use ($createSmsMessageEventsForBuilderOrdering): void {
     ['early' => $early] = $createSmsMessageEventsForBuilderOrdering(['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000']);
 
     expect(SmsMessageEvent::query()->orderByOccurrence()->pluck('id')->all())
         ->toBe([$early->getKey(), '00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 });
 
-it('orders events by occurred_at then id descending', function () use ($createSmsMessageEventsForBuilderOrdering) {
+it('orders events by occurred_at then id descending', function () use ($createSmsMessageEventsForBuilderOrdering): void {
     ['early' => $early] = $createSmsMessageEventsForBuilderOrdering(['00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 
     $expected = ['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000', $early->getKey()];
@@ -72,7 +72,7 @@ it('orders events by occurred_at then id descending', function () use ($createSm
         ->and(SmsMessageEvent::query()->orderByOccurrenceDesc()->pluck('id')->all())->toBe($expected);
 });
 
-it('orders events through the message relation', function () use ($createSmsMessageEventsForBuilderOrdering) {
+it('orders events through the message relation', function () use ($createSmsMessageEventsForBuilderOrdering): void {
     ['message' => $message, 'early' => $early] = $createSmsMessageEventsForBuilderOrdering(['00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 
     expect($message->events()->orderByOccurrenceDesc()->pluck('id')->all())

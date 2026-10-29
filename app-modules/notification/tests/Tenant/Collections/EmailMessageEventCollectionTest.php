@@ -56,7 +56,7 @@ $createEmailMessageEventsForCollectionSorting = function (array $tiedIdsInInsert
     return ['message' => $message, 'early' => $early];
 };
 
-it('sorts events by occurred_at then id ascending', function () use ($createEmailMessageEventsForCollectionSorting) {
+it('sorts events by occurred_at then id ascending', function () use ($createEmailMessageEventsForCollectionSorting): void {
     ['message' => $message, 'early' => $early] = $createEmailMessageEventsForCollectionSorting(['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000']);
 
     expect($message->events)->toBeInstanceOf(EmailMessageEventCollection::class)
@@ -64,7 +64,7 @@ it('sorts events by occurred_at then id ascending', function () use ($createEmai
         ->toBe([$early->getKey(), '00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 });
 
-it('sorts events by occurred_at then id descending', function () use ($createEmailMessageEventsForCollectionSorting) {
+it('sorts events by occurred_at then id descending', function () use ($createEmailMessageEventsForCollectionSorting): void {
     ['message' => $message, 'early' => $early] = $createEmailMessageEventsForCollectionSorting(['00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 
     $expected = ['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000', $early->getKey()];

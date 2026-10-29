@@ -664,7 +664,7 @@ it('returns the correct case given a particular Engagement', function (Engagemen
     ],
 ]);
 
-it('orders email events by sub-second occurred_at', function () {
+it('orders email events by sub-second occurred_at', function (): void {
     $engagement = Engagement::factory()->email()->deliverNow()->create();
 
     $message = EmailMessage::factory()->for($engagement, 'related')->create();
@@ -682,7 +682,7 @@ it('orders email events by sub-second occurred_at', function () {
     expect(EngagementDisplayStatus::getStatus($engagement->refresh()))->toBe(EngagementDisplayStatus::Delivered);
 });
 
-it('breaks email occurred_at ties by id', function () {
+it('breaks email occurred_at ties by id', function (): void {
     $engagement = Engagement::factory()->email()->deliverNow()->create();
 
     $message = EmailMessage::factory()->for($engagement, 'related')->create();
@@ -705,7 +705,7 @@ it('breaks email occurred_at ties by id', function () {
     expect(EngagementDisplayStatus::getStatus($engagement))->toBe(EngagementDisplayStatus::Sent);
 });
 
-it('orders SMS events by sub-second occurred_at', function () {
+it('orders SMS events by sub-second occurred_at', function (): void {
     $engagement = Engagement::factory()->sms()->deliverNow()->create();
 
     $message = SmsMessage::factory()->for($engagement, 'related')->create();
@@ -723,7 +723,7 @@ it('orders SMS events by sub-second occurred_at', function () {
     expect(EngagementDisplayStatus::getStatus($engagement->refresh()))->toBe(EngagementDisplayStatus::Delivered);
 });
 
-it('breaks SMS occurred_at ties by id', function () {
+it('breaks SMS occurred_at ties by id', function (): void {
     $engagement = Engagement::factory()->sms()->deliverNow()->create();
 
     $message = SmsMessage::factory()->for($engagement, 'related')->create();
