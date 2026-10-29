@@ -49,6 +49,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditApplicationSubmissionState extends EditRecord
 {
@@ -61,7 +62,12 @@ class EditApplicationSubmissionState extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
