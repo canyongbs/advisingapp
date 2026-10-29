@@ -56,7 +56,7 @@ $createSmsMessageEventsForCollectionSorting = function (array $tiedIdsInInsertio
     return ['message' => $message, 'early' => $early];
 };
 
-it('sorts events by occurred_at then id ascending', function () use ($createSmsMessageEventsForCollectionSorting) {
+it('sorts events by occurred_at then id ascending', function () use ($createSmsMessageEventsForCollectionSorting): void {
     ['message' => $message, 'early' => $early] = $createSmsMessageEventsForCollectionSorting(['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000']);
 
     expect($message->events)->toBeInstanceOf(SmsMessageEventCollection::class)
@@ -64,7 +64,7 @@ it('sorts events by occurred_at then id ascending', function () use ($createSmsM
         ->toBe([$early->getKey(), '00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 });
 
-it('sorts events by occurred_at then id descending', function () use ($createSmsMessageEventsForCollectionSorting) {
+it('sorts events by occurred_at then id descending', function () use ($createSmsMessageEventsForCollectionSorting): void {
     ['message' => $message, 'early' => $early] = $createSmsMessageEventsForCollectionSorting(['00000000-0000-4000-8000-000000000000', 'ffffffff-ffff-4fff-bfff-ffffffffffff']);
 
     $expected = ['ffffffff-ffff-4fff-bfff-ffffffffffff', '00000000-0000-4000-8000-000000000000', $early->getKey()];

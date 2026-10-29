@@ -38,7 +38,7 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use Illuminate\Support\Facades\DB;
 
-it('stores occurred_at with microsecond precision', function () {
+it('stores occurred_at with microsecond precision', function (): void {
     $message = EmailMessage::factory()->create();
 
     $event = $message->events()->save(EmailMessageEvent::factory()->make(['occurred_at' => '2026-01-01 10:00:00.123456']));
@@ -46,7 +46,7 @@ it('stores occurred_at with microsecond precision', function () {
     expect($event->fresh()?->occurred_at->format('Y-m-d H:i:s.u'))->toBe('2026-01-01 10:00:00.123456');
 });
 
-it('reads a whole-second occurred_at', function () {
+it('reads a whole-second occurred_at', function (): void {
     $message = EmailMessage::factory()->create();
 
     $event = $message->events()->save(EmailMessageEvent::factory()->make());
