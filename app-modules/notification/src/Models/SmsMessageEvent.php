@@ -67,6 +67,8 @@ class SmsMessageEvent extends Model
 
     // TODO: Create Factory
 
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
     protected $fillable = [
         'type',
         'payload',
