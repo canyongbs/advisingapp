@@ -34,14 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\seed;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateApplication tests
 //test('A successful action on the CreateApplication page', function () {});
@@ -102,4 +106,31 @@ test('CreateApplication is gated with proper feature access control', function (
         )->assertSuccessful();
 
     // TODO: Finish the test by adding the request factory CreateApplicationRequestFactory
+});
+
+test('CreateApplication does not allow a name that matches another application case-insensitively', function (): void {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    Application::factory()->create(['name' => 'Fall Admissions']);
+
+    asSuperAdmin();
+
+    Livewire::test(CreateApplication::class)
+        ->fillForm(['name' => 'FALL admissions'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateApplication allows a name freed up by an archived application case-insensitively', function (): void {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $archivedApplication = Application::factory()->create(['name' => 'Fall Admissions']);
+    $archivedApplication->archive();
+
+    asSuperAdmin();
+
+    Livewire::test(CreateApplication::class)
+        ->fillForm(['name' => 'fall admissions'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
 });
