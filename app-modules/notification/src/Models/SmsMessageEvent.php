@@ -36,16 +36,24 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Collections\SmsMessageEventCollection;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\Builders\SmsMessageEventBuilder;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\HasBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperSmsMessageEvent
  */
+#[CollectedBy(SmsMessageEventCollection::class)]
+#[UseEloquentBuilder(SmsMessageEventBuilder::class)]
 class SmsMessageEvent extends BaseModel
 {
-    // TODO: Create Factory
+    /** @use HasBuilder<SmsMessageEventBuilder<self>> */
+    use HasBuilder;
 
     protected $fillable = [
         'type',
