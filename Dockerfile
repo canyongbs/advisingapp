@@ -275,7 +275,7 @@ WORKDIR /var/www/html
 # Install JS package management
 ENV NVM_VERSION=v0.40.8
 # If we change this version, remember to also update the .nvmrc file
-ENV NODE_VERSION=24.22.1
+ENV NODE_VERSION=24.22.2
 ENV NPM_VERSION=^11.21.1
 ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
