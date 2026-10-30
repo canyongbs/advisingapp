@@ -43,6 +43,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\AdvisorNameCitextFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -256,4 +258,37 @@ test('Create Customer Advisor does not apply name uniqueness validation before t
         ->fillForm($request->except(['model'])->toArray())
         ->call('create')
         ->assertHasNoFormErrors(['name']);
+});
+
+test('Create Customer Advisor groups the introductory message fields in their own section', function (): void {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    $components = Livewire::test(CreateCustomerAdvisor::class)
+        ->instance()
+        ->getSchema('form')
+        ->getComponents(withOriginalKeys: true);
+
+    $sections = array_values(array_filter($components, fn (mixed $component): bool => $component instanceof Section));
+
+    expect($sections)->toHaveCount(1);
+
+    $section = $sections[0];
+
+    expect($section->getHeading())->toBe('Introductory Message')
+        ->and(array_map(
+            function (mixed $field): string {
+                assert($field instanceof Field);
+
+                return $field->getName();
+            },
+            $section->getDefaultChildComponents(),
+        ))
+        ->toBe(['is_introductory_message_enabled', 'is_introductory_message_dynamic', 'introductory_message']);
 });

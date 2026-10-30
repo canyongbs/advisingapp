@@ -47,6 +47,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
@@ -71,7 +72,8 @@ class CreateCustomerAdvisor extends CreateRecord
                         fn (TextInput $field): TextInput => $field->unique(
                             modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
                         ),
-                    ),
+                    )
+                    ->columnSpanFull(),
                 Select::make('model')
                     ->live()
                     ->options(fn (AiModel|string|null $state): array => array_unique([
@@ -95,28 +97,33 @@ class CreateCustomerAdvisor extends CreateRecord
                         }
 
                         return $settings->preselected_model;
-                    }),
+                    })
+                    ->columnSpanFull(),
                 Textarea::make('description')
                     ->maxLength(65535)
-                    ->required(),
-                Toggle::make('is_introductory_message_enabled')
-                    ->label('Enable Introductory Message')
-                    ->live()
-                    ->default(false),
-                Toggle::make('is_introductory_message_dynamic')
-                    ->label('Dynamic')
-                    ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
-                        ? 'AI will greet the student or prospect.'
-                        : 'Specify a custom introductory message below.')
-                    ->live()
-                    ->default(true)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
-                Textarea::make('introductory_message')
-                    ->label('Introductory Message')
-                    ->helperText('Specify the plain text introductory message.')
-                    ->maxLength(65535)
-                    ->rows(4)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                    ->required()
+                    ->columnSpanFull(),
+                Section::make('Introductory Message')
+                    ->schema([
+                        Toggle::make('is_introductory_message_enabled')
+                            ->label('Enable Introductory Message')
+                            ->live()
+                            ->default(false),
+                        Toggle::make('is_introductory_message_dynamic')
+                            ->label('Dynamic')
+                            ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
+                                ? 'AI will greet the student or prospect.'
+                                : 'Specify a custom introductory message below.')
+                            ->live()
+                            ->default(true)
+                            ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
+                        Textarea::make('introductory_message')
+                            ->label('Introductory Message')
+                            ->helperText('Specify the plain text introductory message.')
+                            ->maxLength(65535)
+                            ->rows(4)
+                            ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                    ]),
             ]);
     }
 
