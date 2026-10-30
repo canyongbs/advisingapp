@@ -165,3 +165,42 @@ test('delete policy allows when state has no submissions', function (): void {
 
     expect($user->can('delete', $state))->toBeTrue();
 });
+
+test('does not allow renaming a submission state to the name of another non-deleted state case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+    $state = ApplicationSubmissionState::factory()->create(['name' => 'Other']);
+
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+        ->fillForm(['name' => 'under review'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows a submission state to change only the capitalization of its own name', function (): void {
+    asSuperAdmin();
+
+    $state = ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+        ->fillForm(['name' => 'UNDER REVIEW'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($state->fresh()->name)->toBe('UNDER REVIEW');
+});
+
+test('allows renaming a submission state to the name of a soft-deleted state case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create(['name' => 'Under Review'])->delete();
+    $state = ApplicationSubmissionState::factory()->create(['name' => 'Other']);
+
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+        ->fillForm(['name' => 'under review'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($state->fresh()->name)->toBe('under review');
+});

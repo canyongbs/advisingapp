@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -751,6 +754,110 @@ describe('alert statuses name citext change', function () {
                 ConcernStatus::factory()->create(['name' => 'Under Review']);
 
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (application-name-citext) - Delete this describe and everything contained within
+describe('applications name citext change', function () {
+    it('renames case-insensitive duplicate application names', function () {
+        isolatedMigration(
+            '2026_10_29_100001_convert_applications_name_to_citext',
+            function () {
+                app(ApplicationSubmissionStateSeeder::class)->run();
+
+                $application1 = Application::factory()->create(['name' => 'Fall Admissions', 'created_at' => now()->subMinutes(3)]);
+                $application2 = Application::factory()->create(['name' => 'fall admissions', 'created_at' => now()->subMinutes(2)]);
+                $application3 = Application::factory()->create(['name' => 'FALL ADMISSIONS', 'created_at' => now()->subMinutes(1)]);
+
+                // An archived application sharing a name with the live duplicate group must be ignored
+                // by de-duplication: it should neither affect the live renumbering nor get renamed itself.
+                $archivedApplication = Application::factory()->create(['name' => 'Fall admissions', 'created_at' => now()->subMinutes(4)]);
+                $archivedApplication->archive();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($application1->refresh()->name)->toBe('Fall Admissions');
+                expect($application2->refresh()->name)->toBe('fall admissions-2');
+                expect($application3->refresh()->name)->toBe('FALL ADMISSIONS-3');
+                expect($archivedApplication->refresh()->name)->toBe('Fall admissions');
+
+                expect(fn () => Application::factory()->create(['name' => 'fall ADMISSIONS']))->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live application reuses an archived application name', function () {
+        isolatedMigration(
+            '2026_10_29_100001_convert_applications_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores archived rows.
+                app(ApplicationSubmissionStateSeeder::class)->run();
+
+                $archivedApplication = Application::factory()->create(['name' => 'Fall Admissions']);
+                $archivedApplication->archive();
+                Application::factory()->create(['name' => 'Fall Admissions']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (application-name-citext) - Delete this describe and everything contained within
+describe('application submission states name citext change', function () {
+    it('renames case-insensitive duplicate submission state names', function () {
+        isolatedMigration(
+            '2026_10_29_100002_convert_application_submission_states_name_to_citext',
+            function () {
+                $state1 = ApplicationSubmissionState::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
+                $state2 = ApplicationSubmissionState::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
+                $state3 = ApplicationSubmissionState::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted state sharing a name with the live duplicate group must be ignored
+                // by de-duplication: it should neither affect the live renumbering nor get renamed itself.
+                $deletedState = ApplicationSubmissionState::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
+                $deletedState->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($state1->refresh()->name)->toBe('Under Review');
+                expect($state2->refresh()->name)->toBe('under review-2');
+                expect($state3->refresh()->name)->toBe('UNDER REVIEW-3');
+                expect($deletedState->refresh()->name)->toBe('Under review');
+
+                expect(fn () => ApplicationSubmissionState::factory()->create(['name' => 'under REVIEW']))->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live submission state reuses a soft-deleted state name', function () {
+        isolatedMigration(
+            '2026_10_29_100002_convert_application_submission_states_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows.
+                $deletedState = ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+                $deletedState->delete();
+                ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
             }
