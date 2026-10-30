@@ -76,8 +76,10 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
             return;
         }
 
-        $this->link->parsing_last_checked_at = now();
-        $this->link->saveParsingState();
+        if (! $this->refreshExistingParsingResults) {
+            $this->link->parsing_last_checked_at = now();
+            $this->link->saveParsingState();
+        }
 
         try {
             $parsingJobId = $llamaParseV2Client->createParseJob(LlamaParseV2Tier::CostEffective, [

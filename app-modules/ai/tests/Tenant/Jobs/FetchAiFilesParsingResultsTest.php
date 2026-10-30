@@ -48,8 +48,11 @@ use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 
 it('dispatches a parsing results job for each recent unparsed file and submits each recent unparsed link', function (): void {
@@ -155,6 +158,37 @@ it('does not mark old links that were never submitted as failed', function (): v
         'parsing_results' => null,
         'created_at' => now()->subDays(2),
     ]);
+
+    (new FetchAiFilesParsingResults())->handle();
+
+    expect($link->refresh()->parsing_failed_at)->toBeNull();
+
+    Exceptions::assertNotReported(AiLinkParsingFailedException::class);
+});
+
+it('does not mark an old link as failed while its Keep Current refresh is waiting to be retried', function (): void {
+    Exceptions::fake();
+    Queue::fake();
+    Http::preventStrayRequests();
+
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['detail' => 'Internal server error'], 500),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->llamaparse_api_key = 'test-api-key';
+    $settings->save();
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => null,
+        'created_at' => now()->subMonths(2),
+    ]);
+
+    $refresh = (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->withFakeQueueInteractions();
+
+    $refresh->handle(app(LlamaParseV2Client::class));
+
+    $refresh->assertReleased();
 
     (new FetchAiFilesParsingResults())->handle();
 
