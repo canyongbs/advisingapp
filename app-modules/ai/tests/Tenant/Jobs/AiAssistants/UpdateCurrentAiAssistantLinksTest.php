@@ -36,11 +36,54 @@
 
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Jobs\AiAssistants\UpdateCurrentAiAssistantLinks;
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use App\Features\AiAssistantKeepCurrentFeature;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches FetchAiAssistantLinkParsingResults only for current links', function (): void {
+it('submits only current links for refreshing', function (): void {
+    Queue::fake();
+
+    $currentLink = AiAssistantLink::factory()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    $nonCurrentLink = AiAssistantLink::factory()->create([
+        'is_keep_current_enabled' => false,
+    ]);
+
+    (new UpdateCurrentAiAssistantLinks())->handle();
+
+    Queue::assertPushed(SubmitAiLinkForParsing::class, function (SubmitAiLinkForParsing $job) use ($currentLink): bool {
+        return $job->uniqueId() === $currentLink->id
+            && $job->refreshesExistingParsingResults();
+    });
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class, function (SubmitAiLinkForParsing $job) use ($nonCurrentLink): bool {
+        return $job->uniqueId() === $nonCurrentLink->id;
+    });
+});
+
+it('does not submit current links that already have a parse job in progress', function (): void {
+    Queue::fake();
+
+    AiAssistantLink::factory()->parsingInProgress()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    // Discard anything pushed by model observers while arranging the records.
+    Queue::fake();
+
+    (new UpdateCurrentAiAssistantLinks())->handle();
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
+});
+
+// TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the Jina fallback.
+it('dispatches FetchAiAssistantLinkParsingResults only for current links while LlamaParse link parsing is inactive', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Queue::fake();
 
     $currentLink = AiAssistantLink::factory()->create([
@@ -61,6 +104,8 @@ it('dispatches FetchAiAssistantLinkParsingResults only for current links', funct
     Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($nonCurrentLink): bool {
         return $job->uniqueId() === $nonCurrentLink->id;
     });
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
 
 //To Do: AiAssistantKeepCurrentFeature - Remove this test while feature flag cleanup
@@ -76,4 +121,5 @@ it('does nothing while the feature is inactive', function (): void {
     (new UpdateCurrentAiAssistantLinks())->handle();
 
     Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class);
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });

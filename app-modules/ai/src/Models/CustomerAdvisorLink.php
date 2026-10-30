@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
+use AdvisingApp\Ai\Models\Concerns\HasLlamaParseParsingState;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
@@ -58,12 +59,19 @@ class CustomerAdvisorLink extends BaseModel implements AiFile, Auditable
 
     use SoftDeletes;
     use AuditableTrait;
+    use HasLlamaParseParsingState;
 
     protected $fillable = [
         'url',
         'advisor_id',
         'parsing_results',
         'is_keep_current_enabled',
+    ];
+
+    protected $casts = [
+        'parsing_started_at' => 'datetime',
+        'parsing_last_checked_at' => 'datetime',
+        'parsing_failed_at' => 'datetime',
     ];
 
     /**

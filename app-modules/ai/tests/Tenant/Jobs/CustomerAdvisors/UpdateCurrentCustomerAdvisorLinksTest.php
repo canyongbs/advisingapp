@@ -36,10 +36,50 @@
 
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function (): void {
+it('submits only current links for refreshing', function (): void {
+    Queue::fake();
+
+    $currentLink = CustomerAdvisorLink::factory()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
+        'is_keep_current_enabled' => false,
+    ]);
+
+    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+
+    Queue::assertPushed(SubmitAiLinkForParsing::class, function (SubmitAiLinkForParsing $job) use ($currentLink): bool {
+        return $job->uniqueId() === $currentLink->id
+            && $job->refreshesExistingParsingResults();
+    });
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class, function (SubmitAiLinkForParsing $job) use ($nonCurrentLink): bool {
+        return $job->uniqueId() === $nonCurrentLink->id;
+    });
+});
+
+it('does not submit current links that already have a parse job in progress', function (): void {
+    Queue::fake();
+
+    CustomerAdvisorLink::factory()->parsingInProgress()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
+});
+
+// TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the Jina fallback.
+it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links while LlamaParse link parsing is inactive', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Queue::fake();
 
     $currentLink = CustomerAdvisorLink::factory()->create([
@@ -60,4 +100,6 @@ it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', f
     Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink): bool {
         return $job->uniqueId() === $nonCurrentLink->id;
     });
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
