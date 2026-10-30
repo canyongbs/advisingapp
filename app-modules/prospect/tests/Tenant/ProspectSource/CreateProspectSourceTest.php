@@ -38,6 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResour
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -79,6 +80,7 @@ test('CreateProspectSource requires valid data', function (CreateProspectSourceR
     [
         'name missing' => [CreateProspectSourceRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateProspectSourceRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [CreateProspectSourceRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
     ]
 );
 
@@ -113,4 +115,48 @@ test('CreateProspectSource is gated with proper access control', function (): vo
     assertCount(1, ProspectSource::all());
 
     assertDatabaseHas(ProspectSource::class, $request->toArray());
+});
+
+// Case-insensitive uniqueness
+
+it('does not allow creating a prospect source whose name matches another non-deleted prospect source case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ProspectSource::factory()->create(['name' => 'Referral']);
+
+    Livewire::test(CreateProspectSource::class)
+        ->fillForm(['name' => 'referral'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a prospect source whose name is freed up by a soft-deleted prospect source case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedProspectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+    $deletedProspectSource->delete();
+
+    Livewire::test(CreateProspectSource::class)
+        ->fillForm(['name' => 'referral'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+
+    assertDatabaseHas(ProspectSource::class, [
+        'name' => 'referral',
+        'deleted_at' => null,
+    ]);
+});
+
+it('rejects creating a prospect source with a soft-deleted name before the citext migration activates', function (): void {
+    asSuperAdmin();
+
+    ProspectSourceAndStatusNameCitextFeature::deactivate();
+
+    $deletedProspectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+    $deletedProspectSource->delete();
+
+    Livewire::test(CreateProspectSource::class)
+        ->fillForm(['name' => 'referral'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

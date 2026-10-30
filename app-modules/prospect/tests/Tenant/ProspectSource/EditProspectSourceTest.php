@@ -38,6 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResour
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -92,6 +93,7 @@ test('EditProspectSource requires valid data', function (EditProspectSourceReque
     [
         'name missing' => [EditProspectSourceRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditProspectSourceRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [EditProspectSourceRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
     ]
 );
 
@@ -134,4 +136,58 @@ test('EditProspectSource is gated with proper access control', function (): void
         ->assertHasNoFormErrors();
 
     assertEquals($request['name'], $prospectSource->fresh()->name);
+});
+
+// Case-insensitive uniqueness
+
+test('does not allow updating a prospect source to a name matching another non-deleted prospect source case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ProspectSource::factory()->create(['name' => 'Referral']);
+    $prospectSource = ProspectSource::factory()->create(['name' => 'Walk In']);
+
+    Livewire::test(EditProspectSource::class, [
+        'record' => $prospectSource->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'referral'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows updating a prospect source to a name freed up by a soft-deleted prospect source case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedProspectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+    $deletedProspectSource->delete();
+
+    $prospectSource = ProspectSource::factory()->create(['name' => 'Walk In']);
+
+    Livewire::test(EditProspectSource::class, [
+        'record' => $prospectSource->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'referral'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectSource->refresh()->name)->toBe('referral');
+});
+
+test('rejects updating a prospect source to a soft-deleted name before the citext migration activates', function (): void {
+    ProspectSourceAndStatusNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $deletedProspectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+    $deletedProspectSource->delete();
+
+    $prospectSource = ProspectSource::factory()->create(['name' => 'Walk In']);
+
+    Livewire::test(EditProspectSource::class, [
+        'record' => $prospectSource->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'referral'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($prospectSource->refresh()->name)->toBe('Walk In');
 });

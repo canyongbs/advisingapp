@@ -37,9 +37,11 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateProspectSource extends CreateRecord
 {
@@ -52,7 +54,13 @@ class CreateProspectSource extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
             ]);
     }
 }
