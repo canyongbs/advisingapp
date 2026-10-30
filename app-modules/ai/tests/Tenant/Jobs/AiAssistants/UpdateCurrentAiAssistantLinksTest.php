@@ -81,7 +81,7 @@ it('does not submit current links that already have a parse job in progress', fu
 });
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the Jina fallback.
-it('dispatches FetchAiAssistantLinkParsingResults only for current links while LlamaParse link parsing is inactive', function (): void {
+it('dispatches `FetchAiAssistantLinkParsingResults` only for current links while LlamaParse link parsing is inactive', function (): void {
     LlamaParseLinkParsingFeature::deactivate();
 
     Queue::fake();
