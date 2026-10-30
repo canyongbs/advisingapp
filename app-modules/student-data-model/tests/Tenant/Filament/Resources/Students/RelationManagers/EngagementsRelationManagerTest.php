@@ -36,12 +36,16 @@
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Filters\SelectFilter;
 use Livewire\Livewire;
 
@@ -203,3 +207,38 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
             ->assertCanSeeTableRecords([$engagement->timelineRecord, $response->timelineRecord]);
     })->with('messages tab owners');
 });
+
+it('lists message events newest first, breaking ties by id', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess): void {
+    $owner = $createMessagesTabOwner($ownerType);
+
+    $actingAsUserWithMessagesTabAccess($owner);
+
+    $engagement = Engagement::factory()
+        ->email()
+        ->create([
+            'recipient_id' => $owner->getKey(),
+            'recipient_type' => $owner->getMorphClass(),
+        ]);
+
+    $message = EmailMessage::factory()->for($engagement, 'related')->create();
+
+    // Inserted in the opposite order to the expected one, so insertion order can't satisfy the test.
+    $message->events()->save(EmailMessageEvent::factory()->make([
+        'id' => '00000000-0000-4000-8000-000000000000',
+        'type' => EmailMessageEventType::Send,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+    $message->events()->save(EmailMessageEvent::factory()->make([
+        'id' => 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        'type' => EmailMessageEventType::Delivery,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+
+    Livewire::test(EngagementsRelationManager::class, [
+        'ownerRecord' => $owner,
+        'pageClass' => $pageClass,
+    ])
+        ->mountTableAction(ViewAction::class, $engagement->timelineRecord)
+        ->assertSchemaComponentStateSet('message_events.0.type', 'Delivery', 'mountedActionSchema0')
+        ->assertSchemaComponentStateSet('message_events.1.type', 'Send', 'mountedActionSchema0');
+})->with('messages tab owners');

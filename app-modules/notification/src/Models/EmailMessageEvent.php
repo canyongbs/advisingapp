@@ -36,19 +36,31 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Collections\EmailMessageEventCollection;
 use AdvisingApp\Notification\Database\Factories\EmailMessageEventFactory;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Models\Builders\EmailMessageEventBuilder;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\HasBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperEmailMessageEvent
  */
+#[CollectedBy(EmailMessageEventCollection::class)]
+#[UseEloquentBuilder(EmailMessageEventBuilder::class)]
 class EmailMessageEvent extends BaseModel
 {
+    /** @use HasBuilder<EmailMessageEventBuilder<self>> */
+    use HasBuilder;
+
     /** @use HasFactory<EmailMessageEventFactory> */
     use HasFactory;
+
+    protected $dateFormat = 'Y-m-d H:i:s.u';
 
     protected $fillable = [
         'type',
