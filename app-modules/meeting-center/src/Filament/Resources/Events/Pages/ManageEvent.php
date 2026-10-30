@@ -164,14 +164,15 @@ class ManageEvent extends EditRecord
                 Section::make()
                     ->relationship('emailAutoReply')
                     ->schema([
-                        Radio::make('delivery_preference')
-                            ->label('Delivery Preference')
-                            ->helperText('Choose when invited attendees receive the email auto reply.')
-                            ->options(EmailAutoReplyDeliveryPreference::class)
-                            ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
-                            ->required(),
                         Group::make()
-                            ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema)),
+                            ->schema(fn (Schema $schema): Schema => EmailAutoReplyForm::configure($schema, [
+                                Radio::make('delivery_preference')
+                                    ->label('Delivery Preference')
+                                    ->helperText('Choose when invited attendees receive the email auto reply.')
+                                    ->options(EmailAutoReplyDeliveryPreference::class)
+                                    ->default(EmailAutoReplyDeliveryPreference::AfterAttendanceConfirmation)
+                                    ->required(),
+                            ])),
                     ]),
             ])
             ->model($this->getEventRegistrationForm())
