@@ -44,6 +44,7 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowNameCitextFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
@@ -113,9 +114,11 @@ test('creates multiple workflows for the same form without conflicts', function 
     }
 
     foreach ($workflows as $workflow) {
-        expect($workflow->name)->toBe('Form Workflow');
         expect($workflow->is_enabled)->toBeFalse();
     }
+
+    // The second workflow is auto-renamed so it does not collide, case-insensitively, with the first.
+    expect($workflows->pluck('name')->all())->toEqualCanonicalizing(['Form Workflow', 'Form Workflow-2']);
 });
 
 test('form workflow creation is gated with proper access control', function () use ($testWorkflows): void {
@@ -410,4 +413,124 @@ test('nested form workflow edit route is scoped to owner form', function (): voi
         'form' => $otherForm,
         'record' => $workflow,
     ]))->assertNotFound();
+});
+
+test('auto-renames a created form workflow when the name collides case-insensitively with a live workflow', function () use ($testWorkflows): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    Workflow::factory()->create(['name' => 'form workflow']);
+
+    $testWorkflows($form)
+        ->callTableAction('create');
+
+    $createdWorkflow = Workflow::query()
+        ->whereHas('workflowTrigger', fn ($query) => $query->where('related_id', $form->getKey()))
+        ->sole();
+
+    expect($createdWorkflow->name)->toBe('Form Workflow-2');
+});
+
+test('reuses a form workflow name freed up by a soft-deleted workflow case-insensitively', function () use ($testWorkflows): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'form workflow']);
+    $deletedWorkflow->delete();
+
+    $testWorkflows($form)
+        ->callTableAction('create');
+
+    $createdWorkflow = Workflow::query()
+        ->whereHas('workflowTrigger', fn ($query) => $query->where('related_id', $form->getKey()))
+        ->sole();
+
+    expect($createdWorkflow->name)->toBe('Form Workflow');
+});
+
+test('does not allow editing a form workflow to a name matching another workflow case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    Workflow::factory()->create(['name' => 'Advising Team']);
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $form->getMorphClass(),
+                'related_id' => $form->id,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($workflow->refresh()->name)->toBe('Enrollment Team');
+});
+
+test('allows editing a form workflow to a name freed up by a soft-deleted workflow case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'Advising Team']);
+    $deletedWorkflow->delete();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $form->getMorphClass(),
+                'related_id' => $form->id,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($workflow->refresh()->name)->toBe('advising team');
+});
+
+test('rejects editing a form workflow to a soft-deleted name before the citext migration activates', function (): void {
+    WorkflowNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $deletedWorkflow = Workflow::factory()->create(['name' => 'Advising Team']);
+    $deletedWorkflow->delete();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $form->getMorphClass(),
+                'related_id' => $form->id,
+            ])
+        )
+        ->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($workflow->refresh()->name)->toBe('Enrollment Team');
 });

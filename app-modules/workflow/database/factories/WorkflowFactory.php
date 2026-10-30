@@ -49,7 +49,7 @@ class WorkflowFactory extends Factory
     {
         return [
             'workflow_trigger_id' => WorkflowTrigger::factory(),
-            'name' => $this->faker->sentence(3),
+            'name' => $this->faker->unique()->sentence(3),
             'is_enabled' => true,
         ];
     }
