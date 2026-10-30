@@ -44,7 +44,10 @@ use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Queue\Jobs\FakeJob;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -119,6 +122,52 @@ it('does not submit a link that already has a parse job in progress', function (
     Http::assertNothingSent();
 
     expect($link->refresh()->parsing_job_id)->toBe($parsingJobId);
+});
+
+it('does not submit a link that another submission started a parse job for after this one was queued', function (): void {
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
+
+    $job = new SubmitAiLinkForParsing($link);
+
+    CustomerAdvisorLink::query()->whereKey($link->getKey())->update([
+        'parsing_job_id' => 'pjb-other',
+        'parsing_started_at' => now(),
+    ]);
+
+    $job->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_job_id)->toBe('pjb-other');
+});
+
+it('does not submit a link while another submission of it is running', function (): void {
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
+
+    $job = new SubmitAiLinkForParsing($link);
+
+    $middleware = $job->middleware();
+
+    assert($middleware[0] instanceof WithoutOverlapping);
+
+    $runningSubmissionLock = Cache::lock($middleware[0]->getLockKey($job), 120);
+
+    expect($runningSubmissionLock->get())->toBeTrue();
+
+    (new Pipeline(app()))
+        ->send($job)
+        ->through($middleware)
+        ->then(fn (SubmitAiLinkForParsing $job) => $job->handle(app(LlamaParseV2Client::class)));
+
+    $runningSubmissionLock->release();
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_job_id)->toBeNull();
 });
 
 it('does not submit a link that is already parsed or has failed unless it is being refreshed', function (Closure $applyState): void {
