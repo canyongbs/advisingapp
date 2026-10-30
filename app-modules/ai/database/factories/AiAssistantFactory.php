@@ -54,7 +54,7 @@ class AiAssistantFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->words(3, true),
             'application' => AiAssistantApplication::PersonalAssistant,
             'model' => $this->faker->randomElement(
                 array_filter(

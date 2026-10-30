@@ -39,8 +39,10 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisor
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\AdvisorNameCitextFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -229,4 +231,88 @@ test('restore action visible when Customer Advisor is archived', function (): vo
         ->assertSuccessful()
         ->assertActionVisible('restore')
         ->assertActionHidden('archive');
+});
+
+test('Edit Customer Advisor does not allow renaming to a name matching another advisor case-insensitively', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
+    $customerAdvisor = CustomerAdvisor::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'admissions helper']));
+
+    Livewire::test(EditCustomerAdvisor::class, [
+        'record' => $customerAdvisor->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('Edit Customer Advisor allows a name freed up by a soft-deleted advisor and its own name', function (): void {
+    Storage::fake('s3');
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
+
+    actingAs($user);
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper'])->delete();
+    $customerAdvisor = CustomerAdvisor::factory()->create(['name' => 'Financial Aid Helper']);
+
+    foreach (['admissions helper', 'ADMISSIONS HELPER'] as $name) {
+        $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => $name]));
+
+        Livewire::test(EditCustomerAdvisor::class, [
+            'record' => $customerAdvisor->getRouteKey(),
+        ])
+            ->fillForm($request->toArray())
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($customerAdvisor->refresh()->name)->toBe($name);
+    }
+});
+
+// TODO: Cleanup Task (advisor-name-citext) - Delete this test (the unique index always applies once the feature flag is removed)
+test('Edit Customer Advisor does not apply name uniqueness validation before the citext migration activates', function (): void {
+    Storage::fake('s3');
+
+    AdvisorNameCitextFeature::deactivate();
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
+
+    actingAs($user);
+
+    DB::statement('DROP INDEX IF EXISTS customer_advisors_name_unique');
+
+    CustomerAdvisor::factory()->create(['name' => 'Admissions Helper']);
+    $customerAdvisor = CustomerAdvisor::factory()->create(['name' => 'Financial Aid Helper']);
+
+    $request = collect(CustomerAdvisorRequestFactory::new()->create(['name' => 'Admissions Helper']));
+
+    Livewire::test(EditCustomerAdvisor::class, [
+        'record' => $customerAdvisor->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
 });
