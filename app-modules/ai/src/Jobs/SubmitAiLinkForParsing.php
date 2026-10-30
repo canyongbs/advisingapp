@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Spatie\Multitenancy\Jobs\TenantAware;
 use Throwable;
 
@@ -66,8 +67,21 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
         protected bool $refreshExistingParsingResults = false,
     ) {}
 
+    /**
+     * The uniqueness lock can expire while this job waits to run, so a second submission of the same link may be queued.
+     * Only one runs at a time, and each checks the latest state of the link, so a link is never submitted twice.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping($this->link->getKey()))->dontRelease()->expireAfter($this->timeout)];
+    }
+
     public function handle(LlamaParseV2Client $llamaParseV2Client): void
     {
+        $this->link->refresh();
+
         if (filled($this->link->parsing_job_id)) {
             return;
         }
