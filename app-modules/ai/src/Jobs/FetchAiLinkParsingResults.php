@@ -108,9 +108,17 @@ class FetchAiLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUni
             return;
         }
 
-        $this->link->parsing_results = $parseJob->markdownFull;
         $this->link->parsing_job_id = null;
         $this->link->parsing_failed_at = null;
+
+        // An unchanged page must not update `updated_at`, or the vector store would upload the same content again.
+        if ($this->link->parsing_results === $parseJob->markdownFull) {
+            $this->link->saveParsingState();
+
+            return;
+        }
+
+        $this->link->parsing_results = $parseJob->markdownFull;
         // Updates `updated_at`, so the vector store picks up the new parsing results.
         $this->link->save();
     }

@@ -103,6 +103,31 @@ it('replaces the existing parsing results once a refresh completes', function ()
     expect($link->refresh()->parsing_results)->toBe('New parsing results');
 });
 
+it('does not change the `updated_at` of the link when a refresh returns the same content', function (): void {
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
+            'job' => ['id' => 'pjb-123', 'status' => 'COMPLETED'],
+            'markdown_full' => 'Existing parsing results',
+        ]),
+    ]);
+
+    $link = CustomerAdvisorLink::factory()->parsingInProgress()->create([
+        'parsing_results' => 'Existing parsing results',
+        'updated_at' => now()->subDay(),
+    ]);
+
+    $updatedAt = $link->updated_at;
+
+    (new FetchAiLinkParsingResults($link, $link->parsing_job_id))->handle(app(LlamaParseV2Client::class));
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('Existing parsing results')
+        ->and($link->parsing_job_id)->toBeNull()
+        ->and($link->parsing_failed_at)->toBeNull()
+        ->and($link->updated_at->toDateTimeString())->toBe($updatedAt->toDateTimeString());
+});
+
 it('keeps waiting on a parse job that is still in progress', function (string $status): void {
     Http::fake([
         'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
