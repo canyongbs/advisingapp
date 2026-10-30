@@ -1,0 +1,146 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Ai\Jobs;
+
+use AdvisingApp\Ai\Enums\LlamaParseV2Tier;
+use AdvisingApp\Ai\Models\AiAssistantLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Spatie\Multitenancy\Jobs\TenantAware;
+use Throwable;
+
+class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
+{
+    use Queueable;
+
+    /**
+     * How long to wait before retrying a Keep Current refresh that could not be submitted. SQS caps a delay at 900 seconds.
+     */
+    protected const array REFRESH_RETRY_DELAYS_IN_SECONDS = [300, 900];
+
+    public int $timeout = 120;
+
+    public int $tries = 3;
+
+    public int $uniqueFor = 900;
+
+    public function __construct(
+        protected CustomerAdvisorLink|AiAssistantLink $link,
+        protected bool $refreshExistingParsingResults = false,
+    ) {}
+
+    /**
+     * The uniqueness lock can expire while this job waits to run, so a second submission of the same link may be queued.
+     * Only one runs at a time, and each checks the latest state of the link, so a link is never submitted twice.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping($this->link->getKey()))->dontRelease()->expireAfter($this->timeout)];
+    }
+
+    public function handle(LlamaParseV2Client $llamaParseV2Client): void
+    {
+        $this->link->refresh();
+
+        if (filled($this->link->parsing_job_id)) {
+            return;
+        }
+
+        if ((! $this->refreshExistingParsingResults) && (filled($this->link->parsing_results) || filled($this->link->parsing_failed_at))) {
+            return;
+        }
+
+        if (! $this->refreshExistingParsingResults) {
+            $this->link->parsing_last_checked_at = now();
+            $this->link->saveParsingState();
+        }
+
+        try {
+            $parsingJobId = $llamaParseV2Client->createParseJob(LlamaParseV2Tier::CostEffective, [
+                'source_url' => $this->link->url,
+                // Always parse the current page rather than a cached copy, so Keep Current refreshes pick up changes.
+                'disable_cache' => true,
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            if ($this->refreshExistingParsingResults) {
+                $this->retryRefreshOrGiveUp();
+            }
+
+            return;
+        }
+
+        $this->link->parsing_job_id = $parsingJobId;
+        $this->link->parsing_started_at = now();
+        $this->link->parsing_failed_at = null;
+        $this->link->saveParsingState();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->link->getKey();
+    }
+
+    public function refreshesExistingParsingResults(): bool
+    {
+        return $this->refreshExistingParsingResults;
+    }
+
+    /**
+     * New links are retried by the every-minute sweep, but a Keep Current refresh is retried here, then given up on
+     * until next month. Its existing parsing results are kept either way.
+     */
+    protected function retryRefreshOrGiveUp(): void
+    {
+        $retryDelayInSeconds = self::REFRESH_RETRY_DELAYS_IN_SECONDS[$this->attempts() - 1] ?? null;
+
+        if ($retryDelayInSeconds === null) {
+            $this->link->markParsingFailed('Its Keep Current refresh could not be submitted to LlamaParse.');
+
+            return;
+        }
+
+        $this->release($retryDelayInSeconds);
+    }
+}

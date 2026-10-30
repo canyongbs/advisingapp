@@ -49,6 +49,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
+// TODO: Cleanup Task (llamaparse-link-parsing): delete this job, as links are now parsed by `SubmitAiLinkForParsing` and `FetchAiLinkParsingResults`.
 class FetchCustomerAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
