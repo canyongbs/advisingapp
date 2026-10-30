@@ -45,6 +45,7 @@ use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
@@ -466,6 +467,92 @@ describe('basic needs programs name citext change', function () {
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/basic-needs/database/migrations/2026_10_26_113604_convert_basic_needs_programs_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (booking-group-name-citext) - Delete this describe and everything contained within
+describe('booking groups name citext change', function () {
+    it('renames case-insensitive duplicate booking group names', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                // Setup data before migration
+                $bookingGroup1 = BookingGroup::factory()->create(['name' => 'Advising Team', 'created_at' => now()->subMinutes(3)]);
+                $bookingGroup2 = BookingGroup::factory()->create(['name' => 'advising team', 'created_at' => now()->subMinutes(2)]);
+                $bookingGroup3 = BookingGroup::factory()->create(['name' => 'ADVISING TEAM', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted booking group sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering nor get
+                // renamed itself.
+                $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising team', 'created_at' => now()->subMinutes(4)]);
+                DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($bookingGroup1->refresh()->name)->toBe('Advising Team');
+                expect($bookingGroup2->refresh()->name)->toBe('advising team-2');
+                expect($bookingGroup3->refresh()->name)->toBe('ADVISING TEAM-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedBookingGroup->refresh()->name)->toBe('Advising team');
+            }
+        );
+    });
+
+    it('can be rolled back when a live booking group reuses a soft-deleted booking group name', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+                DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+                BookingGroup::factory()->create(['name' => 'Advising Team']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate booking group onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $bookingGroup1 = BookingGroup::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $bookingGroup2 = BookingGroup::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $bookingGroup3 = BookingGroup::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($bookingGroup1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($bookingGroup2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($bookingGroup3->refresh()->name)->toBe($truncatedCollision);
             }
         );
     });
