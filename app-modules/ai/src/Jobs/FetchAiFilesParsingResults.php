@@ -44,7 +44,9 @@ use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -64,14 +66,77 @@ class FetchAiFilesParsingResults implements ShouldQueue
             ->where('created_at', '>=', now()->subHour())
             ->eachById(fn (CustomerAdvisorFile $file): PendingDispatch => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
 
-        CustomerAdvisorLink::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (CustomerAdvisorLink $link): PendingDispatch => dispatch(new FetchCustomerAdvisorLinkParsingResults($link)));
+        if (! LlamaParseLinkParsingFeature::active()) {
+            // TODO: Cleanup Task (llamaparse-link-parsing): delete this Jina fallback.
+            CustomerAdvisorLink::query()
+                ->whereNull('parsing_results')
+                ->where('created_at', '>=', now()->subHour())
+                ->eachById(fn (CustomerAdvisorLink $link): PendingDispatch => dispatch(new FetchCustomerAdvisorLinkParsingResults($link)));
 
-        AiAssistantLink::query()
+            AiAssistantLink::query()
+                ->whereNull('parsing_results')
+                ->where('created_at', '>=', now()->subHour())
+                ->eachById(fn (AiAssistantLink $link): PendingDispatch => dispatch(new FetchAiAssistantLinkParsingResults($link)));
+
+            return;
+        }
+
+        foreach ([CustomerAdvisorLink::class, AiAssistantLink::class] as $linkModel) {
+            $this->submitNewLinks($linkModel);
+            $this->failLinksNotSubmittedInTime($linkModel);
+            $this->pollInFlightLinks($linkModel);
+        }
+    }
+
+    /**
+     * Submits links added in the last hour that are not parsed yet, retrying a failed submission every 5 minutes.
+     *
+     * @param class-string<CustomerAdvisorLink|AiAssistantLink> $linkModel
+     */
+    protected function submitNewLinks(string $linkModel): void
+    {
+        $linkModel::query()
             ->whereNull('parsing_results')
+            ->whereNull('parsing_job_id')
+            ->whereNull('parsing_failed_at')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantLink $link): PendingDispatch => dispatch(new FetchAiAssistantLinkParsingResults($link)));
+            ->where(fn (Builder $query): Builder => $query
+                ->whereNull('parsing_last_checked_at')
+                ->orWhere('parsing_last_checked_at', '<=', now()->subMinutes(5)))
+            ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link): PendingDispatch => dispatch(new SubmitAiLinkForParsing($link)));
+    }
+
+    /**
+     * Gives up on links that were tried but could not be submitted within an hour of being added. Links that were
+     * never tried, such as ones from before LlamaParse, are left alone.
+     *
+     * @param class-string<CustomerAdvisorLink|AiAssistantLink> $linkModel
+     */
+    protected function failLinksNotSubmittedInTime(string $linkModel): void
+    {
+        $linkModel::query()
+            ->whereNull('parsing_results')
+            ->whereNull('parsing_job_id')
+            ->whereNull('parsing_failed_at')
+            ->whereNotNull('parsing_last_checked_at')
+            ->where('created_at', '<', now()->subHour())
+            ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link) => $link->markParsingFailed('It could not be submitted to LlamaParse.'));
+    }
+
+    /**
+     * Checks on parse jobs that are still in progress. Each job is first checked 5 minutes after it was submitted,
+     * then every 5 minutes.
+     *
+     * @param class-string<CustomerAdvisorLink|AiAssistantLink> $linkModel
+     */
+    protected function pollInFlightLinks(string $linkModel): void
+    {
+        $linkModel::query()
+            ->whereNotNull('parsing_job_id')
+            ->where('parsing_started_at', '<=', now()->subMinutes(5))
+            ->where(fn (Builder $query): Builder => $query
+                ->whereNull('parsing_last_checked_at')
+                ->orWhere('parsing_last_checked_at', '<=', now()->subMinutes(5)))
+            ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link): PendingDispatch => dispatch(new FetchAiLinkParsingResults($link, $link->parsing_job_id)));
     }
 }

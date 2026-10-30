@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use App\Features\AiAssistantKeepCurrentFeature;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -56,6 +58,19 @@ class UpdateCurrentAiAssistantLinks implements ShouldQueue, TenantAware
             return;
         }
 
+        if (LlamaParseLinkParsingFeature::active()) {
+            AiAssistantLink::query()
+                ->select('id')
+                ->where('is_keep_current_enabled', true)
+                ->whereNull('parsing_job_id')
+                ->eachById(function (AiAssistantLink $link): void {
+                    dispatch(new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true));
+                });
+
+            return;
+        }
+
+        // TODO: Cleanup Task (llamaparse-link-parsing): delete this Jina fallback and keep the LlamaParse query above, without the `if` around it.
         AiAssistantLink::query()
             ->select('id')
             ->where('is_keep_current_enabled', true)
