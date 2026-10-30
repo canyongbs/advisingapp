@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3133c59788789af8e8bbf494296aaf27",
+    "content-hash": "607b8bd97bc8bc06944c05344589e005",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -10870,7 +10870,8 @@
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
                 "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.30.7"
             },
-            "time": "2026-09-17T03:56:23+00:00"
+            "time": "2026-09-17T03:56:23+00:00",
+            "published-time": "2026-09-17T04:07:00+00:00"
         },
         {
             "name": "phpoption/phpoption",
