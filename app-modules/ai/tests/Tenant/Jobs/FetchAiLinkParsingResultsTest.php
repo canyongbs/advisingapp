@@ -42,6 +42,9 @@ use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -288,6 +291,67 @@ it('ignores a parse job that is no longer the current one for the link', functio
     $parsingJobId = $link->parsing_job_id;
 
     (new FetchAiLinkParsingResults($link, 'pjb-older'))->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_job_id)->toBe($parsingJobId);
+});
+
+it('does not apply the result of a parse job that stopped being current after this check was queued', function (): void {
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
+            'job' => ['id' => 'pjb-123', 'status' => 'COMPLETED'],
+            'markdown_full' => 'Older parsing results',
+        ]),
+    ]);
+
+    $link = CustomerAdvisorLink::factory()->parsingInProgress()->create([
+        'parsing_results' => null,
+    ]);
+
+    $job = new FetchAiLinkParsingResults($link, $link->parsing_job_id);
+
+    CustomerAdvisorLink::query()->whereKey($link->getKey())->update([
+        'parsing_results' => 'Newer parsing results',
+        'parsing_job_id' => 'pjb-newer',
+        'parsing_started_at' => now(),
+    ]);
+
+    $job->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+
+    $link->refresh();
+
+    expect($link->parsing_job_id)->toBe('pjb-newer')
+        ->and($link->parsing_results)->toBe('Newer parsing results');
+});
+
+it('does not check on a parse job while another check of the same link is running', function (): void {
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->parsingInProgress()->create([
+        'parsing_results' => null,
+    ]);
+
+    $parsingJobId = $link->parsing_job_id;
+
+    $job = new FetchAiLinkParsingResults($link, $parsingJobId);
+
+    $middleware = $job->middleware();
+
+    assert($middleware[0] instanceof WithoutOverlapping);
+
+    $runningCheckLock = Cache::lock($middleware[0]->getLockKey($job), 120);
+
+    expect($runningCheckLock->get())->toBeTrue();
+
+    (new Pipeline(app()))
+        ->send($job)
+        ->through($middleware)
+        ->then(fn (FetchAiLinkParsingResults $job) => $job->handle(app(LlamaParseV2Client::class)));
+
+    $runningCheckLock->release();
 
     Http::assertNothingSent();
 
