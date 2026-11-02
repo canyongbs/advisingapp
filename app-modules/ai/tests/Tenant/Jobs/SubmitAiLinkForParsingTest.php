@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Actions\GetLlamaParseWebhookSigningSecret;
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
 use AdvisingApp\Ai\Exceptions\LlamaParseApiKeyNotConfiguredException;
@@ -43,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Models\Tenant;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Pipeline\Pipeline;
@@ -82,9 +84,21 @@ it('submits the link to LlamaParse and stores the parse job', function (string $
         ->and($link->parsing_last_checked_at)->not->toBeNull()
         ->and($link->parsing_failed_at)->toBeNull();
 
+    $tenant = Tenant::current();
+
+    assert($tenant instanceof Tenant);
+
     Http::assertSent(fn (Request $request): bool => $request->data() === [
         'source_url' => $link->url,
         'disable_cache' => true,
+        'webhook_configurations' => [
+            [
+                'webhook_url' => route('inbound.webhook.llamaparse'),
+                'webhook_events' => ['parse.success', 'parse.partial_success', 'parse.error', 'parse.cancelled'],
+                'webhook_signing_secret' => app(GetLlamaParseWebhookSigningSecret::class)($tenant),
+                'webhook_output_format' => 'json',
+            ],
+        ],
         'tier' => 'cost_effective',
         'version' => LlamaParseV2Client::VERSION,
     ]);
