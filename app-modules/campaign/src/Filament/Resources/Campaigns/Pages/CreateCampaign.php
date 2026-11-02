@@ -158,7 +158,7 @@ class CreateCampaign extends CreateRecord
                 ->schema([
                     Toggle::make('enabled')
                         ->default(false)
-                        ->helperText('Toggle this on to enable your campaign. Leave it off to save your campaign as a draft.'),
+                        ->helperText('New campaigns start as drafts. When you click Create, choose "Save as Draft" or "Save and Enable" to set the final state; that choice overrides this toggle.'),
                     ViewField::make('step-summary')
                         ->view('filament.forms.components.campaigns.step-summary'),
                 ]),
