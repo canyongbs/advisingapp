@@ -50,8 +50,11 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Team\Models\Department;
+use App\Enums\TagType;
 use App\Features\CampaignNameCitextFeature;
+use App\Models\Tag;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Livewire\Livewire;
@@ -333,4 +336,60 @@ it('rejects creating a campaign with a soft-deleted name before the citext migra
         ->fillForm(['name' => 'fall outreach'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+/**
+ * @return array<string, mixed>
+ */
+function validCampaignFormData(): array
+{
+    $group = Group::factory()->student()->create(['user_id' => auth()->id()]);
+    $tag = Tag::factory()->create(['type' => TagType::Student]);
+
+    return [
+        'name' => 'Enabled State Campaign',
+        'segment_id' => $group->getKey(),
+        'actions' => [
+            'step-one' => [
+                'type' => 'tags',
+                'data' => [
+                    'tag_ids' => [$tag->getKey()],
+                    'remove_prior' => false,
+                    'execute_at' => now()->addDay()->toDateTimeString(),
+                ],
+            ],
+        ],
+    ];
+}
+
+it('defaults the enabled toggle to disabled when creating a campaign', function (): void {
+    Livewire::test(CreateCampaign::class)
+        ->assertSchemaStateSet(['enabled' => false]);
+});
+
+it('creates a disabled campaign when the form is submitted with the default enabled state', function (): void {
+    Livewire::test(CreateCampaign::class)
+        ->fillForm(validCampaignFormData())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(Campaign::query()->where('name', 'Enabled State Campaign')->firstOrFail()->enabled)->toBeFalse();
+});
+
+it('creates an enabled campaign when Save and Enable is chosen', function (): void {
+    Livewire::test(CreateCampaign::class)
+        ->fillForm(validCampaignFormData())
+        ->callAction('create')
+        ->assertHasNoFormErrors();
+
+    expect(Campaign::query()->where('name', 'Enabled State Campaign')->firstOrFail()->enabled)->toBeTrue();
+});
+
+it('creates a disabled campaign when Save as Draft is chosen even if the toggle is on', function (): void {
+    Livewire::test(CreateCampaign::class)
+        ->fillForm([...validCampaignFormData(), 'enabled' => true])
+        ->callAction([TestAction::make('create'), TestAction::make('draft')])
+        ->assertHasNoFormErrors();
+
+    expect(Campaign::query()->where('name', 'Enabled State Campaign')->firstOrFail()->enabled)->toBeFalse();
 });

@@ -87,6 +87,9 @@ class CreateCampaign extends CreateRecord
                     ->cancelParentActions(),
             ])
             ->action(function (): void {
+                $state = $this->form->getRawState();
+                $state['enabled'] = true;
+                $this->form->fill($state, false, false);
                 $this->create();
             });
     }
@@ -154,8 +157,8 @@ class CreateCampaign extends CreateRecord
             Step::make('Review Campaign')
                 ->schema([
                     Toggle::make('enabled')
-                        ->default(true)
-                        ->helperText('Toggle this off to set your campaign to a draft state.'),
+                        ->default(false)
+                        ->helperText('Toggle this on to enable your campaign. Leave it off to save your campaign as a draft.'),
                     ViewField::make('step-summary')
                         ->view('filament.forms.components.campaigns.step-summary'),
                 ]),
