@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -57,6 +58,11 @@ class UpdateCurrentCustomerAdvisorLinks implements ShouldQueue, TenantAware
             CustomerAdvisorLink::query()
                 ->where('is_keep_current_enabled', true)
                 ->whereNull('parsing_job_id')
+                // Links still being submitted for the first time are retried, and given up on, by the every-minute sweep.
+                ->whereNot(fn (Builder $query): Builder => $query
+                    ->whereNull('parsing_results')
+                    ->whereNull('parsing_failed_at')
+                    ->whereNotNull('parsing_last_checked_at'))
                 ->eachById(function (CustomerAdvisorLink $link): void {
                     dispatch(new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true));
                 });

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
 use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
@@ -75,6 +76,38 @@ it('does not submit current links that already have a parse job in progress', fu
 
     Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
+
+it('does not submit current links that are still being submitted for the first time', function (): void {
+    Queue::fake();
+
+    CustomerAdvisorLink::factory()->create([
+        'is_keep_current_enabled' => true,
+        'parsing_results' => null,
+        'created_at' => now()->subMinutes(50),
+        'parsing_last_checked_at' => now()->subMinutes(3),
+    ]);
+
+    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
+});
+
+it('submits current links without parsing results that failed or were never submitted', function (Closure $applyState): void {
+    Queue::fake();
+
+    $link = $applyState(CustomerAdvisorLink::factory())->create([
+        'is_keep_current_enabled' => true,
+        'parsing_results' => null,
+        'created_at' => now()->subMonth(),
+    ]);
+
+    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+
+    Queue::assertPushed(SubmitAiLinkForParsing::class, fn (SubmitAiLinkForParsing $job): bool => $job->uniqueId() === $link->getKey());
+})->with([
+    'failed' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->parsingFailed()->state(['parsing_last_checked_at' => now()->subMonth()])],
+    'never submitted' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory],
+]);
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the Jina fallback.
 it('dispatches `FetchCustomerAdvisorLinkParsingResults` only for current links while LlamaParse link parsing is inactive', function (): void {
