@@ -275,6 +275,32 @@ it('does not submit a link that is already parsed or has failed unless it is bei
     'failed' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->parsingFailed()],
 ]);
 
+it('leaves a link that is still being submitted for the first time to the every-minute sweep when asked to refresh it', function (Closure $applyState): void {
+    Http::fake();
+
+    $link = $applyState(CustomerAdvisorLink::factory())->create(['parsing_results' => null]);
+
+    $job = (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->withFakeQueueInteractions();
+
+    $job->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+    $job->assertNotReleased();
+
+    $link->refresh();
+
+    expect($link->parsing_job_id)->toBeNull()
+        ->and($link->parsing_failed_at)->toBeNull();
+})->with([
+    'already tried' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->state([
+        'created_at' => now()->subMinutes(50),
+        'parsing_last_checked_at' => now()->subMinutes(3),
+    ])],
+    'not tried yet' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->state([
+        'created_at' => now()->subMinute(),
+    ])],
+]);
+
 it('submits a parsed link that is being refreshed, keeping its existing parsing results', function (): void {
     Http::fake([
         'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),

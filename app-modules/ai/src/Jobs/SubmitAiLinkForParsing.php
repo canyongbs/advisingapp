@@ -91,6 +91,16 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
             return;
         }
 
+        // A link still being submitted for the first time is retried, and given up on, by the every-minute sweep, so it is never refreshed.
+        if (
+            $this->refreshExistingParsingResults
+            && blank($this->link->parsing_results)
+            && blank($this->link->parsing_failed_at)
+            && (filled($this->link->parsing_last_checked_at) || $this->link->created_at?->greaterThanOrEqualTo(now()->subHour()))
+        ) {
+            return;
+        }
+
         // Giving up here, rather than in the every-minute sweep, means it can never happen while a submission of the same link is still waiting on LlamaParse.
         if ((! $this->refreshExistingParsingResults) && filled($this->link->parsing_last_checked_at) && $this->link->created_at?->isBefore(now()->subHour())) {
             $this->link->markParsingFailed('It could not be submitted to LlamaParse.');
