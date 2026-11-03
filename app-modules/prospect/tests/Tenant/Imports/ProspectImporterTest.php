@@ -45,53 +45,51 @@ use Filament\Actions\Imports\ImportColumn;
  * silently resolve to a different, retained row with the same name in another case. The
  * importer resolves these relationships by exact, case-sensitive name to prevent that.
  */
-function resolveImportColumn(string $name, mixed $state): mixed
-{
+$resolveImportColumn = function (string $name, mixed $state): mixed {
     $column = collect(ProspectImporter::getColumns())
         ->first(fn (ImportColumn $column): bool => $column->getName() === $name);
-
     $resolveUsing = (new ReflectionProperty(ImportColumn::class, 'resolveRelationshipUsing'))
         ->getValue($column);
 
     return $resolveUsing($state);
-}
+};
 
-describe('source resolution', function (): void {
-    it('resolves a source by its exact name', function (): void {
+describe('source resolution', function () use ($resolveImportColumn): void {
+    it('resolves a source by its exact name', function () use ($resolveImportColumn): void {
         $source = ProspectSource::factory()->create(['name' => 'Referral']);
 
-        expect(resolveImportColumn('source', 'Referral')?->getKey())->toBe($source->getKey());
+        expect($resolveImportColumn('source', 'Referral')?->getKey())->toBe($source->getKey());
     });
 
-    it('resolves a source by its id', function (): void {
+    it('resolves a source by its id', function () use ($resolveImportColumn): void {
         $source = ProspectSource::factory()->create(['name' => 'Referral']);
 
-        expect(resolveImportColumn('source', $source->getKey())?->getKey())->toBe($source->getKey());
+        expect($resolveImportColumn('source', $source->getKey())?->getKey())->toBe($source->getKey());
     });
 
-    it('does not resolve a source by a different casing of its name', function (): void {
+    it('does not resolve a source by a different casing of its name', function () use ($resolveImportColumn): void {
         ProspectSource::factory()->create(['name' => 'Referral']);
 
-        expect(resolveImportColumn('source', 'referral'))->toBeNull();
+        expect($resolveImportColumn('source', 'referral'))->toBeNull();
     });
 });
 
-describe('status resolution', function (): void {
-    it('resolves a status by its exact name', function (): void {
+describe('status resolution', function () use ($resolveImportColumn): void {
+    it('resolves a status by its exact name', function () use ($resolveImportColumn): void {
         $status = ProspectStatus::factory()->create(['name' => 'Engaged']);
 
-        expect(resolveImportColumn('status', 'Engaged')?->getKey())->toBe($status->getKey());
+        expect($resolveImportColumn('status', 'Engaged')?->getKey())->toBe($status->getKey());
     });
 
-    it('resolves a status by its id', function (): void {
+    it('resolves a status by its id', function () use ($resolveImportColumn): void {
         $status = ProspectStatus::factory()->create(['name' => 'Engaged']);
 
-        expect(resolveImportColumn('status', $status->getKey())?->getKey())->toBe($status->getKey());
+        expect($resolveImportColumn('status', $status->getKey())?->getKey())->toBe($status->getKey());
     });
 
-    it('does not resolve a status by a different casing of its name', function (): void {
+    it('does not resolve a status by a different casing of its name', function () use ($resolveImportColumn): void {
         ProspectStatus::factory()->create(['name' => 'Engaged']);
 
-        expect(resolveImportColumn('status', 'engaged'))->toBeNull();
+        expect($resolveImportColumn('status', 'engaged'))->toBeNull();
     });
 });
