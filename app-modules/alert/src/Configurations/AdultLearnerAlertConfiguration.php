@@ -40,16 +40,20 @@ use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Database\Factories\Configurations\AdultLearnerAlertConfigurationFactory;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAdultLearnerAlertConfiguration
  */
-class AdultLearnerAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
+class AdultLearnerAlertConfiguration extends Model implements AlertPresetConfiguration, Auditable
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
 
     /** @use HasFactory<AdultLearnerAlertConfigurationFactory> */

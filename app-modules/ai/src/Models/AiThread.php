@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\AiThreadFactory;
 use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Models\Scopes\AiThreadScope;
-use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
 use App\Settings\DisplaySettings;
@@ -49,6 +49,9 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -57,13 +60,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Livewire\Wireable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiThread
  */
 #[ScopedBy(AiThreadScope::class)]
-class AiThread extends BaseModel implements HasMedia, Wireable
+class AiThread extends Model implements HasMedia, Wireable
 {
+    /** @use HasFactory<AiThreadFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
     use Prunable;

@@ -36,15 +36,24 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\Ai\Database\Factories\PromptTypeFactory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperPromptType
  */
-class PromptType extends BaseModel
+class PromptType extends Model
 {
+    /** @use HasFactory<PromptTypeFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     protected $fillable = [
