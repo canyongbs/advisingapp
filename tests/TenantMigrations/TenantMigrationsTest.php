@@ -50,6 +50,7 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
+use AdvisingApp\Workflow\Models\Workflow;
 use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
@@ -753,6 +754,85 @@ describe('alert statuses name citext change', function () {
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (workflow-name-citext) - Delete this describe and everything contained within
+describe('workflows name citext change', function (): void {
+    it('renames case-insensitive duplicate workflow names', function (): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function (): void {
+                $workflow1 = Workflow::factory()->create(['name' => 'Form Workflow', 'created_at' => now()->subMinutes(3)]);
+                $workflow2 = Workflow::factory()->create(['name' => 'form workflow', 'created_at' => now()->subMinutes(2)]);
+                $workflow3 = Workflow::factory()->create(['name' => 'FORM WORKFLOW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted workflow sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedWorkflow = Workflow::factory()->create(['name' => 'Form workflow', 'created_at' => now()->subMinutes(4)]);
+                $deletedWorkflow->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($workflow1->refresh()->name)->toBe('Form Workflow');
+                expect($workflow2->refresh()->name)->toBe('form workflow-2');
+                expect($workflow3->refresh()->name)->toBe('FORM WORKFLOW-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedWorkflow->refresh()->name)->toBe('Form workflow');
+
+                expect(fn () => Workflow::factory()->create(['name' => 'form WORKFLOW']))
+                    ->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live workflow reuses a soft-deleted workflow name', function (): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedWorkflow = Workflow::factory()->create(['name' => 'Form Workflow']);
+                $deletedWorkflow->delete();
+                Workflow::factory()->create(['name' => 'Form Workflow']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function (): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function (): void {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $workflow1 = Workflow::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $workflow2 = Workflow::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $workflow3 = Workflow::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($workflow1->refresh()->name)->toBe($maxLengthUpper);
+                expect($workflow2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($workflow3->refresh()->name)->toBe($truncatedCollision);
             }
         );
     });

@@ -38,12 +38,14 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Database\Factories\WorkflowFactory;
+use App\Features\WorkflowNameCitextFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -67,6 +69,36 @@ class Workflow extends BaseModel implements Auditable
     protected $casts = [
         'is_enabled' => 'boolean',
     ];
+
+    /**
+     * Build a workflow name that is unique case-insensitively among non-deleted
+     * workflows, appending an incrementing "-2", "-3", ... suffix when needed.
+     *
+     * Once the citext migration has run the name column is case-insensitively
+     * unique (ignoring soft-deleted rows), so fixed-name creation processes must
+     * resolve collisions up front rather than hitting the unique index. Before the
+     * migration activates the original base name is returned unchanged.
+     */
+    public static function generateUniqueName(string $baseName): string
+    {
+        if (! WorkflowNameCitextFeature::active()) {
+            return $baseName;
+        }
+
+        $name = $baseName;
+        $counter = 2;
+
+        while (
+            static::query()
+                ->whereRaw('LOWER(name) = ?', [Str::lower($name)])
+                ->exists()
+        ) {
+            $name = "{$baseName}-{$counter}";
+            $counter++;
+        }
+
+        return $name;
+    }
 
     /**
      * @return BelongsTo<WorkflowTrigger, $this>

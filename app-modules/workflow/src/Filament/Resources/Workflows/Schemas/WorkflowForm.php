@@ -38,9 +38,11 @@ namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas;
 
 use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Models\Workflow;
+use App\Features\WorkflowNameCitextFeature;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class WorkflowForm
 {
@@ -49,7 +51,13 @@ class WorkflowForm
         $schema = $schema->components([
             TextInput::make('name')
                 ->required()
-                ->maxLength(255),
+                ->maxLength(255)
+                ->unique(
+                    ignoreRecord: true,
+                    modifyRuleUsing: fn (Unique $rule): Unique => WorkflowNameCitextFeature::active()
+                        ? $rule->withoutTrashed()
+                        : $rule,
+                ),
             Toggle::make('is_enabled')
                 ->label('Enabled?')
                 ->inline(false),
