@@ -36,18 +36,27 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Database\Factories\EmailMessageFactory;
 use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperEmailMessage
  */
-class EmailMessage extends BaseModel implements Message
+class EmailMessage extends Model implements Message
 {
+    /** @use HasFactory<EmailMessageFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $fillable = [
         'notification_class',
         'external_reference_id',

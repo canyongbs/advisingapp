@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Database\Factories\InteractionFactory;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -48,11 +49,12 @@ use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\InteractionTimeline;
 use App\Models\Authenticatable;
-use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -61,13 +63,19 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperInteraction
  */
 #[ObservedBy([InteractionObserver::class])] #[ScopedBy(InteractionConfidentialScope::class)]
-class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
+class Interaction extends Model implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
+    /** @use HasFactory<InteractionFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
     use BelongsToEducatable;
     use SoftDeletes;

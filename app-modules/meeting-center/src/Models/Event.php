@@ -36,24 +36,33 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\MeetingCenter\Database\Factories\EventFactory;
 use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperEvent
  */
-class Event extends BaseModel implements HasMedia, HasRichContent
+class Event extends Model implements HasMedia, HasRichContent
 {
+    /** @use HasFactory<EventFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
     use CanBeArchived;
     use HasUserSaveTracking;
