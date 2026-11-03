@@ -94,7 +94,7 @@ class ProspectStatusSeeder extends Seeder
 
             if (! $desiredProtection) {
                 continue;
-             }
+            }
 
             // An earlier data migration provisions "New" and "Converted" with the default
             // is_system_protected = false. Reconcile existing rows to the required
