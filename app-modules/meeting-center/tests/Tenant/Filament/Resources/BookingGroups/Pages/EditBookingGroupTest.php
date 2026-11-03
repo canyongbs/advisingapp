@@ -34,15 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Department;
+use App\Features\BookingGroupNameCitextFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -296,4 +299,52 @@ it('users UserSelect shows all users when filter_admins_from_selection config is
         ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
         });
+});
+
+test('does not allow updating a booking group to a name matching another booking group case-insensitively', function (): void {
+    asSuperAdmin();
+
+    BookingGroup::factory()->create(['name' => 'Advising Team']);
+    $bookingGroup = BookingGroup::factory()->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(EditBookingGroup::class, ['record' => $bookingGroup->getRouteKey()])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows updating a booking group to a name freed up by a soft-deleted booking group case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+    DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+    $bookingGroup = BookingGroup::factory()->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(EditBookingGroup::class, ['record' => $bookingGroup->getRouteKey()])
+        ->fillForm([
+            'name' => 'advising team',
+            'book_with' => BookingGroupBookWith::Availability->value,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+    expect($bookingGroup->refresh()->name)->toBe('advising team');
+});
+
+test('rejects updating a booking group to a soft-deleted name before the citext migration activates', function (): void {
+    BookingGroupNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+    DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+    $bookingGroup = BookingGroup::factory()->create(['name' => 'Enrollment Team']);
+
+    Livewire::test(EditBookingGroup::class, ['record' => $bookingGroup->getRouteKey()])
+        ->fillForm(['name' => 'advising team'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($bookingGroup->refresh()->name)->toBe('Enrollment Team');
 });
