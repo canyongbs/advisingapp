@@ -184,7 +184,6 @@ use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\Authenticatable;
-use App\Models\BaseModel;
 use App\Models\Export;
 use App\Models\FailedImportRow;
 use App\Models\HealthCheckResultHistoryItem;
@@ -412,7 +411,6 @@ return [
     WorkflowTaskDetails::class,
     WorkflowTrigger::class,
     Authenticatable::class,
-    BaseModel::class,
     Export::class,
     FailedImportRow::class,
     HealthCheckResultHistoryItem::class,
@@ -429,8 +427,8 @@ return [
     Tenant::class,
     User::class,
 
-    // These models were created after the UUIDv7 policy but inherited HasVersion4Uuids from BaseModel,
-    // so their tables only hold UUIDv4 IDs. They must stay on HasVersion4Uuids.
+    // These models were created after the UUIDv7 policy but inherited HasVersion4Uuids from a shared base
+    // model class (since removed), so their tables only hold UUIDv4 IDs. They must stay on HasVersion4Uuids.
     EmployeeAdvisorCategory::class,
     EmployeeAdvisorQuestion::class,
     AdultLearnerAlertConfiguration::class,
