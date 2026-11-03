@@ -93,7 +93,7 @@
         "orrison/meliorstan": "^0.4.1",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
-        "phpoffice/phpspreadsheet": "^1.30.6",
+        "phpoffice/phpspreadsheet": "^1.30.7",
         "saade/filament-fullcalendar": "^4.0.1",
         "sentry/sentry-laravel": "^4.16.0",
         "shuvroroy/filament-spatie-laravel-health": "^3.3",
