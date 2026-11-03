@@ -53,7 +53,7 @@ class CareTeamRoleFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->words(asText: true),
             'type' => $this->faker->randomElement(CareTeamRoleType::cases())->value,
             'is_default' => false,
         ];

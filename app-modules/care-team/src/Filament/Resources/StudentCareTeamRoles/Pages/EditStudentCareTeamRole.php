@@ -39,11 +39,13 @@ namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\Pages;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditStudentCareTeamRole extends EditRecord
 {
@@ -56,7 +58,13 @@ class EditStudentCareTeamRole extends EditRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
-                    ->unique(ignoreRecord: true),
+                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the modifyRuleUsing closure with a plain $rule->withoutTrashed()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => CareTeamRoleNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->hint(function (?CareTeamRole $record, ?bool $state): ?string {
