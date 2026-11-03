@@ -38,17 +38,22 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Engagement\Database\Factories\UnmatchedInboundCommunicationFactory;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use App\Models\BaseModel;
 use App\Models\Media;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperUnmatchedInboundCommunication
  */
-class UnmatchedInboundCommunication extends BaseModel implements HasMedia
+class UnmatchedInboundCommunication extends Model implements HasMedia
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     /** @use HasFactory<UnmatchedInboundCommunicationFactory> */
     use HasFactory;
 

@@ -39,19 +39,23 @@ namespace AdvisingApp\Authorization\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableConcern;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Observers\LicenseObserver;
-use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperLicense
  */
 #[ObservedBy([LicenseObserver::class])]
-class License extends BaseModel implements Auditable
+class License extends Model implements Auditable
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableConcern;
     use SoftDeletes;
 

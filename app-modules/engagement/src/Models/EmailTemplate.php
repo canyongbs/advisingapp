@@ -36,25 +36,35 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Engagement\Database\Factories\EmailTemplateFactory;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
-use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperEmailTemplate
  */
 #[ObservedBy([EmailTemplateObserver::class])]
-class EmailTemplate extends BaseModel implements HasMedia, HasRichContent
+class EmailTemplate extends Model implements HasMedia, HasRichContent
 {
+    /** @use HasFactory<EmailTemplateFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 

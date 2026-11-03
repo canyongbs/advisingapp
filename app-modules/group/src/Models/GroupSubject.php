@@ -36,17 +36,20 @@
 
 namespace AdvisingApp\Group\Models;
 
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperGroupSubject
  */
-class GroupSubject extends BaseModel
+class GroupSubject extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     protected $table = 'segment_subjects';

@@ -37,24 +37,33 @@
 namespace AdvisingApp\Group\Models;
 
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Database\Factories\GroupFactory;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Observers\GroupObserver;
 use App\Models\Authenticatable;
-use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperGroup
  */
 #[ObservedBy([GroupObserver::class])]
-class Group extends BaseModel
+class Group extends Model
 {
+    /** @use HasFactory<GroupFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     protected $table = 'segments';
