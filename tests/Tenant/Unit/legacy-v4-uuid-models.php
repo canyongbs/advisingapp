@@ -144,7 +144,6 @@ use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Hold;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -445,10 +444,6 @@ return [
     ReportDepartmentAccess::class,
     ReportUserAccess::class,
     TaskHistory::class,
-
-    // PhoneNumberLookup declares HasUuids (UUIDv7) itself, which overrides the HasVersion4Uuids it inherits
-    // from BaseModel, so it already generates UUIDv7 IDs. It is listed only while it still extends BaseModel.
-    PhoneNumberLookup::class,
 
     // These settings properties inherit HasVersion4Uuids from SettingsProperty and share its table,
     // which only holds UUIDv4 IDs. They must stay on HasVersion4Uuids.

@@ -38,23 +38,30 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\StudentDataModel\Database\Factories\StudentPhoneNumberFactory;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\Concerns\IsTextable;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperStudentPhoneNumber
  */
 #[ObservedBy([StudentPhoneNumberObserver::class])]
-class StudentPhoneNumber extends BaseModel implements Auditable
+class StudentPhoneNumber extends Model implements Auditable
 {
+    /** @use HasFactory<StudentPhoneNumberFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use AuditableTrait;
     use HasUuids;
     use IsTextable;

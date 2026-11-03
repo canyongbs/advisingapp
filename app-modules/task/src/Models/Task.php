@@ -51,7 +51,6 @@ use AdvisingApp\Task\Observers\TaskObserver;
 use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
-use App\Models\BaseModel;
 use App\Models\User;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -67,6 +66,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property-read Student|Prospect|null $concern
@@ -74,8 +74,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin IdeHelperTask
  */
 #[ObservedBy([TaskObserver::class])] #[ScopedBy([ConfidentialTaskScope::class])]
-class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
+class Task extends Model implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
+    use UsesTenantConnection;
     use BelongsToEducatable;
 
     /** @use HasFactory<TaskFactory> */

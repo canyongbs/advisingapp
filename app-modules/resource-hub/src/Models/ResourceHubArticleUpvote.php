@@ -36,15 +36,20 @@
 
 namespace AdvisingApp\ResourceHub\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubArticleUpvote
  */
-class ResourceHubArticleUpvote extends BaseModel
+class ResourceHubArticleUpvote extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $fillable = [
         'user_id',
     ];

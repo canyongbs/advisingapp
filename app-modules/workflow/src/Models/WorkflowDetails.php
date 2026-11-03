@@ -47,13 +47,23 @@ use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use App\Models\BaseModel;
 use App\Settings\LicenseSettings;
 use Filament\Forms\Components\Field;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-abstract class WorkflowDetails extends BaseModel
+abstract class WorkflowDetails extends Model
 {
+    /** @use HasFactory<Factory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     abstract public function getLabel(): string;
 
     abstract public function getBlock(): WorkflowActionBlock;
