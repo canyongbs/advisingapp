@@ -90,7 +90,7 @@ class Workflow extends BaseModel implements Auditable
 
         while (
             static::query()
-                ->whereRaw('LOWER(name) = ?', [Str::lower($name)])
+                ->where('name', Str::lower($name))
                 ->exists()
         ) {
             $name = "{$baseName}-{$counter}";

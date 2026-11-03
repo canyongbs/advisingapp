@@ -61,6 +61,8 @@ return new class () extends Migration {
     {
         DB::transaction(function (): void {
             // TODO: Cleanup Task (workflow-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
+            DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
+            
             $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
