@@ -60,6 +60,9 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function (): void {
+            // Prevents a concurrent write between the duplicate scan and the unique index creation
+            DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
+
             // TODO: Cleanup Task (consent-agreement-title-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             $this->fixDuplicates();
 
