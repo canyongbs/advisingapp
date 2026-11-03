@@ -89,6 +89,22 @@ it('stores the parsing results of a completed parse job', function (string $link
     'AI assistant link' => [AiAssistantLink::class],
 ]);
 
+it('does not check on the parse job of a link that was deleted after this was queued', function (): void {
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->parsingInProgress()->create(['parsing_results' => null]);
+
+    $job = new FetchAiLinkParsingResults($link, $link->parsing_job_id);
+
+    $link->delete();
+
+    $job->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_results)->toBeNull();
+});
+
 it('replaces the existing parsing results once a refresh completes', function (): void {
     Http::fake([
         'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([

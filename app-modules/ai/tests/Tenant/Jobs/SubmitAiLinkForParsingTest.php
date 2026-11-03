@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
 use AdvisingApp\Ai\Exceptions\LlamaParseApiKeyNotConfiguredException;
+use AdvisingApp\Ai\Jobs\FetchAiFilesParsingResults;
 use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
@@ -51,6 +52,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+
+use function Pest\Laravel\travelTo;
 
 beforeEach(function (): void {
     Queue::fake();
@@ -89,6 +92,73 @@ it('submits the link to LlamaParse and stores the parse job', function (string $
     'customer advisor link' => [CustomerAdvisorLink::class],
     'AI assistant link' => [AiAssistantLink::class],
 ]);
+
+it('does not submit a link that was deleted after this was queued', function (bool $refreshExistingParsingResults): void {
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->create(['parsing_results' => $refreshExistingParsingResults ? 'Existing parsing results' : null]);
+
+    $job = new SubmitAiLinkForParsing($link, $refreshExistingParsingResults);
+
+    $link->delete();
+
+    $job->handle(app(LlamaParseV2Client::class));
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_job_id)->toBeNull();
+})->with([
+    'new link' => [false],
+    'Keep Current refresh' => [true],
+]);
+
+it('marks a link as failed without submitting it once it could not be submitted within an hour', function (): void {
+    Exceptions::fake();
+    Http::fake();
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => null,
+        'parsing_last_checked_at' => now()->subMinutes(3),
+        'created_at' => now()->subHour()->subMinute(),
+    ]);
+
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+
+    expect($link->refresh()->parsing_failed_at)->not->toBeNull()
+        ->and($link->parsing_job_id)->toBeNull();
+
+    Http::assertNothingSent();
+    Exceptions::assertReported(AiLinkParsingFailedException::class);
+});
+
+it('does not mark a link as failed while its last submission within the hour is still in progress', function (): void {
+    Exceptions::fake();
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => null,
+        'parsing_last_checked_at' => now()->subMinutes(5),
+        'created_at' => now()->subMinutes(59),
+    ]);
+
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse' => function () {
+            travelTo(now()->addMinutes(2));
+
+            (new FetchAiFilesParsingResults())->handle();
+
+            return Http::response(['id' => 'pjb-123']);
+        },
+    ]);
+
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+
+    $link->refresh();
+
+    expect($link->parsing_job_id)->toBe('pjb-123')
+        ->and($link->parsing_failed_at)->toBeNull();
+
+    Exceptions::assertNotReported(AiLinkParsingFailedException::class);
+});
 
 it('does not change the `updated_at` of the link', function (): void {
     Http::fake([

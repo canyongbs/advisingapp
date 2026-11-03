@@ -47,6 +47,7 @@ it('submits only current links for refreshing', function (): void {
 
     $currentLink = CustomerAdvisorLink::factory()->create([
         'is_keep_current_enabled' => true,
+        'parsing_results' => 'Existing parsing results',
     ]);
 
     $nonCurrentLink = CustomerAdvisorLink::factory()->create([
@@ -77,20 +78,26 @@ it('does not submit current links that already have a parse job in progress', fu
     Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
 
-it('does not submit current links that are still being submitted for the first time', function (): void {
+it('does not submit current links that are still being submitted for the first time', function (Closure $applyState): void {
     Queue::fake();
 
-    CustomerAdvisorLink::factory()->create([
+    $applyState(CustomerAdvisorLink::factory())->create([
         'is_keep_current_enabled' => true,
         'parsing_results' => null,
-        'created_at' => now()->subMinutes(50),
-        'parsing_last_checked_at' => now()->subMinutes(3),
     ]);
 
     (new UpdateCurrentCustomerAdvisorLinks())->handle();
 
     Queue::assertNotPushed(SubmitAiLinkForParsing::class);
-});
+})->with([
+    'already tried' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->state([
+        'created_at' => now()->subMinutes(50),
+        'parsing_last_checked_at' => now()->subMinutes(3),
+    ])],
+    'not tried yet' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->state([
+        'created_at' => now()->subMinute(),
+    ])],
+]);
 
 it('submits current links without parsing results that failed or were never submitted', function (Closure $applyState): void {
     Queue::fake();

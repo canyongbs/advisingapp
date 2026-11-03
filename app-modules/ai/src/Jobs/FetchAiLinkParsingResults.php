@@ -76,8 +76,9 @@ class FetchAiLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUni
     {
         $this->link->refresh();
 
-        // The link may have finished, failed, or started another parsing job since this was dispatched.
-        if ($this->link->parsing_job_id !== $this->parsingJobId) {
+        // The link may have been removed, finished, failed, or started another parsing job since this was dispatched.
+        // Reloading it ignores the soft-delete scope, so a removed link must be checked for here.
+        if ($this->link->trashed() || ($this->link->parsing_job_id !== $this->parsingJobId)) {
             return;
         }
 

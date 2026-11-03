@@ -82,11 +82,19 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
     {
         $this->link->refresh();
 
-        if (filled($this->link->parsing_job_id)) {
+        // Reloading the link ignores the soft-delete scope, so a website removed after this was queued must be skipped here.
+        if ($this->link->trashed() || filled($this->link->parsing_job_id)) {
             return;
         }
 
         if ((! $this->refreshExistingParsingResults) && (filled($this->link->parsing_results) || filled($this->link->parsing_failed_at))) {
+            return;
+        }
+
+        // Giving up here, rather than in the every-minute sweep, means it can never happen while a submission of the same link is still waiting on LlamaParse.
+        if ((! $this->refreshExistingParsingResults) && filled($this->link->parsing_last_checked_at) && $this->link->created_at?->isBefore(now()->subHour())) {
+            $this->link->markParsingFailed('It could not be submitted to LlamaParse.');
+
             return;
         }
 

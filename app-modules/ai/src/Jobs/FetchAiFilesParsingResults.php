@@ -108,7 +108,8 @@ class FetchAiFilesParsingResults implements ShouldQueue
 
     /**
      * Gives up on links that were tried but could not be submitted within an hour of being added. Links that were
-     * never tried, such as ones from before LlamaParse, are left alone.
+     * never tried, such as ones from before LlamaParse, are left alone. The submission job marks them as failed, so
+     * that it never happens while a submission of the same link is still in progress.
      *
      * @param class-string<CustomerAdvisorLink|AiAssistantLink> $linkModel
      */
@@ -120,7 +121,7 @@ class FetchAiFilesParsingResults implements ShouldQueue
             ->whereNull('parsing_failed_at')
             ->whereNotNull('parsing_last_checked_at')
             ->where('created_at', '<', now()->subHour())
-            ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link) => $link->markParsingFailed('It could not be submitted to LlamaParse.'));
+            ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link): PendingDispatch => dispatch(new SubmitAiLinkForParsing($link)));
     }
 
     /**

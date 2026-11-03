@@ -130,8 +130,7 @@ it('does not submit links that have a parse job in progress or have failed', fun
     'failed' => [fn (CustomerAdvisorLinkFactory $factory): CustomerAdvisorLinkFactory => $factory->parsingFailed()],
 ]);
 
-it('marks links that could not be submitted within an hour as failed', function (): void {
-    Exceptions::fake();
+it('gives up on links that could not be submitted within an hour through the submission job', function (): void {
     Queue::fake();
 
     $link = CustomerAdvisorLink::factory()->create([
@@ -140,14 +139,9 @@ it('marks links that could not be submitted within an hour as failed', function 
         'parsing_last_checked_at' => now()->subMinutes(3),
     ]);
 
-    expect($link->parsing_failed_at)->toBeNull();
-
     (new FetchAiFilesParsingResults())->handle();
 
-    expect($link->refresh()->parsing_failed_at)->not->toBeNull();
-
-    Exceptions::assertReported(AiLinkParsingFailedException::class);
-    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
+    Queue::assertPushed(SubmitAiLinkForParsing::class, fn (SubmitAiLinkForParsing $job): bool => $job->uniqueId() === $link->getKey());
 });
 
 it('does not mark old links that were never submitted as failed', function (): void {
@@ -164,6 +158,7 @@ it('does not mark old links that were never submitted as failed', function (): v
     expect($link->refresh()->parsing_failed_at)->toBeNull();
 
     Exceptions::assertNotReported(AiLinkParsingFailedException::class);
+    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
 
 it('does not mark an old link as failed while its Keep Current refresh is waiting to be retried', function (): void {

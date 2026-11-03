@@ -42,7 +42,8 @@ trait HasLlamaParseParsingState
 {
     /**
      * Saves changes to the parsing state without updating `updated_at` or recording an audit. The vector store
-     * re-uploads a link whenever its `updated_at` changes, so only storing new parsing results should update it.
+     * re-uploads a link whenever its `updated_at` is newer than its vector store record, so only storing new parsing
+     * results should update it.
      */
     public function saveParsingState(): void
     {

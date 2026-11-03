@@ -37,11 +37,14 @@
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Http;
 
 // TODO: Cleanup Task (llamaparse-link-parsing): delete this file along with the `FetchAiAssistantLinkParsingResults` job.
 
 it('refreshes existing parsing results when explicitly requested', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);
@@ -61,6 +64,8 @@ it('refreshes existing parsing results when explicitly requested', function (): 
 });
 
 it('does not refresh existing parsing results when not explicitly requested', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);
@@ -77,4 +82,18 @@ it('does not refresh existing parsing results when not explicitly requested', fu
     $link->refresh();
 
     expect($link->parsing_results)->toBe('stale parsing results');
+});
+
+it('does not parse the link once LlamaParse link parsing is active', function (): void {
+    Http::fake();
+
+    $link = AiAssistantLink::factory()->create([
+        'parsing_results' => 'Existing parsing results',
+    ]);
+
+    (new FetchAiAssistantLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
+
+    Http::assertNothingSent();
+
+    expect($link->refresh()->parsing_results)->toBe('Existing parsing results');
 });

@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -69,6 +70,11 @@ class FetchCustomerAdvisorLinkParsingResults implements ShouldQueue, TenantAware
 
     public function handle(): void
     {
+        // A job queued before LlamaParse took over must not overwrite the parsing results that LlamaParse stores.
+        if (LlamaParseLinkParsingFeature::active()) {
+            return;
+        }
+
         if (filled($this->link->parsing_results) && ! $this->refreshExistingParsingResults) {
             return;
         }

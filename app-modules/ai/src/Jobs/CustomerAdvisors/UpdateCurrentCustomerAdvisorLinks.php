@@ -58,11 +58,14 @@ class UpdateCurrentCustomerAdvisorLinks implements ShouldQueue, TenantAware
             CustomerAdvisorLink::query()
                 ->where('is_keep_current_enabled', true)
                 ->whereNull('parsing_job_id')
-                // Links still being submitted for the first time are retried, and given up on, by the every-minute sweep.
+                // Links still being submitted for the first time, including ones added in the last hour that were not tried
+                // yet, are retried, and given up on, by the every-minute sweep.
                 ->whereNot(fn (Builder $query): Builder => $query
                     ->whereNull('parsing_results')
                     ->whereNull('parsing_failed_at')
-                    ->whereNotNull('parsing_last_checked_at'))
+                    ->where(fn (Builder $query): Builder => $query
+                        ->whereNotNull('parsing_last_checked_at')
+                        ->orWhere('created_at', '>=', now()->subHour())))
                 ->eachById(function (CustomerAdvisorLink $link): void {
                     dispatch(new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true));
                 });
