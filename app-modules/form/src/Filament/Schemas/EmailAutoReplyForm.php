@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
@@ -49,13 +50,17 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EmailAutoReplyForm
 {
-    public static function configure(Schema $schema): Schema
+    /**
+     * @param array<Component> $componentsAfterToggle
+     */
+    public static function configure(Schema $schema, array $componentsAfterToggle = []): Schema
     {
         return $schema
             ->components([
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),
+                ...$componentsAfterToggle,
                 RichEditor::make('subject')
                     ->toolbarButtons([])
                     ->minHeight(null)
