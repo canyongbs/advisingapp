@@ -93,6 +93,10 @@ class ProspectStatusSeeder extends Seeder
                 continue;
             }
 
+            if (! $desiredProtection) {
+                continue;
+             }
+
             // An earlier data migration provisions "New" and "Converted" with the default
             // is_system_protected = false. Reconcile existing rows to the required
             // classification and protection so lookups in ConvertToStudent and
