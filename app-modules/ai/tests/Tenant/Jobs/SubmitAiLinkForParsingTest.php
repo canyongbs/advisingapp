@@ -194,6 +194,22 @@ it('does not mark a link as failed while its last submission within the hour is 
     Exceptions::assertNotReported(AiLinkParsingFailedException::class);
 });
 
+it('does not ask LlamaParse to call the webhook in the local environment', function (): void {
+    app()['env'] = 'local';
+
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),
+    ]);
+
+    $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
+
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+
+    expect($link->refresh()->parsing_job_id)->toBe('pjb-123');
+
+    Http::assertSent(fn (Request $request): bool => ! array_key_exists('webhook_configurations', $request->data()));
+});
+
 it('does not change the `updated_at` of the link', function (): void {
     Http::fake([
         'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),
