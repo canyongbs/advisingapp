@@ -131,6 +131,26 @@ it('marks a link as failed without submitting it once it could not be submitted 
     Exceptions::assertReported(AiLinkParsingFailedException::class);
 });
 
+it('submits a link that was never tried, even after its first hour', function (): void {
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),
+    ]);
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => null,
+        'created_at' => now()->subHour()->subMinute(),
+    ]);
+
+    expect($link->parsing_last_checked_at)->toBeNull();
+
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+
+    $link->refresh();
+
+    expect($link->parsing_job_id)->toBe('pjb-123')
+        ->and($link->parsing_failed_at)->toBeNull();
+});
+
 it('does not mark a link as failed while its last submission within the hour is still in progress', function (): void {
     Exceptions::fake();
 

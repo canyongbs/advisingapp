@@ -35,10 +35,12 @@
 */
 
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 // TODO: Cleanup Task (llamaparse-link-parsing): delete this file along with the `FetchCustomerAdvisorLinkParsingResults` job.
 
@@ -84,16 +86,24 @@ it('does not refresh existing parsing results when not explicitly requested', fu
     expect($link->parsing_results)->toBe('stale parsing results');
 });
 
-it('does not parse the link once LlamaParse link parsing is active', function (): void {
+it('hands the link over to LlamaParse instead of parsing it once LlamaParse link parsing is active', function (?string $parsingResults, bool $refreshExistingParsingResults): void {
+    Queue::fake();
     Http::fake();
 
     $link = CustomerAdvisorLink::factory()->create([
-        'parsing_results' => 'Existing parsing results',
+        'parsing_results' => $parsingResults,
+        'created_at' => now()->subHour()->subMinute(),
     ]);
 
-    (new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
+    (new FetchCustomerAdvisorLinkParsingResults($link, $refreshExistingParsingResults))->handle();
 
     Http::assertNothingSent();
 
-    expect($link->refresh()->parsing_results)->toBe('Existing parsing results');
-});
+    Queue::assertPushed(SubmitAiLinkForParsing::class, fn (SubmitAiLinkForParsing $job): bool => ($job->uniqueId() === $link->getKey())
+        && ($job->refreshesExistingParsingResults() === $refreshExistingParsingResults));
+
+    expect($link->refresh()->parsing_results)->toBe($parsingResults);
+})->with([
+    'unparsed link' => [null, false],
+    'Keep Current refresh' => ['Existing parsing results', true],
+]);

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\LlamaParseLinkParsingFeature;
@@ -69,8 +70,10 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
 
     public function handle(): void
     {
-        // A job queued before LlamaParse took over must not overwrite the parsing results that LlamaParse stores.
+        // A job queued before LlamaParse took over hands the link over to LlamaParse, so it is neither parsed by Jina nor dropped.
         if (LlamaParseLinkParsingFeature::active()) {
+            dispatch(new SubmitAiLinkForParsing($this->link, $this->refreshExistingParsingResults));
+
             return;
         }
 
