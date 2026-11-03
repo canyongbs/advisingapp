@@ -43,17 +43,12 @@ class ProspectSourceSeeder extends Seeder
 {
     public function run(): void
     {
-        $sources = [
-            ['name' => 'Advising App'],
-            ['name' => 'Import'],
-        ];
-
-        foreach ($sources as $source) {
-            if (ProspectSource::query()->where('name', $source['name'])->exists()) {
-                continue;
-            }
-
-            ProspectSource::factory()->create($source);
-        }
+        ProspectSource::factory()
+            ->createMany(
+                [
+                    ['name' => 'Advising App'],
+                    ['name' => 'Import'],
+                ]
+            );
     }
 }

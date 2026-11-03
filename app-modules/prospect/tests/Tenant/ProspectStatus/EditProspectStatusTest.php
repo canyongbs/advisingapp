@@ -190,6 +190,36 @@ test('EditProspectStatus is gated with proper system protection access control',
 
 // Case-insensitive uniqueness
 
+test('allows saving a prospect status with its own existing name', function (): void {
+    asSuperAdmin();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'Engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('Engaged');
+});
+
+test('allows saving a prospect status with a different casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
+});
+
 test('does not allow updating a prospect status to a name matching another non-deleted prospect status case-insensitively', function (): void {
     asSuperAdmin();
 
@@ -222,7 +252,7 @@ test('allows updating a prospect status to a name freed up by a soft-deleted pro
     expect($prospectStatus->refresh()->name)->toBe('engaged');
 });
 
-test('rejects updating a prospect status to a soft-deleted name before the citext migration activates', function (): void {
+test('does not enforce name uniqueness when editing before the citext migration activates', function (): void {
     ProspectSourceAndStatusNameCitextFeature::deactivate();
 
     asSuperAdmin();
@@ -237,7 +267,7 @@ test('rejects updating a prospect status to a soft-deleted name before the citex
     ])
         ->fillForm(['name' => 'engaged'])
         ->call('save')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors(['name']);
 
-    expect($prospectStatus->refresh()->name)->toBe('Nurturing');
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
 });

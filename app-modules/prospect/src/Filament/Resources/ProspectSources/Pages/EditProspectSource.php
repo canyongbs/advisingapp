@@ -58,11 +58,12 @@ class EditProspectSource extends EditRecord
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    ->unique(
-                        ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                    ->when(
+                        ProspectSourceAndStatusNameCitextFeature::active(),
+                        fn (TextInput $input): TextInput => $input->unique(
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     ),
             ]);
     }

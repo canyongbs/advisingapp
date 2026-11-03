@@ -140,6 +140,36 @@ test('EditProspectSource is gated with proper access control', function (): void
 
 // Case-insensitive uniqueness
 
+test('allows saving a prospect source with its own existing name', function (): void {
+    asSuperAdmin();
+
+    $prospectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+
+    Livewire::test(EditProspectSource::class, [
+        'record' => $prospectSource->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'Referral'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectSource->refresh()->name)->toBe('Referral');
+});
+
+test('allows saving a prospect source with a different casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $prospectSource = ProspectSource::factory()->create(['name' => 'Referral']);
+
+    Livewire::test(EditProspectSource::class, [
+        'record' => $prospectSource->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'referral'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectSource->refresh()->name)->toBe('referral');
+});
+
 test('does not allow updating a prospect source to a name matching another non-deleted prospect source case-insensitively', function (): void {
     asSuperAdmin();
 
@@ -172,7 +202,7 @@ test('allows updating a prospect source to a name freed up by a soft-deleted pro
     expect($prospectSource->refresh()->name)->toBe('referral');
 });
 
-test('rejects updating a prospect source to a soft-deleted name before the citext migration activates', function (): void {
+test('does not enforce name uniqueness when editing before the citext migration activates', function (): void {
     ProspectSourceAndStatusNameCitextFeature::deactivate();
 
     asSuperAdmin();
@@ -187,7 +217,7 @@ test('rejects updating a prospect source to a soft-deleted name before the citex
     ])
         ->fillForm(['name' => 'referral'])
         ->call('save')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors(['name']);
 
-    expect($prospectSource->refresh()->name)->toBe('Walk In');
+    expect($prospectSource->refresh()->name)->toBe('referral');
 });

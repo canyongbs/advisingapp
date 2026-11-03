@@ -40,7 +40,6 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ProspectStatusSeeder extends Seeder
 {
@@ -109,15 +108,13 @@ class ProspectStatusSeeder extends Seeder
                 continue;
             }
 
-            // Use a direct update to bypass the is_system_protected mass-assignment guard.
-            // The modification-prevention trigger only blocks already-protected rows, so
-            // promoting a currently non-protected default to protected is permitted.
-            DB::table('prospect_statuses')
-                ->where('id', $existingStatus->getKey())
-                ->update([
-                    'classification' => $desiredClassification->value,
-                    'is_system_protected' => $desiredProtection,
-                ]);
+            // Use forceFill to bypass the is_system_protected mass-assignment guard while still
+            // touching updated_at. The modification-prevention trigger only blocks already-protected
+            // rows, so promoting a currently non-protected default to protected is permitted.
+            $existingStatus->forceFill([
+                'classification' => $desiredClassification,
+                'is_system_protected' => $desiredProtection,
+            ])->save();
         }
     }
 }

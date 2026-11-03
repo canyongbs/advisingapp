@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -57,42 +56,30 @@ return new class () extends Migration {
 
     private string $uniqueConstraint = 'prospect_sources_name_unique';
 
-    private string $lengthConstraint = 'prospect_sources_name_length';
-
     public function up(): void
     {
         DB::transaction(function (): void {
-            // TODO: Cleanup Task (prospect-source-status-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
+            // Prevents a concurrent insert between the duplicate scan and the unique index creation
             DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
 
+            // TODO: Cleanup Task (prospect-source-status-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
-
-            // citext has no length modifier, so preserve the original varchar(255) limit with a
-            // CHECK constraint. Without it, names longer than 255 chars could be stored here but
-            // would be rejected by the prospect create/update APIs' max:255 rule.
-            DB::statement("ALTER TABLE {$this->table} ADD CONSTRAINT {$this->lengthConstraint} CHECK (char_length({$this->column}) <= 255)");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            ProspectSourceAndStatusNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            ProspectSourceAndStatusNameCitextFeature::deactivate();
-
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
-
-            DB::statement("ALTER TABLE {$this->table} DROP CONSTRAINT {$this->lengthConstraint}");
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });

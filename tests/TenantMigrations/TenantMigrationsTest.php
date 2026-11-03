@@ -851,7 +851,7 @@ describe('alert statuses name citext change', function () {
 describe('prospect sources name citext change', function () {
     it('renames case-insensitive duplicate prospect source names', function () {
         isolatedMigration(
-            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            '2026_10_28_211902_convert_prospect_sources_name_to_citext',
             function () {
                 // Setup data before migration
                 $source1 = ProspectSource::factory()->create(['name' => 'Referral', 'created_at' => now()->subMinutes(3)]);
@@ -865,7 +865,7 @@ describe('prospect sources name citext change', function () {
                 DB::table('prospect_sources')->where('id', $deletedSource->getKey())->update(['deleted_at' => now()]);
 
                 // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 // Confirm migration ran successfully
                 expect($migrate)->toBe(Command::SUCCESS);
@@ -882,9 +882,9 @@ describe('prospect sources name citext change', function () {
 
     it('can be rolled back when a live prospect source reuses a soft-deleted prospect source name', function () {
         isolatedMigration(
-            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            '2026_10_28_211902_convert_prospect_sources_name_to_citext',
             function () {
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -895,7 +895,7 @@ describe('prospect sources name citext change', function () {
                 DB::table('prospect_sources')->where('id', $deletedSource->getKey())->update(['deleted_at' => now()]);
                 ProspectSource::factory()->create(['name' => 'Referral']);
 
-                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
             }
@@ -904,7 +904,7 @@ describe('prospect sources name citext change', function () {
 
     it('does not rename a case-variant duplicate prospect source onto an existing truncated name', function () {
         isolatedMigration(
-            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            '2026_10_28_211902_convert_prospect_sources_name_to_citext',
             function () {
                 // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
                 // chars + "-2", which can land on an unrelated live row that already holds that exact
@@ -918,7 +918,7 @@ describe('prospect sources name citext change', function () {
                 $source2 = ProspectSource::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
                 $source3 = ProspectSource::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -934,7 +934,7 @@ describe('prospect sources name citext change', function () {
 
     it('does not rename a case-variant duplicate prospect source onto a live name containing LIKE special characters', function () {
         isolatedMigration(
-            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            '2026_10_28_211902_convert_prospect_sources_name_to_citext',
             function () {
                 // Regression: the seed query that loads existing "<base>-<n>" names uses a SQL LIKE
                 // pattern. A base value containing LIKE special characters (\, %, _) must be escaped,
@@ -944,7 +944,7 @@ describe('prospect sources name citext change', function () {
                 $source2 = ProspectSource::factory()->create(['name' => 'a\\b', 'created_at' => now()->subMinutes(1)]);
                 $source3 = ProspectSource::factory()->create(['name' => 'a\\b-2', 'created_at' => now()]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -960,7 +960,7 @@ describe('prospect sources name citext change', function () {
 
     it('retains the canonical Advising App source even when an older custom source precedes it', function () {
         isolatedMigration(
-            '2026_10_28_130000_convert_prospect_sources_name_to_citext',
+            '2026_10_28_211902_convert_prospect_sources_name_to_citext',
             function () {
                 // Regression: form and application registrations resolve their source by the exact
                 // name "Advising App". If an older custom row shares that name case-insensitively,
@@ -969,7 +969,7 @@ describe('prospect sources name citext change', function () {
                 $olderCustom = ProspectSource::factory()->create(['name' => 'advising app', 'created_at' => now()->subMinutes(2)]);
                 $canonical = ProspectSource::factory()->create(['name' => 'Advising App', 'created_at' => now()->subMinutes(1)]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130000_convert_prospect_sources_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211902_convert_prospect_sources_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -986,7 +986,7 @@ describe('prospect sources name citext change', function () {
 describe('prospect statuses name citext change', function () {
     it('renames case-insensitive duplicate prospect status names', function () {
         isolatedMigration(
-            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
             function () {
                 // Setup data before migration
                 $status1 = ProspectStatus::factory()->create(['name' => 'Engaged', 'created_at' => now()->subMinutes(3)]);
@@ -1000,7 +1000,7 @@ describe('prospect statuses name citext change', function () {
                 DB::table('prospect_statuses')->where('id', $deletedStatus->getKey())->update(['deleted_at' => now()]);
 
                 // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 // Confirm migration ran successfully
                 expect($migrate)->toBe(Command::SUCCESS);
@@ -1017,9 +1017,9 @@ describe('prospect statuses name citext change', function () {
 
     it('can be rolled back when a live prospect status reuses a soft-deleted prospect status name', function () {
         isolatedMigration(
-            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
             function () {
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -1030,7 +1030,7 @@ describe('prospect statuses name citext change', function () {
                 DB::table('prospect_statuses')->where('id', $deletedStatus->getKey())->update(['deleted_at' => now()]);
                 ProspectStatus::factory()->create(['name' => 'Engaged']);
 
-                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
             }
@@ -1039,7 +1039,7 @@ describe('prospect statuses name citext change', function () {
 
     it('does not rename a case-variant duplicate prospect status onto an existing truncated name', function () {
         isolatedMigration(
-            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
             function () {
                 // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
                 // chars + "-2", which can land on an unrelated live row that already holds that exact
@@ -1053,7 +1053,7 @@ describe('prospect statuses name citext change', function () {
                 $status2 = ProspectStatus::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
                 $status3 = ProspectStatus::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -1069,7 +1069,7 @@ describe('prospect statuses name citext change', function () {
 
     it('does not rename a case-variant duplicate prospect status onto a live name containing LIKE special characters', function () {
         isolatedMigration(
-            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
             function () {
                 // Regression: the seed query that loads existing "<base>-<n>" names uses a SQL LIKE
                 // pattern. A base value containing LIKE special characters (\, %, _) must be escaped,
@@ -1079,7 +1079,7 @@ describe('prospect statuses name citext change', function () {
                 $status2 = ProspectStatus::factory()->create(['name' => 'a\\b', 'created_at' => now()->subMinutes(1)]);
                 $status3 = ProspectStatus::factory()->create(['name' => 'a\\b-2', 'created_at' => now()]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -1095,7 +1095,7 @@ describe('prospect statuses name citext change', function () {
 
     it('keeps system-protected statuses and renames their non-protected duplicates', function () {
         isolatedMigration(
-            '2026_10_28_130001_convert_prospect_statuses_name_to_citext',
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
             function () {
                 // Regression: the default "New" and "Converted" statuses are system-protected and are
                 // looked up by name + is_system_protected by ConvertToStudent and DisassociateStudent.
@@ -1108,7 +1108,7 @@ describe('prospect statuses name citext change', function () {
                 $userConverted = ProspectStatus::factory()->create(['name' => 'Converted', 'is_system_protected' => false, 'created_at' => now()->subMinutes(5)]);
                 $protectedConverted = ProspectStatus::factory()->create(['name' => 'Converted', 'is_system_protected' => true, 'created_at' => now()->subMinutes(1)]);
 
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_130001_convert_prospect_statuses_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
@@ -1118,6 +1118,33 @@ describe('prospect statuses name citext change', function () {
                 // The non-protected duplicates are renamed instead.
                 expect($userNew->refresh()->name)->toBe('New-2');
                 expect($userConverted->refresh()->name)->toBe('Converted-2');
+            }
+        );
+    });
+
+    it('unprotects renamed system-protected status duplicates so they remain manageable', function () {
+        isolatedMigration(
+            '2026_10_28_211903_convert_prospect_statuses_name_to_citext',
+            function () {
+                // Regression: a prior bug let the status seeder run more than once, creating multiple
+                // system-protected "New"/"Converted" rows. De-duplication keeps one per name and
+                // renames the rest with a numeric suffix. If those renamed extras stayed protected,
+                // the re-enabled modification-prevention trigger would make them permanently
+                // uneditable and undeletable through the app. They must be unprotected instead.
+                $keptNew = ProspectStatus::factory()->create(['name' => 'New', 'is_system_protected' => true, 'created_at' => now()->subMinutes(2)]);
+                $extraNew = ProspectStatus::factory()->create(['name' => 'New', 'is_system_protected' => true, 'created_at' => now()->subMinutes(1)]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/prospect/database/migrations/2026_10_28_211903_convert_prospect_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // One protected row is retained with its exact name and stays protected.
+                expect($keptNew->refresh()->name)->toBe('New');
+                expect($keptNew->refresh()->is_system_protected)->toBeTrue();
+
+                // The renamed extra is unprotected so it can be edited or deleted like any other status.
+                expect($extraNew->refresh()->name)->toBe('New-2');
+                expect($extraNew->refresh()->is_system_protected)->toBeFalse();
             }
         );
     });

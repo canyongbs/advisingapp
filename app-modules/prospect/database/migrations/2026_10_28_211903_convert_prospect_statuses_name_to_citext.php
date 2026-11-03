@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -57,45 +56,43 @@ return new class () extends Migration {
 
     private string $uniqueConstraint = 'prospect_statuses_name_unique';
 
-    private string $lengthConstraint = 'prospect_statuses_name_length';
-
     public function up(): void
     {
         DB::transaction(function (): void {
-            // TODO: Cleanup Task (prospect-source-status-citext) - remove the trigger toggle and the $this->fixDuplicates() call (the surrounding schema changes are permanent)
+            // TODO: Cleanup Task (prospect-source-status-citext) - remove the trigger toggle, the $this->fixDuplicates() call, and the renamed-protected-extras cleanup below (the surrounding schema changes are permanent)
 
             DB::statement("ALTER TABLE {$this->table} DISABLE TRIGGER prevent_modification_of_system_protected_rows");
 
             $this->fixDuplicates();
 
+            // A prior bug let the status seeder run more than once, producing multiple
+            // system-protected "New"/"Converted" rows. De-duplication keeps one per name and
+            // renames the rest with a numeric suffix, but those extras stay system-protected — so
+            // once the trigger is re-enabled they could never be edited or deleted through the app.
+            // Unprotect the renamed extras so they behave like ordinary statuses and remain
+            // manageable (their prospects keep pointing at them and can be reassigned later).
+            DB::table($this->table)
+                ->where('is_system_protected', true)
+                ->whereRaw("{$this->column} ~ ?", [$this->deduplicatedValuePattern()])
+                ->update(['is_system_protected' => false]);
+
             DB::statement("ALTER TABLE {$this->table} ENABLE TRIGGER prevent_modification_of_system_protected_rows");
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
-
-            // citext has no length modifier, so preserve the original varchar(255) limit with a
-            // CHECK constraint. Without it, names longer than 255 chars could be stored here but
-            // would be rejected by the prospect create/update APIs' max:255 rule.
-            DB::statement("ALTER TABLE {$this->table} ADD CONSTRAINT {$this->lengthConstraint} CHECK (char_length({$this->column}) <= 255)");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            ProspectSourceAndStatusNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            ProspectSourceAndStatusNameCitextFeature::deactivate();
-
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
-
-            DB::statement("ALTER TABLE {$this->table} DROP CONSTRAINT {$this->lengthConstraint}");
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });
