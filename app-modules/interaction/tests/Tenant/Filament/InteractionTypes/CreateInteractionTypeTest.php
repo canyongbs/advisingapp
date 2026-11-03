@@ -136,6 +136,37 @@ test('it can successfully create with the same name for different types', functi
     assertDatabaseHas(InteractionType::class, $prospectInteractionType->toArray());
 });
 
+test('it cannot create a name that only differs by case from an existing one of the same type', function (): void {
+    asSuperAdmin();
+
+    InteractionType::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+    $interactionType = InteractionType::factory()->make(['name' => 'PHONE', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(CreateInteractionType::class)
+        ->fillForm($interactionType->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    assertDatabaseCount(InteractionType::class, 1);
+});
+
+test('it can create with the name of a soft-deleted record of the same type', function (): void {
+    asSuperAdmin();
+
+    $deletedInteractionType = InteractionType::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $deletedInteractionType->delete();
+
+    $interactionType = InteractionType::factory()->make(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(CreateInteractionType::class)
+        ->fillForm($interactionType->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(InteractionType::class, ['name' => 'Phone', 'interactable_type' => InteractableType::Student, 'deleted_at' => null]);
+});
+
 test('it can successfully set a default per type', function (): void {
     asSuperAdmin();
 
