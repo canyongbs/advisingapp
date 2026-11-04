@@ -407,3 +407,27 @@ it('can start an export, sending a notification', function (): void {
         ->assertHasNoFormErrors()
         ->assertNotified();
 });
+
+it('does not list users or count interactions with archived students, including those from before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    $userWithBoth = User::factory()->create();
+    $userWithArchivedOnly = User::factory()->create();
+
+    Interaction::factory()->for($active, 'interactable')->for($userWithBoth, 'user')->create();
+    Interaction::factory()->for($archived, 'interactable')->for($userWithBoth, 'user')->create();
+    Interaction::factory()->for($archived, 'interactable')->for($userWithArchivedOnly, 'user')->create();
+
+    $archived->archive();
+
+    Livewire::test(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'pageFilters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$userWithBoth]))
+        ->assertCanNotSeeTableRecords(collect([$userWithArchivedOnly]))
+        ->assertTableColumnStateSet('total_interactions', 1, $userWithBoth)
+        // The only eligible interaction is theirs, so the share is out of eligible interactions too.
+        ->assertTableColumnStateSet('total_interactions_percent', '100%', $userWithBoth);
+});

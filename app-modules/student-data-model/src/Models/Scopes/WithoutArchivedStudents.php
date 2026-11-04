@@ -37,23 +37,22 @@
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Excludes students archived on or before a point in time — now by default, or the end
- * of the period being reported on when `asOf` is given, so a student archived after that
- * period still counts within it.
+ * Excludes students who are currently archived.
  *
  * Archived students are included by default, so apply this explicitly wherever students
- * are listed, searched or selected. It is deliberately not applied to `BelongsTo`
- * relationships, or to reports counting records that belong to students (engagements,
- * interactions), so existing history keeps resolving to who it belongs to.
+ * are listed, searched or selected. Reports apply it to the students that the records they
+ * count belong to (engagements, messages, interactions, concerns, tasks) as well, so a
+ * student's current archive status excludes them and all of their activity from every
+ * reported period, including periods before they were archived.
+ *
+ * It is deliberately not applied to `BelongsTo` relationships, so existing history keeps
+ * resolving to who it belongs to.
  */
 class WithoutArchivedStudents
 {
-    public function __construct(private ?CarbonInterface $asOf = null) {}
-
     /**
      * @param Builder<Student> $query
      *
@@ -61,14 +60,6 @@ class WithoutArchivedStudents
      */
     public function __invoke(Builder $query): Builder
     {
-        if (is_null($this->asOf)) {
-            return $query->withoutArchived();
-        }
-
-        $archivedAt = $query->getModel()->getQualifiedArchivedAtColumn();
-
-        return $query->where(fn (Builder $query): Builder => $query
-            ->whereNull($archivedAt)
-            ->orWhere($archivedAt, '>', $this->asOf));
+        return $query->withoutArchived();
     }
 }

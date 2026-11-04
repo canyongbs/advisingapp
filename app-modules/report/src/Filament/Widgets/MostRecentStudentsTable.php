@@ -85,7 +85,7 @@ class MostRecentStudentsTable extends BaseWidget
                 $groupId = $this->getSelectedGroup();
 
                 return Student::query()
-                    ->tap(new WithoutArchivedStudents(asOf: $endDate))
+                    ->tap(new WithoutArchivedStudents())
                     ->whereNotNull('created_at_source')
                     ->whereNull('deleted_at')
                     ->when(

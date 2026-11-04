@@ -79,7 +79,7 @@ class MostEngagedStudentsTable extends BaseWidget
         return $table
             ->query(function () use ($startDate, $endDate, $groupId) {
                 return Student::with('primaryEmailAddress:id,address')
-                    ->tap(new WithoutArchivedStudents(asOf: $endDate))
+                    ->tap(new WithoutArchivedStudents())
                     ->select('sisid', 'full_name', 'primary_email_id', 'archived_at')
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {

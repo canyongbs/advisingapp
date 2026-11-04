@@ -86,7 +86,7 @@ class StudentDeliverableTable extends BaseWidget
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id', 'archived_at')
-                    ->tap(new WithoutArchivedStudents(asOf: $endDate))
+                    ->tap(new WithoutArchivedStudents())
                     ->with(['primaryEmailAddress', 'primaryPhoneNumber'])
                     ->when(
                         $startDate instanceof Carbon && $endDate instanceof Carbon,
