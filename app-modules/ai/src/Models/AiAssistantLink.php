@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Database\Factories\AiAssistantLinkFactory;
+use AdvisingApp\Ai\Models\Concerns\HasLlamaParseParsingState;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
@@ -55,6 +56,7 @@ class AiAssistantLink extends BaseModel implements AiFile, Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
+    use HasLlamaParseParsingState;
 
     /** @use HasFactory<AiAssistantLinkFactory> */
     use HasFactory;
@@ -64,6 +66,12 @@ class AiAssistantLink extends BaseModel implements AiFile, Auditable
         'parsing_results',
         'url',
         'is_keep_current_enabled',
+    ];
+
+    protected $casts = [
+        'parsing_started_at' => 'datetime',
+        'parsing_last_checked_at' => 'datetime',
+        'parsing_failed_at' => 'datetime',
     ];
 
     /**

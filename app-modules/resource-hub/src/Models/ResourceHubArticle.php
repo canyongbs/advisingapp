@@ -44,7 +44,6 @@ use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\VideoRichContentPlugin;
-use DateTimeInterface;
 use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -260,10 +259,5 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
     public function openAiVectorStores(): MorphMany
     {
         return $this->morphMany(OpenAiVectorStore::class, 'file');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

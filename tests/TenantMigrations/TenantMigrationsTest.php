@@ -39,6 +39,7 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
@@ -845,6 +846,61 @@ describe('alert statuses name citext change', function () {
                 ConcernStatus::factory()->create(['name' => 'Under Review']);
 
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (consent-agreement-title-citext) - Delete this describe and everything contained within
+describe('consent agreements title citext change', function () {
+    it('renames case-insensitive duplicate consent agreement titles', function () {
+        isolatedMigration(
+            '2026_11_03_145546_convert_consent_agreements_title_to_citext',
+            function () {
+                // Setup data before migration
+                $consentAgreement1 = ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement', 'created_at' => now()->subMinutes(3)]);
+                $consentAgreement2 = ConsentAgreement::factory()->create(['title' => 'ai usage agreement', 'created_at' => now()->subMinutes(2)]);
+                $consentAgreement3 = ConsentAgreement::factory()->create(['title' => 'AI USAGE AGREEMENT', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted consent agreement sharing a title with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedConsentAgreement = ConsentAgreement::factory()->create(['title' => 'AI usage agreement', 'created_at' => now()->subMinutes(4)]);
+                DB::table('consent_agreements')->where('id', $deletedConsentAgreement->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its title, the rest are renumbered by their own original value
+                expect($consentAgreement1->refresh()->title)->toBe('AI Usage Agreement');
+                expect($consentAgreement2->refresh()->title)->toBe('ai usage agreement-2');
+                expect($consentAgreement3->refresh()->title)->toBe('AI USAGE AGREEMENT-3');
+                // Untouched: excluded from the live dedup group entirely, despite the title collision
+                expect($deletedConsentAgreement->refresh()->title)->toBe('AI usage agreement');
+            }
+        );
+    });
+
+    it('can be rolled back when a live consent agreement reuses a soft-deleted consent agreement title', function () {
+        isolatedMigration(
+            '2026_11_03_145546_convert_consent_agreements_title_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact title of a soft-deleted one.
+                $deletedConsentAgreement = ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement']);
+                DB::table('consent_agreements')->where('id', $deletedConsentAgreement->getKey())->update(['deleted_at' => now()]);
+                ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
             }

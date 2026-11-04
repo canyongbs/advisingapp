@@ -38,8 +38,10 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use App\Features\LlamaParseLinkParsingFeature;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Computed;
 use UnitEnum;
 
@@ -72,8 +74,21 @@ class PreviewCustomerAdvisor extends ViewRecord
 
         assert($advisor instanceof CustomerAdvisor);
 
+        if (! LlamaParseLinkParsingFeature::active()) {
+            // TODO: Cleanup Task (llamaparse-link-parsing): delete this whole `if` block, as the file check is repeated below.
+            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
+                || $advisor->links()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
+        }
+
+        // A link that still has content keeps the advisor usable, even when refreshing it failed.
         return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
-            || $advisor->links()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
+            || $advisor->links()
+                ->whereNull('parsing_results')
+                ->whereNull('parsing_job_id')
+                ->where(fn (Builder $query): Builder => $query
+                    ->whereNotNull('parsing_failed_at')
+                    ->orWhere('created_at', '<', now()->subHour()))
+                ->exists();
     }
 
     #[Computed]
@@ -83,7 +98,21 @@ class PreviewCustomerAdvisor extends ViewRecord
 
         assert($advisor instanceof CustomerAdvisor);
 
+        if (! LlamaParseLinkParsingFeature::active()) {
+            // TODO: Cleanup Task (llamaparse-link-parsing): delete this whole `if` block, as the file check is repeated below.
+            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
+                || $advisor->links()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();
+        }
+
+        // A link without content is still being learned while its parse job runs, or while it waits to be submitted.
         return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
-            || $advisor->links()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();
+            || $advisor->links()
+                ->whereNull('parsing_results')
+                ->where(fn (Builder $query): Builder => $query
+                    ->whereNotNull('parsing_job_id')
+                    ->orWhere(fn (Builder $query): Builder => $query
+                        ->whereNull('parsing_failed_at')
+                        ->where('created_at', '>=', now()->subHour())))
+                ->exists();
     }
 }

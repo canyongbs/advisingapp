@@ -41,7 +41,6 @@ use AdvisingApp\Notification\Observers\SubscriptionObserver;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use App\Models\User;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -95,10 +94,5 @@ class Subscription extends MorphPivot
         static::addGlobalScope('licensed', function (Builder $builder): void {
             $builder->tap(new LicensedToEducatable('subscribable'));
         });
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }
