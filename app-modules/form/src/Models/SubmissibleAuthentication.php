@@ -37,19 +37,28 @@
 namespace AdvisingApp\Form\Models;
 
 use App\Models\Attributes\NoPermissions;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property Carbon|null $created_at
  * @property-read Submissible $submissible
  */
 #[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+abstract class SubmissibleAuthentication extends Model
 {
+    /** @use HasFactory<Factory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use MassPrunable;
 
     abstract public function submissible(): BelongsTo;

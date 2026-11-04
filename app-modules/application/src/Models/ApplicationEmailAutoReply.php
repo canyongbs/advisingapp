@@ -36,24 +36,33 @@
 
 namespace AdvisingApp\Application\Models;
 
+use AdvisingApp\Application\Database\Factories\ApplicationEmailAutoReplyFactory;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\BaseModel;
 use App\Models\Media;
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperApplicationEmailAutoReply
  */
-class ApplicationEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
+class ApplicationEmailAutoReply extends Model implements HasMedia, HasRichContent
 {
+    /** @use HasFactory<ApplicationEmailAutoReplyFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     /** @use InteractsWithMedia<Media> */

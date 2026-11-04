@@ -37,16 +37,21 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Database\Factories\AiAssistantUseFactory;
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiAssistantUse
  */
-class AiAssistantUse extends BaseModel
+class AiAssistantUse extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     /** @use HasFactory<AiAssistantUseFactory> */
     use HasFactory;
 

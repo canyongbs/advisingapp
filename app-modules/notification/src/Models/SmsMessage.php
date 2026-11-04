@@ -36,17 +36,26 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Database\Factories\SmsMessageFactory;
 use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperSmsMessage
  */
-class SmsMessage extends BaseModel implements Message
+class SmsMessage extends Model implements Message
 {
+    /** @use HasFactory<SmsMessageFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $fillable = [
         'notification_class',
         'external_reference_id',

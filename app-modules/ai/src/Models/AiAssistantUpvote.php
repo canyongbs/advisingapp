@@ -37,16 +37,20 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiAssistantUpvote
  */
-class AiAssistantUpvote extends BaseModel
+class AiAssistantUpvote extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 

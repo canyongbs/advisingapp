@@ -37,6 +37,7 @@
 namespace AdvisingApp\Concern\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Concern\Database\Factories\ConcernFactory;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Concern\Observers\ConcernObserver;
@@ -48,10 +49,11 @@ use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
-use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -59,6 +61,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property-read (Subscribable&(Student|Prospect))|null $concern
@@ -66,8 +69,13 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin IdeHelperConcern
  */
 #[ObservedBy([ConcernObserver::class])]
-class Concern extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
+class Concern extends Model implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
+    /** @use HasFactory<ConcernFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
     use BelongsToEducatable;

@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\Form\Models;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property bool $is_required
@@ -48,8 +52,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Submissible $submissible
  * @property-read SubmissibleStep $step
  */
-abstract class SubmissibleField extends BaseModel
+abstract class SubmissibleField extends Model
 {
+    /** @use HasFactory<Factory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     abstract public function submissible(): BelongsTo;
 
     abstract public function step(): BelongsTo;

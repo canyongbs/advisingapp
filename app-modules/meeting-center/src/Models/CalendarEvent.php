@@ -36,19 +36,29 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\MeetingCenter\Database\Factories\CalendarEventFactory;
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCalendarEvent
  */
 #[ObservedBy([CalendarEventObserver::class])]
-class CalendarEvent extends BaseModel
+class CalendarEvent extends Model
 {
+    /** @use HasFactory<CalendarEventFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $fillable = [
         'title',
         'description',

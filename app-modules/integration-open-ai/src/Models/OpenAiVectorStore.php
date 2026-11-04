@@ -36,16 +36,24 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\IntegrationOpenAi\Database\Factories\OpenAiVectorStoreFactory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperOpenAiVectorStore
  */
-class OpenAiVectorStore extends BaseModel
+class OpenAiVectorStore extends Model
 {
+    /** @use HasFactory<OpenAiVectorStoreFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     public $fillable = [
