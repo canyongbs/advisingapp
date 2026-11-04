@@ -36,21 +36,30 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Engagement\Database\Factories\SmsTemplateFactory;
 use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
-use App\Models\BaseModel;
 use App\Models\User;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperSmsTemplate
  */
 #[ObservedBy([SmsTemplateObserver::class])]
-class SmsTemplate extends BaseModel implements HasRichContent
+class SmsTemplate extends Model implements HasRichContent
 {
+    /** @use HasFactory<SmsTemplateFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use InteractsWithRichContent;
     use SoftDeletes;
 
