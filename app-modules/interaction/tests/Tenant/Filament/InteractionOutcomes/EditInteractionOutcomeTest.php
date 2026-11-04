@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\EditInteractionOutcome;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -73,4 +74,46 @@ test('it cannot delete instances used by an interaction', function (): void {
 
     Livewire::test(EditInteractionOutcome::class, ['record' => $outcome->id])
         ->assertActionHidden('delete');
+});
+
+test('it cannot update the name to one that only differs by case from another of the same type', function (): void {
+    asSuperAdmin();
+
+    InteractionOutcome::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $interactionOutcome = InteractionOutcome::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionOutcome::class, ['record' => $interactionOutcome->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($interactionOutcome->refresh()->name)->toBe('Email');
+});
+
+test('it can update the name to one used by a soft-deleted record of the same type', function (): void {
+    asSuperAdmin();
+
+    $deletedInteractionOutcome = InteractionOutcome::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $deletedInteractionOutcome->delete();
+    $interactionOutcome = InteractionOutcome::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionOutcome::class, ['record' => $interactionOutcome->getKey()])
+        ->fillForm(['name' => 'Phone'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionOutcome->refresh()->name)->toBe('Phone');
+});
+
+test('it can change only the casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $interactionOutcome = InteractionOutcome::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionOutcome::class, ['record' => $interactionOutcome->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionOutcome->refresh()->name)->toBe('PHONE');
 });

@@ -46,6 +46,10 @@ use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
@@ -913,4 +917,8 @@ describe('interaction settings name citext change', function () {
 dataset('interaction setting citext migrations', [
     'interaction types' => ['2026_11_03_105100_convert_interaction_types_name_to_citext', InteractionType::class],
     'interaction statuses' => ['2026_11_03_105103_convert_interaction_statuses_name_to_citext', InteractionStatus::class],
+    'interaction drivers' => ['2026_11_03_105107_convert_interaction_drivers_name_to_citext', InteractionDriver::class],
+    'interaction outcomes' => ['2026_11_03_105111_convert_interaction_outcomes_name_to_citext', InteractionOutcome::class],
+    'interaction relations' => ['2026_11_03_105114_convert_interaction_relations_name_to_citext', InteractionRelation::class],
+    'interaction initiatives' => ['2026_11_03_105117_convert_interaction_initiatives_name_to_citext', InteractionInitiative::class],
 ]);
