@@ -36,18 +36,19 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperWorkflowRunStepRelated
  */
-class WorkflowRunStepRelated extends BaseModel
+class WorkflowRunStepRelated extends Model
 {
+    use UsesTenantConnection;
     use SoftDeletes;
     use HasUuids;
 

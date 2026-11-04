@@ -36,15 +36,25 @@
 
 namespace AdvisingApp\Team\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\Team\Database\Factories\DepartmentFactory;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperDepartment
  */
-class Department extends BaseModel
+class Department extends Model
 {
+    /** @use HasFactory<DepartmentFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $table = 'teams';
 
     protected $fillable = [

@@ -39,16 +39,18 @@ namespace AdvisingApp\StudentDataModel\Models;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Database\Factories\PhoneNumberLookupFactory;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperPhoneNumberLookup
  */
-class PhoneNumberLookup extends BaseModel
+class PhoneNumberLookup extends Model
 {
+    use UsesTenantConnection;
     use HasUuids;
 
     /** @use HasFactory<PhoneNumberLookupFactory> */

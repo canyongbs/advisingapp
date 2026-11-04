@@ -37,16 +37,21 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\StudentDataModel\Enums\StudentDataImportStatus;
-use App\Models\BaseModel;
 use App\Models\Import;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperStudentDataImport
  */
-class StudentDataImport extends BaseModel
+class StudentDataImport extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     public $fillable = [
         'job_batch_id',
         'started_at',
