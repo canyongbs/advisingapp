@@ -41,7 +41,6 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -76,10 +75,5 @@ class ProspectStatus extends BaseModel implements Auditable
     public function prospects(): HasMany
     {
         return $this->hasMany(Prospect::class, 'status_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

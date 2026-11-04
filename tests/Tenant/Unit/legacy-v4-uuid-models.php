@@ -20,15 +20,21 @@ use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
+use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
+use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationEmailAutoReply;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationStep;
@@ -49,6 +55,7 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -96,6 +103,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -109,12 +117,17 @@ use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Portal\Models\PortalAuthentication;
+use AdvisingApp\Portal\Models\PortalGuest;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
+use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ManagerResourceHubArticle;
@@ -131,6 +144,7 @@ use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Hold;
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -144,10 +158,12 @@ use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveyFieldSubmission;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveySubmission;
+use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Task\Models\ConfidentialTasksUsers;
 use AdvisingApp\Task\Models\DepartmentsConfidentialTasks;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
+use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Webhook\Models\InboundWebhook;
@@ -185,6 +201,8 @@ use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Settings\SettingsProperties\InstitutionDetailsSettingsProperty;
+use App\Settings\SettingsProperties\NotificationSettingsProperty;
 
 /*
 <COPYRIGHT>
@@ -411,4 +429,31 @@ return [
     Taggable::class,
     Tenant::class,
     User::class,
+
+    // These models were created after the UUIDv7 policy but inherited HasVersion4Uuids from BaseModel,
+    // so their tables only hold UUIDv4 IDs. They must stay on HasVersion4Uuids.
+    EmployeeAdvisorCategory::class,
+    EmployeeAdvisorQuestion::class,
+    AdultLearnerAlertConfiguration::class,
+    LowEarnedCreditPercentageAlertConfiguration::class,
+    NewStudentAlertConfiguration::class,
+    ApplicationEmailAutoReply::class,
+    ConcernHistory::class,
+    EventRegistrationFormEmailAutoReply::class,
+    PortalGuest::class,
+    ResourceHubArticleVote::class,
+    ReportDepartmentAccess::class,
+    ReportUserAccess::class,
+    TaskHistory::class,
+
+    // PhoneNumberLookup declares HasUuids (UUIDv7) itself, which overrides the HasVersion4Uuids it inherits
+    // from BaseModel, so it already generates UUIDv7 IDs. It is listed only while it still extends BaseModel.
+    PhoneNumberLookup::class,
+
+    // These settings properties inherit HasVersion4Uuids from SettingsProperty and share its table,
+    // which only holds UUIDv4 IDs. They must stay on HasVersion4Uuids.
+    PortalSettingsProperty::class,
+    ThemeSettingsProperty::class,
+    InstitutionDetailsSettingsProperty::class,
+    NotificationSettingsProperty::class,
 ];
