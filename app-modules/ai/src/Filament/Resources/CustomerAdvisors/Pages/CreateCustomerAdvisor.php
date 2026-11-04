@@ -40,15 +40,18 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
+use App\Features\AdvisorNameCitextFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateCustomerAdvisor extends CreateRecord
 {
@@ -62,7 +65,15 @@ class CreateCustomerAdvisor extends CreateRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    // TODO: Cleanup Task (advisor-name-citext) - replace ->when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
+                    ->when(
+                        AdvisorNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
+                    )
+                    ->columnSpanFull(),
                 Select::make('model')
                     ->live()
                     ->options(fn (AiModel|string|null $state): array => array_unique([
@@ -86,28 +97,33 @@ class CreateCustomerAdvisor extends CreateRecord
                         }
 
                         return $settings->preselected_model;
-                    }),
+                    })
+                    ->columnSpanFull(),
                 Textarea::make('description')
                     ->maxLength(65535)
-                    ->required(),
-                Toggle::make('is_introductory_message_enabled')
-                    ->label('Enable Introductory Message')
-                    ->live()
-                    ->default(false),
-                Toggle::make('is_introductory_message_dynamic')
-                    ->label('Dynamic')
-                    ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
-                        ? 'AI will greet the student or prospect.'
-                        : 'Specify a custom introductory message below.')
-                    ->live()
-                    ->default(true)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
-                Textarea::make('introductory_message')
-                    ->label('Introductory Message')
-                    ->helperText('Specify the plain text introductory message.')
-                    ->maxLength(65535)
-                    ->rows(4)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                    ->required()
+                    ->columnSpanFull(),
+                Section::make('Introductory Message')
+                    ->schema([
+                        Toggle::make('is_introductory_message_enabled')
+                            ->label('Enable Introductory Message')
+                            ->live()
+                            ->default(false),
+                        Toggle::make('is_introductory_message_dynamic')
+                            ->label('Dynamic')
+                            ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
+                                ? 'AI will greet the student or prospect.'
+                                : 'Specify a custom introductory message below.')
+                            ->live()
+                            ->default(true)
+                            ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
+                        Textarea::make('introductory_message')
+                            ->label('Introductory Message')
+                            ->helperText('Specify the plain text introductory message.')
+                            ->maxLength(65535)
+                            ->rows(4)
+                            ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                    ]),
             ]);
     }
 
