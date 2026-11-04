@@ -51,6 +51,7 @@ use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Field;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportTesting\Testable;
@@ -605,6 +606,23 @@ describe('email auto reply tab', function () use ($getTabLabels, $richText): voi
                 'emailAutoReply.subject' => $richText('Thanks for registering'),
                 'emailAutoReply.body' => $richText('We look forward to seeing you.'),
             ], 'emailAutoReplyForm');
+    });
+
+    it('displays the enabled toggle before the delivery preference', function (): void {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        $page = Livewire::withQueryParams(['tab' => 'email-auto-reply'])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->instance();
+
+        $fieldNames = array_map(
+            fn (Field $field): string => $field->getName(),
+            array_values($page->emailAutoReplyForm->getFlatFields()),
+        );
+
+        expect(array_slice($fieldNames, 0, 3))->toBe(['is_enabled', 'delivery_preference', 'subject']);
     });
 
     it('can save the email auto reply', function () use ($richText): void {

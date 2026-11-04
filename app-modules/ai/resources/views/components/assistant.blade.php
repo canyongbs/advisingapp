@@ -32,8 +32,11 @@
     </COPYRIGHT>
 --}}
 @php
+    use App\Settings\DisplaySettings;
     use Filament\Support\Enums\Size;
     use Illuminate\Support\Facades\Vite;
+
+    $timezone = app(DisplaySettings::class)->getTimezone();
 @endphp
 
 <div class="h-[calc(100dvh-4rem)]">
@@ -320,6 +323,7 @@
                                         year: 'numeric',
                                         month: 'short',
                                         day: 'numeric',
+                                        timeZone: @js($timezone),
                                     }),
                                     updateTitle: function (event) {
                                         if (event.detail.threadId === thread.id) {
@@ -327,6 +331,7 @@
                                                 year: 'numeric',
                                                 month: 'short',
                                                 day: 'numeric',
+                                                timeZone: @js($timezone),
                                             })
                                         }
                                     },

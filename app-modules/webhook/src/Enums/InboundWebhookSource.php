@@ -43,4 +43,6 @@ enum InboundWebhookSource: string
     case AwsSns = 'aws_sns';
 
     case Telnyx = 'telnyx';
+
+    case LlamaParse = 'llamaparse';
 }

@@ -40,8 +40,20 @@ use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\PreviewAdvisorEmbedController;
+use AdvisingApp\Ai\Http\Controllers\LlamaParseInboundWebhookController;
 use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
+use AdvisingApp\Ai\Http\Middleware\LogLlamaParseRequest;
+use AdvisingApp\Ai\Http\Middleware\VerifyLlamaParseWebhookSignature;
+use App\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Route;
+
+Route::post('inbound/webhook/llamaparse', LlamaParseInboundWebhookController::class)
+    ->middleware([
+        VerifyLlamaParseWebhookSignature::class,
+        LogLlamaParseRequest::class,
+    ])
+    ->withoutMiddleware(TrimStrings::class)
+    ->name('inbound.webhook.llamaparse');
 
 Route::middleware(['web', 'auth', EnsureEnterpriseAiFeatureIsActive::class])
     ->name('ai.')

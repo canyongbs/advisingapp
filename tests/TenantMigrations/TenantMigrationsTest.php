@@ -39,12 +39,14 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
@@ -472,6 +474,92 @@ describe('basic needs programs name citext change', function () {
     });
 });
 
+// TODO: Cleanup Task (booking-group-name-citext) - Delete this describe and everything contained within
+describe('booking groups name citext change', function () {
+    it('renames case-insensitive duplicate booking group names', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                // Setup data before migration
+                $bookingGroup1 = BookingGroup::factory()->create(['name' => 'Advising Team', 'created_at' => now()->subMinutes(3)]);
+                $bookingGroup2 = BookingGroup::factory()->create(['name' => 'advising team', 'created_at' => now()->subMinutes(2)]);
+                $bookingGroup3 = BookingGroup::factory()->create(['name' => 'ADVISING TEAM', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted booking group sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering nor get
+                // renamed itself.
+                $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising team', 'created_at' => now()->subMinutes(4)]);
+                DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($bookingGroup1->refresh()->name)->toBe('Advising Team');
+                expect($bookingGroup2->refresh()->name)->toBe('advising team-2');
+                expect($bookingGroup3->refresh()->name)->toBe('ADVISING TEAM-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedBookingGroup->refresh()->name)->toBe('Advising team');
+            }
+        );
+    });
+
+    it('can be rolled back when a live booking group reuses a soft-deleted booking group name', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedBookingGroup = BookingGroup::factory()->create(['name' => 'Advising Team']);
+                DB::table('booking_groups')->where('id', $deletedBookingGroup->getKey())->update(['deleted_at' => now()]);
+                BookingGroup::factory()->create(['name' => 'Advising Team']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate booking group onto an existing truncated name', function () {
+        isolatedMigration(
+            '2026_10_28_120000_convert_booking_groups_name_to_citext',
+            function () {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $bookingGroup1 = BookingGroup::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $bookingGroup2 = BookingGroup::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $bookingGroup3 = BookingGroup::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_10_28_120000_convert_booking_groups_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($bookingGroup1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($bookingGroup2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($bookingGroup3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
 // TODO: Cleanup Task (campaign-name-citext) - Delete this describe and everything contained within
 describe('campaigns name citext change', function () {
     it('renames case-insensitive duplicate campaign names', function () {
@@ -704,61 +792,6 @@ describe('sms templates name citext change', function (): void {
     });
 });
 
-// TODO: Cleanup Task (alert-status-name-citext) - Delete this describe and everything contained within
-describe('alert statuses name citext change', function () {
-    it('renames case-insensitive duplicate alert status names', function () {
-        isolatedMigration(
-            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
-            function () {
-                // Setup data before migration
-                $concernStatus1 = ConcernStatus::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
-                $concernStatus2 = ConcernStatus::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
-                $concernStatus3 = ConcernStatus::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
-
-                // A soft-deleted alert status sharing a name with the live duplicate group must be
-                // ignored by de-duplication: it should neither affect the live renumbering
-                // nor get renamed itself.
-                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
-                $deletedConcernStatus->delete();
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // The oldest live record keeps its name, the rest are renumbered by their own original value
-                expect($concernStatus1->refresh()->name)->toBe('Under Review');
-                expect($concernStatus2->refresh()->name)->toBe('under review-2');
-                expect($concernStatus3->refresh()->name)->toBe('UNDER REVIEW-3');
-                // Untouched: excluded from the live dedup group entirely, despite the name collision
-                expect($deletedConcernStatus->refresh()->name)->toBe('Under review');
-            }
-        );
-    });
-
-    it('can be rolled back when a live alert status reuses a soft-deleted alert status name', function () {
-        isolatedMigration(
-            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
-            function () {
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
-                // so a live record may reuse the exact name of a soft-deleted one.
-                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
-                $deletedConcernStatus->delete();
-                ConcernStatus::factory()->create(['name' => 'Under Review']);
-
-                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                expect($rollback)->toBe(Command::SUCCESS);
-            }
-        );
-    });
-});
-
 // TODO: Cleanup Task (workflow-name-citext) - Delete this describe and everything contained within
 describe('workflows name citext change', function (): void {
     it('renames case-insensitive duplicate workflow names', function (): void {
@@ -833,6 +866,116 @@ describe('workflows name citext change', function (): void {
                 expect($workflow1->refresh()->name)->toBe($maxLengthUpper);
                 expect($workflow2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 expect($workflow3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (alert-status-name-citext) - Delete this describe and everything contained within
+describe('alert statuses name citext change', function () {
+    it('renames case-insensitive duplicate alert status names', function () {
+        isolatedMigration(
+            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
+            function () {
+                // Setup data before migration
+                $concernStatus1 = ConcernStatus::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
+                $concernStatus2 = ConcernStatus::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
+                $concernStatus3 = ConcernStatus::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted alert status sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
+                $deletedConcernStatus->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($concernStatus1->refresh()->name)->toBe('Under Review');
+                expect($concernStatus2->refresh()->name)->toBe('under review-2');
+                expect($concernStatus3->refresh()->name)->toBe('UNDER REVIEW-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedConcernStatus->refresh()->name)->toBe('Under review');
+            }
+        );
+    });
+
+    it('can be rolled back when a live alert status reuses a soft-deleted alert status name', function () {
+        isolatedMigration(
+            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one.
+                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
+                $deletedConcernStatus->delete();
+                ConcernStatus::factory()->create(['name' => 'Under Review']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (consent-agreement-title-citext) - Delete this describe and everything contained within
+describe('consent agreements title citext change', function () {
+    it('renames case-insensitive duplicate consent agreement titles', function () {
+        isolatedMigration(
+            '2026_11_03_145546_convert_consent_agreements_title_to_citext',
+            function () {
+                // Setup data before migration
+                $consentAgreement1 = ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement', 'created_at' => now()->subMinutes(3)]);
+                $consentAgreement2 = ConsentAgreement::factory()->create(['title' => 'ai usage agreement', 'created_at' => now()->subMinutes(2)]);
+                $consentAgreement3 = ConsentAgreement::factory()->create(['title' => 'AI USAGE AGREEMENT', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted consent agreement sharing a title with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedConsentAgreement = ConsentAgreement::factory()->create(['title' => 'AI usage agreement', 'created_at' => now()->subMinutes(4)]);
+                DB::table('consent_agreements')->where('id', $deletedConsentAgreement->getKey())->update(['deleted_at' => now()]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its title, the rest are renumbered by their own original value
+                expect($consentAgreement1->refresh()->title)->toBe('AI Usage Agreement');
+                expect($consentAgreement2->refresh()->title)->toBe('ai usage agreement-2');
+                expect($consentAgreement3->refresh()->title)->toBe('AI USAGE AGREEMENT-3');
+                // Untouched: excluded from the live dedup group entirely, despite the title collision
+                expect($deletedConsentAgreement->refresh()->title)->toBe('AI usage agreement');
+            }
+        );
+    });
+
+    it('can be rolled back when a live consent agreement reuses a soft-deleted consent agreement title', function () {
+        isolatedMigration(
+            '2026_11_03_145546_convert_consent_agreements_title_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact title of a soft-deleted one.
+                $deletedConsentAgreement = ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement']);
+                DB::table('consent_agreements')->where('id', $deletedConsentAgreement->getKey())->update(['deleted_at' => now()]);
+                ConsentAgreement::factory()->create(['title' => 'AI Usage Agreement']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/consent/database/migrations/2026_11_03_145546_convert_consent_agreements_title_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
             }
         );
     });

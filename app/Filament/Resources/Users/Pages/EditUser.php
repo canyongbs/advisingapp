@@ -113,10 +113,10 @@ class EditUser extends EditRecord
                             })
                             ->disabled(fn (User $record): bool => $record->isAdmin()),
                         TextInput::make('created_at')
-                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format('Y-m-d H:i:s'))
                             ->disabled(),
                         TextInput::make('updated_at')
-                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                            ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format('Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
                 Section::make('Department')
