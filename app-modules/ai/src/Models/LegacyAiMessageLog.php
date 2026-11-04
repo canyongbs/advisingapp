@@ -37,15 +37,20 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiMessageLogFeature;
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperLegacyAiMessageLog
  */
-class LegacyAiMessageLog extends BaseModel
+class LegacyAiMessageLog extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $table = 'assistant_chat_message_logs';
 
     protected $fillable = [

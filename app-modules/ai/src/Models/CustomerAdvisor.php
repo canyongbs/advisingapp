@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorFactory;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -43,10 +44,12 @@ use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use App\Models\BaseModel;
 use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -56,13 +59,19 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCustomerAdvisor
  */
 #[ObservedBy([CustomerAdvisorObserver::class])]
-class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
+class CustomerAdvisor extends Model implements HasMedia, Auditable
 {
+    /** @use HasFactory<CustomerAdvisorFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use CanAddAssistantLicenseGlobalScope;
 
     /** @use InteractsWithMedia<Media> */

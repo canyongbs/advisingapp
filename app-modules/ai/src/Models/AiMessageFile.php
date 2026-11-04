@@ -36,23 +36,32 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\AiMessageFileFactory;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use App\Models\BaseModel;
 use App\Models\Media;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiMessageFile
  */
-class AiMessageFile extends BaseModel implements AiFile, HasMedia
+class AiMessageFile extends Model implements AiFile, HasMedia
 {
+    /** @use HasFactory<AiMessageFileFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     /** @use InteractsWithMedia<Media> */

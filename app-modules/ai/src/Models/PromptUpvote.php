@@ -36,16 +36,20 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperPromptUpvote
  */
-class PromptUpvote extends BaseModel
+class PromptUpvote extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     protected $fillable = [

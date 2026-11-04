@@ -36,19 +36,28 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorThreadFactory;
 use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCustomerAdvisorThread
  */
-class CustomerAdvisorThread extends BaseModel
+class CustomerAdvisorThread extends Model
 {
+    /** @use HasFactory<CustomerAdvisorThreadFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     public $fillable = [
         'advisor_id',
         'author_type',
