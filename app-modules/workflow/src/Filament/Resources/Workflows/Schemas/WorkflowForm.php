@@ -48,22 +48,33 @@ class WorkflowForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $record = $schema->getRecord();
+
+        $nameInput = TextInput::make('name')
+            ->required()
+            ->maxLength(255);
+
+        // Only enforce uniqueness once the citext migration has run. Before then no unique
+        // index exists and duplicate default names (e.g. "Form Workflow") are legitimate, so
+        // the rule must be fully disabled to avoid blocking edits (even just toggling enabled)
+        // on those pre-existing duplicates. When active, uniqueness is scoped to the owning
+        // record so workflows for different objects may share a name.
+        if (WorkflowNameCitextFeature::active() && $record instanceof Workflow) {
+            $nameInput = $nameInput->unique(
+                ignoreRecord: true,
+                modifyRuleUsing: fn (Unique $rule): Unique => $rule
+                    ->where('related_type', $record->related_type)
+                    ->where('related_id', $record->related_id)
+                    ->withoutTrashed(),
+            );
+        }
+
         $schema = $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->unique(
-                    ignoreRecord: true,
-                    modifyRuleUsing: fn (Unique $rule): Unique => WorkflowNameCitextFeature::active()
-                        ? $rule->withoutTrashed()
-                        : $rule,
-                ),
+            $nameInput,
             Toggle::make('is_enabled')
                 ->label('Enabled?')
                 ->inline(false),
         ]);
-
-        $record = $schema->getRecord();
 
         if ($record instanceof Workflow) {
             $typeFormClass = app(WorkflowTypeFormRegistry::class)

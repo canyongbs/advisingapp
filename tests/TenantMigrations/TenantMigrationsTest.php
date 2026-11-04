@@ -43,6 +43,7 @@ use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
@@ -52,7 +53,9 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
+use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
@@ -794,18 +797,28 @@ describe('sms templates name citext change', function (): void {
 
 // TODO: Cleanup Task (workflow-name-citext) - Delete this describe and everything contained within
 describe('workflows name citext change', function (): void {
-    it('renames case-insensitive duplicate workflow names', function (): void {
+    // Scope every workflow in a group to the same owning record (the trigger's related), since
+    // uniqueness is enforced per owner. A fresh trigger is needed per workflow (1:1), all pointing
+    // at the same Form.
+    $triggerFor = fn (Form $form): WorkflowTriggerFactory => WorkflowTrigger::factory()->state([
+        'related_type' => $form->getMorphClass(),
+        'related_id' => $form->getKey(),
+    ]);
+
+    it('renames case-insensitive duplicate workflow names within the same owner', function () use ($triggerFor): void {
         isolatedMigration(
             '2026_11_03_130000_convert_workflows_name_to_citext',
-            function (): void {
-                $workflow1 = Workflow::factory()->create(['name' => 'Form Workflow', 'created_at' => now()->subMinutes(3)]);
-                $workflow2 = Workflow::factory()->create(['name' => 'form workflow', 'created_at' => now()->subMinutes(2)]);
-                $workflow3 = Workflow::factory()->create(['name' => 'FORM WORKFLOW', 'created_at' => now()->subMinutes(1)]);
+            function () use ($triggerFor): void {
+                $form = Form::factory()->create();
+
+                $workflow1 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow', 'created_at' => now()->subMinutes(3)]);
+                $workflow2 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'form workflow', 'created_at' => now()->subMinutes(2)]);
+                $workflow3 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'FORM WORKFLOW', 'created_at' => now()->subMinutes(1)]);
 
                 // A soft-deleted workflow sharing a name with the live duplicate group must be
                 // ignored by de-duplication: it should neither affect the live renumbering
                 // nor get renamed itself.
-                $deletedWorkflow = Workflow::factory()->create(['name' => 'Form workflow', 'created_at' => now()->subMinutes(4)]);
+                $deletedWorkflow = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form workflow', 'created_at' => now()->subMinutes(4)]);
                 $deletedWorkflow->delete();
 
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
@@ -819,26 +832,50 @@ describe('workflows name citext change', function (): void {
                 // Untouched: excluded from the live dedup group entirely, despite the name collision
                 expect($deletedWorkflow->refresh()->name)->toBe('Form workflow');
 
-                expect(fn () => Workflow::factory()->create(['name' => 'form WORKFLOW']))
+                // A further duplicate under the same owner is rejected by the scoped unique index.
+                expect(fn () => Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'form WORKFLOW']))
                     ->toThrow(QueryException::class);
             }
         );
     });
 
-    it('can be rolled back when a live workflow reuses a soft-deleted workflow name', function (): void {
+    it('allows workflows for different owners to share a name', function () use ($triggerFor): void {
         isolatedMigration(
             '2026_11_03_130000_convert_workflows_name_to_citext',
-            function (): void {
+            function () use ($triggerFor): void {
+                $formA = Form::factory()->create();
+                $formB = Form::factory()->create();
+
+                Workflow::factory()->for($triggerFor($formA), 'workflowTrigger')->create(['name' => 'Shared Workflow']);
+
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
+                // A workflow owned by a different record may reuse the same name case-insensitively.
+                $workflowB = Workflow::factory()->for($triggerFor($formB), 'workflowTrigger')->create(['name' => 'shared workflow']);
+
+                expect($workflowB->refresh()->name)->toBe('shared workflow');
+            }
+        );
+    });
+
+    it('can be rolled back when a live workflow reuses a soft-deleted workflow name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $form = Form::factory()->create();
+
                 // Valid post-migration data: the partial unique index ignores soft-deleted rows,
                 // so a live record may reuse the exact name of a soft-deleted one. down() must
                 // restore a partial (not all-row) index so this data does not break the rollback.
-                $deletedWorkflow = Workflow::factory()->create(['name' => 'Form Workflow']);
+                $deletedWorkflow = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow']);
                 $deletedWorkflow->delete();
-                Workflow::factory()->create(['name' => 'Form Workflow']);
+                Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow']);
 
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
 
@@ -847,17 +884,19 @@ describe('workflows name citext change', function (): void {
         );
     });
 
-    it('does not rename a case-variant duplicate onto an existing truncated name', function (): void {
+    it('does not rename a case-variant duplicate onto an existing truncated name', function () use ($triggerFor): void {
         isolatedMigration(
             '2026_11_03_130000_convert_workflows_name_to_citext',
-            function (): void {
+            function () use ($triggerFor): void {
+                $form = Form::factory()->create();
+
                 $maxLengthUpper = str_repeat('A', 255);
                 $maxLengthLower = str_repeat('a', 255);
                 $truncatedCollision = str_repeat('a', 253) . '-2';
 
-                $workflow1 = Workflow::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
-                $workflow2 = Workflow::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
-                $workflow3 = Workflow::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+                $workflow1 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $workflow2 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $workflow3 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $truncatedCollision, 'created_at' => now()]);
 
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
 

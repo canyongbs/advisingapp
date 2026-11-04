@@ -42,6 +42,7 @@ use App\Features\WorkflowNameCitextFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -71,15 +72,16 @@ class Workflow extends BaseModel implements Auditable
     ];
 
     /**
-     * Build a workflow name that is unique case-insensitively among non-deleted
-     * workflows, appending an incrementing "-2", "-3", ... suffix when needed.
+     * Build a workflow name that is unique case-insensitively among non-deleted workflows
+     * belonging to the same owning record ($related), appending an incrementing "-2", "-3",
+     * ... suffix when needed.
      *
-     * Once the citext migration has run the name column is case-insensitively
-     * unique (ignoring soft-deleted rows), so fixed-name creation processes must
-     * resolve collisions up front rather than hitting the unique index. Before the
-     * migration activates the original base name is returned unchanged.
+     * Once the citext migration has run the name column is case-insensitively unique per
+     * owner (ignoring soft-deleted rows), so fixed-name creation processes must resolve
+     * collisions up front rather than hitting the unique index. Before the migration
+     * activates the original base name is returned unchanged.
      */
-    public static function generateUniqueName(string $baseName): string
+    public static function generateUniqueName(string $baseName, Model $related): string
     {
         if (! WorkflowNameCitextFeature::active()) {
             return $baseName;
@@ -90,6 +92,8 @@ class Workflow extends BaseModel implements Auditable
 
         while (
             static::query()
+                ->where('related_type', $related->getMorphClass())
+                ->where('related_id', $related->getKey())
                 ->where('name', Str::lower($name))
                 ->exists()
         ) {
@@ -114,5 +118,36 @@ class Workflow extends BaseModel implements Auditable
     public function workflowSteps(): HasMany
     {
         return $this->hasMany(WorkflowStep::class);
+    }
+
+    /**
+     * Keep the denormalized owner (related_type/related_id) in sync with the workflow's
+     * trigger on creation. These columns exist only to scope the case-insensitive unique
+     * index on `name` to the owning record, so a Form workflow and an Application workflow
+     * may share a name while duplicates within the same owner are rejected.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Workflow $workflow): void {
+            // The related_type/related_id columns only exist once the citext migration has
+            // run, and that migration activates the flag. Gating on it keeps pre-migration
+            // inserts (which run before the columns exist) from writing to absent columns.
+            if (! WorkflowNameCitextFeature::active()) {
+                return;
+            }
+
+            if ($workflow->getAttribute('related_type') !== null || $workflow->getAttribute('related_id') !== null) {
+                return;
+            }
+
+            $trigger = $workflow->workflowTrigger;
+
+            if ($trigger === null) {
+                return;
+            }
+
+            $workflow->setAttribute('related_type', $trigger->related_type);
+            $workflow->setAttribute('related_id', $trigger->related_id);
+        });
     }
 }

@@ -50,6 +50,15 @@ return new class () extends Migration {
 
     protected string $column = 'name';
 
+    /**
+     * Workflow names are unique per owning record (the trigger's related object), so a Form
+     * workflow and an Application workflow may share a name. The owner lives on
+     * workflow_triggers, so it is denormalized onto workflows to allow a scoped unique index.
+     *
+     * @var array<int, string>
+     */
+    protected array $groupByColumns = ['related_type', 'related_id'];
+
     // TODO: Cleanup Task (workflow-name-citext) - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
 
@@ -60,15 +69,30 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function (): void {
-            // TODO: Cleanup Task (workflow-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
 
+            Schema::table($this->table, function (Blueprint $table): void {
+                $table->string('related_type')->nullable();
+                $table->string('related_id')->nullable();
+            });
+
+            // Denormalize the owning record from the workflow's trigger so the uniqueness
+            // scope can be enforced by a single-table partial index.
+            DB::statement(<<<SQL
+                UPDATE {$this->table} AS w
+                SET related_type = t.related_type,
+                    related_id = t.related_id
+                FROM workflow_triggers AS t
+                WHERE w.workflow_trigger_id = t.id
+                SQL);
+
+            // TODO: Cleanup Task (workflow-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table): void {
-                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+                $table->uniqueIndex(['related_type', 'related_id', $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
@@ -86,6 +110,10 @@ return new class () extends Migration {
             });
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+
+            Schema::table($this->table, function (Blueprint $table): void {
+                $table->dropColumn(['related_type', 'related_id']);
+            });
         });
     }
 };

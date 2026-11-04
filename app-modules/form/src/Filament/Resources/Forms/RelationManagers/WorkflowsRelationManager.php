@@ -108,7 +108,7 @@ class WorkflowsRelationManager extends RelationManager
                     $workflowTrigger->save();
 
                     $workflow = new Workflow([
-                        'name' => Workflow::generateUniqueName('Form Workflow'),
+                        'name' => Workflow::generateUniqueName('Form Workflow', $this->getOwnerRecord()),
                         'is_enabled' => false,
                     ]);
 

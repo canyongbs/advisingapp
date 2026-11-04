@@ -582,15 +582,35 @@ describe('workflow name uniqueness', function (): void {
             ->assertHasNoFormErrors(['name']);
     });
 
-    it('rejects editing a workflow to a soft-deleted name before the citext migration activates', function () use ($makeWorkflow): void {
+    it('allows two different applications to have workflows with the same name', function () use ($makeWorkflow): void {
+        WorkflowNameCitextFeature::activate();
+
+        asSuperAdmin();
+
+        $applicationA = Application::factory()->create();
+        $applicationB = Application::factory()->create();
+
+        $makeWorkflow($applicationA, 'Shared Outreach');
+        $workflow = $makeWorkflow($applicationB, 'Spring Outreach');
+
+        Livewire::test(ApplicationNestedEditWorkflow::class, [
+            'parentRecord' => $applicationB,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'Shared Outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($workflow->refresh()->name)->toBe('Shared Outreach');
+    });
+
+    it('allows editing a workflow to a duplicate name before the citext migration activates', function () use ($makeWorkflow): void {
         WorkflowNameCitextFeature::deactivate();
 
         asSuperAdmin();
 
         $application = Application::factory()->create();
-        $deletedWorkflow = $makeWorkflow($application, 'Fall Outreach');
-        $deletedWorkflow->delete();
-
+        $makeWorkflow($application, 'Fall Outreach');
         $workflow = $makeWorkflow($application, 'Spring Outreach');
 
         Livewire::test(ApplicationNestedEditWorkflow::class, [
@@ -599,8 +619,8 @@ describe('workflow name uniqueness', function (): void {
         ])
             ->fillForm(['name' => 'Fall Outreach'])
             ->call('save')
-            ->assertHasFormErrors(['name' => 'unique']);
+            ->assertHasNoFormErrors(['name']);
 
-        expect($workflow->refresh()->name)->toBe('Spring Outreach');
+        expect($workflow->refresh()->name)->toBe('Fall Outreach');
     });
 });
