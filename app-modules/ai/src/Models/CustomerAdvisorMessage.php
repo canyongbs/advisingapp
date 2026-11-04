@@ -36,16 +36,25 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorMessageFactory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCustomerAdvisorMessage
  */
-class CustomerAdvisorMessage extends BaseModel
+class CustomerAdvisorMessage extends Model
 {
+    /** @use HasFactory<CustomerAdvisorMessageFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     public $fillable = [
         'message_id',
         'content',

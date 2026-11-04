@@ -36,15 +36,25 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Database\Factories\SmsMessageEventFactory;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperSmsMessageEvent
  */
-class SmsMessageEvent extends BaseModel
+class SmsMessageEvent extends Model
 {
+    /** @use HasFactory<SmsMessageEventFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     // TODO: Create Factory
 
     protected $fillable = [

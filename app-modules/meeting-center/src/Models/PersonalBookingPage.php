@@ -37,18 +37,22 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
-use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperPersonalBookingPage
  */
-class PersonalBookingPage extends BaseModel implements Auditable
+class PersonalBookingPage extends Model implements Auditable
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
 
     /** @use HasFactory<PersonalBookingPageFactory> */

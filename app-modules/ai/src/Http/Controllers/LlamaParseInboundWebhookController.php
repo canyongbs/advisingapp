@@ -34,19 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Ai\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use AdvisingApp\Ai\Jobs\FetchAiLinkParsingResults;
+use AdvisingApp\Ai\Models\AiAssistantLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseLinkParsingFeature;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-abstract class BaseModel extends Model
+class LlamaParseInboundWebhookController
 {
-    /** @use HasFactory<Factory> */
-    use HasFactory;
+    /**
+     * Responds straight away, as LlamaParse only waits a few seconds for each delivery. The queued job fetches the
+     * results, so every event type is handled the same way, and a delivery for an unknown job is ignored.
+     */
+    public function __invoke(Request $request): Response
+    {
+        if (! LlamaParseLinkParsingFeature::active()) {
+            // TODO: Cleanup Task (llamaparse-link-parsing): delete this check, as the parsing columns always exist once the feature flag is removed.
+            return response()->noContent();
+        }
 
-    use HasUuids;
-    use UsesTenantConnection;
+        $parsingJobId = $request->string('data.job_id')->toString();
+
+        if (blank($parsingJobId)) {
+            return response()->noContent();
+        }
+
+        $link = CustomerAdvisorLink::query()->where('parsing_job_id', $parsingJobId)->first()
+            ?? AiAssistantLink::query()->where('parsing_job_id', $parsingJobId)->first();
+
+        if ($link) {
+            dispatch(new FetchAiLinkParsingResults($link, $parsingJobId));
+        }
+
+        return response()->noContent();
+    }
 }

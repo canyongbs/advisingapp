@@ -37,22 +37,29 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Database\Factories\StudentEmailAddressFactory;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Observers\StudentEmailAddressObserver;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperStudentEmailAddress
  */
 #[ObservedBy([StudentEmailAddressObserver::class])]
-class StudentEmailAddress extends BaseModel implements Auditable
+class StudentEmailAddress extends Model implements Auditable
 {
+    /** @use HasFactory<StudentEmailAddressFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use AuditableTrait;
     use HasUuids;
 

@@ -144,7 +144,6 @@ use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Hold;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -185,7 +184,6 @@ use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\Authenticatable;
-use App\Models\BaseModel;
 use App\Models\Export;
 use App\Models\FailedImportRow;
 use App\Models\HealthCheckResultHistoryItem;
@@ -413,7 +411,6 @@ return [
     WorkflowTaskDetails::class,
     WorkflowTrigger::class,
     Authenticatable::class,
-    BaseModel::class,
     Export::class,
     FailedImportRow::class,
     HealthCheckResultHistoryItem::class,
@@ -430,8 +427,8 @@ return [
     Tenant::class,
     User::class,
 
-    // These models were created after the UUIDv7 policy but inherited HasVersion4Uuids from BaseModel,
-    // so their tables only hold UUIDv4 IDs. They must stay on HasVersion4Uuids.
+    // These models were created after the UUIDv7 policy but inherited HasVersion4Uuids from a shared base
+    // model class (since removed), so their tables only hold UUIDv4 IDs. They must stay on HasVersion4Uuids.
     EmployeeAdvisorCategory::class,
     EmployeeAdvisorQuestion::class,
     AdultLearnerAlertConfiguration::class,
@@ -445,10 +442,6 @@ return [
     ReportDepartmentAccess::class,
     ReportUserAccess::class,
     TaskHistory::class,
-
-    // PhoneNumberLookup declares HasUuids (UUIDv7) itself, which overrides the HasVersion4Uuids it inherits
-    // from BaseModel, so it already generates UUIDv7 IDs. It is listed only while it still extends BaseModel.
-    PhoneNumberLookup::class,
 
     // These settings properties inherit HasVersion4Uuids from SettingsProperty and share its table,
     // which only holds UUIDv4 IDs. They must stay on HasVersion4Uuids.

@@ -36,19 +36,28 @@
 
 namespace AdvisingApp\Portal\Models;
 
+use AdvisingApp\Portal\Database\Factories\ResourceHubArticleVoteFactory;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\Attributes\NoPermissions;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubArticleVote
  */
 #[NoPermissions]
-class ResourceHubArticleVote extends BaseModel
+class ResourceHubArticleVote extends Model
 {
+    /** @use HasFactory<ResourceHubArticleVoteFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $casts = [
         'is_helpful' => 'boolean',
     ];

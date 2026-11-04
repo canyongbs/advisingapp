@@ -36,17 +36,26 @@
 
 namespace AdvisingApp\Report\Models;
 
+use AdvisingApp\Report\Database\Factories\ReportDepartmentAccessFactory;
 use AdvisingApp\Team\Models\Department;
-use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperReportDepartmentAccess
  */
-class ReportDepartmentAccess extends BaseModel implements Auditable
+class ReportDepartmentAccess extends Model implements Auditable
 {
+    /** @use HasFactory<ReportDepartmentAccessFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
 
     protected $table = 'report_team_accesses';

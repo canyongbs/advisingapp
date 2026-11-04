@@ -36,18 +36,27 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\Ai\Database\Factories\EmployeeAdvisorCategoryFactory;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperEmployeeAdvisorCategory
  */
-class EmployeeAdvisorCategory extends BaseModel implements Auditable
+class EmployeeAdvisorCategory extends Model implements Auditable
 {
+    /** @use HasFactory<EmployeeAdvisorCategoryFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
 

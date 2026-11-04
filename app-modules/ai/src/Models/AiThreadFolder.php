@@ -36,19 +36,28 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\AiThreadFolderFactory;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiThreadFolder
  */
-class AiThreadFolder extends BaseModel
+class AiThreadFolder extends Model
 {
+    /** @use HasFactory<AiThreadFolderFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
 

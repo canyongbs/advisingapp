@@ -37,25 +37,34 @@
 namespace AdvisingApp\Campaign\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Campaign\Database\Factories\CampaignActionFactory;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
-use App\Models\BaseModel;
 use App\Models\Media;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCampaignAction
  */
-class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichContent
+class CampaignAction extends Model implements Auditable, HasMedia, HasRichContent
 {
+    /** @use HasFactory<CampaignActionFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
 
     /** @use InteractsWithMedia<Media> */

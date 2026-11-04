@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\MeetingCenter\Database\Factories\EventAttendeeFactory;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -43,18 +44,26 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperEventAttendee
  */
-class EventAttendee extends BaseModel implements CanBeNotified
+class EventAttendee extends Model implements CanBeNotified
 {
+    /** @use HasFactory<EventAttendeeFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use CanBeArchived;
     use Notifiable;
 
