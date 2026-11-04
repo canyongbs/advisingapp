@@ -38,8 +38,10 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Enrollme
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use App\Features\EnrollmentSemesterNameCitextFeature;
 use App\Features\TermsConsolidationFeature;
 use App\Models\User;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Livewire\Livewire;
 
@@ -118,5 +120,40 @@ describe('when the `TermsConsolidationFeature` is inactive', function (): void {
 
         Livewire::test(ManageEnrollmentSemesters::class)
             ->assertTableColumnStateSet('is_mapped', false, record: $semester);
+    });
+
+    // TODO: Cleanup Task (enrollment-semester-name-citext) - Delete these tests when the feature flag is removed
+    describe('enrollment semester name uniqueness', function (): void {
+        beforeEach(function (): void {
+            asSuperAdmin();
+        });
+
+        it('does not allow creating a semester whose name matches another non-deleted semester case-insensitively', function (): void {
+            EnrollmentSemester::factory()->create(['name' => 'Fall 2024']);
+
+            Livewire::test(ManageEnrollmentSemesters::class)
+                ->callAction(CreateAction::class, data: ['name' => 'fall 2024'])
+                ->assertHasActionErrors(['name' => 'unique']);
+        });
+
+        it('allows creating a semester whose name is freed up by a soft-deleted semester case-insensitively', function (): void {
+            $deletedSemester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024']);
+            $deletedSemester->delete();
+
+            Livewire::test(ManageEnrollmentSemesters::class)
+                ->callAction(CreateAction::class, data: ['name' => 'fall 2024'])
+                ->assertHasNoActionErrors(['name']);
+        });
+
+        it('rejects creating a semester with a soft-deleted name before the citext migration activates', function (): void {
+            EnrollmentSemesterNameCitextFeature::deactivate();
+
+            $deletedSemester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024']);
+            $deletedSemester->delete();
+
+            Livewire::test(ManageEnrollmentSemesters::class)
+                ->callAction(CreateAction::class, data: ['name' => 'fall 2024'])
+                ->assertHasActionErrors(['name' => 'unique']);
+        });
     });
 });

@@ -647,6 +647,94 @@ describe('campaigns name citext change', function () {
     });
 });
 
+// TODO: Cleanup Task (enrollment-semester-name-citext) - Delete this describe and everything contained within
+describe('enrollment semesters name citext change', function (): void {
+    it('renames case-insensitive duplicate enrollment semester names', function (): void {
+        isolatedMigration(
+            '2026_11_04_214646_convert_enrollment_semesters_name_to_citext',
+            function (): void {
+                // Setup data before migration
+                $semester1 = EnrollmentSemester::factory()->create(['name' => 'Fall 2024', 'created_at' => now()->subMinutes(3)]);
+                $semester2 = EnrollmentSemester::factory()->create(['name' => 'fall 2024', 'created_at' => now()->subMinutes(2)]);
+                $semester3 = EnrollmentSemester::factory()->create(['name' => 'FALL 2024', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted semester sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedSemester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024', 'created_at' => now()->subMinutes(4)]);
+                $deletedSemester->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_04_214646_convert_enrollment_semesters_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value.
+                expect($semester1->refresh()->name)->toBe('Fall 2024');
+                expect($semester2->refresh()->name)->toBe('fall 2024-2');
+                expect($semester3->refresh()->name)->toBe('FALL 2024-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision.
+                expect($deletedSemester->refresh()->name)->toBe('Fall 2024');
+
+                // The new unique index rejects a further case-insensitive collision.
+                expect(fn () => EnrollmentSemester::factory()->create(['name' => 'fall 2024']))
+                    ->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live enrollment semester reuses a soft-deleted semester name', function (): void {
+        isolatedMigration(
+            '2026_11_04_214646_convert_enrollment_semesters_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_04_214646_convert_enrollment_semesters_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedSemester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024']);
+                $deletedSemester->delete();
+                EnrollmentSemester::factory()->create(['name' => 'Fall 2024']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_04_214646_convert_enrollment_semesters_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function (): void {
+        isolatedMigration(
+            '2026_11_04_214646_convert_enrollment_semesters_name_to_citext',
+            function (): void {
+                // Regression: a 255-char duplicate renamed with a "-2" suffix is truncated to 253
+                // chars + "-2", which can land on an unrelated live row that already holds that exact
+                // truncated value. The de-duplicator must detect the live collision and pick the next
+                // free suffix instead of producing a name that breaks the new unique index.
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $semester1 = EnrollmentSemester::factory()->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $semester2 = EnrollmentSemester::factory()->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $semester3 = EnrollmentSemester::factory()->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_04_214646_convert_enrollment_semesters_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($semester1->refresh()->name)->toBe($maxLengthUpper);
+                // "-2" would collide with the pre-existing truncated row, so the next suffix is used.
+                expect($semester2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                // The pre-existing truncated row is in its own group and is left untouched.
+                expect($semester3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
 // TODO: Cleanup Task (template-name-citext) - Delete this describe and everything contained within
 describe('email templates name citext change', function (): void {
     it('renames case-insensitive duplicate email template names', function (): void {

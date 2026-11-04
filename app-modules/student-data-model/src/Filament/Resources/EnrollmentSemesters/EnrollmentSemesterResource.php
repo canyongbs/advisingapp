@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use App\Features\EnrollmentSemesterNameCitextFeature;
 use App\Features\TermsConsolidationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Clusters\ConstituentManagementNavigationGroup;
@@ -53,6 +54,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
 
 class EnrollmentSemesterResource extends Resource
@@ -79,6 +81,12 @@ class EnrollmentSemesterResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255)
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => EnrollmentSemesterNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    )
                     ->datalist(fn (string $operation): array => ($operation === 'create') ? Enrollment::query()
                         ->whereNotIn('semester_name', EnrollmentSemester::query()->select('name'))
                         ->distinct()
