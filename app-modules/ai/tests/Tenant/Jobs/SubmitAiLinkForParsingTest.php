@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Actions\GetLlamaParseWebhookSigningSecret;
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
 use AdvisingApp\Ai\Exceptions\LlamaParseApiKeyNotConfiguredException;
@@ -43,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Models\Tenant;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Pipeline\Pipeline;
@@ -82,9 +84,21 @@ it('submits the link to LlamaParse and stores the parse job', function (string $
         ->and($link->parsing_last_checked_at)->not->toBeNull()
         ->and($link->parsing_failed_at)->toBeNull();
 
+    $tenant = Tenant::current();
+
+    assert($tenant instanceof Tenant);
+
     Http::assertSent(fn (Request $request): bool => $request->data() === [
         'source_url' => $link->url,
         'disable_cache' => true,
+        'webhook_configurations' => [
+            [
+                'webhook_url' => route('inbound.webhook.llamaparse'),
+                'webhook_events' => ['parse.success', 'parse.partial_success', 'parse.error', 'parse.cancelled'],
+                'webhook_signing_secret' => app(GetLlamaParseWebhookSigningSecret::class)($tenant),
+                'webhook_output_format' => 'json',
+            ],
+        ],
         'tier' => 'cost_effective',
         'version' => LlamaParseV2Client::VERSION,
     ]);
@@ -178,6 +192,22 @@ it('does not mark a link as failed while its last submission within the hour is 
         ->and($link->parsing_failed_at)->toBeNull();
 
     Exceptions::assertNotReported(AiLinkParsingFailedException::class);
+});
+
+it('does not ask LlamaParse to call the webhook in the local environment', function (): void {
+    app()['env'] = 'local';
+
+    Http::fake([
+        'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),
+    ]);
+
+    $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
+
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+
+    expect($link->refresh()->parsing_job_id)->toBe('pjb-123');
+
+    Http::assertSent(fn (Request $request): bool => ! array_key_exists('webhook_configurations', $request->data()));
 });
 
 it('does not change the `updated_at` of the link', function (): void {

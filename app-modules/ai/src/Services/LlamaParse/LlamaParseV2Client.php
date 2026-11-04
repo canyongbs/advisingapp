@@ -100,18 +100,20 @@ class LlamaParseV2Client
     }
 
     /**
-     * @param array<string> $expand The content to include alongside the job, such as `markdown_full`.
+     * @param array<string> $expand The content to include alongside the job, such as `markdown_full`. Sent as one
+     *                              comma-separated `expand` parameter, as in `?expand=markdown,items`.
      *
      * @see https://developers.llamaindex.ai/reference/resources/parsing/methods/get/
+     * @see https://developers.llamaindex.ai/llamaparse/parse/guides/api-reference/
      */
     public function getParseJob(string $jobId, array $expand = []): LlamaParseV2ParseJobData
     {
         $response = $this->request()
             ->get(
                 'parse/' . rawurlencode($jobId),
-                collect($expand)
-                    ->map(fn (string $value): string => 'expand=' . rawurlencode($value))
-                    ->implode('&'),
+                filled($expand)
+                    ? 'expand=' . collect($expand)->map(fn (string $value): string => rawurlencode($value))->implode(',')
+                    : '',
             )
             ->throw();
 

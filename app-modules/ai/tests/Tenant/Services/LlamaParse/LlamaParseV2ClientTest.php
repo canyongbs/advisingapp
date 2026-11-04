@@ -167,6 +167,21 @@ describe('getting a parse job', function (): void {
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.cloud.llamaindex.ai/api/v2/parse/pjb-123');
     });
 
+    it('requests several kinds of content as a comma-separated list', function (): void {
+        Http::fake([
+            'https://api.cloud.llamaindex.ai/api/v2/parse/pjb-123*' => Http::response([
+                'job' => [
+                    'id' => 'pjb-123',
+                    'status' => 'COMPLETED',
+                ],
+            ]),
+        ]);
+
+        app(LlamaParseV2Client::class)->getParseJob('pjb-123', ['markdown', 'items']);
+
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.cloud.llamaindex.ai/api/v2/parse/pjb-123?expand=markdown,items');
+    });
+
     it('encodes the job ID in the request path', function (): void {
         Http::fake([
             'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
