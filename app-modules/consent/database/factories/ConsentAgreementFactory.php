@@ -49,7 +49,7 @@ class ConsentAgreementFactory extends Factory
     {
         return [
             'type' => $this->faker->randomElement(ConsentAgreementType::cases())->value,
-            'title' => $this->faker->catchPhrase(),
+            'title' => $this->faker->unique()->catchPhrase(),
             'description' => $this->faker->paragraph(),
             'body' => $this->faker->paragraphs(3, true),
         ];
