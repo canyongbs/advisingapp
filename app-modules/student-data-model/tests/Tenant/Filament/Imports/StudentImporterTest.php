@@ -88,23 +88,25 @@ $importCareTeamRole = function (string $roleName): ?string {
     return DB::table("import_{$import->getKey()}_care_teams")->value('care_team_role_id');
 };
 
-it('assigns the student care team role matching the imported role name', function () use ($importCareTeamRole): void {
-    $studentRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
-    CareTeamRole::factory()->create(['name' => 'advisor-other', 'type' => CareTeamRoleType::Prospect]);
+describe('care team roles', function () use ($importCareTeamRole): void {
+    it('assigns the student care team role matching the imported role name', function () use ($importCareTeamRole): void {
+        $studentRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+        CareTeamRole::factory()->create(['name' => 'advisor-other', 'type' => CareTeamRoleType::Prospect]);
 
-    expect($importCareTeamRole('advisor'))->toBe($studentRole->getKey());
-});
+        expect($importCareTeamRole('advisor'))->toBe($studentRole->getKey());
+    });
 
-it('does not assign a prospect care team role to an imported student', function () use ($importCareTeamRole): void {
-    $defaultStudentRole = CareTeamRole::factory()->create(['name' => 'Default', 'type' => CareTeamRoleType::Student, 'is_default' => true]);
-    CareTeamRole::factory()->create(['name' => 'Recruiter', 'type' => CareTeamRoleType::Prospect]);
+    it('does not assign a prospect care team role to an imported student', function () use ($importCareTeamRole): void {
+        $defaultStudentRole = CareTeamRole::factory()->create(['name' => 'Default', 'type' => CareTeamRoleType::Student, 'is_default' => true]);
+        CareTeamRole::factory()->create(['name' => 'Recruiter', 'type' => CareTeamRoleType::Prospect]);
 
-    expect($importCareTeamRole('recruiter'))->toBe($defaultStudentRole->getKey());
-});
+        expect($importCareTeamRole('recruiter'))->toBe($defaultStudentRole->getKey());
+    });
 
-it('picks the student role when a student and a prospect role share a name', function () use ($importCareTeamRole): void {
-    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect, 'created_at' => now()->subMinute()]);
-    $studentRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student, 'created_at' => now()]);
+    it('picks the student role when a student and a prospect role share a name', function () use ($importCareTeamRole): void {
+        CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect, 'created_at' => now()->subMinute()]);
+        $studentRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student, 'created_at' => now()]);
 
-    expect($importCareTeamRole('ADVISOR'))->toBe($studentRole->getKey());
+        expect($importCareTeamRole('ADVISOR'))->toBe($studentRole->getKey());
+    });
 });
