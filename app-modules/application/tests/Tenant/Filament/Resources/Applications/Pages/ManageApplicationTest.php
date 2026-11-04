@@ -237,6 +237,31 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
 });
 
 describe('edit tab', function () use ($archiveAction): void {
+    it('does not allow renaming an application to the name of another application case-insensitively', function (): void {
+        asSuperAdmin();
+
+        Application::factory()->create(['name' => 'Fall Admissions']);
+        $application = Application::factory()->create(['name' => 'Spring Admissions']);
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['name' => 'FALL admissions'])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'unique']);
+    });
+
+    it('allows an application to change only the capitalization of its own name', function (): void {
+        asSuperAdmin();
+
+        $application = Application::factory()->create(['name' => 'Fall Admissions']);
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->fillForm(['name' => 'FALL ADMISSIONS'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect(Application::query()->where('root_id', $application->root_id)->whereNull('archived_at')->value('name'))->toBe('FALL ADMISSIONS');
+    });
+
     it('loads existing wizard steps', function (): void {
         asSuperAdmin();
 

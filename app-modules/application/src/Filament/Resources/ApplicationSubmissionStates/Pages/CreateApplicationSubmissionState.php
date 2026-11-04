@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateApplicationSubmissionState extends CreateRecord
 {
@@ -58,7 +59,11 @@ class CreateApplicationSubmissionState extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
