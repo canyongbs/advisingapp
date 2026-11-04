@@ -156,7 +156,7 @@ it('rejects creating a prospect source with a soft-deleted name before the citex
     $deletedProspectSource->delete();
 
     Livewire::test(CreateProspectSource::class)
-        ->fillForm(['name' => 'referral'])
+        ->fillForm(['name' => 'Referral'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
 });

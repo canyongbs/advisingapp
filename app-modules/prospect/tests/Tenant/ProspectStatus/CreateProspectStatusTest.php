@@ -157,7 +157,7 @@ it('rejects creating a prospect status with a soft-deleted name before the citex
     $deletedProspectStatus->delete();
 
     Livewire::test(CreateProspectStatus::class)
-        ->fillForm(['name' => 'engaged'])
+        ->fillForm(['name' => 'Engaged'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
 });
