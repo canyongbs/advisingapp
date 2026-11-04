@@ -35,11 +35,18 @@
 */
 
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+
+// TODO: Cleanup Task (llamaparse-link-parsing): delete this file along with the `FetchAiAssistantLinkParsingResults` job.
 
 it('refreshes existing parsing results when explicitly requested', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);
@@ -59,6 +66,8 @@ it('refreshes existing parsing results when explicitly requested', function (): 
 });
 
 it('does not refresh existing parsing results when not explicitly requested', function (): void {
+    LlamaParseLinkParsingFeature::deactivate();
+
     Http::fake([
         'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
     ]);
@@ -76,3 +85,28 @@ it('does not refresh existing parsing results when not explicitly requested', fu
 
     expect($link->parsing_results)->toBe('stale parsing results');
 });
+
+it('hands the link over to LlamaParse instead of parsing it once LlamaParse link parsing is active', function (?string $parsingResults, bool $refreshExistingParsingResults): void {
+    Queue::fake();
+    Http::fake();
+
+    $link = AiAssistantLink::factory()->create([
+        'parsing_results' => $parsingResults,
+        'created_at' => now()->subHour()->subMinute(),
+    ]);
+
+    // Discard anything pushed by model observers while arranging the records.
+    Queue::fake();
+
+    (new FetchAiAssistantLinkParsingResults($link, $refreshExistingParsingResults))->handle();
+
+    Http::assertNothingSent();
+
+    Queue::assertPushed(SubmitAiLinkForParsing::class, fn (SubmitAiLinkForParsing $job): bool => ($job->uniqueId() === $link->getKey())
+        && ($job->refreshesExistingParsingResults() === $refreshExistingParsingResults));
+
+    expect($link->refresh()->parsing_results)->toBe($parsingResults);
+})->with([
+    'unparsed link' => [null, false],
+    'Keep Current refresh' => ['Existing parsing results', true],
+]);
