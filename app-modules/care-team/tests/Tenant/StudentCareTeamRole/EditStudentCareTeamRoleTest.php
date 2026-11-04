@@ -175,6 +175,20 @@ it('allows a care team role to keep or change the case of its own name', functio
     'case change' => ['ADVISOR'],
 ]);
 
+it('allows renaming to a name used by a prospect care team role', function (): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect]);
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Mentor', 'type' => CareTeamRoleType::Student]);
+
+    Livewire::test(EditStudentCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => 'advisor'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($careTeamRole->refresh()->name)->toBe('advisor');
+});
+
 // TODO: Cleanup Task (care-team-role-name-citext) - delete this test
 it('rejects renaming to a soft-deleted name before the citext migration activates', function (): void {
     asSuperAdmin();

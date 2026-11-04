@@ -146,7 +146,7 @@ it('rejects a name matching an existing care team role case-insensitively', func
     'case variant' => ['advisor'],
 ]);
 
-it('rejects a name matching an existing prospect care team role case-insensitively', function (): void {
+it('allows a name that matches a prospect care team role case-insensitively', function (): void {
     asSuperAdmin();
 
     CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect]);
@@ -154,7 +154,9 @@ it('rejects a name matching an existing prospect care team role case-insensitive
     Livewire::test(CreateStudentCareTeamRole::class)
         ->fillForm(['name' => 'ADVISOR', 'is_default' => false])
         ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors();
+
+    expect(CareTeamRole::query()->where('type', CareTeamRoleType::Student)->sole()->name)->toBe('ADVISOR');
 });
 
 it('allows a name that was freed up by a soft-deleted care team role', function (): void {
@@ -175,7 +177,7 @@ it('allows a duplicate name when the feature is inactive and the unique index is
     asSuperAdmin();
 
     CareTeamRoleNameCitextFeature::deactivate();
-    DB::statement('DROP INDEX care_team_roles_name_unique');
+    DB::statement('DROP INDEX care_team_roles_type_name_unique');
 
     CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
 

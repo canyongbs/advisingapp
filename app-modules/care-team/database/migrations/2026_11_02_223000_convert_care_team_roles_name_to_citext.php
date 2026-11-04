@@ -50,12 +50,15 @@ return new class () extends Migration {
 
     protected string $column = 'name';
 
+    /** @var array<int, string> */
+    protected array $groupByColumns = ['type'];
+
     // TODO: Cleanup Task (care-team-role-name-citext) - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
 
     protected bool $usesSoftDeletes = true;
 
-    private string $uniqueConstraint = 'care_team_roles_name_unique';
+    private string $uniqueConstraint = 'care_team_roles_type_name_unique';
 
     public function up(): void
     {
@@ -69,7 +72,7 @@ return new class () extends Migration {
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table): void {
-                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+                $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 

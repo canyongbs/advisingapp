@@ -59,10 +59,12 @@ class CreateProspectCareTeamRole extends CreateRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
-                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
+                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed())
                     ->when(
                         CareTeamRoleNameCitextFeature::active(),
-                        fn (TextInput $field): TextInput => $field->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed()),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed(),
+                        ),
                     ),
                 Toggle::make('is_default')
                     ->label('Default')

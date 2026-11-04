@@ -58,11 +58,11 @@ class EditProspectCareTeamRole extends EditRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
-                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the modifyRuleUsing closure with a plain $rule->withoutTrashed()
+                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the modifyRuleUsing closure with a plain $rule->where('type', ...)->withoutTrashed()
                     ->unique(
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule): Unique => CareTeamRoleNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
+                            ? $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed()
                             : $rule,
                     ),
                 Toggle::make('is_default')
