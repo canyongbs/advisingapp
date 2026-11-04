@@ -38,6 +38,7 @@ namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreements\Pages;
 
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreements\ConsentAgreementResource;
+use App\Features\ConsentAgreementTitleCitextFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -48,6 +49,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rules\Unique;
 
 class ListConsentAgreements extends ListRecords
 {
@@ -64,7 +66,14 @@ class ListConsentAgreements extends ListRecords
                     ->disabled()
                     ->helperText('This field is not editable.'),
                 TextInput::make('title')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => ConsentAgreementTitleCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Fieldset::make('Content')
                     ->schema([
                         Textarea::make('description')

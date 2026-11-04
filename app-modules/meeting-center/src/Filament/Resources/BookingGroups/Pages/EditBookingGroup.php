@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\BookingGroupNameCitextFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Forms\Components\UserSelect;
@@ -64,6 +65,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 
 class EditBookingGroup extends EditRecord
 {
@@ -90,6 +92,12 @@ class EditBookingGroup extends EditRecord
                         ->required()
                         ->string()
                         ->maxLength(255)
+                        ->unique(
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => BookingGroupNameCitextFeature::active()
+                                ? $rule->withoutTrashed()
+                                : $rule,
+                        )
                         ->live(onBlur: true)
                         ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                             if (filled($get('slug'))) {
