@@ -72,7 +72,6 @@ use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
 use Database\Factories\UserFactory;
-use DateTimeInterface;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
@@ -614,10 +613,5 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
             ->using(ManagerResourceHubArticle::class)
             ->withTimestamps();
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }
