@@ -269,3 +269,26 @@ it('does not count archived students in the students with interactions stat', fu
 
     expect($widget->getStats()[1]->getValue())->toEqual(2);
 });
+
+it('does not count interactions with archived students, including those from before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Interaction::factory()->for($active, 'interactable')->create(['created_at' => now()->subDays(5)]);
+    Interaction::factory()->for($archived, 'interactable')->create(['created_at' => now()->subDays(5)]);
+
+    $archived->archive();
+
+    $widget = new StudentInteractionStats();
+    $widget->cacheTag = 'report-student-interaction';
+
+    // Unfiltered, so read through the cache.
+    expect($widget->getStats()[0]->getValue())->toEqual(1);
+
+    $widget->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widget->getStats()[0]->getValue())->toEqual(1);
+});

@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -134,10 +135,14 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
                 'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId): void {
                     $query
                         ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
-                            $query->when(
-                                $groupId,
-                                fn (Builder $query) => $this->groupFilter($query, $groupId)
-                            );
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                                ->when(
+                                    $groupId,
+                                    fn (Builder $query) => $this->groupFilter($query, $groupId)
+                                );
                         })
                         ->when($startDate instanceof Carbon && $endDate instanceof Carbon, function (Builder $query) use ($startDate, $endDate): void {
                             $query->whereBetween('created_at', [$startDate, $endDate]);

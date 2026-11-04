@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -111,10 +112,14 @@ class StudentEngagementLineChart extends LineChartReportWidget
         $baseQuery = fn (string $channel) => Engagement::query()
             ->whereBetween('created_at', [$startDate, $endDate])
             ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                $query->when(
-                    $groupId,
-                    fn (Builder $query) => $this->groupFilter($query, $groupId)
-                );
+                // The morph callback is typed `Builder<Model>` rather than
+                // `Builder<Student>`, and `Builder` is not covariant, so the
+                // constrained model cannot be proven here.
+                $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                    ->when(
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
+                    );
             })
             ->where('channel', $channel)
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")

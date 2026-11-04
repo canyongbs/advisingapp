@@ -230,3 +230,22 @@ it('returns correct interaction counts by status for students based on group fil
         ->and($stats[$secondIndex])->toEqual($interactionsCountForDoe)
         ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });
+
+it('does not count interactions with archived students, including those from before they were archived', function (): void {
+    $status = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Interaction::factory()->for($active, 'interactable')->for($status, 'status')->create();
+    Interaction::factory()->for($archived, 'interactable')->for($status, 'status')->create();
+
+    $archived->archive();
+
+    $widgetInstance = new StudentInteractionStatusPolarAreaChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    $data = $widgetInstance->getData();
+
+    expect($data['datasets'][0]['data'][$data['labels']->search($status->name)])->toEqual(1);
+});

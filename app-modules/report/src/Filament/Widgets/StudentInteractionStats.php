@@ -58,10 +58,14 @@ class StudentInteractionStats extends StatsOverviewReportWidget
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
                 ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                        ->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
                 })
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
@@ -72,12 +76,15 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                 'total-student-interactions-count',
                 now()->addHours(24),
                 fn (): int => Interaction::query()
-                    ->whereHasMorph('interactable', Student::class)
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                     ->count()
             );
 
         $studentsWithInteractionsCount = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate): void {
                     $query->when(
                         $startDate instanceof Carbon && $endDate instanceof Carbon,

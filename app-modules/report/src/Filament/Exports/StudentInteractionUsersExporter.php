@@ -37,12 +37,14 @@
 namespace AdvisingApp\Report\Filament\Exports;
 
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Illuminate\Database\Eloquent\Builder;
 
 class StudentInteractionUsersExporter extends Exporter
 {
@@ -56,10 +58,8 @@ class StudentInteractionUsersExporter extends Exporter
             ExportColumn::make('name'),
             ExportColumn::make('first_interaction_at')
                 ->label('First')
-                ->getStateUsing(function (User $record) {
-                    $first = $record
-                        ->interactions()
-                        ->whereHasMorph('interactable', Student::class)
+                ->getStateUsing(function (User $record, array $options) {
+                    $first = static::getReportedInteractions($record, $options)
                         ->orderBy('created_at')
                         ->first();
 
@@ -67,10 +67,8 @@ class StudentInteractionUsersExporter extends Exporter
                 }),
             ExportColumn::make('most_recent_interaction_at')
                 ->label('Most Recent')
-                ->getStateUsing(function (User $record) {
-                    $last = $record
-                        ->interactions()
-                        ->whereHasMorph('interactable', Student::class)
+                ->getStateUsing(function (User $record, array $options) {
+                    $last = static::getReportedInteractions($record, $options)
                         ->orderByDesc('created_at')
                         ->first();
 
@@ -78,20 +76,19 @@ class StudentInteractionUsersExporter extends Exporter
                 }),
             ExportColumn::make('total_interactions')
                 ->label('Total')
-                ->getStateUsing(function (User $record) {
-                    return $record
-                        ->interactions()
-                        ->whereHasMorph('interactable', Student::class)
-                        ->count();
+                ->getStateUsing(function (User $record, array $options) {
+                    return static::getReportedInteractions($record, $options)->count();
                 }),
             ExportColumn::make('total_interactions_percent')
                 ->label('Total %')
-                ->getStateUsing(function (User $record): string {
-                    $allInteractions = Interaction::whereHasMorph('interactable', Student::class)->count();
-                    $userInteractionsCount = $record
-                        ->interactions()
-                        ->whereHasMorph('interactable', Student::class)
+                ->getStateUsing(function (User $record, array $options): string {
+                    $allInteractions = Interaction::query()
+                        // The morph callback is typed `Builder<Model>` rather than
+                        // `Builder<Student>`, and `Builder` is not covariant, so the
+                        // constrained model cannot be proven here.
+                        ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                         ->count();
+                    $userInteractionsCount = static::getReportedInteractions($record, $options)->count();
 
                     if ($allInteractions > 0) {
                         $percent = round(($userInteractionsCount / $allInteractions) * 100);
@@ -103,10 +100,8 @@ class StudentInteractionUsersExporter extends Exporter
                 }),
             ExportColumn::make('avg_interaction_duration')
                 ->label('Avg. Duration')
-                ->getStateUsing(function (User $record): ?string {
-                    $durations = $record
-                        ->interactions()
-                        ->whereHasMorph('interactable', Student::class)
+                ->getStateUsing(function (User $record, array $options): ?string {
+                    $durations = static::getReportedInteractions($record, $options)
                         ->get()
                         ->map(function (Interaction $interaction): float {
                             return Carbon::parse($interaction->end_datetime)
@@ -133,5 +128,31 @@ class StudentInteractionUsersExporter extends Exporter
         }
 
         return $body;
+    }
+
+    /**
+     * The user's interactions with students who are not archived, within the date range the
+     * report was filtered to when the export was started, matching the report's table.
+     *
+     * @param array<string, mixed> $options
+     *
+     * @return Builder<Interaction>
+     */
+    protected static function getReportedInteractions(User $record, array $options): Builder
+    {
+        $startDate = filled($options['startDate'] ?? null) ? Carbon::parse($options['startDate'])->startOfDay() : null;
+        $endDate = filled($options['endDate'] ?? null) ? Carbon::parse($options['endDate'])->endOfDay() : null;
+
+        return $record
+            ->interactions()
+            ->getQuery()
+            // The morph callback is typed `Builder<Model>` rather than
+            // `Builder<Student>`, and `Builder` is not covariant, so the
+            // constrained model cannot be proven here.
+            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
+            ->when(
+                $startDate instanceof Carbon && $endDate instanceof Carbon,
+                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+            );
     }
 }

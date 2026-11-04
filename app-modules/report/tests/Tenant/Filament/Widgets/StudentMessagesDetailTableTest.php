@@ -583,3 +583,46 @@ it('can start an export, sending a notification', function (): void {
         ->callTableAction(ExportAction::class)
         ->assertNotified();
 });
+
+it('does not list or export messages of archived students, including those from before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    $activeEngagement = Engagement::factory()->create([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $activeEngagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $active->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $archivedEngagement = Engagement::factory()->create([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $archivedEngagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $archived->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $archived->archive();
+
+    $activeOutbound = HolisticEngagement::where('record_id', $activeEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $activeInbound = HolisticEngagement::where('record_id', $activeEngagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+    $archivedOutbound = HolisticEngagement::where('record_id', $archivedEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $archivedInbound = HolisticEngagement::where('record_id', $archivedEngagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    $component = Livewire::test(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$activeOutbound, $activeInbound]))
+        ->assertCanNotSeeTableRecords(collect([$archivedOutbound, $archivedInbound]));
+
+    // The export reads the table's own query, so it leaves out the same messages.
+    expect($component->instance()->getTableQueryForExport()->pluck('record_id')->sort()->values()->all())
+        ->toEqual(collect([$activeEngagement->id, $activeEngagementResponse->id])->sort()->values()->all());
+});
