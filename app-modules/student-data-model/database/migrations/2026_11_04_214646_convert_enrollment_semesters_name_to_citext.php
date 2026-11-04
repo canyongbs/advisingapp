@@ -60,7 +60,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function (): void {
-
             DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
 
             // TODO: Cleanup Task (enrollment-semester-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
