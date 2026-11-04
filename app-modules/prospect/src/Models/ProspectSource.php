@@ -37,17 +37,24 @@
 namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
+use AdvisingApp\Prospect\Database\Factories\ProspectSourceFactory;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperProspectSource
  */
-class ProspectSource extends BaseModel implements Auditable
+class ProspectSource extends Model implements Auditable
 {
+    /** @use HasFactory<ProspectSourceFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use HasUuids;
     use SoftDeletes;
     use AuditableTrait;

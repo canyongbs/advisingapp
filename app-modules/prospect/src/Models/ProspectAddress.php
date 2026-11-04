@@ -37,20 +37,27 @@
 namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Database\Factories\ProspectAddressFactory;
 use AdvisingApp\Prospect\Observers\ProspectAddressObserver;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperProspectAddress
  */
 #[ObservedBy(ProspectAddressObserver::class)]
-class ProspectAddress extends BaseModel implements Auditable
+class ProspectAddress extends Model implements Auditable
 {
+    /** @use HasFactory<ProspectAddressFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use AuditableTrait;
     use HasUuids;
 

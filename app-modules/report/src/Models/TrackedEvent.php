@@ -36,16 +36,25 @@
 
 namespace AdvisingApp\Report\Models;
 
+use AdvisingApp\Report\Database\Factories\TrackedEventFactory;
 use AdvisingApp\Report\Enums\TrackedEventType;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperTrackedEvent
  */
-class TrackedEvent extends BaseModel
+class TrackedEvent extends Model
 {
+    /** @use HasFactory<TrackedEventFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     public $timestamps = false;
 
     protected $fillable = [
