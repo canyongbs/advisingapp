@@ -36,6 +36,13 @@
 
 use AdvisingApp\Engagement\Filament\Pages\ViewEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
+use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
@@ -53,4 +60,58 @@ it('requires the unified inbox feature addon to access', function (): void {
     setUnifiedInboxEnabled(true);
 
     get(ViewEngagement::getUrl([$engagement]))->assertOk();
+});
+
+it('lists email events newest first, breaking ties by id', function (): void {
+    asSuperAdmin();
+    setUnifiedInboxEnabled(true);
+
+    $engagement = Engagement::factory()->email()->create();
+
+    $message = EmailMessage::factory()->for($engagement, 'related')->create();
+
+    // Inserted in the opposite order to the expected one, so insertion order can't satisfy the test.
+    $message->events()->save(EmailMessageEvent::factory()->make([
+        'id' => '00000000-0000-4000-8000-000000000000',
+        'type' => EmailMessageEventType::Send,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+    $message->events()->save(EmailMessageEvent::factory()->make([
+        'id' => 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        'type' => EmailMessageEventType::Delivery,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+
+    Livewire::test(ViewEngagement::class, [
+        'record' => $engagement,
+    ])
+        ->assertSchemaComponentStateSet('message_events.0.type', 'Delivery', 'infolist')
+        ->assertSchemaComponentStateSet('message_events.1.type', 'Send', 'infolist');
+});
+
+it('lists SMS events newest first, breaking ties by id', function (): void {
+    asSuperAdmin();
+    setUnifiedInboxEnabled(true);
+
+    $engagement = Engagement::factory()->sms()->create();
+
+    $message = SmsMessage::factory()->for($engagement, 'related')->create();
+
+    // Inserted in the opposite order to the expected one, so insertion order can't satisfy the test.
+    $message->events()->save(SmsMessageEvent::factory()->make([
+        'id' => '00000000-0000-4000-8000-000000000000',
+        'type' => SmsMessageEventType::Sent,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+    $message->events()->save(SmsMessageEvent::factory()->make([
+        'id' => 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        'type' => SmsMessageEventType::Delivered,
+        'occurred_at' => '2025-03-14 10:15:00',
+    ]));
+
+    Livewire::test(ViewEngagement::class, [
+        'record' => $engagement,
+    ])
+        ->assertSchemaComponentStateSet('message_events.0.type', 'Delivered', 'infolist')
+        ->assertSchemaComponentStateSet('message_events.1.type', 'Sent', 'infolist');
 });

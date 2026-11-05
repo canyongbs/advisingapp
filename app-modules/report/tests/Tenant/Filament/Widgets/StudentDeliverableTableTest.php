@@ -217,9 +217,7 @@ it('does not list archived students', function (): void {
         ->assertCanNotSeeTableRecords(collect([$archived]));
 });
 
-// Archiving is not retroactive: a student archived in September was genuinely part of the
-// student body in March, so a report looking at March still has to list them.
-it('lists a student archived after the reported period without linking to them', function (): void {
+it('does not list a student archived after the reported period', function (): void {
     $active = Student::factory()->create(['created_at_source' => '2026-03-10']);
 
     $archived = Student::factory()->create(['created_at_source' => '2026-03-10']);
@@ -232,18 +230,11 @@ it('lists a student archived after the reported period without linking to them',
             'endDate' => '2026-03-31',
         ],
     ])
-        ->assertCanSeeTableRecords(collect([$active, $archived]))
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$archived]))
         ->assertTableColumnExists(
             'full_name',
             fn (TextColumn $column): bool => $column->getUrl() === StudentResource::getUrl('view', ['record' => $active]),
             $active,
-        )
-        // Listed for the period, but their page no longer resolves, so the name is not a link.
-        // The record is read back through this table's own query, so this also proves the
-        // explicit `select()` loads `archived_at` — without it the link would come back.
-        ->assertTableColumnExists(
-            'full_name',
-            fn (TextColumn $column): bool => $column->getUrl() === null,
-            $archived,
         );
 });

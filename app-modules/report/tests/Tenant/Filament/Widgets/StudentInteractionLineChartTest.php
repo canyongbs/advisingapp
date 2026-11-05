@@ -297,3 +297,22 @@ it('returns correct data for student interactions based on group filter', functi
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
+
+it('does not count interactions with archived students, including those from before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Interaction::factory()->for($active, 'interactable')->create(['created_at' => Carbon::parse('2026-03-10')]);
+    Interaction::factory()->for($archived, 'interactable')->create(['created_at' => Carbon::parse('2026-03-10')]);
+
+    $archived->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    $widget = new StudentInteractionLineChart();
+    $widget->cacheTag = 'report-student-interaction';
+    $widget->pageFilters = [
+        'startDate' => '2026-03-01',
+        'endDate' => '2026-03-31',
+    ];
+
+    expect($widget->getData()['datasets'][0]['data'])->toBe([1]);
+});

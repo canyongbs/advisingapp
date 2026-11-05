@@ -267,3 +267,89 @@ it('returns correct counts of emails and SMS sent/received based on group filter
         ->and($stats[2]->getValue())->toEqual($smsSentForJohn + $smsSentForDoe)
         ->and($stats[3]->getValue())->toEqual($smsReceivedForJohn + $smsReceivedForDoe);
 });
+
+it('does not count messages sent to or received from archived students, including those from before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'dispatched_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'dispatched_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'dispatched_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'dispatched_at' => now()->subDays(5),
+    ])->create();
+
+    EngagementResponse::factory()->state([
+        'sender_id' => $active->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Email,
+        'sent_at' => now()->subDays(5),
+    ])->create();
+
+    EngagementResponse::factory()->state([
+        'sender_id' => $archived->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Email,
+        'sent_at' => now()->subDays(5),
+    ])->create();
+
+    EngagementResponse::factory()->state([
+        'sender_id' => $active->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Sms,
+        'sent_at' => now()->subDays(5),
+    ])->create();
+
+    EngagementResponse::factory()->state([
+        'sender_id' => $archived->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Sms,
+        'sent_at' => now()->subDays(5),
+    ])->create();
+
+    $archived->archive();
+
+    $widget = new StudentMessagesDetailStats();
+    $widget->cacheTag = 'report-student-messages';
+
+    // Unfiltered, so read through the cache.
+    $unfilteredStats = $widget->getStats();
+
+    expect($unfilteredStats[0]->getValue())->toEqual(1)
+        ->and($unfilteredStats[1]->getValue())->toEqual(1)
+        ->and($unfilteredStats[2]->getValue())->toEqual(1)
+        ->and($unfilteredStats[3]->getValue())->toEqual(1);
+
+    $widget->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    $filteredStats = $widget->getStats();
+
+    expect($filteredStats[0]->getValue())->toEqual(1)
+        ->and($filteredStats[1]->getValue())->toEqual(1)
+        ->and($filteredStats[2]->getValue())->toEqual(1)
+        ->and($filteredStats[3]->getValue())->toEqual(1);
+});

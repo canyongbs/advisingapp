@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Carbon\Carbon;
@@ -87,7 +88,12 @@ class MostRecentTasksTable extends BaseWidget
             ->query(function () use ($startDate, $endDate, $groupId): Builder {
                 return Task::query()
                     ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($groupId): void {
-                        $query->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId));
+                        $query
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->when($this->educatableType === Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
+                            ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId));
                     })
                     ->when($startDate instanceof Carbon && $endDate instanceof Carbon, function (Builder $query) use ($startDate, $endDate): Builder {
                         return $query->whereBetween('created_at', [$startDate, $endDate]);
