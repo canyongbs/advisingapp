@@ -54,7 +54,7 @@ class ConcernStatusFactory extends Factory
     {
         return [
             'classification' => SystemConcernStatusClassification::Active,
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->word(),
         ];
     }
 

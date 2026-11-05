@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -118,6 +119,8 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
             }
 
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
+
+            event(new EventAttendeeInvited($attendee));
 
             $workflowRunStepRelated = new WorkflowRunStepRelated();
 

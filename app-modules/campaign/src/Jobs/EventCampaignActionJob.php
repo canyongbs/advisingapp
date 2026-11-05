@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -113,6 +114,8 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             }
 
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
+
+            event(new EventAttendeeInvited($attendee));
 
             $this->actionEducatable->succeeded_at = now();
             $this->actionEducatable

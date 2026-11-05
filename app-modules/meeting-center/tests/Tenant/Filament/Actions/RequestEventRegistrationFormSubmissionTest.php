@@ -36,8 +36,10 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Jobs\DeliverEventRegistrationFormSubmissionRequestByEmail;
+use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
@@ -45,6 +47,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
@@ -260,6 +263,32 @@ it('dispatches the delivery job after creating the submission', function (): voi
         ->assertHasNoTableActionErrors();
 
     Queue::assertPushed(DeliverEventRegistrationFormSubmissionRequestByEmail::class);
+});
+
+it('queues the email auto reply for the invited attendee', function (): void {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $event = Event::factory()->create();
+
+    Queue::fake();
+
+    Livewire::test(EventsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->callAction(TestAction::make('request')->table(), data: [
+            'event_id' => $event->id,
+        ])
+        ->assertHasNoFormErrors();
+
+    $attendee = $event->attendees()->where('email', $student->primaryEmailAddress?->address)->sole();
+
+    Queue::assertPushed(
+        SendEventRegistrationFormEmailAutoReply::class,
+        fn (SendEventRegistrationFormEmailAutoReply $job): bool => $job->attendee->is($attendee)
+            && ($job->requiredDeliveryPreference === EmailAutoReplyDeliveryPreference::WhenInvited),
+    );
 });
 
 it('sends a success notification after the request is sent', function (): void {

@@ -72,6 +72,8 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -261,6 +263,7 @@ class FilamentServiceProvider extends ServiceProvider
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
             $column
+                ->placeholder('N/A')
                 ->timezone(function (TextColumn $column) use ($timezone): ?string {
                     if ($column->isDateTime()) {
                         return $timezone;
@@ -280,11 +283,16 @@ class FilamentServiceProvider extends ServiceProvider
                 });
         });
 
+        ColorColumn::configureUsing(fn (ColorColumn $column): ColorColumn => $column->placeholder('N/A'));
+
+        IconColumn::configureUsing(fn (IconColumn $column): IconColumn => $column->placeholder('N/A'));
+
         TextEntry::configureUsing(function (TextEntry $entry): void {
             $timezone = app(DisplaySettings::class)->getTimezone();
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
             $entry
+                ->placeholder('N/A')
                 ->timezone(function (TextEntry $column) use ($timezone): ?string {
                     if ($column->isDateTime()) {
                         return $timezone;

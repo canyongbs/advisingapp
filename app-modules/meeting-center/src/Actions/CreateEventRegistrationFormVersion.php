@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use Illuminate\Support\Facades\DB;
 
 class CreateEventRegistrationFormVersion
@@ -59,7 +60,19 @@ class CreateEventRegistrationFormVersion
             $newVersion->event_id = $oldVersion->event_id;
             $newVersion->save();
 
+            if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+                $this->reassociateEmailAutoReply($oldVersion, $newVersion);
+            }
+
             return $newVersion;
         });
+    }
+
+    private function reassociateEmailAutoReply(EventRegistrationForm $oldVersion, EventRegistrationForm $newVersion): void
+    {
+        if ($oldVersion->emailAutoReply) {
+            $oldVersion->emailAutoReply->form()->associate($newVersion);
+            $oldVersion->emailAutoReply->save();
+        }
     }
 }

@@ -56,4 +56,18 @@ class TermFactory extends Factory
             'is_active' => $this->faker->boolean(90),
         ];
     }
+
+    /**
+     * A term that was not synced from the SIS, such as one derived from enrollment semester names.
+     */
+    public function withoutSisTermId(): static
+    {
+        return $this->state([
+            'sis_term_id' => null,
+            'code' => null,
+            'start_date' => null,
+            'end_date' => null,
+            'is_active' => true,
+        ]);
+    }
 }

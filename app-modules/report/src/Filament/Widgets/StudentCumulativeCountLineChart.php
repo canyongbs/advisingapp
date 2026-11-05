@@ -36,23 +36,21 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Each bucket reports the size of the student body at the END of that month, so archiving is
- * applied as of each bucket rather than as of now. A student archived in September still
- * counts in every month up to August and in none from September onwards — archiving them does
- * not rewrite the months they were actually present for.
+ * Each bucket reports how many students, who are not currently archived, had been created in
+ * the SIS by the END of that month. A student's current archive status applies to every bucket,
+ * so archiving a student removes them from the whole chart, including the months before they
+ * were archived, and the running total only ever rises.
  *
- * The running total therefore falls as well as rises, which is why this is built from monthly
- * additions minus monthly archives rather than a plain cumulative sum of additions. It is also
- * seeded with a baseline headcount of students who already existed before the reported window,
- * so the first bucket reflects the true active population rather than only students added
+ * It is seeded with a baseline headcount of students who already existed before the reported
+ * window, so the first bucket reflects the whole population rather than only students added
  * since the window started.
  */
 class StudentCumulativeCountLineChart extends LineChartReportWidget
@@ -67,7 +65,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
     public function render(): View
     {
-        if (Student::query()->whereNull('created_at_source')->exists()) {
+        if (Student::query()->tap(new WithoutArchivedStudents())->whereNull('created_at_source')->exists()) {
             return view('report::filament.widgets.empty', [
                 'message' => 'We apologize, some records are missing information about when your students were created in the student information system (SIS), so we are unable to accurately present the cumulative growth of students at your institution in this chart.',
             ]);
@@ -78,7 +76,8 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
     public static function canView(): bool
     {
-        return (! Student::query()->exists()) || Student::query()->whereNotNull('created_at_source')->exists();
+        return (! Student::query()->tap(new WithoutArchivedStudents())->exists())
+            || Student::query()->tap(new WithoutArchivedStudents())->whereNotNull('created_at_source')->exists();
     }
 
     public function getData(): array
@@ -132,32 +131,26 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
         $months = $this->getMonthRange($startDate, $endDate);
 
-        // Students who existed, and weren't yet archived, before the window are already part
-        // of the population the first bucket should report, not just whoever is added later.
+        // Students who existed before the window are already part of the population the first
+        // bucket should report, not just whoever is added later.
         $baseline = Student::query()
+            ->tap(new WithoutArchivedStudents())
             ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
             ->where('created_at_source', '<', $startDate)
-            ->where(fn (Builder $query) => $query
-                ->whereNull('archived_at')
-                ->orWhere('archived_at', '>=', $startDate))
             ->count();
 
-        $addedPerMonth = $this->countPerMonth(
-            Student::query()
-                ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
-                ->whereBetween('created_at_source', [$startDate, $endDate]),
-            'created_at_source'
-        );
-
-        // Not scoped to students created inside the window, so archiving one added before it
-        // still drops them from the running total in the month they were archived.
-        $archivedPerMonth = $this->countPerMonth(
-            Student::query()
-                ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
-                ->onlyArchived()
-                ->whereBetween('archived_at', [$startDate, $endDate]),
-            'archived_at'
-        );
+        $addedPerMonth = Student::query()
+            ->tap(new WithoutArchivedStudents())
+            ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
+            ->whereBetween('created_at_source', [$startDate, $endDate])
+            ->selectRaw("date_trunc('month', created_at_source) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', created_at_source)")
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                ];
+            });
 
         $runningTotal = [];
         $total = $baseline;
@@ -165,29 +158,10 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
         foreach ($months as $month) {
             $key = $month->toDateString();
             $label = $month->format('M Y');
-            $total += ($addedPerMonth[$key] ?? 0) - ($archivedPerMonth[$key] ?? 0);
+            $total += $addedPerMonth[$key] ?? 0;
             $runningTotal[$label] = $total;
         }
 
         return $runningTotal;
-    }
-
-    /**
-     * @param Builder<Student> $query
-     * @param 'archived_at'|'created_at_source' $column
-     *
-     * @return Collection<string, int>
-     */
-    protected function countPerMonth(Builder $query, string $column): Collection
-    {
-        return $query
-            ->selectRaw("date_trunc('month', {$column}) as month, COUNT(*) as monthly_total")
-            ->groupByRaw("date_trunc('month', {$column})")
-            ->get()
-            ->mapWithKeys(function (object $item): array {
-                return [
-                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                ];
-            });
     }
 }

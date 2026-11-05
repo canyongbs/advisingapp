@@ -39,6 +39,7 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use App\Exceptions\SoftDeleteContraintViolationException;
+use App\Features\BasicNeedsCategoryNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
@@ -46,6 +47,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditBasicNeedsCategory extends EditRecord
 {
@@ -59,7 +61,13 @@ class EditBasicNeedsCategory extends EditRecord
                     ->label('Category Name')
                     ->required()
                     ->maxLength(255)
-                    ->string(),
+                    ->string()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => BasicNeedsCategoryNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535)

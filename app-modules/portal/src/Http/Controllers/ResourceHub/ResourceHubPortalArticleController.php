@@ -47,11 +47,14 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Http\Controllers\Controller;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResourceHubPortalArticleController extends Controller
 {
     public function show(ResourceHubCategory $category, ResourceHubArticle $article): JsonResponse
     {
+        abort_unless($article->public, Response::HTTP_NOT_FOUND);
+
         $article->increment('portal_view_count');
 
         $voter = ResolveResourceHubPortalVoter::execute();

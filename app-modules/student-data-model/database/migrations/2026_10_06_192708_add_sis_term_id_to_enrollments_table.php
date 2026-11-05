@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\TermAttributesFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -47,16 +46,12 @@ return new class () extends Migration {
             Schema::table('enrollments', function (Blueprint $table): void {
                 $table->string('sis_term_id')->nullable()->index();
             });
-
-            TermAttributesFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            TermAttributesFeature::deactivate();
-
             Schema::table('enrollments', function (Blueprint $table): void {
                 $table->dropColumn('sis_term_id');
             });

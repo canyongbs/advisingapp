@@ -118,4 +118,10 @@ return [
     'gpt_56_luna_api_key' => env('OPEN_AI_GPT_56_LUNA_API_KEY'),
 
     'gpt_56_luna_model' => env('OPEN_AI_GPT_56_LUNA_MODEL'),
+
+    'gpt_6_luna_base_uri' => env('OPEN_AI_GPT_6_LUNA_BASE_URI'),
+
+    'gpt_6_luna_api_key' => env('OPEN_AI_GPT_6_LUNA_API_KEY'),
+
+    'gpt_6_luna_model' => env('OPEN_AI_GPT_6_LUNA_MODEL'),
 ];

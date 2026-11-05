@@ -71,7 +71,7 @@ export default {
         suffixIcon: '$reset block w-4 ml-2 shrink-0',
     },
     submit: {
-        input: '$reset relative inline-grid grid-flow-col items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition duration-75 outline-none bg-[rgba(var(--primary-600),1)] text-white hover:bg-[rgba(var(--primary-500),1)] focus-visible:ring-2 focus-visible:ring-[rgba(var(--primary-500),0.5)] formkit-loading:cursor-wait formkit-loading:opacity-70 disabled:cursor-default disabled:opacity-70 disabled:pointer-events-none',
+        input: '$reset relative inline-grid grid-flow-col items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition duration-75 outline-none bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500 formkit-loading:cursor-wait formkit-loading:opacity-70 disabled:cursor-default disabled:opacity-70 disabled:pointer-events-none',
     },
     button: {
         input: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 active:bg-gray-100 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-400',

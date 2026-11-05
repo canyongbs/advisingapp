@@ -37,22 +37,30 @@
 namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Database\Factories\ProspectStatusFactory;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
-use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperProspectStatus
  */
 #[ObservedBy([ProspectStatusObserver::class])]
-class ProspectStatus extends BaseModel implements Auditable
+class ProspectStatus extends Model implements Auditable
 {
+    /** @use HasFactory<ProspectStatusFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
 
@@ -76,10 +84,5 @@ class ProspectStatus extends BaseModel implements Auditable
     public function prospects(): HasMany
     {
         return $this->hasMany(Prospect::class, 'status_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

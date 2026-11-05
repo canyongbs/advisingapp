@@ -61,6 +61,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::before(
             function (Authenticatable $authenticatable, string $ability): ?bool {
+                if ($ability === 'viewApiDocs') {
+                    return $authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin();
+                }
+
                 if (! ($authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin())) {
                     return null;
                 }

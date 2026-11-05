@@ -38,156 +38,85 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Enrollme
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use App\Features\TermsConsolidationFeature;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\assertDatabaseHas;
 use function Tests\asSuperAdmin;
 
-test('the page is gated with proper access control', function (): void {
-    $user = User::factory()->create();
-
-    actingAs($user)
-        ->get(
-            EnrollmentSemesterResource::getUrl('index')
-        )->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-
-    actingAs($user)
-        ->get(
-            EnrollmentSemesterResource::getUrl('index')
-        )->assertSuccessful();
+test('the page is not accessible while the `TermsConsolidationFeature` is active', function (): void {
+    asSuperAdmin()
+        ->get(EnrollmentSemesterResource::getUrl('index'))
+        ->assertForbidden();
 });
 
-test('the delete bulk action is gated by the delete permission', function (): void {
-    $user = User::factory()->create();
+describe('when the `TermsConsolidationFeature` is inactive', function (): void {
+    beforeEach(function (): void {
+        TermsConsolidationFeature::deactivate();
+    });
 
-    $user->givePermissionTo('settings.view-any');
+    test('the page is gated with proper access control', function (): void {
+        $user = User::factory()->create();
 
-    actingAs($user);
+        actingAs($user)
+            ->get(
+                EnrollmentSemesterResource::getUrl('index')
+            )->assertForbidden();
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+        $user->givePermissionTo('settings.view-any');
 
-    $user->givePermissionTo('settings.*.delete');
+        actingAs($user)
+            ->get(
+                EnrollmentSemesterResource::getUrl('index')
+            )->assertSuccessful();
+    });
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
+    test('the delete bulk action is gated by the delete permission', function (): void {
+        $user = User::factory()->create();
 
-test('it enables the sync button when appropriate', function (): void {
-    asSuperAdmin();
+        $user->givePermissionTo('settings.view-any');
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertActionDisabled('syncAll');
+        actingAs($user);
 
-    $count = random_int(1, 10);
+        Livewire::test(ManageEnrollmentSemesters::class)
+            ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
+        $user->givePermissionTo('settings.*.delete');
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertActionEnabled('syncAll');
-});
+        Livewire::test(ManageEnrollmentSemesters::class)
+            ->assertTableBulkActionVisible(DeleteBulkAction::class);
+    });
 
-test('it can successfully sync all semesters', function (): void {
-    asSuperAdmin();
+    test('the mapping column shows mapped when an enrollment with a matching semester name exists', function (): void {
+        asSuperAdmin();
 
-    $count = random_int(1, 10);
+        $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
+        Enrollment::factory(['semester_name' => 'Fall 2024'])->create();
 
-    assertDatabaseCount(EnrollmentSemester::class, 0);
+        Livewire::test(ManageEnrollmentSemesters::class)
+            ->assertTableColumnStateSet('is_mapped', true, record: $semester);
+    });
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->callAction('syncAll')
-        ->assertSuccessful()
-        ->assertNotified();
+    test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function (): void {
+        asSuperAdmin();
 
-    assertDatabaseCount(EnrollmentSemester::class, $count);
-});
+        $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
 
-test('it will add new semesters without removing old ones', function (): void {
-    asSuperAdmin();
+        Livewire::test(ManageEnrollmentSemesters::class)
+            ->assertTableColumnStateSet('is_mapped', false, record: $semester);
+    });
 
-    $count = random_int(1, 10);
+    test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function (): void {
+        asSuperAdmin();
 
-    EnrollmentSemester::factory(3)->create();
+        $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
 
-    Enrollment::factory($count)->sequence(fn (Sequence $seq): array => ['semester_name' => "Name {$seq->index}"])->create();
+        Enrollment::factory(['semester_name' => 'Fall 2024', 'deleted_at' => now()])->create();
 
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->callAction('syncAll')
-        ->assertSuccessful()
-        ->assertNotified();
-
-    assertDatabaseCount(EnrollmentSemester::class, $count + 3);
-});
-
-test('it will only add unique semesters', function (): void {
-    asSuperAdmin();
-
-    Enrollment::factory(2, ['semester_name' => 'test semester'])->create();
-
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->callAction('syncAll')
-        ->assertSuccessful()
-        ->assertNotified();
-
-    assertDatabaseCount(EnrollmentSemester::class, 1);
-});
-
-test('it will not add semesters that are already ordered', function (): void {
-    asSuperAdmin();
-
-    EnrollmentSemester::factory(['name' => 'test semester'])->create();
-
-    Enrollment::factory(['semester_name' => 'test semester'])->create();
-
-    Enrollment::factory(['semester_name' => 'test semester 2'])->create();
-
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->callAction('syncAll')
-        ->assertSuccessful()
-        ->assertNotified();
-
-    assertDatabaseCount(EnrollmentSemester::class, 2);
-
-    assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester']);
-    assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester 2']);
-});
-
-test('the mapping column shows mapped when an enrollment with a matching semester name exists', function (): void {
-    asSuperAdmin();
-
-    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
-
-    Enrollment::factory(['semester_name' => 'Fall 2024'])->create();
-
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertTableColumnStateSet('is_mapped', true, record: $semester);
-});
-
-test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function (): void {
-    asSuperAdmin();
-
-    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
-
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertTableColumnStateSet('is_mapped', false, record: $semester);
-});
-
-test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function (): void {
-    asSuperAdmin();
-
-    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
-
-    Enrollment::factory(['semester_name' => 'Fall 2024', 'deleted_at' => now()])->create();
-
-    Livewire::test(ManageEnrollmentSemesters::class)
-        ->assertTableColumnStateSet('is_mapped', false, record: $semester);
+        Livewire::test(ManageEnrollmentSemesters::class)
+            ->assertTableColumnStateSet('is_mapped', false, record: $semester);
+    });
 });

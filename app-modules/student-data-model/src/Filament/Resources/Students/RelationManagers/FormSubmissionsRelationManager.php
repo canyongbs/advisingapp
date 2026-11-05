@@ -74,7 +74,7 @@ class FormSubmissionsRelationManager extends RelationManager
                 TextColumn::make('submissible.name')
                     ->label('Form')
                     ->searchable()
-                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
+                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('view', ['record' => $record->submissible, 'tab' => 'edit'])),
                 TextColumn::make('status')
                     ->badge()
                     ->state(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),

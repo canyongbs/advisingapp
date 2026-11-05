@@ -51,7 +51,7 @@ beforeEach(function (): void {
 });
 
 it('starts a guest session and returns no vote and a zero percentage for a first-time guest visitor', function (): void {
-    $article = ResourceHubArticle::factory()->create();
+    $article = ResourceHubArticle::factory()->public()->create();
 
     $response = getJson(route('portals.resource-hub.api.article.show', [
         'category' => $article->category_id,
@@ -70,7 +70,7 @@ it('starts a guest session and returns no vote and a zero percentage for a first
 it('returns the current voter\'s vote and the helpful vote percentage', function (): void {
     $student = Student::factory()->create();
 
-    $article = ResourceHubArticle::factory()->create();
+    $article = ResourceHubArticle::factory()->public()->create();
 
     ResourceHubArticleVote::factory()
         ->for($article, 'resourceHubArticle')
@@ -95,4 +95,15 @@ it('returns the current voter\'s vote and the helpful vote percentage', function
             'article' => ['vote' => ['is_helpful' => true]],
             'helpful_vote_percentage' => 50,
         ]);
+});
+
+it('does not show a private article', function (): void {
+    $article = ResourceHubArticle::factory()->create(['public' => false, 'portal_view_count' => 0]);
+
+    getJson(route('portals.resource-hub.api.article.show', [
+        'category' => $article->category_id,
+        'article' => $article->getKey(),
+    ]))->assertNotFound();
+
+    expect($article->refresh()->portal_view_count)->toBe(0);
 });

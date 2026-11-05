@@ -37,24 +37,30 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Database\Factories\AiAssistantLinkFactory;
+use AdvisingApp\Ai\Models\Concerns\HasLlamaParseParsingState;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Exception;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperAiAssistantLink
  */
-class AiAssistantLink extends BaseModel implements AiFile, Auditable
+class AiAssistantLink extends Model implements AiFile, Auditable
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
+    use HasLlamaParseParsingState;
 
     /** @use HasFactory<AiAssistantLinkFactory> */
     use HasFactory;
@@ -64,6 +70,12 @@ class AiAssistantLink extends BaseModel implements AiFile, Auditable
         'parsing_results',
         'url',
         'is_keep_current_enabled',
+    ];
+
+    protected $casts = [
+        'parsing_started_at' => 'datetime',
+        'parsing_last_checked_at' => 'datetime',
+        'parsing_failed_at' => 'datetime',
     ];
 
     /**

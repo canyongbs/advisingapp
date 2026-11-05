@@ -108,7 +108,7 @@ class ManageProspectConcerns extends ManageRelatedRecords
                 TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
                 TextEntry::make('status.name'),
-                TextEntry::make('createdBy.name')->label('Created By')->placeholder('N/A'),
+                TextEntry::make('createdBy.name')->label('Created By'),
                 TextEntry::make('created_at')
                     ->label('Created Date')
                     ->dateTime(),

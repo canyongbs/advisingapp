@@ -150,8 +150,7 @@ class ProgramsRelationManager extends RelationManager
                     ->dateTime()
                     ->visible($sisSystem?->hasProgramsGraduationDt() ?? true),
                 TextColumn::make('catalog_year')
-                    ->label('Catalog Year')
-                    ->placeholder('N/A'),
+                    ->label('Catalog Year'),
             ])
             ->recordActions([
                 ViewAction::make()

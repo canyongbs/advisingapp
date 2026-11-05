@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
+use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -48,6 +50,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
+// TODO: Cleanup Task (llamaparse-link-parsing): delete this job, as links are now parsed by `SubmitAiLinkForParsing` and `FetchAiLinkParsingResults`.
 class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
@@ -67,6 +70,13 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
 
     public function handle(): void
     {
+        // A job queued before LlamaParse took over hands the link over to LlamaParse, so it is neither parsed by Jina nor dropped.
+        if (LlamaParseLinkParsingFeature::active()) {
+            dispatch(new SubmitAiLinkForParsing($this->link, $this->refreshExistingParsingResults));
+
+            return;
+        }
+
         if (filled($this->link->parsing_results) && ! $this->refreshExistingParsingResults) {
             return;
         }

@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermsConsolidationFeature;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -64,23 +66,17 @@ class TermAttributesRelationManager extends RelationManager
             ->recordTitleAttribute('sis_term_id')
             ->columns([
                 TextColumn::make('enrollment_status')
-                    ->label('Enrollment Status')
-                    ->placeholder('N/A'),
+                    ->label('Enrollment Status'),
                 TextColumn::make('academic_status')
-                    ->label('Academic Status')
-                    ->placeholder('N/A'),
+                    ->label('Academic Status'),
                 TextColumn::make('campus')
-                    ->label('Campus')
-                    ->placeholder('N/A'),
+                    ->label('Campus'),
                 TextColumn::make('college_level')
-                    ->label('College Level')
-                    ->placeholder('N/A'),
+                    ->label('College Level'),
                 TextColumn::make('commuter')
-                    ->label('Commuter')
-                    ->placeholder('N/A'),
+                    ->label('Commuter'),
                 TextColumn::make('student_registered')
-                    ->label('Student Registered')
-                    ->placeholder('N/A'),
+                    ->label('Student Registered'),
             ])
             ->filters([
                 SelectFilter::make('sis_term_id')
@@ -112,9 +108,19 @@ class TermAttributesRelationManager extends RelationManager
 
         assert($student instanceof Student);
 
-        return Term::query()
-            ->whereIn('sis_term_id', $student->termAttributes()->select('sis_term_id'))
-            ->orderByRaw('start_date DESC NULLS LAST')
+        $query = Term::query()
+            ->whereIn('sis_term_id', $student->termAttributes()->select('sis_term_id'));
+
+        if (TermsConsolidationFeature::active()) {
+            $query
+                // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+                ->whereNull('deleted_at')
+                ->tap(new OrderByMostRecentTerm());
+        } else {
+            $query->orderByRaw('start_date DESC NULLS LAST');
+        }
+
+        return $query
             ->get(['sis_term_id', 'name', 'start_date'])
             ->mapWithKeys(fn (Term $term): array => [$term->sis_term_id => $term->getDisplayName()])
             ->all();

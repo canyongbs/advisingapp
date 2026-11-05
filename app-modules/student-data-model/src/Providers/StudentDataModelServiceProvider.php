@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use AdvisingApp\StudentDataModel\Listeners\AutoImportEnrollmentSemestersAfterSisSync;
 use AdvisingApp\StudentDataModel\Listeners\QueuePhoneNumberLookupsAfterSisSync;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
@@ -53,6 +52,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use App\Models\Tenant;
 use Filament\Panel;
@@ -90,6 +90,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'bounced_phone_number' => BouncedPhoneNumber::class,
             'email_address_opt_in_opt_out' => EmailAddressOptInOptOut::class,
             'phone_number_lookup' => PhoneNumberLookup::class,
+            'term' => Term::class,
         ]);
 
         Event::listen(
@@ -100,11 +101,6 @@ class StudentDataModelServiceProvider extends ServiceProvider
         Event::listen(
             SisSyncCompleted::class,
             QueuePhoneNumberLookupsAfterSisSync::class,
-        );
-
-        Event::listen(
-            SisSyncCompleted::class,
-            AutoImportEnrollmentSemestersAfterSisSync::class,
         );
 
         // Telnyx applies rate limits per account, and each tenant uses its own

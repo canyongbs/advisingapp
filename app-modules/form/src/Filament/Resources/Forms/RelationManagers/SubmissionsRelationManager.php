@@ -1,0 +1,282 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Form\Filament\Resources\Forms\RelationManagers;
+
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
+use AdvisingApp\Form\Exports\FormSubmissionExport;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormSubmission;
+use App\Filament\Tables\Columns\IdColumn;
+use Carbon\CarbonInterface;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Url;
+use Maatwebsite\Excel\Facades\Excel;
+
+class SubmissionsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'submissions';
+
+    protected static ?string $title = 'Submissions';
+
+    /** @var array<string, mixed>|null */
+    #[Url(as: 'filters')]
+    public ?array $tableFilters = null;
+
+    #[Url(as: 'search')]
+    public $tableSearch = '';
+
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return FormResource::canAccess()
+            && FormResource::canView($ownerRecord)
+            && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function getDefaultActionUrlIdentifier(): string
+    {
+        return 'submissions';
+    }
+
+    public function mountDefaultActions(): void
+    {
+        parent::mountDefaultActions();
+
+        if (! $this->hasDefaultTableActionMounted) {
+            return;
+        }
+
+        // Consume the link, otherwise returning to this tab remounts the table and reopens the submission.
+        $this->defaultActionComponent = null;
+        $this->defaultTableAction = null;
+        $this->defaultTableActionRecord = null;
+        $this->defaultTableActionArguments = null;
+    }
+
+    public function table(Table $table): Table
+    {
+        $owner = $this->getOwnerRecord();
+        assert($owner instanceof Form);
+
+        return $table
+            ->query(
+                FormSubmission::query()
+                    ->whereHas(
+                        'submissible',
+                        fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                    )
+            )
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->state(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                TextColumn::make('submitted_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('author.primaryEmailAddress.address')
+                    ->label('Submitter')
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHas(
+                        'author.primaryEmailAddress',
+                        fn (Builder $query): Builder => $query->where(new Expression('lower(address)'), 'like', '%' . Str::lower($search) . '%'),
+                    )),
+                TextColumn::make('author_type')
+                    ->label('Submitter Type')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
+                    ->color('success'),
+                TextColumn::make('requester.name'),
+                TextColumn::make('requested_at')
+                    ->dateTime()
+                    ->state(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+            ])
+            ->filters([
+                FormSubmissionStatusFilter::make(),
+                SelectFilter::make('author_type')
+                    ->label('Submitter Type')
+                    ->options([
+                        'student' => 'Student',
+                        'prospect' => 'Prospect',
+                    ]),
+                Filter::make('withoutArchived')
+                    ->label('Without archived')
+                    ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                    ->default(),
+            ])
+            ->headerActions([
+                Action::make('export')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function () use ($owner) {
+                        $filename = str("form-submissions-{$owner->name}-")
+                            ->append(now()->format('Y-m-d-Hisv'))
+                            ->slug()
+                            ->append('.csv');
+
+                        $query = FormSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                            );
+
+                        return Excel::download(new FormSubmissionExport($query->get()), $filename);
+                    }),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->modalHeading(fn (FormSubmission $record): string => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
+                    ->schema(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
+                        Section::make('Authenticated Submitter')
+                            ->schema([
+                                TextEntry::make('author.' . $record->author::displayNameKey())
+                                    ->label('Name'),
+                                TextEntry::make('author.primaryEmailAddress.address')
+                                    ->label('Email address'),
+                            ])
+                            ->columns(2),
+                    ] : null)
+                    ->modalContent(fn (FormSubmission $record): Factory|\Illuminate\Contracts\View\View => view('form::submission', ['submission' => $record]))
+                    ->visible(fn (FormSubmission $record) => $record->submitted_at),
+                Action::make('archive')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Archive Submission')
+                    ->modalSubmitActionLabel('Archive')
+                    ->authorize(fn (FormSubmission $record): bool => auth()->user()->can('archive', $record))
+                    ->action(function (FormSubmission $record): void {
+                        $record->archive();
+
+                        Cache::tags('{form-submission-count}')->flush();
+
+                        $this->dispatch('refresh-page');
+
+                        Notification::make()
+                            ->title('Submission archived')
+                            ->success()
+                            ->send();
+                    })
+                    ->hidden(fn (FormSubmission $record): bool => $record->isArchived()),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('Export')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(function (Collection $records) use ($owner) {
+                            $filename = str("selected-form-submissions-{$owner->name}-")
+                                ->append(now()->format('Y-m-d-Hisv'))
+                                ->slug()
+                                ->append('.csv');
+
+                            return Excel::download(new FormSubmissionExport($records), $filename);
+                        }),
+                    BulkAction::make('archive')
+                        ->label('Archive')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archive Submissions')
+                        ->modalSubmitActionLabel('Archive')
+                        ->authorize(fn () => auth()->user()->can('deleteAny', FormSubmission::class))
+                        ->authorizeIndividualRecords('archive')
+                        ->action(function (Collection $records): void {
+                            /** @phpstan-ignore argument.type */
+                            $records->each(function (FormSubmission $record): void {
+                                if ($record->isArchived()) {
+                                    return;
+                                }
+
+                                $record->archive();
+                            });
+
+                            Cache::tags('{form-submission-count}')->flush();
+
+                            $this->dispatch('refresh-page');
+
+                            Notification::make()
+                                ->title('Submissions archived')
+                                ->success()
+                                ->send();
+                        }),
+                ]),
+            ]);
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        assert($ownerRecord instanceof Form);
+
+        $formSubmissionsCount = Cache::tags('{form-submission-count}')
+            ->remember(
+                // Licenses limit which submissions a user can count.
+                "form-submission-count-{$ownerRecord->root_id}-" . auth()->id(),
+                now()->addMinutes(5),
+                function () use ($ownerRecord): int {
+                    return FormSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                        )
+                        ->withoutArchived()
+                        ->count();
+                },
+            );
+
+        return (string) $formSubmissionsCount;
+    }
+}

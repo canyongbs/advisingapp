@@ -59,4 +59,20 @@ class CustomerAdvisorLinkFactory extends Factory
             'is_keep_current_enabled' => true,
         ];
     }
+
+    public function parsingInProgress(): self
+    {
+        return $this->state([
+            'parsing_job_id' => 'pjb-' . $this->faker->uuid(),
+            'parsing_started_at' => now()->subMinutes(10),
+            'parsing_last_checked_at' => now()->subMinutes(10),
+        ]);
+    }
+
+    public function parsingFailed(): self
+    {
+        return $this->state([
+            'parsing_failed_at' => now(),
+        ]);
+    }
 }

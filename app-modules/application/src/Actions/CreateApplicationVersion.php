@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Actions;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use Illuminate\Support\Facades\DB;
 
 class CreateApplicationVersion
@@ -60,6 +61,10 @@ class CreateApplicationVersion
             $this->reassociateNotificationUsers($oldVersion, $newVersion);
             $this->reassociateWorkflowTriggers($oldVersion, $newVersion);
 
+            if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+                $this->reassociateEmailAutoReply($oldVersion, $newVersion);
+            }
+
             return $newVersion;
         });
     }
@@ -77,5 +82,13 @@ class CreateApplicationVersion
             $trigger->related()->associate($newVersion);
             $trigger->save();
         });
+    }
+
+    private function reassociateEmailAutoReply(Application $oldVersion, Application $newVersion): void
+    {
+        if ($oldVersion->emailAutoReply) {
+            $oldVersion->emailAutoReply->application()->associate($newVersion);
+            $oldVersion->emailAutoReply->save();
+        }
     }
 }

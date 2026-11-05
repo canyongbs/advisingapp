@@ -37,6 +37,7 @@
 namespace AdvisingApp\Application\Observers;
 
 use AdvisingApp\Application\Models\Application;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class ApplicationObserver
 {
@@ -45,5 +46,18 @@ class ApplicationObserver
         if ($application->getAttribute('root_id') === null) {
             $application->root_id = $application->id;
         }
+    }
+
+    public function created(Application $application): void
+    {
+        if (! AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+            return;
+        }
+
+        if ($application->root_id !== $application->id) {
+            return;
+        }
+
+        $application->emailAutoReply()->create();
     }
 }

@@ -71,6 +71,16 @@ it('will appropriately create a message event based on the payload received', fu
     ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
 ]);
 
+it('keeps the milliseconds of the Telnyx occurred_at', function (): void {
+    $smsMessage = SmsMessage::factory()->create([
+        'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+    ]);
+
+    (new ProcessTelnyxMessageStatusUpdate(loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivered')['data']))->handle();
+
+    expect($smsMessage->events()->sole()->occurred_at->format('Y-m-d H:i:s.v'))->toBe('2019-12-09 21:32:14.148');
+});
+
 it('creates a BouncedPhoneNumber record when delivery fails with a bounce error code', function (): void {
     SmsMessage::factory()->create([
         'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',

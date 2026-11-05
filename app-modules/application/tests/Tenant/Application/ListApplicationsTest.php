@@ -40,6 +40,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplicatio
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -332,5 +333,77 @@ describe('duplication', function (): void {
 
         Storage::disk('s3-public')->assertExists($duplicatedApplicationImage->getPathRelativeToRoot());
         Storage::disk('s3-public')->assertExists($duplicatedStepImage->getPathRelativeToRoot());
+    });
+
+    it('copies the email auto reply to the duplicated application', function (): void {
+        $application = Application::factory()->create();
+
+        $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for applying']]]]];
+        $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'We have received your application.']]]]];
+
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+        $emailAutoReply->update([
+            'is_enabled' => true,
+            'subject' => $subject,
+            'body' => $body,
+        ]);
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedApplication->emailAutoReply()->firstOrFail();
+
+        expect($duplicatedApplication->emailAutoReply()->count())->toBe(1)
+            ->and($duplicatedEmailAutoReply->getKey())->not->toBe($emailAutoReply->getKey())
+            ->and($duplicatedEmailAutoReply->is_enabled)->toBeTrue()
+            ->and($duplicatedEmailAutoReply->subject)->toEqual($subject)
+            ->and($duplicatedEmailAutoReply->body)->toEqual($body)
+            ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
+    });
+
+    it('copies the email auto reply body images to the duplicated application', function (): void {
+        Storage::fake('s3-public');
+
+        $application = Application::factory()->create();
+
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+        $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+        $emailAutoReply->update([
+            'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+        ]);
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedApplication->emailAutoReply()->firstOrFail();
+        $duplicatedImage = $duplicatedEmailAutoReply->getFirstMedia('body');
+
+        expect($duplicatedImage)->not->toBeNull()
+            ->and($duplicatedImage->uuid)->not->toBe($image->uuid)
+            ->and(json_encode($duplicatedEmailAutoReply->body))->toContain($duplicatedImage->uuid)->not->toContain($image->uuid)
+            ->and($emailAutoReply->refresh()->getMedia('body')->pluck('uuid')->all())->toBe([$image->uuid])
+            ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
+
+        Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
+    });
+
+    it('does not copy the email auto reply to the duplicated application when the feature is inactive', function (): void {
+        $application = Application::factory()->create();
+        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect($duplicatedApplication->emailAutoReply()->exists())->toBeFalse()
+            ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
     });
 });

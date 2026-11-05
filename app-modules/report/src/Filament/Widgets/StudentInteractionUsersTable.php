@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Exports\StudentInteractionUsersExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
@@ -90,6 +91,10 @@ class StudentInteractionUsersTable extends BaseWidget
             ->headerActions([
                 ExportAction::make()
                     ->exporter(StudentInteractionUsersExporter::class)
+                    ->options([
+                        'startDate' => $startDate?->toDateString(),
+                        'endDate' => $endDate?->toDateString(),
+                    ])
                     ->formats([
                         ExportFormat::Csv,
                     ]),
@@ -100,10 +105,14 @@ class StudentInteractionUsersTable extends BaseWidget
                         ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $groupId): Builder {
                             return $query
                                 ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId): void {
-                                    $query->when(
-                                        $groupId,
-                                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                                    );
+                                    // The morph callback is typed `Builder<Model>` rather than
+                                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                                    // constrained model cannot be proven here.
+                                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                                        ->when(
+                                            $groupId,
+                                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                                        );
                                 })
                                 ->when(
                                     $startDate instanceof Carbon && $endDate instanceof Carbon,
@@ -152,7 +161,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->state(function (User $record) use ($startDate, $endDate) {
                         $first = $record
                             ->interactions()
-                            ->whereHasMorph('interactable', Student::class)
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                             ->when(
                                 $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -167,7 +179,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->state(function (User $record) use ($startDate, $endDate) {
                         $last = $record
                             ->interactions()
-                            ->whereHasMorph('interactable', Student::class)
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                             ->when(
                                 $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -182,7 +197,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->state(function (User $record) use ($startDate, $endDate) {
                         return $record
                             ->interactions()
-                            ->whereHasMorph('interactable', Student::class)
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                             ->when(
                                 $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -192,10 +210,16 @@ class StudentInteractionUsersTable extends BaseWidget
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
                     ->state(function (User $record) use ($startDate, $endDate): string {
-                        $allInteractions = Interaction::whereHasMorph('interactable', Student::class)->count();
+                        // The morph callback is typed `Builder<Model>` rather than
+                        // `Builder<Student>`, and `Builder` is not covariant, so the
+                        // constrained model cannot be proven here.
+                        $allInteractions = Interaction::whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))->count(); // @phpstan-ignore argument.type
                         $userInteractionsCount = $record
                             ->interactions()
-                            ->whereHasMorph('interactable', Student::class)
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                             ->when(
                                 $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -215,7 +239,10 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->state(function (User $record) use ($startDate, $endDate): ?string {
                         $durations = $record
                             ->interactions()
-                            ->whereHasMorph('interactable', Student::class)
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            ->whereHasMorph('interactable', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents())) // @phpstan-ignore argument.type
                             ->when(
                                 $startDate instanceof Carbon && $endDate instanceof Carbon,
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])

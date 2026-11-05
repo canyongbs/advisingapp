@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
@@ -157,6 +158,8 @@ class RequestEventRegistrationFormSubmission extends Action
             $submission->save();
 
             $submission->deliverRequest();
+
+            event(new EventAttendeeInvited($attendee));
 
             Notification::make()
                 ->title('Event registration request sent')

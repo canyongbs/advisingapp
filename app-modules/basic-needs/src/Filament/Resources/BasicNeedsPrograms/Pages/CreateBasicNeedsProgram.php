@@ -37,11 +37,13 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
+use App\Features\BasicNeedsProgramNameCitextFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class CreateBasicNeedsProgram extends CreateRecord
@@ -57,7 +59,11 @@ class CreateBasicNeedsProgram extends CreateRecord
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    ->unique(),
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => BasicNeedsProgramNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535)

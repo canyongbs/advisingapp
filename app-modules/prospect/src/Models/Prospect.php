@@ -72,7 +72,6 @@ use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\User;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -514,11 +513,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                 $builder->whereRaw('1 = 0');
             }
         });
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 
     protected function displayName(): Attribute

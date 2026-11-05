@@ -39,11 +39,13 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
 use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use App\Features\CampaignNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditCampaign extends EditRecord
 {
@@ -55,7 +57,13 @@ class EditCampaign extends EditRecord
             ->columns(1)
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => CampaignNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 ...PopulationGroupSelector::make(),
                 Toggle::make('enabled')
                     ->helperText('Toggle this off to pause the campaign; no further journey steps will run.'),

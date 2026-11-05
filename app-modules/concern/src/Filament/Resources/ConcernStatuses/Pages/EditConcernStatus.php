@@ -39,6 +39,7 @@ namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\ConcernStatusResource;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use App\Features\AlertStatusNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -46,6 +47,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditConcernStatus extends EditRecord
 {
@@ -60,7 +62,13 @@ class EditConcernStatus extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => AlertStatusNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()

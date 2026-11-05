@@ -108,8 +108,16 @@ class CompleteStudentDataImport
                 }
 
                 if ($import->enrollmentsImport) {
+                    // The `enrollment_terms` view depends on `enrollments`, so it is recreated from its current definition around the swap.
+                    $enrollmentTermsViewDefinition = DB::scalar("select pg_get_viewdef(to_regclass('enrollment_terms'))");
+
+                    DB::statement('drop view if exists "enrollment_terms"');
                     DB::statement('drop table "enrollments"');
                     DB::statement("alter table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
+
+                    if (filled($enrollmentTermsViewDefinition)) {
+                        DB::statement("create view \"enrollment_terms\" as {$enrollmentTermsViewDefinition}");
+                    }
                 }
             });
 

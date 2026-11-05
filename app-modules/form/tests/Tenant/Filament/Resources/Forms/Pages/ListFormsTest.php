@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormEmailAutoReply;
@@ -70,6 +71,20 @@ it('the create action is gated by the create permission', function () use ($list
 
     Livewire::test(ListForms::class)
         ->assertActionVisible('create');
+});
+
+it('redirects to the create page with the chosen access settings', function (): void {
+    asSuperAdmin();
+
+    Livewire::test(ListForms::class)
+        ->callAction(TestAction::make('create'), data: [
+            'is_authenticated' => true,
+            'generate_prospects' => false,
+        ])
+        ->assertRedirect(FormResource::getUrl('create', [
+            'is_authenticated' => true,
+            'generate_prospects' => false,
+        ]));
 });
 
 it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser): void {

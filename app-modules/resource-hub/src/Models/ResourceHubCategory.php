@@ -37,18 +37,24 @@
 namespace AdvisingApp\ResourceHub\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use DateTimeInterface;
+use AdvisingApp\ResourceHub\Database\Factories\ResourceHubCategoryFactory;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubCategory
  */
-class ResourceHubCategory extends BaseModel implements Auditable
+class ResourceHubCategory extends Model implements Auditable
 {
+    /** @use HasFactory<ResourceHubCategoryFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
@@ -70,10 +76,5 @@ class ResourceHubCategory extends BaseModel implements Auditable
     public function resourceHubArticles(): HasMany
     {
         return $this->hasMany(ResourceHubArticle::class, 'category_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

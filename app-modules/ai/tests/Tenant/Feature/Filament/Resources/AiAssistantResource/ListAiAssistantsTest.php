@@ -120,3 +120,34 @@ it('can list records', function () use ($licenses, $permissions): void {
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);
 });
+
+it('displays the archived status as a boolean icon', function (bool $archived) use ($licenses, $permissions): void {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->employeeAdvisors = true;
+
+    $settings->save();
+
+    $assistant = AiAssistant::factory()->create([
+        'archived_at' => $archived ? now() : null,
+    ]);
+
+    $component = Livewire::test(ListAiAssistants::class)
+        ->removeTableFilter('withoutArchived')
+        ->assertCanSeeTableRecords([$assistant])
+        ->assertTableColumnStateSet('archived_at', $archived, $assistant);
+
+    $column = $component->instance()->getTable()->getColumn('archived_at');
+
+    expect($column->record($assistant)->toEmbeddedHtml())
+        ->toContain('<svg')
+        ->not->toContain('N/A');
+})->with([
+    'active' => false,
+    'archived' => true,
+]);

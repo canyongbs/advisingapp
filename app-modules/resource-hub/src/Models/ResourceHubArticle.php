@@ -39,12 +39,11 @@ namespace AdvisingApp\ResourceHub\Models;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleFactory;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleObserver;
-use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\VideoRichContentPlugin;
-use DateTimeInterface;
 use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -52,6 +51,8 @@ use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,13 +61,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubArticle
  */
 #[ObservedBy([ResourceHubArticleObserver::class])]
-class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedia, HasRichContent
+class ResourceHubArticle extends Model implements AiFile, Auditable, HasMedia, HasRichContent
 {
+    /** @use HasFactory<ResourceHubArticleFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use AuditableTrait;
     use HasUuids;
 
@@ -260,10 +266,5 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
     public function openAiVectorStores(): MorphMany
     {
         return $this->morphMany(OpenAiVectorStore::class, 'file');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

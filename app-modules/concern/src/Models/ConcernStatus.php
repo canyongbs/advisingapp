@@ -39,18 +39,23 @@ namespace AdvisingApp\Concern\Models;
 use AdvisingApp\Concern\Database\Factories\ConcernStatusFactory;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Observers\ConcernStatusObserver;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperConcernStatus
  */
 #[ObservedBy([ConcernStatusObserver::class])]
-class ConcernStatus extends BaseModel
+class ConcernStatus extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     /** @use HasFactory<ConcernStatusFactory> */
     use HasFactory;
 

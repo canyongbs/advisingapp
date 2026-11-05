@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e94219510a0b7f160acfbd320503045d",
+    "content-hash": "3e1a768e52179047a7f469d15284848b",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2013,16 +2013,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.46.0",
+            "version": "2.47.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "190be375e4609f19414b3d951a1d59df4c942656"
+                "reference": "9affe279a9f427c2a8ddb12410a403b08d33abe4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/190be375e4609f19414b3d951a1d59df4c942656",
-                "reference": "190be375e4609f19414b3d951a1d59df4c942656",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/9affe279a9f427c2a8ddb12410a403b08d33abe4",
+                "reference": "9affe279a9f427c2a8ddb12410a403b08d33abe4",
                 "shasum": ""
             },
             "require": {
@@ -2030,10 +2030,10 @@
                 "internachi/modular": "^3.0",
                 "internachi/modularize": "^1.1",
                 "laravel-notification-channels/webpush": "^11.0",
-                "laravel/framework": "^12.0|^13.0",
+                "laravel/framework": "^12.15|^13.0",
                 "laravel/pennant": "^1.0",
                 "laravel/prompts": "^0.3",
-                "owen-it/laravel-auditing": "^14.0",
+                "owen-it/laravel-auditing": "^14.0.5",
                 "php": "8.4.*|8.5.*",
                 "spatie/laravel-health": "^1.40",
                 "tapp/filament-timezone-field": "^3.0",
@@ -2080,9 +2080,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.46.0"
+                "source": "https://github.com/canyongbs/common/tree/2.47.0"
             },
-            "time": "2026-10-20T15:16:11+00:00"
+            "time": "2026-11-04T10:55:25+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
@@ -10745,16 +10745,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.30.6",
+            "version": "1.30.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "a416375ffc8bf5b661c1bb4e6c60d8f3fddbe5ce"
+                "reference": "f5dd9c1f084d336ea63cf53099533e061a9c157a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/a416375ffc8bf5b661c1bb4e6c60d8f3fddbe5ce",
-                "reference": "a416375ffc8bf5b661c1bb4e6c60d8f3fddbe5ce",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/f5dd9c1f084d336ea63cf53099533e061a9c157a",
+                "reference": "f5dd9c1f084d336ea63cf53099533e061a9c157a",
                 "shasum": ""
             },
             "require": {
@@ -10847,9 +10847,10 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.30.6"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/1.30.7"
             },
-            "time": "2026-07-12T19:59:31+00:00"
+            "time": "2026-09-17T03:56:23+00:00",
+            "published-time": "2026-09-17T04:07:00+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -11155,7 +11156,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-31T19:09:43+00:00"
+            "time": "2026-08-31T19:09:43+00:00",
+            "published-time": "2026-08-31T19:09:59+00:00"
         },
         {
             "name": "pragmarx/google2fa",
@@ -18953,12 +18955,12 @@
             "version": "v5.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
+                "url": "https://github.com/phpdotenv/phpdotenv.git",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
+                "url": "https://api.github.com/repos/phpdotenv/phpdotenv/zipball/301c07936b16d88628b126b01d082ba153cf4c40",
                 "reference": "301c07936b16d88628b126b01d082ba153cf4c40",
                 "shasum": ""
             },
@@ -24459,5 +24461,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

@@ -35,11 +35,13 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -260,5 +262,82 @@ describe('duplication', function (): void {
 
         Storage::disk('s3-public')->assertExists($duplicatedDescriptionImage->getPathRelativeToRoot());
         Storage::disk('s3-public')->assertExists($duplicatedHeroImage->getPathRelativeToRoot());
+    });
+
+    it('copies the email auto reply to the duplicated event', function (): void {
+        $event = Event::factory()->create();
+
+        $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for registering']]]]];
+        $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'We look forward to seeing you.']]]]];
+
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+        $emailAutoReply->update([
+            'is_enabled' => true,
+            'delivery_preference' => EmailAutoReplyDeliveryPreference::WhenInvited,
+            'subject' => $subject,
+            'body' => $body,
+        ]);
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedEvent->eventRegistrationForm->emailAutoReply()->firstOrFail();
+
+        expect($duplicatedEvent->eventRegistrationForm->emailAutoReply()->count())->toBe(1)
+            ->and($duplicatedEmailAutoReply->getKey())->not->toBe($emailAutoReply->getKey())
+            ->and($duplicatedEmailAutoReply->is_enabled)->toBeTrue()
+            ->and($duplicatedEmailAutoReply->delivery_preference)->toBe(EmailAutoReplyDeliveryPreference::WhenInvited)
+            ->and($duplicatedEmailAutoReply->subject)->toEqual($subject)
+            ->and($duplicatedEmailAutoReply->body)->toEqual($body)
+            ->and($emailAutoReply->refresh()->form_id)->toBe($event->eventRegistrationForm->getKey());
+    });
+
+    it('copies the email auto reply body images to the duplicated event', function (): void {
+        Storage::fake('s3-public');
+
+        $event = Event::factory()->create();
+
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+        $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+        $emailAutoReply->update([
+            'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+        ]);
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedEvent->eventRegistrationForm->emailAutoReply()->firstOrFail();
+        $duplicatedImage = $duplicatedEmailAutoReply->getFirstMedia('body');
+
+        expect($duplicatedImage)->not->toBeNull()
+            ->and($duplicatedImage->uuid)->not->toBe($image->uuid)
+            ->and(json_encode($duplicatedEmailAutoReply->body))->toContain($duplicatedImage->uuid)->not->toContain($image->uuid)
+            ->and($emailAutoReply->refresh()->getMedia('body')->pluck('uuid')->all())->toBe([$image->uuid])
+            ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
+
+        Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
+    });
+
+    it('does not copy the email auto reply to the duplicated event when the feature is inactive', function (): void {
+        $event = Event::factory()->create();
+        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
+
+        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+
+        expect($duplicatedEvent->eventRegistrationForm->emailAutoReply()->exists())->toBeFalse()
+            ->and($emailAutoReply->refresh()->form_id)->toBe($event->eventRegistrationForm->getKey());
     });
 });

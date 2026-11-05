@@ -38,22 +38,26 @@ namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\BaseModel;
 use App\Models\Media;
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperFormEmailAutoReply
  */
-class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
+class FormEmailAutoReply extends Model implements HasMedia, HasRichContent
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     /** @use InteractsWithMedia<Media> */
@@ -130,6 +134,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags($mergeTags);
     }
 }

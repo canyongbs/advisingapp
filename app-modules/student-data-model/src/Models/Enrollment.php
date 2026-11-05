@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
@@ -105,10 +106,19 @@ class Enrollment extends Model
     }
 
     /**
-     * @return BelongsTo<Term, $this>
+     * The term matched to this enrollment by the `enrollment_terms` view: by `sis_term_id`, otherwise by `semester_name` ignoring case.
+     *
+     * @return HasOneThrough<Term, EnrollmentTerm, $this>
      */
-    public function term(): BelongsTo
+    public function term(): HasOneThrough
     {
-        return $this->belongsTo(Term::class, 'sis_term_id', 'sis_term_id');
+        return $this->hasOneThrough(
+            Term::class,
+            EnrollmentTerm::class,
+            firstKey: 'enrollment_id',
+            secondKey: 'id',
+            localKey: 'id',
+            secondLocalKey: 'term_id',
+        );
     }
 }

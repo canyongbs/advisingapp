@@ -43,6 +43,7 @@ use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -108,5 +109,13 @@ class EventRegistrationForm extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
+    }
+
+    /**
+     * @return HasOne<EventRegistrationFormEmailAutoReply, $this>
+     */
+    public function emailAutoReply(): HasOne
+    {
+        return $this->hasOne(EventRegistrationFormEmailAutoReply::class, 'form_id');
     }
 }

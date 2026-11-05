@@ -212,6 +212,7 @@ class EventRegistrationWidgetController extends Controller
                     'event' => $authentication->submissible->event,
                 ],
             ),
+            'is_attendance_question_required' => $this->isAttendanceQuestionRequired($authentication->author),
         ]);
     }
 
@@ -239,11 +240,15 @@ class EventRegistrationWidgetController extends Controller
                 abort(Response::HTTP_UNAUTHORIZED);
             }
 
+            $isAttendanceQuestionRequired = $this->isAttendanceQuestionRequired($authentication->author);
+
+            $attending = $isAttendanceQuestionRequired ? $request->get('attending') : 'yes';
+
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'attending' => ['required', 'in:yes,no'],
-                    ...$request->get('attending') === 'yes' ? $generateValidation($form) : [],
+                    ...$isAttendanceQuestionRequired ? ['attending' => ['required', 'in:yes,no']] : [],
+                    ...$attending === 'yes' ? $generateValidation($form) : [],
                 ]
             );
 
@@ -270,15 +275,15 @@ class EventRegistrationWidgetController extends Controller
 
             $submission->submitted_at = now();
 
-            $submission->attendee_status = $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending;
+            $submission->attendee_status = $attending === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending;
 
             $submission->save();
 
-            $authentication->author->update(['status' => $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
+            $authentication->author->update(['status' => $attending === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
 
             $data = $validator->validated();
 
-            if ($data['attending'] === 'yes') {
+            if ($attending === 'yes') {
                 unset($data['recaptcha-token'], $data['attending']);
 
                 if ($form->is_wizard) {
@@ -328,5 +333,15 @@ class EventRegistrationWidgetController extends Controller
                 'message' => 'Event registration submitted successfully.',
             ]
         );
+    }
+
+    /**
+     * Only attendees registering for the first time through the public link skip the attendance
+     * question and are registered as attending. Anyone who was invited, or has already responded,
+     * is asked, so they can still decline or change their answer.
+     */
+    private function isAttendanceQuestionRequired(EventAttendee $attendee): bool
+    {
+        return ($attendee->status !== EventAttendeeStatus::Pending) || $attendee->hasPendingInvitation();
     }
 }

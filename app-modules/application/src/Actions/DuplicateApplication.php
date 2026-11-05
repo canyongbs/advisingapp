@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Actions;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationStep;
+use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class DuplicateApplication
 {
@@ -53,6 +54,10 @@ class DuplicateApplication
         $fieldMap = $this->replicateFields($stepMap);
         $this->updateStepContent($fieldMap);
         $this->replicateContentMedia($this->original, $this->replica);
+
+        if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
+            $this->replicateEmailAutoReply();
+        }
     }
 
     private function replicateSteps(): array
@@ -121,6 +126,34 @@ class DuplicateApplication
 
         $target->content = $this->remapMediaUuids($target->content, $mediaUuidMap);
         $target->save();
+    }
+
+    private function replicateEmailAutoReply(): void
+    {
+        $originalEmailAutoReply = $this->original->emailAutoReply;
+
+        if (! $originalEmailAutoReply) {
+            return;
+        }
+
+        $replicaEmailAutoReply = $this->replica->emailAutoReply()->updateOrCreate([], [
+            'subject' => $originalEmailAutoReply->subject,
+            'body' => $originalEmailAutoReply->body,
+            'is_enabled' => $originalEmailAutoReply->is_enabled,
+        ]);
+
+        $mediaUuidMap = [];
+
+        foreach ($originalEmailAutoReply->getMedia('body') as $media) {
+            $mediaUuidMap[$media->uuid] = $media->copy($replicaEmailAutoReply, 'body', 's3-public')->uuid;
+        }
+
+        if ($mediaUuidMap === []) {
+            return;
+        }
+
+        $replicaEmailAutoReply->body = $this->remapMediaUuids($replicaEmailAutoReply->body, $mediaUuidMap);
+        $replicaEmailAutoReply->save();
     }
 
     /**

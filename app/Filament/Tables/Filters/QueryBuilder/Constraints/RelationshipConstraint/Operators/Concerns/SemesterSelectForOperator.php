@@ -37,6 +37,11 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\Concerns;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Scopes\MatchedToTermNamed;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutMatchedTerm;
+use AdvisingApp\StudentDataModel\Models\Term;
+use App\Features\TermsConsolidationFeature;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +51,11 @@ use Illuminate\Support\Str;
 
 trait SemesterSelectForOperator
 {
+    /**
+     * Selects enrollments that were not matched to any term.
+     */
+    public const string UNASSIGNED_SEMESTER = '__unassigned__';
+
     public function getFormSchema(): array
     {
         return [
@@ -56,6 +66,14 @@ trait SemesterSelectForOperator
 
     public static function semesterSelect(): Select
     {
+        if (TermsConsolidationFeature::active()) {
+            return Select::make('semesters')
+                ->label('Semester')
+                ->options(fn (): array => static::getTermSemesterOptions())
+                ->searchable()
+                ->multiple();
+        }
+
         return Select::make('semesters')
             ->label('Semester')
             ->options(fn (): array => Enrollment::query()
@@ -96,6 +114,16 @@ trait SemesterSelectForOperator
         $semesters = Arr::wrap($semesters);
 
         $semesters = array_values(array_filter($semesters, filled(...)));
+
+        if (TermsConsolidationFeature::active()) {
+            return $query->whereHas(
+                $relationshipName,
+                fn (Builder $query) => static::applyTermSemestersToEnrollmentsQuery($query, $semesters),
+                $this->getQueryOperator(),
+                $count,
+            );
+        }
+
         $lowerSemesters = array_map(mb_strtolower(...), $semesters);
 
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters): void {
@@ -108,12 +136,54 @@ trait SemesterSelectForOperator
         $summary = parent::getSummary();
 
         if (! empty($this->settings['semesters'])) {
-            $semesters = Arr::wrap($this->settings['semesters']);
+            $semesters = array_map(
+                fn (mixed $semester): mixed => $semester === static::UNASSIGNED_SEMESTER ? 'Unassigned' : $semester,
+                Arr::wrap($this->settings['semesters']),
+            );
 
             $concatenatedSemesters = implode(', ', $semesters);
             $summary .= ' in ' . (count($semesters) > 1 ? 'semesters ' : 'semester ') . $concatenatedSemesters;
         }
 
         return $summary;
+    }
+
+    /**
+     * The names of the terms, most recent first, with names differing only in case listed once.
+     *
+     * @return array<int|string, string>
+     */
+    protected static function getTermSemesterOptions(): array
+    {
+        // A union rather than a spread, which would renumber numeric names such as `2024`.
+        return Term::query()
+            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
+            ->whereNull('deleted_at')
+            ->tap(new OrderByMostRecentTerm())
+            ->pluck('name')
+            ->unique(fn (string $name): string => mb_strtolower($name), strict: true)
+            ->mapWithKeys(fn (string $name): array => [$name => $name])
+            ->all() + [static::UNASSIGNED_SEMESTER => 'Unassigned'];
+    }
+
+    /**
+     * Matches enrollments by the name of their matched term, ignoring case, or by having no matched term.
+     *
+     * @param Builder<Model> $query
+     * @param array<string> $semesters
+     */
+    protected static function applyTermSemestersToEnrollmentsQuery(Builder $query, array $semesters): void
+    {
+        $termNames = array_values(array_diff($semesters, [static::UNASSIGNED_SEMESTER]));
+
+        $query->where(fn (Builder $query) => $query
+            ->when(
+                filled($termNames),
+                fn (Builder $query) => $query->where(fn (Builder $query) => $query->tap(new MatchedToTermNamed($termNames))),
+            )
+            ->when(
+                in_array(static::UNASSIGNED_SEMESTER, $semesters, strict: true),
+                fn (Builder $query) => $query->orWhere(fn (Builder $query) => $query->tap(new WithoutMatchedTerm())),
+            ));
     }
 }

@@ -157,16 +157,12 @@
     <Page v-if="!category || !article">
         <template #heading> 404 Not Found </template>
 
-        <PageCard>
-            <EmptyState>
-                <template #heading>Article Not Found</template>
-                <template #description>The article you are looking for does not exist or has been removed.</template>
-                <template #actions>
-                    <BaseButton tag="router-link" :to="{ name: 'home' }" color="gray" size="md">
-                        Return Home
-                    </BaseButton>
-                </template>
-            </EmptyState>
-        </PageCard>
+        <EmptyState>
+            <template #heading>Article Not Found</template>
+            <template #description>The article you are looking for does not exist or has been removed.</template>
+            <template #actions>
+                <BaseButton tag="router-link" :to="{ name: 'home' }" color="gray" size="md"> Return Home </BaseButton>
+            </template>
+        </EmptyState>
     </Page>
 </template>

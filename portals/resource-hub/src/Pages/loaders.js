@@ -44,29 +44,37 @@
 import { defineColadaLoader } from 'vue-router/experimental/pinia-colada';
 import { apiGet } from '../Services/api.js';
 
+/**
+ * Resolves a loader query, treating "you can't see this" responses as missing data so the navigation still completes and
+ * the page renders its own fallback state instead of failing. Pass `notFound` to treat a 404 the same way.
+ */
+async function tolerant(promise, { notFound = false } = {}) {
+    try {
+        return await promise;
+    } catch (error) {
+        const status = error?.response?.status;
+        const tolerated = [401, 403, ...(notFound ? [404] : [])];
+
+        if (status && tolerated.includes(status)) {
+            return null;
+        }
+
+        throw error;
+    }
+}
+
 export const useCategoriesData = defineColadaLoader({
     key: () => ['resource-hub', 'categories'],
-    query: () => apiGet('/categories'),
+    query: () => tolerant(apiGet('/categories')),
 });
 
 export const useCategoryData = defineColadaLoader({
     key: (to) => ['resource-hub', 'category', String(to.params.categoryId)],
-    query: (to) => apiGet(`/categories/${to.params.categoryId}`),
+    query: (to) => tolerant(apiGet(`/categories/${to.params.categoryId}`), { notFound: true }),
 });
 
 export const useArticleData = defineColadaLoader({
     key: (to) => ['resource-hub', 'article', String(to.params.categoryId), String(to.params.articleId)],
-    query: async (to) => {
-        try {
-            return await apiGet(`/categories/${to.params.categoryId}/articles/${to.params.articleId}`);
-        } catch (error) {
-            // Treat missing / unauthorized articles as "not found" so the navigation still
-            // resolves and the page can render its own 404 state instead of failing.
-            if (error?.response && [401, 404].includes(error.response.status)) {
-                return null;
-            }
-
-            throw error;
-        }
-    },
+    query: (to) =>
+        tolerant(apiGet(`/categories/${to.params.categoryId}/articles/${to.params.articleId}`), { notFound: true }),
 });

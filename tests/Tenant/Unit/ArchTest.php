@@ -89,6 +89,38 @@ test('Legacy models must not use HasUuids (UUIDv7)', function () {
     }
 });
 
+test('Only the listed legacy models use HasVersion4Uuids', function () use ($modules) {
+    $legacyModels = require __DIR__ . '/legacy-v4-uuid-models.php';
+
+    // The arch rules above only see traits declared directly on a class, so models that inherit
+    // HasVersion4Uuids from a parent slip past them. They also only cover `Models` namespaces, and
+    // ignoring() matches by prefix (AiAssistant exempts AiAssistantFile). This test catches all three.
+    $findClassFiles = fn (string $path): Collection => collect(
+        Finder::create()
+            ->files()
+            ->in($path)
+            ->name('/^[A-Z].*\.php$/')
+            ->contains('/^\s*(?:(?:abstract|final|readonly)\s+)*class\s/m')
+    );
+
+    $modelClasses = $findClassFiles(app_path())
+        ->map(fn (SplFileInfo $file): string => app()->getNamespace() . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname()))
+        ->merge($modules->flatMap(
+            fn (ModuleConfig $module): Collection => $findClassFiles($module->path('src'))
+                ->map(fn (SplFileInfo $file): string => $module->pathToFullyQualifiedClassName($file->getPathname()))
+        ));
+
+    $unlistedModels = $modelClasses
+        ->filter(fn (string $class): bool => class_exists($class) && is_subclass_of($class, Model::class))
+        ->filter(fn (string $class): bool => in_array(HasVersion4Uuids::class, class_uses_recursive($class), true))
+        ->reject(fn (string $class): bool => in_array($class, $legacyModels, true))
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($unlistedModels)->toBe([]);
+});
+
 test('product_admin. permission strings only appear in database/migrations', function () {
     $basePath = dirname(__DIR__, 3);
 

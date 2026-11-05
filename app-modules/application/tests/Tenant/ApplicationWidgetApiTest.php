@@ -40,12 +40,15 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 
@@ -481,4 +484,34 @@ test('completing a requested submission fires ApplicationSubmissionCreated and r
         event: ApplicationSubmissionCreated::class,
         callback: fn (ApplicationSubmissionCreated $event) => $event->submission->is($requestedSubmission)
     );
+});
+
+test('submit sends the email auto reply to the author once when it is enabled', function (): void {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    Notification::fake();
+
+    $application = Application::factory()->create();
+    $application->content = [];
+    $application->save();
+    $application->fields()->delete();
+    $application->emailAutoReply()->firstOrFail()->update(['is_enabled' => true]);
+
+    $authentication = ApplicationAuthentication::factory()->create([
+        'application_id' => $application->id,
+    ]);
+    $author = $authentication->author;
+    assert($author instanceof Student || $author instanceof Prospect);
+
+    Notification::assertNotSentTo($author, ApplicationSubmissionAutoReplyNotification::class);
+
+    post(URL::signedRoute(
+        name: 'widgets.applications.api.submit',
+        parameters: ['application' => $application, 'authentication' => $authentication],
+    ))
+        ->assertSuccessful();
+
+    Notification::assertSentToTimes($author, ApplicationSubmissionAutoReplyNotification::class, 1);
 });

@@ -41,6 +41,7 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\EditBas
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\ListBasicNeedsCategories;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\BasicNeedsCategoryNameCitextFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
@@ -318,4 +319,126 @@ it('is gated with proper access control', function (): void {
     $user->givePermissionTo('settings.view-any');
 
     get(BasicNeedsCategoryResource::getUrl('index'))->assertSuccessful();
+});
+
+it('does not allow creating a category whose name matches another non-deleted category case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
+
+    BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+
+    Livewire::test(CreateBasicNeedsCategory::class)
+        ->fillForm(['name' => 'food pantry'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows creating a category whose name is freed up by a soft-deleted category case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
+
+    $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+    $deletedCategory->delete();
+
+    Livewire::test(CreateBasicNeedsCategory::class)
+        ->fillForm(['name' => 'food pantry'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name']);
+
+    assertDatabaseHas(BasicNeedsCategory::class, [
+        'name' => 'food pantry',
+        'deleted_at' => null,
+    ]);
+});
+
+it('rejects creating a category with a soft-deleted name before the citext migration activates', function (): void {
+    BasicNeedsCategoryNameCitextFeature::deactivate();
+
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
+
+    $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+    $deletedCategory->delete();
+
+    Livewire::test(CreateBasicNeedsCategory::class)
+        ->fillForm(['name' => 'food pantry'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('does not allow updating a category to a name matching another non-deleted category case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+
+    BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+    $category = BasicNeedsCategory::factory()->create(['name' => 'Clothing']);
+
+    Livewire::test(EditBasicNeedsCategory::class, [
+        'record' => $category->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'food pantry'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows updating a category to a name freed up by a soft-deleted category case-insensitively', function (): void {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+
+    $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+    $deletedCategory->delete();
+
+    $category = BasicNeedsCategory::factory()->create(['name' => 'Clothing']);
+
+    Livewire::test(EditBasicNeedsCategory::class, [
+        'record' => $category->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'food pantry'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+});
+
+it('rejects updating a category to a soft-deleted name before the citext migration activates', function (): void {
+    BasicNeedsCategoryNameCitextFeature::deactivate();
+
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+
+    $deletedCategory = BasicNeedsCategory::factory()->create(['name' => 'Food Pantry']);
+    $deletedCategory->delete();
+
+    $category = BasicNeedsCategory::factory()->create(['name' => 'Clothing']);
+
+    Livewire::test(EditBasicNeedsCategory::class, [
+        'record' => $category->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'food pantry'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($category->refresh()->name)->toBe('Clothing');
 });
