@@ -132,6 +132,7 @@ class EngagementFilesRelationManager extends RelationManager
             ->recordActions([
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
+                    ->authorize('view')
                     ->url(
                         fn (EngagementFile $record): string => route('engagement-file-download', ['file' => $record]),
                         shouldOpenInNewTab: true,

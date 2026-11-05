@@ -34,13 +34,16 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 it('links the download action to the engagement file download route', function (): void {
@@ -56,4 +59,23 @@ it('links the download action to the engagement file download route', function (
     ])
         ->assertActionHasUrl(TestAction::make('download')->table($file), route('engagement-file-download', ['file' => $file]))
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('download')->table($file));
+});
+
+describe('authorization', function (): void {
+    it('hides the `download` action without the `engagement_file.*.view` permission', function (): void {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('student.view-any', 'student.*.view', 'engagement_file.view-any');
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+        $file = EngagementFile::factory()->create();
+        $student->engagementFiles()->attach($file);
+
+        Livewire::test(EngagementFilesRelationManager::class, [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ])
+            ->assertActionHidden(TestAction::make('download')->table($file));
+    });
 });
