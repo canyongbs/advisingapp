@@ -57,11 +57,11 @@ $createEngagementFileWithMedia = function (): EngagementFile {
     return $file;
 };
 
-beforeEach(function () {
+beforeEach(function (): void {
     Storage::fake('s3');
 });
 
-it('redirects to a temporary url that downloads the file under its original name', function () use ($createEngagementFileWithMedia) {
+it('redirects to a temporary url that downloads the file under its original name', function () use ($createEngagementFileWithMedia): void {
     $captured = null;
 
     Storage::disk('s3')->buildTemporaryUrlsUsing(function (string $path, DateTimeInterface $expiration, array $options) use (&$captured): string {
@@ -79,8 +79,8 @@ it('redirects to a temporary url that downloads the file under its original name
     expect($captured)->toBe('attachment; filename="Quarterly Report.png"');
 });
 
-describe('authorization', function () use ($createEngagementFileWithMedia) {
-    it('denies the download without the engagement file view permission', function () use ($createEngagementFileWithMedia) {
+describe('authorization', function () use ($createEngagementFileWithMedia): void {
+    it('denies the download without the engagement file view permission', function () use ($createEngagementFileWithMedia): void {
         Storage::disk('s3')->buildTemporaryUrlsUsing(fn (string $path): string => 'https://s3.test/' . $path);
 
         $file = $createEngagementFileWithMedia();
@@ -90,7 +90,7 @@ describe('authorization', function () use ($createEngagementFileWithMedia) {
         get(route('engagement-file-download', ['file' => $file]))->assertForbidden();
     });
 
-    it('allows the download with the engagement file view permission', function () use ($createEngagementFileWithMedia) {
+    it('allows the download with the engagement file view permission', function () use ($createEngagementFileWithMedia): void {
         Storage::disk('s3')->buildTemporaryUrlsUsing(fn (string $path): string => 'https://s3.test/' . $path);
 
         $file = $createEngagementFileWithMedia();

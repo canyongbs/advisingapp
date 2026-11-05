@@ -56,15 +56,11 @@ $captureTemporaryUrlOptions = function (): ArrayObject {
 };
 
 $createEngagementFileMedia = function (string $name): Media {
-    $media = EngagementFile::factory()->create()
+    return EngagementFile::factory()->create()
         ->addMedia(UploadedFile::fake()->image('upload.png'))
         ->usingName($name)
         ->usingFileName(Str::random(40) . '.png')
         ->toMediaCollection('file');
-
-    assert($media instanceof Media);
-
-    return $media;
 };
 
 describe('getDownloadFilename', function () {

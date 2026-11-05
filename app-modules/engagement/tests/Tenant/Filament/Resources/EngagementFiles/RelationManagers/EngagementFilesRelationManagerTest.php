@@ -43,7 +43,7 @@ use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 
-it('links the download action to the engagement file download route', function () {
+it('links the download action to the engagement file download route', function (): void {
     asSuperAdmin();
 
     $student = Student::factory()->create();

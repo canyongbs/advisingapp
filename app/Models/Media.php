@@ -95,7 +95,7 @@ class Media extends SpatieMedia
         if ($conversionName === '') {
             $disposition = $options['ResponseContentDisposition'] ?? HeaderUtils::DISPOSITION_INLINE;
 
-            $type = is_string($disposition) ? strtolower(trim($disposition)) : null;
+            $type = is_string($disposition) ? Str::lower(trim($disposition)) : null;
 
             if (in_array($type, [HeaderUtils::DISPOSITION_ATTACHMENT, HeaderUtils::DISPOSITION_INLINE], strict: true)) {
                 $options['ResponseContentDisposition'] = $this->makeContentDisposition($type, $this->getDownloadFilename());
@@ -104,7 +104,6 @@ class Media extends SpatieMedia
 
         return parent::getTemporaryUrl($expiration, $conversionName, $options);
     }
-
 
     public function getCreatedByNameAttribute(): string
     {
