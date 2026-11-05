@@ -40,6 +40,7 @@ use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\EditCareTeamRoleRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -142,3 +143,79 @@ test('EditProspectCareTeamRole requires valid data', function (EditCareTeamRoleR
         'is_default not a boolean' => [EditCareTeamRoleRequestFactory::new()->state(['is_default' => 'a', 'type' => CareTeamRoleType::Prospect]), ['is_default' => 'boolean']],
     ]
 );
+
+it('rejects renaming to a name matching another care team role case-insensitively', function (string $name): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect]);
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Mentor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(EditProspectCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => $name])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($careTeamRole->refresh()->name)->toBe('Mentor');
+})->with([
+    'exact match' => ['Advisor'],
+    'case variant' => ['advisor'],
+]);
+
+it('allows renaming to a name that was freed up by a soft-deleted care team role', function (): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect])->delete();
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Mentor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(EditProspectCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => 'advisor'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($careTeamRole->refresh()->name)->toBe('advisor');
+});
+
+it('allows a care team role to keep or change the case of its own name', function (string $name): void {
+    asSuperAdmin();
+
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(EditProspectCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => $name])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($careTeamRole->refresh()->name)->toBe($name);
+})->with([
+    'same name' => ['Advisor'],
+    'case change' => ['ADVISOR'],
+]);
+
+it('allows renaming to a name used by a student care team role', function (): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Mentor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(EditProspectCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => 'advisor'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($careTeamRole->refresh()->name)->toBe('advisor');
+});
+
+// TODO: Cleanup Task (care-team-role-name-citext) - delete this test
+it('rejects renaming to a soft-deleted name before the citext migration activates', function (): void {
+    asSuperAdmin();
+
+    CareTeamRoleNameCitextFeature::deactivate();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect])->delete();
+    $careTeamRole = CareTeamRole::factory()->create(['name' => 'Mentor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(EditProspectCareTeamRole::class, ['record' => $careTeamRole->getRouteKey()])
+        ->fillForm(['name' => 'Advisor'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
