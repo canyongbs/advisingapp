@@ -49,6 +49,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\StudentMessagesExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
@@ -102,10 +103,14 @@ class StudentMessagesDetailTable extends BaseWidget
                         }
                     )
                     ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
-                        $query->when(
-                            $groupId,
-                            fn (Builder $query) => $this->groupFilter($query, $groupId)
-                        );
+                        // The morph callback is typed `Builder<Model>` rather than
+                        // `Builder<Student>`, and `Builder` is not covariant, so the
+                        // constrained model cannot be proven here.
+                        $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                            ->when(
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                            );
                     })
             )
             ->columns([

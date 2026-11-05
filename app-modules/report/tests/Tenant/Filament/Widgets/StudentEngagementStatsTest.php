@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 it('returns correct counts of students, emails, texts, and staff engagements within the given date range', function (): void {
     $startDate = now()->subDays(10);
@@ -199,4 +200,135 @@ it('does not count archived students in the total students stat', function (): v
     $archived->each(fn (Student $student): bool => $student->archive());
 
     expect($widget->getStats()[0]->getValue())->toEqual(3);
+});
+
+it('does not count engagements sent to archived students, including those sent before they were archived', function (): void {
+    $active = Student::factory()->create(['created_at_source' => now()->subDays(10)]);
+    $archived = Student::factory()->create(['created_at_source' => now()->subDays(10)]);
+
+    $activeSender = User::factory()->create();
+    $archivedOnlySender = User::factory()->create();
+
+    Engagement::factory()->state([
+        'user_id' => $activeSender->getKey(),
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'user_id' => $activeSender->getKey(),
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'user_id' => $archivedOnlySender->getKey(),
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    Engagement::factory()->state([
+        'user_id' => $archivedOnlySender->getKey(),
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    $archived->archive();
+
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+    $widget->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    // The staff member who only engaged the archived student is no longer counted either.
+    expect($stats[0]->getValue())->toEqual(1)
+        ->and($stats[1]->getValue())->toEqual(1)
+        ->and($stats[2]->getValue())->toEqual(1)
+        ->and($stats[3]->getValue())->toEqual(1);
+});
+
+it('does not count engagements sent to archived students once the cached stats are refreshed', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+
+    expect($widget->getStats()[1]->getValue())->toEqual(2);
+
+    $archived->archive();
+    Cache::tags(['{report-student-engagement}'])->flush();
+
+    expect($widget->getStats()[1]->getValue())->toEqual(1);
+});
+
+it('does not count engagements sent to archived students in the selected group', function (): void {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'name',
+                        'data' => [
+                            'operator' => 'lastName',
+                            'settings' => [
+                                'operator' => 'contains',
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $active = Student::factory()->create(['last' => 'John']);
+    $archived = Student::factory()->create(['last' => 'John']);
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    $archived->archive();
+
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+    $widget->pageFilters = [
+        'populationGroup' => $group->getKey(),
+    ];
+
+    expect($widget->getStats()[1]->getValue())->toEqual(1);
 });

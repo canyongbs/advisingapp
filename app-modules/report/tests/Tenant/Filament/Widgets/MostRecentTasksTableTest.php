@@ -214,3 +214,20 @@ it('properly filters prospects by group', function (): void {
         ->assertCanSeeTableRecords(collect([$groupTask]))
         ->assertCanNotSeeTableRecords(collect([$nonGroupTask]));
 });
+
+it('does not list tasks concerning archived students, including those from before they were archived', function (): void {
+    $taskForActive = Task::factory()->concerningStudent()->state(['is_confidential' => false])->create();
+    $taskForArchived = Task::factory()->concerningStudent()->state(['is_confidential' => false])->create();
+
+    $archived = $taskForArchived->concern;
+    assert($archived instanceof Student);
+    $archived->archive();
+
+    Livewire::test(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Student::class,
+        'pageFilters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$taskForActive]))
+        ->assertCanNotSeeTableRecords(collect([$taskForArchived]));
+});

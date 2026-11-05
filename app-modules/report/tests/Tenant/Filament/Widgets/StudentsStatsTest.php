@@ -187,9 +187,11 @@ it('does not count archived students in the total', function (): void {
     expect($widget->getStats()[0]->getValue())->toEqual(3);
 });
 
-// Archiving is not retroactive: a student archived in September was genuinely part of the
-// student body in March, so a report looking at March still has to count them.
-it('counts a student archived after the reported period', function (): void {
+// Archiving applies by current status, so a student archived in September no longer counts
+// in a March report either.
+it('does not count a student archived after the reported period', function (): void {
+    Student::factory()->create(['created_at_source' => '2026-03-10']);
+
     $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 
@@ -201,4 +203,59 @@ it('counts a student archived after the reported period', function (): void {
     ];
 
     expect($widget->getStats()[0]->getValue())->toEqual(1);
+});
+
+it('does not count concerns or tasks of archived students, including those from before they were archived', function (): void {
+    $startDate = now()->subDays(10);
+    $endDate = now();
+
+    $active = Student::factory()->create(['created_at_source' => $startDate]);
+    $archived = Student::factory()->create(['created_at_source' => $startDate]);
+
+    Concern::factory()->state([
+        'concern_id' => $active->getKey(),
+        'concern_type' => (new Student())->getMorphClass(),
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    Concern::factory()->state([
+        'concern_id' => $archived->getKey(),
+        'concern_type' => (new Student())->getMorphClass(),
+        'created_at' => now()->subDays(5),
+    ])->create();
+
+    Task::factory()->state([
+        'concern_id' => $active->getKey(),
+        'concern_type' => (new Student())->getMorphClass(),
+        'created_at' => now()->subDays(5),
+        'is_confidential' => false,
+    ])->create();
+
+    Task::factory()->state([
+        'concern_id' => $archived->getKey(),
+        'concern_type' => (new Student())->getMorphClass(),
+        'created_at' => now()->subDays(5),
+        'is_confidential' => false,
+    ])->create();
+
+    $archived->archive();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+
+    // Unfiltered, so read through the cache.
+    $unfilteredStats = $widget->getStats();
+
+    expect($unfilteredStats[1]->getValue())->toEqual(1)
+        ->and($unfilteredStats[2]->getValue())->toEqual(1);
+
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $filteredStats = $widget->getStats();
+
+    expect($filteredStats[1]->getValue())->toEqual(1)
+        ->and($filteredStats[2]->getValue())->toEqual(1);
 });

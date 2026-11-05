@@ -231,3 +231,22 @@ it('returns correct interaction counts by type for students based on group filte
         ->and($stats[$secondIndex])->toEqual($interactionsCountForDoe)
         ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });
+
+it('does not count interactions with archived students, including those from before they were archived', function (): void {
+    $type = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Interaction::factory()->for($active, 'interactable')->for($type, 'type')->create();
+    Interaction::factory()->for($archived, 'interactable')->for($type, 'type')->create();
+
+    $archived->archive();
+
+    $widgetInstance = new StudentInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    $data = $widgetInstance->getData();
+
+    expect($data['datasets'][0]['data'][$data['labels']->search($type->name)])->toEqual(1);
+});

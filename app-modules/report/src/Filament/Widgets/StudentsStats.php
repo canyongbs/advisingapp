@@ -63,7 +63,7 @@ class StudentsStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $studentsCount = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -82,10 +82,14 @@ class StudentsStats extends StatsOverviewReportWidget
         $concernsCount = $shouldBypassCache
             ? Concern::query()
                 ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                        ->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
                 })
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
@@ -95,16 +99,23 @@ class StudentsStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-concerns-count',
                 now()->addHours(24),
-                fn () => Concern::query()->whereHasMorph('concern', Student::class)->count()
+                // The morph callback is typed `Builder<Model>` rather than
+                // `Builder<Student>`, and `Builder` is not covariant, so the
+                // constrained model cannot be proven here.
+                fn () => Concern::query()->whereHasMorph('concern', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))->count() // @phpstan-ignore argument.type
             );
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
                 ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                        ->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
                 })
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
@@ -114,7 +125,10 @@ class StudentsStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-student-tasks-count',
                 now()->addHours(24),
-                fn () => Task::query()->whereHasMorph('concern', Student::class)->count()
+                // The morph callback is typed `Builder<Model>` rather than
+                // `Builder<Student>`, and `Builder` is not covariant, so the
+                // constrained model cannot be proven here.
+                fn () => Task::query()->whereHasMorph('concern', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))->count() // @phpstan-ignore argument.type
             );
 
         return [

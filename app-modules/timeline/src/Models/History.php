@@ -36,19 +36,22 @@
 
 namespace AdvisingApp\Timeline\Models;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property array $new
  * @property array $old
  */
-abstract class History extends BaseModel
+abstract class History extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use SoftDeletes;
 
     protected $table = 'histories';

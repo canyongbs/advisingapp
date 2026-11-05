@@ -359,18 +359,16 @@ it('does not count archived students in the deliverability percentages', functio
     expect($widget->getStats()[0]->getValue())->toBe(Number::format(0.0, 2) . '%');
 });
 
-// Archiving is not retroactive: a student archived in September was genuinely part of the
-// student body in March, so a March report keeps them in every percentage's denominator.
-it('counts a student archived after the reported period', function (): void {
-    // One student missing an institutional email, one with one — both archived in September.
+// Archiving applies by current status, so a student archived in September is left out of a
+// March report's percentages too.
+it('does not count a student archived after the reported period', function (): void {
     $missingEmail = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $missingEmail->primaryEmailAddress()->delete();
     $missingEmail->update(['primary_email_id' => null]);
 
-    $withEmail = Student::factory()->create(['created_at_source' => '2026-03-10']);
+    Student::factory()->create(['created_at_source' => '2026-03-10']);
 
     $missingEmail->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
-    $withEmail->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 
     $widget = new StudentDeliverabilityStats();
     $widget->cacheTag = 'report-student-deliverability';
@@ -379,6 +377,6 @@ it('counts a student archived after the reported period', function (): void {
         'endDate' => '2026-03-31',
     ];
 
-    // Both still count in March, so 1 of 2 is missing an email.
-    expect($widget->getStats()[0]->getValue())->toBe(Number::format(50.0, 2) . '%');
+    // Only the student with an email is left, so none are missing one.
+    expect($widget->getStats()[0]->getValue())->toBe(Number::format(0.0, 2) . '%');
 });

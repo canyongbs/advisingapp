@@ -233,9 +233,9 @@ it('does not count archived students', function (): void {
     expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(3);
 });
 
-// Archiving is not retroactive: a student archived in September was genuinely part of the
-// student body in March, so a report looking at March still has to count them.
-it('counts a student archived after the reported period', function (): void {
+it('does not count a student archived after the reported period', function (): void {
+    Student::factory()->create(['ethnicity' => 'Asian', 'created_at_source' => '2026-03-10']);
+
     $student = Student::factory()->create(['ethnicity' => 'Asian', 'created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 
