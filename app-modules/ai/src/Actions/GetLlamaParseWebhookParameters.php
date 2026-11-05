@@ -45,8 +45,8 @@ class GetLlamaParseWebhookParameters
     ) {}
 
     /**
-     * The parameters that make LlamaParse call the current tenant's webhook as soon as a parse job finishes. Every
-     * parse job sends the same ones, so links and files are completed the same way.
+     * The parameters that make LlamaParse call the current tenant's webhook as soon as a parse job finishes. They are
+     * shared so that every parse job registers the same webhook.
      *
      * LlamaParse can only reach a public URL, so a local environment relies on polling the parse job instead.
      *
