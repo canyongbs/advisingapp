@@ -100,6 +100,40 @@ class LlamaParseV2Client
     }
 
     /**
+     * Uploads a file, submits a parse job for it in the same request, and returns the job's ID. The tier and the
+     * pinned version always take precedence over any `tier` or `version` passed in the configuration.
+     *
+     * @param resource $contents The file's contents, as an open stream.
+     * @param array<string, mixed> $configuration The other parse options, such as `disable_cache` or `agentic_options`.
+     *
+     * @see https://developers.llamaindex.ai/llamaparse/parse/guides/api-reference/
+     */
+    public function uploadFile(LlamaParseV2Tier $tier, mixed $contents, string $fileName, string $mimeType, array $configuration): string
+    {
+        assert(is_resource($contents));
+
+        // The upload endpoint takes the file and its options as multipart form fields, with every option, including
+        // the tier and version, inside a single `configuration` field encoded as a JSON string.
+        $jobId = $this->baseRequest()
+            ->attach('file', $contents, $fileName, ['Content-Type' => $mimeType])
+            ->post('parse/upload', [
+                'configuration' => json_encode([
+                    ...$configuration,
+                    'tier' => $tier->value,
+                    'version' => self::VERSION,
+                ], JSON_THROW_ON_ERROR),
+            ])
+            ->throw()
+            ->json('id');
+
+        if ((! is_string($jobId)) || blank($jobId)) {
+            throw new UnexpectedValueException('LlamaParse did not return a parse job ID for the uploaded file.');
+        }
+
+        return $jobId;
+    }
+
+    /**
      * @param array<string> $expand The content to include alongside the job, such as `markdown_full`. Sent as one
      *                              comma-separated `expand` parameter, as in `?expand=markdown,items`.
      *
@@ -128,16 +162,27 @@ class LlamaParseV2Client
 
         $errorMessage = $response->json('job.error_message');
         $markdownFull = $response->json('markdown_full');
+        $textFull = $response->json('text_full');
 
         return new LlamaParseV2ParseJobData(
             id: $id,
             status: $status,
             errorMessage: is_string($errorMessage) ? $errorMessage : null,
             markdownFull: is_string($markdownFull) ? $markdownFull : null,
+            textFull: is_string($textFull) ? $textFull : null,
         );
     }
 
     protected function request(): PendingRequest
+    {
+        return $this->baseRequest()->asJson();
+    }
+
+    /**
+     * A request without a body format, as `asJson()` sets a `Content-Type` header that a multipart upload would keep,
+     * so the upload could not be read.
+     */
+    protected function baseRequest(): PendingRequest
     {
         $apiKey = $this->aiIntegrationsSettings->llamaparse_api_key;
 
@@ -148,7 +193,6 @@ class LlamaParseV2Client
         return Http::baseUrl(self::BASE_URL)
             ->withToken($apiKey)
             ->acceptJson()
-            ->asJson()
             ->timeout(self::TIMEOUT_SECONDS)
             ->connectTimeout(self::CONNECT_TIMEOUT_SECONDS);
     }
