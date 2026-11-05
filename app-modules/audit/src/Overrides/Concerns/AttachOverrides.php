@@ -100,6 +100,9 @@ trait AttachOverrides
     }
 
     /**
+     * @param mixed $ids
+     * @param mixed $detaching
+     *
      * @return array<string, array<int|string, mixed>>
      */
     public function sync($ids, $detaching = true)
