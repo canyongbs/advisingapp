@@ -189,6 +189,18 @@ it('records the SES send time for events that have no timestamp of their own', f
     'RenderingFailure',
 ]);
 
+it('keeps the milliseconds of the SES event timestamp', function () use ($sesNotificationFor, $postSesNotification): void {
+    $tenant = Tenant::query()->firstOrFail();
+
+    $emailMessage = $tenant->execute(fn () => EmailMessage::factory()->create());
+
+    $postSesNotification($sesNotificationFor($tenant, $emailMessage, 'Delivery'));
+
+    $tenant->execute(function () use ($emailMessage): void {
+        expect($emailMessage->events()->sole()->occurred_at->format('Y-m-d H:i:s.v'))->toBe('2016-10-19 23:21:04.133');
+    });
+});
+
 it('records repeated deliveries of the same SNS message once', function () use ($sesNotificationFor, $postSesNotification): void {
     $tenant = Tenant::query()->firstOrFail();
 

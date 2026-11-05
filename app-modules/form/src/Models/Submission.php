@@ -39,18 +39,27 @@ namespace AdvisingApp\Form\Models;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @property-read Submissible $submissible
  * @property-read Collection<int, SubmissibleField> $fields
  * @property-read Student|Prospect|null $author
  */
-abstract class Submission extends BaseModel
+abstract class Submission extends Model
 {
+    /** @use HasFactory<Factory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use BelongsToEducatable;
 
     abstract public function submissible(): BelongsTo;

@@ -36,16 +36,38 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Collections\SmsMessageEventCollection;
+use AdvisingApp\Notification\Database\Factories\SmsMessageEventFactory;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
-use App\Models\BaseModel;
+use AdvisingApp\Notification\Models\Builders\SmsMessageEventBuilder;
+use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\HasBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperSmsMessageEvent
  */
-class SmsMessageEvent extends BaseModel
+#[CollectedBy(SmsMessageEventCollection::class)]
+#[UseEloquentBuilder(SmsMessageEventBuilder::class)]
+class SmsMessageEvent extends Model
 {
+    /** @use HasBuilder<SmsMessageEventBuilder<self>> */
+    use HasBuilder;
+
+    /** @use HasFactory<SmsMessageEventFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     // TODO: Create Factory
+
+    protected $dateFormat = 'Y-m-d H:i:s.u';
 
     protected $fillable = [
         'type',

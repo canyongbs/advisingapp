@@ -64,7 +64,7 @@ class StudentEngagementStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $studentsCount = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -79,10 +79,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
         $emailsCount = $shouldBypassCache
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                        ->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
                 })
                 ->where('channel', NotificationChannel::Email)
                 ->when(
@@ -95,10 +99,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 now()->addHours(24),
                 fn () => Engagement::query()
                     ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                        $query->when(
-                            $groupId,
-                            fn (Builder $query) => $this->groupFilter($query, $groupId)
-                        );
+                        // The morph callback is typed `Builder<Model>` rather than
+                        // `Builder<Student>`, and `Builder` is not covariant, so the
+                        // constrained model cannot be proven here.
+                        $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                            ->when(
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                            );
                     })
                     ->where('channel', NotificationChannel::Email)
                     ->count()
@@ -107,10 +115,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
         $textsCount = $shouldBypassCache
             ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
+                    // The morph callback is typed `Builder<Model>` rather than
+                    // `Builder<Student>`, and `Builder` is not covariant, so the
+                    // constrained model cannot be proven here.
+                    $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                        ->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
                 })
                 ->where('channel', NotificationChannel::Sms)
                 ->when(
@@ -123,10 +135,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
                 now()->addHours(24),
                 fn () => Engagement::query()
                     ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                        $query->when(
-                            $groupId,
-                            fn (Builder $query) => $this->groupFilter($query, $groupId)
-                        );
+                        // The morph callback is typed `Builder<Model>` rather than
+                        // `Builder<Student>`, and `Builder` is not covariant, so the
+                        // constrained model cannot be proven here.
+                        $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                            ->when(
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                            );
                     })
                     ->where('channel', NotificationChannel::Sms)
                     ->count()
@@ -134,10 +150,14 @@ class StudentEngagementStats extends StatsOverviewReportWidget
 
         $engagementFilter = function (Builder $query) use ($startDate, $endDate, $groupId): void {
             $query->whereHasMorph('recipient', Student::class, function (Builder $query) use ($groupId): void {
-                $query->when(
-                    $groupId,
-                    fn (Builder $query) => $this->groupFilter($query, $groupId)
-                );
+                // The morph callback is typed `Builder<Model>` rather than
+                // `Builder<Student>`, and `Builder` is not covariant, so the
+                // constrained model cannot be proven here.
+                $query->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+                    ->when(
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
+                    );
             })
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,

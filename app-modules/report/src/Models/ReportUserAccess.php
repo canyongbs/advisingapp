@@ -36,17 +36,26 @@
 
 namespace AdvisingApp\Report\Models;
 
-use App\Models\BaseModel;
+use AdvisingApp\Report\Database\Factories\ReportUserAccessFactory;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperReportUserAccess
  */
-class ReportUserAccess extends BaseModel implements Auditable
+class ReportUserAccess extends Model implements Auditable
 {
+    /** @use HasFactory<ReportUserAccessFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
     use AuditableTrait;
 
     protected $fillable = [

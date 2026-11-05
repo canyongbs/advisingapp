@@ -40,8 +40,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
-
-beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
+use Carbon\Carbon;
 
 it('returns correct monthly email and sms engagement data for students within the given date range', function (): void {
     $startDate = now()->subMonths(3);
@@ -72,7 +71,7 @@ it('returns correct monthly email and sms engagement data for students within th
     ];
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-});
+})->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
 it('returns correct monthly email and sms engagement data for students based on group filters', function (): void {
     $startDate = now()->subMonths(3);
@@ -152,4 +151,52 @@ it('returns correct monthly email and sms engagement data for students based on 
     expect($dataWithoutGroup)
         ->not->toBeEmpty()
         ->and($dataWithoutGroup['datasets'][0]['data'])->toMatchSnapshot();
+})->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
+
+it('does not count engagements sent to archived students, including those sent before they were archived', function (): void {
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    $archived->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    $widgetInstance = new StudentEngagementLineChart();
+    $widgetInstance->cacheTag = 'report-student-engagement';
+    $widgetInstance->pageFilters = [
+        'startDate' => '2026-03-01',
+        'endDate' => '2026-03-31',
+    ];
+
+    $data = $widgetInstance->getData();
+
+    expect($data['labels'])->toBe(['Mar 2026'])
+        ->and($data['datasets'][0]['data'])->toBe([1])
+        ->and($data['datasets'][1]['data'])->toBe([1]);
 });

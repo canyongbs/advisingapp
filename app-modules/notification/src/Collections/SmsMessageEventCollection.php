@@ -34,19 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Notification\Collections;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
+use Illuminate\Database\Eloquent\Collection;
+use SortDirection;
 
-abstract class BaseModel extends Model
+/**
+ * @template TKey of array-key
+ * @template TModel of SmsMessageEvent
+ *
+ * @extends Collection<TKey, TModel>
+ */
+class SmsMessageEventCollection extends Collection
 {
-    /** @use HasFactory<Factory> */
-    use HasFactory;
+    /**
+     * Events sharing an `occurred_at` are sorted by `id` so the order is stable between loads.
+     */
+    public function sortByOccurrence(SortDirection|bool $descending = false): static
+    {
+        $direction = match ($descending) {
+            true, SortDirection::Descending => SortDirection::Descending,
+            false, SortDirection::Ascending => SortDirection::Ascending,
+        };
 
-    use HasUuids;
-    use UsesTenantConnection;
+        return $this->sortBy([
+            ['occurred_at', $direction],
+            ['id', $direction],
+        ]);
+    }
+
+    public function sortByOccurrenceDesc(): static
+    {
+        return $this->sortByOccurrence(SortDirection::Descending);
+    }
 }

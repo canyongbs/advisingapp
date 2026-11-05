@@ -37,13 +37,18 @@
 namespace AdvisingApp\Webhook\Models;
 
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperInboundWebhook
  */
-class InboundWebhook extends BaseModel
+class InboundWebhook extends Model
 {
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $fillable = [
         'source',
         'event',

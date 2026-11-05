@@ -36,7 +36,6 @@
 
 namespace App\Actions\Finders;
 
-use App\Models\BaseModel;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -67,7 +66,7 @@ class ApplicationModels
 
                 if (class_exists($class)) {
                     $reflection = new ReflectionClass($class);
-                    $isModel = ($reflection->isSubclassOf(Model::class) || $reflection->isSubclassOf(BaseModel::class)) &&
+                    $isModel = $reflection->isSubclassOf(Model::class) &&
                     ! $reflection->isAbstract();
                 }
 

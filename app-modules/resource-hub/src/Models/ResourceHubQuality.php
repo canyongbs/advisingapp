@@ -37,17 +37,24 @@
 namespace AdvisingApp\ResourceHub\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
+use AdvisingApp\ResourceHub\Database\Factories\ResourceHubQualityFactory;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubQuality
  */
-class ResourceHubQuality extends BaseModel implements Auditable
+class ResourceHubQuality extends Model implements Auditable
 {
+    /** @use HasFactory<ResourceHubQualityFactory> */
+    use HasFactory;
+
+    use UsesTenantConnection;
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;

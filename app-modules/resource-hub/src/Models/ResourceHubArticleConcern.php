@@ -40,21 +40,24 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleConcernObserver;
-use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperResourceHubArticleConcern
  */
 #[ObservedBy(ResourceHubArticleConcernObserver::class)]
-class ResourceHubArticleConcern extends BaseModel implements Auditable
+class ResourceHubArticleConcern extends Model implements Auditable
 {
+    use UsesTenantConnection;
+
     /** @use HasFactory<ResourceHubArticleConcernFactory> */
     use HasFactory;
 

@@ -36,17 +36,27 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\MeetingCenter\Database\Factories\CalendarFactory;
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperCalendar
  */
-class Calendar extends BaseModel
+class Calendar extends Model
 {
+    /** @use HasFactory<CalendarFactory> */
+    use HasFactory;
+
+    use HasVersion4Uuids;
+    use UsesTenantConnection;
+
     protected $hidden = [
         'oauth_token',
         'oauth_refresh_token',

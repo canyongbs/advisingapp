@@ -39,6 +39,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Runs the chart with the given page filters and returns its series keyed by month label.
@@ -130,39 +131,37 @@ it('returns correct cumulative student counts grouped by month based on group fi
 });
 
 describe('archiving', function () use ($cumulativeStudentsByMonth): void {
-    it('drops an archived student from the month they were archived onwards', function () use ($cumulativeStudentsByMonth): void {
+    it('excludes a currently archived student from every bucket, whenever they were archived', function (string $createdAtSource, string $archivedAt) use ($cumulativeStudentsByMonth): void {
         Student::factory()->count(2)->state(['created_at_source' => '2026-04-10'])->create();
 
-        $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
-        $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
+        $archived = Student::factory()->create(['created_at_source' => $createdAtSource]);
+        $archived->forceFill(['archived_at' => Carbon::parse($archivedAt)])->save();
 
         expect($cumulativeStudentsByMonth())->toBe([
-            'Apr 2026' => 3,
+            'Apr 2026' => 2,
             'May 2026' => 2,
             'Jun 2026' => 2,
         ]);
-    });
+    })->with([
+        'created within, archived within the period' => ['2026-04-10', '2026-05-20'],
+        'created within, archived after the period' => ['2026-04-10', '2026-08-20'],
+        'created before, archived before the period' => ['2026-01-10', '2026-02-20'],
+        'created before, archived within the period' => ['2026-01-10', '2026-05-20'],
+        'created before, archived after the period' => ['2026-01-10', '2026-08-20'],
+    ]);
 
-    it('keeps counting a student archived after the reported period', function () use ($cumulativeStudentsByMonth): void {
+    it('excludes archived students from the cached chart once it is refreshed', function () use ($cumulativeStudentsByMonth): void {
+        Carbon::setTestNow('2026-06-15');
+
+        Student::factory()->create(['created_at_source' => '2026-04-10']);
         $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
-        $archived->forceFill(['archived_at' => Carbon::parse('2026-08-20')])->save();
 
-        expect($cumulativeStudentsByMonth())->toBe([
-            'Apr 2026' => 1,
-            'May 2026' => 1,
-            'Jun 2026' => 1,
-        ]);
-    });
+        expect($cumulativeStudentsByMonth([])['Jun 2026'])->toBe(2);
 
-    it('counts a student created before the reported period until they are archived within it', function () use ($cumulativeStudentsByMonth): void {
-        $archived = Student::factory()->create(['created_at_source' => '2026-01-10']);
-        $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
+        $archived->archive();
+        Cache::tags(['{report-student}'])->flush();
 
-        expect($cumulativeStudentsByMonth())->toBe([
-            'Apr 2026' => 1,
-            'May 2026' => 0,
-            'Jun 2026' => 0,
-        ]);
+        expect($cumulativeStudentsByMonth([])['Jun 2026'])->toBe(1);
     });
 });
 

@@ -140,8 +140,8 @@ class ViewEngagement extends Page
                                 RepeatableEntry::make('message_events')
                                     ->state(function (Engagement $record) {
                                         return match ($record->channel) {
-                                            NotificationChannel::Email => $record->latestEmailMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
-                                            NotificationChannel::Sms => $record->latestSmsMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
+                                            NotificationChannel::Email => $record->latestEmailMessage?->events()->orderByOccurrenceDesc()->get() ?? [],
+                                            NotificationChannel::Sms => $record->latestSmsMessage?->events()->orderByOccurrenceDesc()->get() ?? [],
                                             default => [],
                                         };
                                     })
