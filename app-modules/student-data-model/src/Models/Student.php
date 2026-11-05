@@ -186,7 +186,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return $this->newQuery()
             ->where($field ?? $this->getRouteKeyName(), $value)
-            ->tap(new WithoutArchivedStudents())
+            ->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
             ->first();
     }
 

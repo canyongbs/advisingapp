@@ -53,11 +53,12 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use function Tests\asSuperAdmin;
 
 /**
- * A macOS screenshot name: the space before "PM" is a narrow no-break space (U+202F),
- * which is not representable in ASCII and is what breaks the raw S3 download link.
+ * A file name containing an em dash (U+2014), which is not representable in ISO-8859-1 and is what
+ * breaks the raw S3 download link. Media Library rewrites Unicode space separators, so a space
+ * character would no longer reach the Content-Disposition header.
  */
 $nonLatin1FileName = function (): string {
-    return "Screenshot-2024-01-01-at-9.41.00\u{202F}PM.png";
+    return "Screenshot-2024-01-01-at-9.41.00\u{2014}PM.png";
 };
 
 /**
@@ -201,6 +202,9 @@ describe('upload block submission state', function () use ($createSubmissionFiel
 
     it('strips the raw storage url that the signed route replaces', function () use ($createSubmissionFieldWithMedia, $nonLatin1FileName): void {
         [, $media] = $createSubmissionFieldWithMedia($nonLatin1FileName());
+
+        // Media Library now rewrites Unicode spaces on upload, but records stored before that still carry them.
+        $media->forceFill(['file_name' => "Screenshot-2024-01-01-at-9.41.00\u{202F}PM.png"])->save();
 
         // Derive the URL from the real object key rather than building one by hand: the media
         // library keys objects as "{id}/{file name}", so the non-ASCII character is in the URL
