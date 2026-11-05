@@ -112,8 +112,11 @@ test('creates multiple workflows for the same form without conflicts', function 
         expect($trigger->related_id)->toBe($form->id);
     }
 
+    // With the citext feature active the default name is de-duplicated case-insensitively.
+    expect($workflows->pluck('name')->all())
+        ->toEqualCanonicalizing(['Form Workflow', 'Form Workflow-2']);
+
     foreach ($workflows as $workflow) {
-        expect($workflow->name)->toBe('Form Workflow');
         expect($workflow->is_enabled)->toBeFalse();
     }
 });

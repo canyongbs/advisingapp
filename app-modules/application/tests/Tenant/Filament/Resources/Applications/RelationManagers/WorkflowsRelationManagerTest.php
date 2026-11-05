@@ -47,6 +47,7 @@ use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowNameCitextFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
@@ -120,8 +121,11 @@ test('creates multiple workflows for the same application without conflicts', fu
         expect($trigger->related_id)->toBe($application->id);
     }
 
+    // With the citext feature active the default name is de-duplicated case-insensitively.
+    expect($workflows->pluck('name')->all())
+        ->toEqualCanonicalizing(['Application Workflow', 'Application Workflow-2']);
+
     foreach ($workflows as $workflow) {
-        expect($workflow->name)->toBe('Application Workflow');
         expect($workflow->is_enabled)->toBeFalse();
     }
 });
@@ -522,5 +526,101 @@ describe('authorization', function () use ($testWorkflows): void {
 
         expect(Workflow::query()->count())->toBe(0)
             ->and(WorkflowTrigger::query()->count())->toBe(0);
+    });
+});
+
+describe('workflow name uniqueness', function (): void {
+    $makeWorkflow = fn (Application $application, string $name): Workflow => Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create(['name' => $name]);
+
+    it('does not allow editing a workflow to a name matching another non-deleted workflow case-insensitively', function () use ($makeWorkflow): void {
+        WorkflowNameCitextFeature::activate();
+
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $makeWorkflow($application, 'Fall Outreach');
+        $workflow = $makeWorkflow($application, 'Spring Outreach');
+
+        Livewire::test(ApplicationNestedEditWorkflow::class, [
+            'parentRecord' => $application,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'fall outreach'])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'unique']);
+    });
+
+    it('allows editing a workflow to a name freed up by a soft-deleted workflow case-insensitively', function () use ($makeWorkflow): void {
+        WorkflowNameCitextFeature::activate();
+
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $deletedWorkflow = $makeWorkflow($application, 'Fall Outreach');
+        $deletedWorkflow->delete();
+
+        $workflow = $makeWorkflow($application, 'Spring Outreach');
+
+        Livewire::test(ApplicationNestedEditWorkflow::class, [
+            'parentRecord' => $application,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'fall outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+    });
+
+    it('allows two different applications to have workflows with the same name', function () use ($makeWorkflow): void {
+        WorkflowNameCitextFeature::activate();
+
+        asSuperAdmin();
+
+        $applicationA = Application::factory()->create();
+        $applicationB = Application::factory()->create();
+
+        $makeWorkflow($applicationA, 'Shared Outreach');
+        $workflow = $makeWorkflow($applicationB, 'Spring Outreach');
+
+        Livewire::test(ApplicationNestedEditWorkflow::class, [
+            'parentRecord' => $applicationB,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'Shared Outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($workflow->refresh()->name)->toBe('Shared Outreach');
+    });
+
+    it('allows editing a workflow to a duplicate name before the citext migration activates', function () use ($makeWorkflow): void {
+        WorkflowNameCitextFeature::deactivate();
+
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+        $makeWorkflow($application, 'Fall Outreach');
+        $workflow = $makeWorkflow($application, 'Spring Outreach');
+
+        Livewire::test(ApplicationNestedEditWorkflow::class, [
+            'parentRecord' => $application,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'Fall Outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($workflow->refresh()->name)->toBe('Fall Outreach');
     });
 });
