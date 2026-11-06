@@ -39,6 +39,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResou
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -100,6 +101,7 @@ test('EditProspectStatus requires valid data', function (EditProspectStatusReque
     [
         'name missing' => [EditProspectStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name too long' => [EditProspectStatusRequestFactory::new()->state(['name' => str_repeat('a', 256)]), ['name' => 'max']],
         'color missing' => [EditProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
         'color not within enum' => [EditProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
@@ -184,4 +186,88 @@ test('EditProspectStatus is gated with proper system protection access control',
     assertEquals($request['name'], $prospectStatus->fresh()->name);
 
     assertEquals($request['color'], $prospectStatus->fresh()->color->value);
+});
+
+// Case-insensitive uniqueness
+
+test('allows saving a prospect status with its own existing name', function (): void {
+    asSuperAdmin();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'Engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('Engaged');
+});
+
+test('allows saving a prospect status with a different casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
+});
+
+test('does not allow updating a prospect status to a name matching another non-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('allows updating a prospect status to a name freed up by a soft-deleted prospect status case-insensitively', function (): void {
+    asSuperAdmin();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
+});
+
+test('does not enforce name uniqueness when editing before the citext migration activates', function (): void {
+    ProspectSourceAndStatusNameCitextFeature::deactivate();
+
+    asSuperAdmin();
+
+    $deletedProspectStatus = ProspectStatus::factory()->create(['name' => 'Engaged']);
+    $deletedProspectStatus->delete();
+
+    $prospectStatus = ProspectStatus::factory()->create(['name' => 'Nurturing']);
+
+    Livewire::test(EditProspectStatus::class, [
+        'record' => $prospectStatus->getRouteKey(),
+    ])
+        ->fillForm(['name' => 'engaged'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    expect($prospectStatus->refresh()->name)->toBe('engaged');
 });

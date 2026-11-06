@@ -38,11 +38,13 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateProspectStatus extends CreateRecord
 {
@@ -55,7 +57,13 @@ class CreateProspectStatus extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => ProspectSourceAndStatusNameCitextFeature::active()
+                            ? $rule->withoutTrashed()
+                            : $rule,
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
