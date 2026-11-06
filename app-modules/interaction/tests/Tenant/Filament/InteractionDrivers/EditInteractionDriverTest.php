@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -73,4 +74,46 @@ test('it cannot delete instances used by an interaction', function (): void {
 
     Livewire::test(EditInteractionDriver::class, ['record' => $driver->id])
         ->assertActionHidden('delete');
+});
+
+test('it cannot update the name to one that only differs by case from another of the same type', function (): void {
+    asSuperAdmin();
+
+    InteractionDriver::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $interactionDriver = InteractionDriver::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionDriver::class, ['record' => $interactionDriver->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($interactionDriver->refresh()->name)->toBe('Email');
+});
+
+test('it can update the name to one used by a soft-deleted record of the same type', function (): void {
+    asSuperAdmin();
+
+    $deletedInteractionDriver = InteractionDriver::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $deletedInteractionDriver->delete();
+    $interactionDriver = InteractionDriver::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionDriver::class, ['record' => $interactionDriver->getKey()])
+        ->fillForm(['name' => 'Phone'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionDriver->refresh()->name)->toBe('Phone');
+});
+
+test('it can change only the casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $interactionDriver = InteractionDriver::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionDriver::class, ['record' => $interactionDriver->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionDriver->refresh()->name)->toBe('PHONE');
 });
