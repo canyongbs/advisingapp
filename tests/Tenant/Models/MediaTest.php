@@ -41,13 +41,16 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-$captureTemporaryUrlOptions = function (): ArrayObject {
-    $captured = new ArrayObject();
+$captureTemporaryUrlOptions = function (): object {
+    $captured = new class () {
+        /** @var array<string, mixed> */
+        public array $options = [];
+    };
 
     Storage::fake('s3');
 
     Storage::disk('s3')->buildTemporaryUrlsUsing(function (string $path, DateTimeInterface $expiration, array $options) use ($captured): string {
-        $captured->exchangeArray($options);
+        $captured->options = $options;
 
         return 'https://s3.test/' . $path;
     });
@@ -96,7 +99,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute());
 
-        expect($captured['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
+        expect($captured->options['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
     });
 
     it('adds the original filename to a bare attachment disposition', function (string $disposition) use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
@@ -105,7 +108,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute(), options: ['ResponseContentDisposition' => $disposition]);
 
-        expect($captured['ResponseContentDisposition'] ?? null)->toBe('attachment; filename="Quarterly Report.png"');
+        expect($captured->options['ResponseContentDisposition'] ?? null)->toBe('attachment; filename="Quarterly Report.png"');
     })->with([
         'lowercase' => 'attachment',
         'padded mixed case' => ' Attachment ',
@@ -117,7 +120,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute(), options: ['ResponseContentDisposition' => 'attachment; filename="custom.txt"']);
 
-        expect($captured['ResponseContentDisposition'] ?? null)->toBe('attachment; filename="custom.txt"');
+        expect($captured->options['ResponseContentDisposition'] ?? null)->toBe('attachment; filename="custom.txt"');
     });
 
     it('keeps other options intact', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
@@ -126,8 +129,8 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute(), options: ['ResponseContentType' => 'text/plain']);
 
-        expect($captured['ResponseContentType'] ?? null)->toBe('text/plain')
-            ->and($captured['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
+        expect($captured->options['ResponseContentType'] ?? null)->toBe('text/plain')
+            ->and($captured->options['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
     });
 
     it('builds an ASCII safe disposition for a non-Latin-1 name', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
@@ -137,7 +140,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute());
 
-        $disposition = $captured['ResponseContentDisposition'] ?? '';
+        $disposition = $captured->options['ResponseContentDisposition'] ?? '';
 
         expect(mb_check_encoding($disposition, 'ASCII'))->toBeTrue()
             ->and($disposition)->toContain("filename*=utf-8''")
@@ -150,7 +153,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         expect($media->getTemporaryUrl(now()->addMinute()))->toBeString();
 
-        $disposition = $captured['ResponseContentDisposition'] ?? '';
+        $disposition = $captured->options['ResponseContentDisposition'] ?? '';
 
         expect(mb_check_encoding($disposition, 'ASCII'))->toBeTrue()
             ->and($disposition)->toStartWith('inline;')
@@ -168,7 +171,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
 
         $media->getTemporaryUrl(now()->addMinute(), 'avatar-height-250px');
 
-        expect($captured->getArrayCopy())->not->toHaveKey('ResponseContentDisposition');
+        expect($captured->options)->not->toHaveKey('ResponseContentDisposition');
     });
 });
 
