@@ -109,6 +109,9 @@ trait CanManageThreads
         $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();
     }
 
+    /**
+     * @return array<string, string>
+     */
     #[Computed]
     public function customAssistants(): array
     {
@@ -197,6 +200,9 @@ trait CanManageThreads
         return $this->assistantSwitcherForm($schema, 'assistantSwitcherMobile');
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getCanManageThreadsForms(): array
     {
         return [
@@ -221,6 +227,9 @@ trait CanManageThreads
         $this->selectedThreadId = $this->thread->getKey();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getThreadsWithoutAFolder(): array
     {
         /** @var User $user */
