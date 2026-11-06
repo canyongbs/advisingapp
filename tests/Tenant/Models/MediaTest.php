@@ -63,8 +63,8 @@ $createEngagementFileMedia = function (string $name): Media {
         ->toMediaCollection('file');
 };
 
-describe('getDownloadFilename', function () {
-    it('combines the original name with the stored extension', function () {
+describe('getDownloadFilename', function (): void {
+    it('combines the original name with the stored extension', function (): void {
         $media = new Media();
         $media->name = 'Quarterly Report';
         $media->file_name = Str::random(40) . '.docx';
@@ -72,7 +72,7 @@ describe('getDownloadFilename', function () {
         expect($media->getDownloadFilename())->toBe('Quarterly Report.docx');
     });
 
-    it('falls back to the stored file name when the name is blank', function () {
+    it('falls back to the stored file name when the name is blank', function (): void {
         $media = new Media();
         $media->name = '';
         $media->file_name = 'xyz.pdf';
@@ -80,7 +80,7 @@ describe('getDownloadFilename', function () {
         expect($media->getDownloadFilename())->toBe('xyz.pdf');
     });
 
-    it('uses the name alone when the stored file has no extension', function () {
+    it('uses the name alone when the stored file has no extension', function (): void {
         $media = new Media();
         $media->name = 'README';
         $media->file_name = 'abc';
@@ -89,8 +89,8 @@ describe('getDownloadFilename', function () {
     });
 });
 
-describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
-    it('adds an inline disposition with the original filename when none is given', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
+    it('adds an inline disposition with the original filename when none is given', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $media = $createEngagementFileMedia('Quarterly Report');
 
@@ -99,7 +99,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
         expect($captured['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
     });
 
-    it('adds the original filename to a bare attachment disposition', function (string $disposition) use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+    it('adds the original filename to a bare attachment disposition', function (string $disposition) use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $media = $createEngagementFileMedia('Quarterly Report');
 
@@ -111,7 +111,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
         'padded mixed case' => ' Attachment ',
     ]);
 
-    it('passes a caller supplied disposition through unchanged', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+    it('passes a caller supplied disposition through unchanged', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $media = $createEngagementFileMedia('Quarterly Report');
 
@@ -120,7 +120,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
         expect($captured['ResponseContentDisposition'] ?? null)->toBe('attachment; filename="custom.txt"');
     });
 
-    it('keeps other options intact', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+    it('keeps other options intact', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $media = $createEngagementFileMedia('Quarterly Report');
 
@@ -130,7 +130,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
             ->and($captured['ResponseContentDisposition'] ?? null)->toBe('inline; filename="Quarterly Report.png"');
     });
 
-    it('builds an ASCII safe disposition for a non-Latin-1 name', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+    it('builds an ASCII safe disposition for a non-Latin-1 name', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $name = "Screenshot 7.48.39\u{202F}PM";
         $media = $createEngagementFileMedia($name);
@@ -144,7 +144,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
             ->and(rawurldecode($disposition))->toContain("{$name}.png");
     });
 
-    it('does not throw for a name containing slashes', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia) {
+    it('does not throw for a name containing slashes', function () use ($captureTemporaryUrlOptions, $createEngagementFileMedia): void {
         $captured = $captureTemporaryUrlOptions();
         $media = $createEngagementFileMedia('a/b\\c');
 
@@ -158,7 +158,7 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
             ->and(Str::after($disposition, 'filename='))->not->toContain('\\');
     });
 
-    it('does not add a disposition for a conversion', function () use ($captureTemporaryUrlOptions) {
+    it('does not add a disposition for a conversion', function () use ($captureTemporaryUrlOptions): void {
         $captured = $captureTemporaryUrlOptions();
 
         $media = User::factory()->create()
@@ -172,8 +172,8 @@ describe('getTemporaryUrl', function () use ($captureTemporaryUrlOptions, $creat
     });
 });
 
-describe('attachmentContentDisposition', function () {
-    it('builds an ASCII safe disposition for a file name that is not Latin-1 representable', function () {
+describe('attachmentContentDisposition', function (): void {
+    it('builds an ASCII safe disposition for a file name that is not Latin-1 representable', function (): void {
         // macOS screenshots use a narrow no-break space (U+202F) before AM/PM, which S3 rejects in the header.
         $media = new Media();
         $media->file_name = "Screenshot-2026-09-08-at-7.48.39\u{202F}PM.jpg";
@@ -186,7 +186,7 @@ describe('attachmentContentDisposition', function () {
             ->and(rawurldecode($disposition))->toContain($media->file_name);
     });
 
-    it('builds a simple disposition for an ASCII file name', function () {
+    it('builds a simple disposition for an ASCII file name', function (): void {
         $media = new Media();
         $media->file_name = 'report.png';
 
