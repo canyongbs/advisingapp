@@ -34,10 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorFileFactory;
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\PreviewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use App\Settings\LicenseSettings;
 use Livewire\Livewire;
@@ -113,6 +116,62 @@ it('does not show the advisor as failed or learning while a link still has conte
         'parsing_results' => 'Existing parsing results',
     ])],
 ]);
+
+$previewAdvisorWithFile = function (Closure $applyState): PreviewCustomerAdvisor {
+    $advisor = CustomerAdvisor::factory()->create();
+
+    $applyState(CustomerAdvisorFile::factory()->for($advisor, 'advisor'))->create();
+
+    $page = Livewire::test(PreviewCustomerAdvisor::class, ['record' => $advisor->getRouteKey()])->instance();
+
+    assert($page instanceof PreviewCustomerAdvisor);
+
+    return $page;
+};
+
+it('shows the advisor as learning while a file without content is being parsed', function (Closure $applyState) use ($previewAdvisorWithFile): void {
+    $page = $previewAdvisorWithFile($applyState);
+
+    expect($page->isProcessing())->toBeTrue()
+        ->and($page->isFailed())->toBeFalse();
+})->with([
+    'parse job running for over an hour' => [fn (CustomerAdvisorFileFactory $factory): CustomerAdvisorFileFactory => $factory->parsingInProgress()->state([
+        'created_at' => now()->subMinutes(90),
+        'updated_at' => now()->subMinutes(90),
+        'parsing_started_at' => now()->subMinutes(90),
+    ])],
+    'submitted to V1 recently' => [fn (CustomerAdvisorFileFactory $factory): CustomerAdvisorFileFactory => $factory->state([
+        'file_id' => '3b0b1f7e-2c6a-4f43-9d5f-1d2a2b7f9c10',
+        'parsing_results' => null,
+        'created_at' => now()->subMinutes(10),
+    ])],
+]);
+
+it('shows the advisor as failed when a file submitted to V1 was not parsed within an hour', function () use ($previewAdvisorWithFile): void {
+    $page = $previewAdvisorWithFile(fn (CustomerAdvisorFileFactory $factory): CustomerAdvisorFileFactory => $factory->state([
+        'file_id' => '3b0b1f7e-2c6a-4f43-9d5f-1d2a2b7f9c10',
+        'parsing_results' => null,
+        'created_at' => now()->subHours(2),
+    ]));
+
+    expect($page->isFailed())->toBeTrue()
+        ->and($page->isProcessing())->toBeFalse();
+});
+
+// TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the feature flag.
+it('judges files by when they were last updated while LlamaParse file parsing is inactive', function () use ($previewAdvisorWithFile): void {
+    LlamaParseFileParsingFeature::deactivate();
+
+    $page = $previewAdvisorWithFile(fn (CustomerAdvisorFileFactory $factory): CustomerAdvisorFileFactory => $factory->state([
+        'file_id' => '3b0b1f7e-2c6a-4f43-9d5f-1d2a2b7f9c10',
+        'parsing_results' => null,
+        'created_at' => now()->subMinutes(10),
+        'updated_at' => now()->subHours(2),
+    ]));
+
+    expect($page->isFailed())->toBeTrue()
+        ->and($page->isProcessing())->toBeFalse();
+});
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the feature flag.
 it('judges links by when they were last updated while LlamaParse link parsing is inactive', function () use ($previewAdvisorWithLink): void {
