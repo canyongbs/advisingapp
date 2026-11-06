@@ -36,6 +36,7 @@
 
 use App\Features\LlamaParseFileParsingFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
@@ -49,6 +50,11 @@ return new class () extends Migration {
                 Schema::table($tableName, function (Blueprint $table): void {
                     $table->timestamp('parsing_started_at')->nullable();
                     $table->timestamp('parsing_last_checked_at')->nullable();
+
+                    // Only files that are still being parsed are indexed, so checking on them every minute stays quick
+                    // however many files have been parsed before.
+                    $table->index(['parsing_started_at'])
+                        ->where(fn (Builder $condition) => $condition->whereNull('parsing_results')->whereNull('deleted_at'));
                 });
             }
 
