@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Concerns;
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use App\Features\LlamaParseFileParsingFeature;
 use Filament\Notifications\Notification;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -78,6 +79,11 @@ trait HandlesFileUploads
 
             $file->file_id = $result->fileId;
             $file->parsing_results = $result->parsingResults;
+
+            if (LlamaParseFileParsingFeature::active() && filled($result->fileId)) {
+                $file->parsing_started_at = now();
+            }
+
             $file->save();
 
             $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('files');
