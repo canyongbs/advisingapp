@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Database\Factories\AiAssistantFileFactory;
+use AdvisingApp\Ai\Models\Concerns\SavesLlamaParseParsingState;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\Media;
@@ -67,6 +68,7 @@ class AiAssistantFile extends Model implements AiFile, HasMedia
     use InteractsWithMedia;
 
     use SoftDeletes;
+    use SavesLlamaParseParsingState;
 
     protected $fillable = [
         'file_id',
@@ -75,6 +77,11 @@ class AiAssistantFile extends Model implements AiFile, HasMedia
         'name',
         'temporary_url',
         'parsing_results',
+    ];
+
+    protected $casts = [
+        'parsing_started_at' => 'datetime',
+        'parsing_last_checked_at' => 'datetime',
     ];
 
     /**
