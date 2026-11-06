@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
@@ -76,12 +77,12 @@ class PreviewCustomerAdvisor extends ViewRecord
 
         if (! LlamaParseLinkParsingFeature::active()) {
             // TODO: Cleanup Task (llamaparse-link-parsing): delete this whole `if` block, as the file check is repeated below.
-            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
+            return $this->hasFailedFiles($advisor)
                 || $advisor->links()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
         }
 
         // A link that still has content keeps the advisor usable, even when refreshing it failed.
-        return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
+        return $this->hasFailedFiles($advisor)
             || $advisor->links()
                 ->whereNull('parsing_results')
                 ->whereNull('parsing_job_id')
@@ -100,12 +101,12 @@ class PreviewCustomerAdvisor extends ViewRecord
 
         if (! LlamaParseLinkParsingFeature::active()) {
             // TODO: Cleanup Task (llamaparse-link-parsing): delete this whole `if` block, as the file check is repeated below.
-            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
+            return $this->hasProcessingFiles($advisor)
                 || $advisor->links()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();
         }
 
         // A link without content is still being learned while its parse job runs, or while it waits to be submitted.
-        return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
+        return $this->hasProcessingFiles($advisor)
             || $advisor->links()
                 ->whereNull('parsing_results')
                 ->where(fn (Builder $query): Builder => $query
@@ -114,5 +115,40 @@ class PreviewCustomerAdvisor extends ViewRecord
                         ->whereNull('parsing_failed_at')
                         ->where('created_at', '>=', now()->subHour())))
                 ->exists();
+    }
+
+    /**
+     * A file that failed to parse is deleted, so only a file that was never parsed and is no longer being checked
+     * counts as failed. That is one from before V2 that was not parsed within an hour of being uploaded.
+     */
+    protected function hasFailedFiles(CustomerAdvisor $advisor): bool
+    {
+        if (! LlamaParseFileParsingFeature::active()) {
+            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
+        }
+
+        return $advisor->files()
+            ->whereNull('parsing_results')
+            ->whereNull('parsing_started_at')
+            ->where('created_at', '<', now()->subHour())
+            ->exists();
+    }
+
+    /**
+     * A file without content is still being learned until it is parsed, or until it is given up on after 2 hours and
+     * deleted. A file from before V2 is only checked within an hour of being uploaded, until it is given a start time.
+     */
+    protected function hasProcessingFiles(CustomerAdvisor $advisor): bool
+    {
+        if (! LlamaParseFileParsingFeature::active()) {
+            return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();
+        }
+
+        return $advisor->files()
+            ->whereNull('parsing_results')
+            ->where(fn (Builder $query): Builder => $query
+                ->whereNotNull('parsing_started_at')
+                ->orWhere('created_at', '>=', now()->subHour()))
+            ->exists();
     }
 }

@@ -41,21 +41,25 @@ use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
 use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUpvote;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Team\Models\Department;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Filament\Pages\Dashboard;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 
@@ -1247,4 +1251,74 @@ test('super admin users do not show up in clone user search', function () use ($
 
             return ! in_array($superAdmin->name, $options) && empty($searchOptions);
         });
+});
+
+describe('file parsing', function () use ($setUp): void {
+    $checkChatFile = function (int $uploadedMinutesAgo) use ($setUp): array {
+        ['thread' => $thread] = $setUp();
+
+        $settings = app(AiIntegrationsSettings::class);
+        $settings->llamaparse_api_key = 'test-api-key';
+        $settings->save();
+
+        Http::preventStrayRequests();
+
+        Http::fake([
+            'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
+                'job' => ['id' => 'pjb-123', 'status' => 'RUNNING'],
+            ]),
+        ]);
+
+        $file = AiMessageFile::factory()->create([
+            'file_id' => 'pjb-123',
+            'mime_type' => 'application/pdf',
+            'parsing_results' => null,
+            'created_at' => now()->subMinutes($uploadedMinutesAgo),
+        ]);
+
+        $page = Livewire::test(InstitutionalAdvisor::class)
+            ->call('selectThread', $thread->toArray())
+            ->instance();
+
+        assert($page instanceof InstitutionalAdvisor);
+
+        $page->files = [$file->getKey()];
+
+        return [$page, $file];
+    };
+
+    it('keeps processing a chat file while its parse job runs within 2 hours', function () use ($checkChatFile): void {
+        [$page, $file] = $checkChatFile(uploadedMinutesAgo: 30);
+
+        expect($page->isProcessingFiles())->toBeTrue()
+            ->and($page->files)->toBe([$file->getKey()]);
+
+        assertNotSoftDeleted($file);
+    });
+
+    it('gives up on a chat file that was not parsed within 2 hours', function () use ($checkChatFile): void {
+        [$page, $file] = $checkChatFile(uploadedMinutesAgo: 121);
+
+        assertNotSoftDeleted($file);
+
+        expect($page->isProcessingFiles())->toBeFalse()
+            ->and($page->files)->toBe([]);
+
+        assertSoftDeleted($file);
+    });
+
+    // TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the feature flag.
+    it('does not give up on a chat file while LlamaParse file parsing is inactive', function () use ($checkChatFile): void {
+        LlamaParseFileParsingFeature::deactivate();
+
+        Http::fake([
+            'https://api.cloud.llamaindex.ai/api/v1/parsing/job/*' => Http::response(['status' => 'PENDING']),
+        ]);
+
+        [$page, $file] = $checkChatFile(uploadedMinutesAgo: 121);
+
+        expect($page->isProcessingFiles())->toBeTrue();
+
+        assertNotSoftDeleted($file);
+    });
 });

@@ -37,9 +37,13 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\DataTransferObjects\FileParsingResult;
+use AdvisingApp\Ai\Enums\LlamaParseV2JobStatus;
 use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
 use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
+use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseFileParsingFeature;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -49,9 +53,81 @@ class FetchFileParsingResults
 {
     public function __construct(
         protected AiIntegrationsSettings $aiIntegrationsSettings,
+        protected LlamaParseV2Client $llamaParseV2Client,
     ) {}
 
+    /**
+     * Returns the parsing results once the parse job has completed, or no results while it is still running.
+     *
+     * @throws FileParsingFailedException When the parse job failed or was cancelled.
+     * @throws FileParsingTooManyPagesException When a V1 parse job failed because the file has too many pages.
+     */
     public function execute(string $fileId, string $mimeType): FileParsingResult
+    {
+        if (! LlamaParseFileParsingFeature::active()) {
+            return $this->executeV1($fileId, $mimeType);
+        }
+
+        $isAudioOrVideo = str($mimeType)->startsWith(['audio/', 'video/']);
+
+        try {
+            // LlamaParse does not document which output holds the transcript of an audio or video file, so both are
+            // requested for those, preferring the plain text as V1 did.
+            $parseJob = $this->llamaParseV2Client->getParseJob($fileId, $isAudioOrVideo ? ['text_full', 'markdown_full'] : ['markdown_full']);
+        } catch (RequestException $exception) {
+            // V2 does not know about jobs that were submitted to V1, so a file that was still being parsed on V1 when
+            // V2 was enabled is fetched from V1 instead.
+            // TODO: Cleanup Task (llamaparse-file-parsing): remove this fallback, along with `executeV1()`, `checkJobStatus()`, `fetchResults()` and the `AiIntegrationsSettings` they use.
+            if ($exception->response->notFound()) {
+                return $this->executeV1($fileId, $mimeType);
+            }
+
+            report($exception);
+
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        }
+
+        if (in_array($parseJob->status, [LlamaParseV2JobStatus::Failed, LlamaParseV2JobStatus::Cancelled], strict: true)) {
+            Log::warning('LlamaParse file parsing failed.', [
+                'file_id' => $fileId,
+                'status' => $parseJob->status->value,
+                'error_message' => $parseJob->errorMessage,
+            ]);
+
+            throw new FileParsingFailedException($fileId, message: "LlamaParse reported the parse job [{$fileId}] as {$parseJob->status->value}: " . ($parseJob->errorMessage ?? 'no error message was given.'));
+        }
+
+        if ($parseJob->status !== LlamaParseV2JobStatus::Completed) {
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        }
+
+        $parsingResults = ($isAudioOrVideo && filled($parseJob->textFull)) ? $parseJob->textFull : $parseJob->markdownFull;
+
+        // A completed job's content never changes, so checking it again would not help.
+        if (blank($parsingResults)) {
+            throw new FileParsingFailedException($fileId, message: "LlamaParse completed the parse job [{$fileId}] without any content.");
+        }
+
+        return new FileParsingResult(
+            fileId: $fileId,
+            parsingResults: $parsingResults,
+        );
+    }
+
+    protected function executeV1(string $fileId, string $mimeType): FileParsingResult
     {
         $statusResponse = $this->checkJobStatus($fileId);
 

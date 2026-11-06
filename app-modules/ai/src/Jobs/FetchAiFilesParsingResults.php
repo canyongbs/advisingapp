@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,15 +57,22 @@ class FetchAiFilesParsingResults implements ShouldQueue
 
     public function handle(): void
     {
-        AiAssistantFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (AiAssistantFile $file): PendingDispatch => dispatch(new FetchAiAssistantFileParsingResults($file)));
+        if (LlamaParseFileParsingFeature::active()) {
+            foreach ([AiAssistantFile::class, CustomerAdvisorFile::class] as $fileModel) {
+                $this->pollInFlightFiles($fileModel);
+                $this->pollFilesStillParsingOnV1($fileModel);
+            }
+        } else {
+            AiAssistantFile::query()
+                ->whereNull('parsing_results')
+                ->where('created_at', '>=', now()->subHour())
+                ->eachById(fn (AiAssistantFile $file): PendingDispatch => dispatch(new FetchAiAssistantFileParsingResults($file)));
 
-        CustomerAdvisorFile::query()
-            ->whereNull('parsing_results')
-            ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (CustomerAdvisorFile $file): PendingDispatch => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
+            CustomerAdvisorFile::query()
+                ->whereNull('parsing_results')
+                ->where('created_at', '>=', now()->subHour())
+                ->eachById(fn (CustomerAdvisorFile $file): PendingDispatch => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
+        }
 
         if (! LlamaParseLinkParsingFeature::active()) {
             // TODO: Cleanup Task (llamaparse-link-parsing): delete this Jina fallback.
@@ -139,5 +147,46 @@ class FetchAiFilesParsingResults implements ShouldQueue
                 ->whereNull('parsing_last_checked_at')
                 ->orWhere('parsing_last_checked_at', '<=', now()->subMinutes(5)))
             ->eachById(fn (CustomerAdvisorLink|AiAssistantLink $link): PendingDispatch => dispatch(new FetchAiLinkParsingResults($link, $link->parsing_job_id)));
+    }
+
+    /**
+     * Checks on files that are still being parsed. Each file is first checked 5 minutes after it was submitted, then
+     * every 5 minutes, until it is parsed or the check gives up on it after 2 hours.
+     *
+     * @param class-string<AiAssistantFile|CustomerAdvisorFile> $fileModel
+     */
+    protected function pollInFlightFiles(string $fileModel): void
+    {
+        $fileModel::query()
+            ->whereNull('parsing_results')
+            ->where('parsing_started_at', '<=', now()->subMinutes(5))
+            ->where(fn (Builder $query): Builder => $query
+                ->whereNull('parsing_last_checked_at')
+                ->orWhere('parsing_last_checked_at', '<=', now()->subMinutes(5)))
+            ->eachById(fn (AiAssistantFile|CustomerAdvisorFile $file): PendingDispatch => $this->fetchParsingResults($file));
+    }
+
+    /**
+     * Checks on files that were submitted to V1 before V2 was enabled, which have no start time. The first check gives
+     * each one a start time, so that from then on it is checked with the other files that are still being parsed.
+     *
+     * TODO: Cleanup Task (llamaparse-file-parsing): delete this once no file is still being parsed on V1.
+     *
+     * @param class-string<AiAssistantFile|CustomerAdvisorFile> $fileModel
+     */
+    protected function pollFilesStillParsingOnV1(string $fileModel): void
+    {
+        $fileModel::query()
+            ->whereNull('parsing_results')
+            ->whereNull('parsing_started_at')
+            ->where('created_at', '>=', now()->subHour())
+            ->eachById(fn (AiAssistantFile|CustomerAdvisorFile $file): PendingDispatch => $this->fetchParsingResults($file));
+    }
+
+    protected function fetchParsingResults(AiAssistantFile|CustomerAdvisorFile $file): PendingDispatch
+    {
+        return dispatch($file instanceof AiAssistantFile
+            ? new FetchAiAssistantFileParsingResults($file)
+            : new FetchCustomerAdvisorFileParsingResults($file));
     }
 }
