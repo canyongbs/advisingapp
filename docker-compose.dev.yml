@@ -82,6 +82,8 @@ services:
             # - '../common:/var/www/common'
         networks:
             - cgbs-development
+        dns:
+            - 172.16.1.1
         depends_on:
             advisingapp-pgsql:
                 condition: service_started
@@ -119,6 +121,8 @@ services:
             # - '../common:/var/www/common'
         networks:
             - cgbs-development
+        dns:
+            - 172.16.1.1
         depends_on:
             advisingapp-pgsql:
                 condition: service_started
