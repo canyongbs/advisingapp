@@ -83,7 +83,13 @@ trait FixesDuplicateNames
     {
         $lower = Str::lower($baseValue);
 
-        return [$lower, $lower . '-%'];
+        // The first value feeds an `=` comparison (and a PHP prefix check) so it stays literal,
+        // but the second feeds a `LIKE`, where `%`, `_`, and the `\` escape character in the base
+        // name must be escaped. Otherwise a base name containing one of them (e.g. a backslash,
+        // PostgreSQL's default LIKE escape) fails to match its own "-N" suffixed rows, so the
+        // de-duplicator can rename a duplicate straight onto an existing live name and break the
+        // unique index. The trailing `-%` stays an unescaped wildcard.
+        return [$lower, addcslashes($lower, '%_\\') . '-%'];
     }
 
     protected function buildDeduplicatedValue(string $originalValue, int $counter): string

@@ -54,11 +54,8 @@ class WorkflowForm
             ->required()
             ->maxLength(255);
 
-        // Only enforce uniqueness once the citext migration has run. Before then no unique
-        // index exists and duplicate default names (e.g. "Form Workflow") are legitimate, so
-        // the rule must be fully disabled to avoid blocking edits (even just toggling enabled)
-        // on those pre-existing duplicates. When active, uniqueness is scoped to the owning
-        // record so workflows for different objects may share a name.
+        // Only enforce uniqueness once the citext migration has run.
+        // TODO: Cleanup Task (workflow-name-citext) - remove the `WorkflowNameCitextFeature::active()` guard and apply the unique rule unconditionally.
         if (WorkflowNameCitextFeature::active() && $record instanceof Workflow) {
             $nameInput = $nameInput->unique(
                 ignoreRecord: true,

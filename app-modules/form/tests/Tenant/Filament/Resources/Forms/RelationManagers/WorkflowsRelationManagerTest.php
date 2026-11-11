@@ -44,6 +44,7 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowNameCitextFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
@@ -413,4 +414,91 @@ test('nested form workflow edit route is scoped to owner form', function (): voi
         'form' => $otherForm,
         'record' => $workflow,
     ]))->assertNotFound();
+});
+
+describe('workflow name uniqueness', function (): void {
+    $makeWorkflow = fn (Form $form, string $name): Workflow => Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $form->getMorphClass(),
+                'related_id' => $form->id,
+                'type' => WorkflowTriggerType::EventBased,
+            ])
+        )
+        ->create(['name' => $name]);
+
+    it('does not allow editing a workflow to a name matching another non-deleted workflow on the same form case-insensitively', function () use ($makeWorkflow): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $makeWorkflow($form, 'Fall Outreach');
+        $workflow = $makeWorkflow($form, 'Spring Outreach');
+
+        Livewire::test(FormNestedEditWorkflow::class, [
+            'parentRecord' => $form,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'fall outreach'])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'unique']);
+    });
+
+    it('allows editing a workflow to a name freed up by a soft-deleted workflow case-insensitively', function () use ($makeWorkflow): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $deletedWorkflow = $makeWorkflow($form, 'Fall Outreach');
+        $deletedWorkflow->delete();
+
+        $workflow = $makeWorkflow($form, 'Spring Outreach');
+
+        Livewire::test(FormNestedEditWorkflow::class, [
+            'parentRecord' => $form,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'fall outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+    });
+
+    it('allows two different forms to have workflows with the same name', function () use ($makeWorkflow): void {
+        asSuperAdmin();
+
+        $formA = Form::factory()->create();
+        $formB = Form::factory()->create();
+
+        $makeWorkflow($formA, 'Shared Outreach');
+        $workflow = $makeWorkflow($formB, 'Spring Outreach');
+
+        Livewire::test(FormNestedEditWorkflow::class, [
+            'parentRecord' => $formB,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'Shared Outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($workflow->refresh()->name)->toBe('Shared Outreach');
+    });
+
+    it('allows editing a workflow to a duplicate name before the citext migration activates', function () use ($makeWorkflow): void {
+        // TODO: Cleanup Task (workflow-name-citext) - Delete this test; it only covers the pre-migration inactive-flag branch
+        WorkflowNameCitextFeature::deactivate();
+
+        asSuperAdmin();
+
+        $form = Form::factory()->create();
+        $makeWorkflow($form, 'Fall Outreach');
+        $workflow = $makeWorkflow($form, 'Spring Outreach');
+
+        Livewire::test(FormNestedEditWorkflow::class, [
+            'parentRecord' => $form,
+            'record' => $workflow->getRouteKey(),
+        ])
+            ->fillForm(['name' => 'Fall Outreach'])
+            ->call('save')
+            ->assertHasNoFormErrors(['name']);
+
+        expect($workflow->refresh()->name)->toBe('Fall Outreach');
+    });
 });

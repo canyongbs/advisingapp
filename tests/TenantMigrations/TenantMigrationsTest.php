@@ -1019,6 +1019,36 @@ describe('workflows name citext change', function (): void {
             }
         );
     });
+
+    it('does not rename a duplicate whose name contains a LIKE metacharacter onto an existing suffixed name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                // Regression: the de-duplicator seeds its "taken names" set with a LIKE query on the
+                // base name's prefix. A backslash is PostgreSQL's default LIKE escape character, so an
+                // unescaped prefix like "fall\outreach-%" never matches the live "fall\outreach-2" row.
+                // Without escaping, the duplicate is renamed straight onto "fall\outreach-2" and the
+                // unique index fails to build. The escaped pattern must find the suffixed row and skip
+                // to "-3" instead.
+                $form = Form::factory()->create();
+
+                $original = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Fall\\Outreach', 'created_at' => now()->subMinutes(2)]);
+                $duplicate = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'fall\\outreach', 'created_at' => now()->subMinutes(1)]);
+                $existingSuffixed = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'fall\\outreach-2', 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($original->refresh()->name)->toBe('Fall\\Outreach');
+                // "-2" is already taken by a live row, so the next free suffix is used.
+                expect($duplicate->refresh()->name)->toBe('fall\\outreach-3');
+                // The pre-existing suffixed row is in its own group and is left untouched.
+                expect($existingSuffixed->refresh()->name)->toBe('fall\\outreach-2');
+            }
+        );
+    });
 });
 
 // TODO: Cleanup Task (alert-status-name-citext) - Delete this describe and everything contained within

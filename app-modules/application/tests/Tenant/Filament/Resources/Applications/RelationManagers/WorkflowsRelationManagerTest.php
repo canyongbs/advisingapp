@@ -544,9 +544,7 @@ describe('workflow name uniqueness', function (): void {
         )
         ->create(['name' => $name]);
 
-    it('does not allow editing a workflow to a name matching another non-deleted workflow case-insensitively', function () use ($makeWorkflow): void {
-        WorkflowNameCitextFeature::activate();
-
+    it('does not allow editing a workflow to a name matching another non-deleted workflow on the same application case-insensitively', function () use ($makeWorkflow): void {
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -563,8 +561,6 @@ describe('workflow name uniqueness', function (): void {
     });
 
     it('allows editing a workflow to a name freed up by a soft-deleted workflow case-insensitively', function () use ($makeWorkflow): void {
-        WorkflowNameCitextFeature::activate();
-
         asSuperAdmin();
 
         $application = Application::factory()->create();
@@ -583,8 +579,6 @@ describe('workflow name uniqueness', function (): void {
     });
 
     it('allows two different applications to have workflows with the same name', function () use ($makeWorkflow): void {
-        WorkflowNameCitextFeature::activate();
-
         asSuperAdmin();
 
         $applicationA = Application::factory()->create();
@@ -605,6 +599,7 @@ describe('workflow name uniqueness', function (): void {
     });
 
     it('allows editing a workflow to a duplicate name before the citext migration activates', function () use ($makeWorkflow): void {
+        // TODO: Cleanup Task (workflow-name-citext) - Delete this test; it only covers the pre-migration inactive-flag branch
         WorkflowNameCitextFeature::deactivate();
 
         asSuperAdmin();
