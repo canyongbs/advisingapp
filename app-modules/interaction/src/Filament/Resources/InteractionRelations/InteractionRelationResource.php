@@ -76,7 +76,7 @@ class InteractionRelationResource extends Resource
                     ->placeholder('Interaction Relation Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at')
+                        modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('interactable_type', $get('interactable_type'))->withoutTrashed(),
                     ),
                 Toggle::make('is_default')
                     ->label('Default')

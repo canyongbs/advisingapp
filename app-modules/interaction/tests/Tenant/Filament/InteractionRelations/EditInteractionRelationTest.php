@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\EditInteractionRelation;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -73,4 +74,46 @@ test('it cannot delete instances used by an interaction', function (): void {
 
     Livewire::test(EditInteractionRelation::class, ['record' => $relation->id])
         ->assertActionHidden('delete');
+});
+
+test('it cannot update the name to one that only differs by case from another of the same type', function (): void {
+    asSuperAdmin();
+
+    InteractionRelation::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $interactionRelation = InteractionRelation::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionRelation::class, ['record' => $interactionRelation->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect($interactionRelation->refresh()->name)->toBe('Email');
+});
+
+test('it can update the name to one used by a soft-deleted record of the same type', function (): void {
+    asSuperAdmin();
+
+    $deletedInteractionRelation = InteractionRelation::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+    $deletedInteractionRelation->delete();
+    $interactionRelation = InteractionRelation::factory()->create(['name' => 'Email', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionRelation::class, ['record' => $interactionRelation->getKey()])
+        ->fillForm(['name' => 'Phone'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionRelation->refresh()->name)->toBe('Phone');
+});
+
+test('it can change only the casing of its own name', function (): void {
+    asSuperAdmin();
+
+    $interactionRelation = InteractionRelation::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+    Livewire::test(EditInteractionRelation::class, ['record' => $interactionRelation->getKey()])
+        ->fillForm(['name' => 'PHONE'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($interactionRelation->refresh()->name)->toBe('PHONE');
 });

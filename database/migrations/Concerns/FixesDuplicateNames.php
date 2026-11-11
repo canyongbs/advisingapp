@@ -89,7 +89,12 @@ trait FixesDuplicateNames
         // PostgreSQL's default LIKE escape) fails to match its own "-N" suffixed rows, so the
         // de-duplicator can rename a duplicate straight onto an existing live name and break the
         // unique index. The trailing `-%` stays an unescaped wildcard.
-        return [$lower, addcslashes($lower, '%_\\') . '-%'];
+        return [$lower, $this->escapeLikePattern($lower) . '-%'];
+    }
+
+    protected function escapeLikePattern(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
     }
 
     protected function buildDeduplicatedValue(string $originalValue, int $counter): string

@@ -109,7 +109,13 @@ class ProspectImporter extends Importer
                         ->when(
                             Str::isUuid($state),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->where('name', $state),
+                            // Match the name case-sensitively. The column is citext, so a plain
+                            // where() would match case-insensitively and could silently resolve a
+                            // legacy name (e.g. a "referral" renamed to "referral-2" by the name
+                            // citext migration) to a different, retained row with the same name in
+                            // another case. Casting to text forces an exact match so such names
+                            // fail resolution instead.
+                            fn (Builder $query) => $query->whereRaw('name::text = ?', [$state]),
                         )
                         ->first(),
                 )
@@ -122,7 +128,13 @@ class ProspectImporter extends Importer
                         ->when(
                             Str::isUuid($state),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->where('name', $state),
+                            // Match the name case-sensitively. The column is citext, so a plain
+                            // where() would match case-insensitively and could silently resolve a
+                            // legacy name (e.g. a "referral" renamed to "referral-2" by the name
+                            // citext migration) to a different, retained row with the same name in
+                            // another case. Casting to text forces an exact match so such names
+                            // fail resolution instead.
+                            fn (Builder $query) => $query->whereRaw('name::text = ?', [$state]),
                         )
                         ->first(),
                 )
