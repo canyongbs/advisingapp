@@ -888,6 +888,18 @@ describe('care team roles name citext change', function (): void {
             function (): void {
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
 
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student])->delete();
+                CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+
+                // The rolled-back schema must still support running the migration again.
+                $remigrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
                 expect($remigrate)->toBe(Command::SUCCESS);
             }
         );
