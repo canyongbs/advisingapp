@@ -106,3 +106,23 @@ it('is idempotent and does not fail when protected statuses already exist', func
         ->and(ProspectStatus::query()->where('is_system_protected', true)->pluck('name')->sort()->values()->all())
         ->toBe(['Converted', 'New']);
 });
+
+it('leaves an existing non-protected status untouched even when its classification differs', function (): void {
+    // The seeder's `if (! $desiredProtection) { continue; }` guard means non-protected defaults
+    // (e.g. "Assigned") are never reconciled. An existing "Assigned" row deliberately carrying a
+    // different classification must be left exactly as-is, not rewritten to the seeded default.
+    $assigned = ProspectStatus::factory()->create([
+        'name' => 'Assigned',
+        'classification' => SystemProspectClassification::InProgress,
+        'is_system_protected' => false,
+    ]);
+
+    seed([ProspectStatusSeeder::class]);
+
+    expect(ProspectStatus::query()->where('name', 'Assigned')->count())->toBe(1);
+
+    $assigned->refresh();
+
+    expect($assigned->classification)->toBe(SystemProspectClassification::InProgress)
+        ->and($assigned->is_system_protected)->toBeFalse();
+});
