@@ -49,6 +49,13 @@ use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -1285,4 +1292,75 @@ test('2026_10_29_220315_tmp_backfill_sms_message_events_occurred_at leaves occur
 })->with([
     'empty payload' => [[]],
     'unparseable occurred_at' => [['occurred_at' => 'not-a-date']],
+]);
+
+// TODO: Cleanup Task (interaction-setting-name-citext) - Delete this describe and everything contained within
+describe('interaction settings name citext change', function () {
+    it('renames case-insensitive duplicate names within the same interactable type', function (string $migrationName, string $model) {
+        isolatedMigration(
+            $migrationName,
+            function () use ($migrationName, $model) {
+                // Setup data before migration
+                $record1 = $model::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student, 'created_at' => now()->subMinutes(3)]);
+                $record2 = $model::factory()->create(['name' => 'phone', 'interactable_type' => InteractableType::Student, 'created_at' => now()->subMinutes(2)]);
+                $record3 = $model::factory()->create(['name' => 'PHONE', 'interactable_type' => InteractableType::Student, 'created_at' => now()->subMinutes(1)]);
+
+                // The same name under another interactable type is a separate uniqueness scope,
+                // so it must not be counted in, or renamed by, the student duplicate group.
+                $prospectRecord = $model::factory()->create(['name' => 'phone', 'interactable_type' => InteractableType::Prospect, 'created_at' => now()->subMinutes(5)]);
+
+                // A soft-deleted record sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedRecord = $model::factory()->create(['name' => 'PHone', 'interactable_type' => InteractableType::Student, 'created_at' => now()->subMinutes(4)]);
+                $deletedRecord->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => "app-modules/interaction/database/migrations/{$migrationName}.php"]);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($record1->refresh()->name)->toBe('Phone')
+                    ->and($record2->refresh()->name)->toBe('phone-2')
+                    ->and($record3->refresh()->name)->toBe('PHONE-3')
+                    // Untouched: the only record with this name in its own interactable type
+                    ->and($prospectRecord->refresh()->name)->toBe('phone')
+                    // Untouched: excluded from the live dedup group entirely, despite the name collision
+                    ->and($deletedRecord->refresh()->name)->toBe('PHone');
+            }
+        );
+    })->with('interaction setting citext migrations');
+
+    it('can be rolled back when a live record reuses a soft-deleted record name', function (string $migrationName, string $model) {
+        isolatedMigration(
+            $migrationName,
+            function () use ($migrationName, $model) {
+                $migrate = Artisan::call('migrate', ['--path' => "app-modules/interaction/database/migrations/{$migrationName}.php"]);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one.
+                $deletedRecord = $model::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+                $deletedRecord->delete();
+                $model::factory()->create(['name' => 'Phone', 'interactable_type' => InteractableType::Student]);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => "app-modules/interaction/database/migrations/{$migrationName}.php"]);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    })->with('interaction setting citext migrations');
+});
+
+// TODO: Cleanup Task (interaction-setting-name-citext) - Delete this dataset
+dataset('interaction setting citext migrations', [
+    'interaction types' => ['2026_11_03_105100_convert_interaction_types_name_to_citext', InteractionType::class],
+    'interaction statuses' => ['2026_11_03_105103_convert_interaction_statuses_name_to_citext', InteractionStatus::class],
+    'interaction drivers' => ['2026_11_03_105107_convert_interaction_drivers_name_to_citext', InteractionDriver::class],
+    'interaction outcomes' => ['2026_11_03_105111_convert_interaction_outcomes_name_to_citext', InteractionOutcome::class],
+    'interaction relations' => ['2026_11_03_105114_convert_interaction_relations_name_to_citext', InteractionRelation::class],
+    'interaction initiatives' => ['2026_11_03_105117_convert_interaction_initiatives_name_to_citext', InteractionInitiative::class],
 ]);
