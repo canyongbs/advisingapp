@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
+use App\Features\ProspectSourceAndStatusNameCitextFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -45,6 +46,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditProspectStatus extends EditRecord
 {
@@ -57,7 +59,15 @@ class EditProspectStatus extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->when(
+                        ProspectSourceAndStatusNameCitextFeature::active(),
+                        fn (TextInput $input): TextInput => $input->unique(
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()

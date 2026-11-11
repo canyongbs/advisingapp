@@ -83,7 +83,12 @@ trait FixesDuplicateNames
     {
         $lower = Str::lower($baseValue);
 
-        return [$lower, $lower . '-%'];
+        return [$lower, $this->escapeLikePattern($lower) . '-%'];
+    }
+
+    protected function escapeLikePattern(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
     }
 
     protected function buildDeduplicatedValue(string $originalValue, int $counter): string

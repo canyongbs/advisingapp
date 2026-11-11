@@ -45,42 +45,76 @@ class ProspectStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        ProspectStatus::factory()
-            ->createMany(
-                [
-                    [
-                        'classification' => SystemProspectClassification::New,
-                        'name' => 'New',
-                        'color' => Color::Sky->value,
-                        'is_system_protected' => true,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Assigned,
-                        'name' => 'Assigned',
-                        'color' => Color::Yellow->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::InProgress,
-                        'name' => 'In-Progress',
-                        'color' => Color::Blue->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Converted,
-                        'name' => 'Converted',
-                        'color' => Color::Green->value,
-                        'is_system_protected' => true,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::Recycled,
-                        'name' => 'Recycled',
-                        'color' => Color::Gray->value,
-                    ],
-                    [
-                        'classification' => SystemProspectClassification::NotInterested,
-                        'name' => 'Not Interested',
-                        'color' => Color::Red->value,
-                    ],
-                ]
-            );
+        $statuses = [
+            [
+                'classification' => SystemProspectClassification::New,
+                'name' => 'New',
+                'color' => Color::Sky->value,
+                'is_system_protected' => true,
+            ],
+            [
+                'classification' => SystemProspectClassification::Assigned,
+                'name' => 'Assigned',
+                'color' => Color::Yellow->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::InProgress,
+                'name' => 'In-Progress',
+                'color' => Color::Blue->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::Converted,
+                'name' => 'Converted',
+                'color' => Color::Green->value,
+                'is_system_protected' => true,
+            ],
+            [
+                'classification' => SystemProspectClassification::Recycled,
+                'name' => 'Recycled',
+                'color' => Color::Gray->value,
+            ],
+            [
+                'classification' => SystemProspectClassification::NotInterested,
+                'name' => 'Not Interested',
+                'color' => Color::Red->value,
+            ],
+        ];
+
+        foreach ($statuses as $status) {
+            $desiredClassification = $status['classification'];
+            $desiredProtection = $status['is_system_protected'] ?? false;
+
+            $existingStatus = ProspectStatus::query()->where('name', $status['name'])->first();
+
+            if ($existingStatus === null) {
+                ProspectStatus::factory()->create($status);
+
+                continue;
+            }
+
+            if (! $desiredProtection) {
+                continue;
+            }
+
+            // An earlier data migration provisions "New" and "Converted" with the default
+            // is_system_protected = false. Reconcile existing rows to the required
+            // classification and protection so lookups in ConvertToStudent and
+            // DisassociateStudent (name + is_system_protected) keep working, instead of
+            // skipping them and leaving a non-protected default behind.
+            if (
+                $existingStatus->classification === $desiredClassification
+                && $existingStatus->is_system_protected === $desiredProtection
+            ) {
+                continue;
+            }
+
+            // Use forceFill to bypass the is_system_protected mass-assignment guard while still
+            // touching updated_at. The modification-prevention trigger only blocks already-protected
+            // rows, so promoting a currently non-protected default to protected is permitted.
+            $existingStatus->forceFill([
+                'classification' => $desiredClassification,
+                'is_system_protected' => $desiredProtection,
+            ])->save();
+        }
     }
 }
