@@ -36,9 +36,16 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
+use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\Advisors\FetchAiMessageFileParsingResults;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorFileParsingResults;
 use AdvisingApp\Ai\Jobs\FetchAiLinkParsingResults;
+use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -51,24 +58,57 @@ class LlamaParseInboundWebhookController
      */
     public function __invoke(Request $request): Response
     {
-        if (! LlamaParseLinkParsingFeature::active()) {
-            // TODO: Cleanup Task (llamaparse-link-parsing): delete this check, as the parsing columns always exist once the feature flag is removed.
-            return response()->noContent();
-        }
-
         $parsingJobId = $request->string('data.job_id')->toString();
 
         if (blank($parsingJobId)) {
             return response()->noContent();
         }
 
-        $link = CustomerAdvisorLink::query()->where('parsing_job_id', $parsingJobId)->first()
-            ?? AiAssistantLink::query()->where('parsing_job_id', $parsingJobId)->first();
+        // TODO: Cleanup Task (llamaparse-link-parsing): remove the feature flag check, as the parsing columns always exist once the feature flag is removed.
+        if (LlamaParseLinkParsingFeature::active() && $this->dispatchLinkParsingResultsFetch($parsingJobId)) {
+            return response()->noContent();
+        }
 
-        if ($link) {
-            dispatch(new FetchAiLinkParsingResults($link, $parsingJobId));
+        if (LlamaParseFileParsingFeature::active()) {
+            $this->dispatchFileParsingResultsFetch($parsingJobId);
         }
 
         return response()->noContent();
+    }
+
+    protected function dispatchLinkParsingResultsFetch(string $parsingJobId): bool
+    {
+        $link = CustomerAdvisorLink::query()->where('parsing_job_id', $parsingJobId)->first()
+            ?? AiAssistantLink::query()->where('parsing_job_id', $parsingJobId)->first();
+
+        if (! $link) {
+            return false;
+        }
+
+        dispatch(new FetchAiLinkParsingResults($link, $parsingJobId));
+
+        return true;
+    }
+
+    /**
+     * A file's `file_id` is the ID of its parse job.
+     */
+    protected function dispatchFileParsingResultsFetch(string $parsingJobId): void
+    {
+        if ($file = CustomerAdvisorFile::query()->where('file_id', $parsingJobId)->first()) {
+            dispatch(new FetchCustomerAdvisorFileParsingResults($file));
+
+            return;
+        }
+
+        if ($file = AiAssistantFile::query()->where('file_id', $parsingJobId)->first()) {
+            dispatch(new FetchAiAssistantFileParsingResults($file));
+
+            return;
+        }
+
+        if ($file = AiMessageFile::query()->where('file_id', $parsingJobId)->first()) {
+            dispatch(new FetchAiMessageFileParsingResults($file));
+        }
     }
 }
