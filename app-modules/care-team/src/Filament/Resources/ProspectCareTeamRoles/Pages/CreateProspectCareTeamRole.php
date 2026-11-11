@@ -39,10 +39,12 @@ namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\Pages;
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleNameCitextFeature;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateProspectCareTeamRole extends CreateRecord
 {
@@ -56,7 +58,14 @@ class CreateProspectCareTeamRole extends CreateRecord
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed())
+                    ->when(
+                        CareTeamRoleNameCitextFeature::active(),
+                        fn (TextInput $field): TextInput => $field->unique(
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed(),
+                        ),
+                    ),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->hint(function (?CareTeamRole $record, ?bool $state): ?string {

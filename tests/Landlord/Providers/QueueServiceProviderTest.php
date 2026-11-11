@@ -36,6 +36,8 @@
 
 use App\Models\Tenant;
 use App\Queue\TenantFairSqsQueue;
+use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
+use Cbox\LaravelQueueAutoscale\Diagnostics\QueueDiscovery;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
@@ -43,6 +45,24 @@ use Illuminate\Support\Facades\Queue;
 
 it('resolves the `sqs` connection to the tenant fair SQS queue', function () {
     expect(Queue::connection('sqs'))->toBeInstanceOf(TenantFairSqsQueue::class);
+});
+
+it('discovers workable custom queue connections without excluding the sync queue name', function () {
+    config(['queue-autoscale.queues' => []]);
+
+    $discovery = new class () extends QueueDiscovery {
+        protected function fromMetrics(): array
+        {
+            return [
+                'background:sync' => ['connection' => 'background', 'queue' => 'sync'],
+                'sqs:jobs' => ['connection' => 'sqs', 'queue' => 'jobs'],
+            ];
+        }
+    };
+
+    expect(AutoscaleConfiguration::isExcluded('sync'))->toBeFalse()
+        ->and($discovery->names())->toBe(['jobs'])
+        ->and($discovery->namesOnDriver('sqs'))->toBe(['jobs']);
 });
 
 it('stamps `pushedAt` on job payloads', function () {

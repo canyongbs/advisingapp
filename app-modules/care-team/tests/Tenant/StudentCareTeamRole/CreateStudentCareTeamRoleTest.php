@@ -40,7 +40,9 @@ use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\CreateCareTeamRoleRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleNameCitextFeature;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -126,4 +128,63 @@ test('Creating a default care team role will make all other care team roles not 
         ->assertHasNoFormErrors();
 
     $careTeamRoles->each(fn ($careTeamRole) => assertFalse($careTeamRole->fresh()->is_default === true));
+});
+
+it('rejects a name matching an existing care team role case-insensitively', function (string $name): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+
+    Livewire::test(CreateStudentCareTeamRole::class)
+        ->fillForm(['name' => $name, 'is_default' => false])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+
+    expect(CareTeamRole::query()->count())->toBe(1);
+})->with([
+    'exact match' => ['Advisor'],
+    'case variant' => ['advisor'],
+]);
+
+it('allows a name that matches a prospect care team role case-insensitively', function (): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect]);
+
+    Livewire::test(CreateStudentCareTeamRole::class)
+        ->fillForm(['name' => 'ADVISOR', 'is_default' => false])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(CareTeamRole::query()->where('type', CareTeamRoleType::Student)->sole()->name)->toBe('ADVISOR');
+});
+
+it('allows a name that was freed up by a soft-deleted care team role', function (): void {
+    asSuperAdmin();
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student])->delete();
+
+    Livewire::test(CreateStudentCareTeamRole::class)
+        ->fillForm(['name' => 'advisor', 'is_default' => false])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(CareTeamRole::query()->sole()->name)->toBe('advisor');
+});
+
+// TODO: Cleanup Task (care-team-role-name-citext) - delete this test
+it('allows a duplicate name when the feature is inactive and the unique index is dropped', function (): void {
+    asSuperAdmin();
+
+    CareTeamRoleNameCitextFeature::deactivate();
+    DB::statement('DROP INDEX care_team_roles_type_name_unique');
+
+    CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+
+    Livewire::test(CreateStudentCareTeamRole::class)
+        ->fillForm(['name' => 'Advisor', 'is_default' => false])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(CareTeamRole::query()->count())->toBe(2);
 });
