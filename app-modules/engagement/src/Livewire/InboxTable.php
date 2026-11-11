@@ -243,7 +243,7 @@ class InboxTable extends Component implements HasActions, HasForms, HasTable
 
                 if ($shouldApplyFilter) {
                     app(TranslateGroupFilters::class)
-                        ->applyFilterToQuery($data['value'], $query);
+                        ->applyFilterToQuery($data['value'], $query); // @phpstan-ignore argument.type
                 } else {
                     $query->whereRaw('1 = 0');
                 }

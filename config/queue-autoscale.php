@@ -167,11 +167,7 @@ return [
     | Examples: 'legacy-*', 'test-?', 'horizon-managed'
     |
     */
-    'excluded' => [
-        // Jobs on the `background` connection run in-process and report this queue. Its custom driver is not on the
-        // package's list of connections workers cannot pop: docs/explanations/oss-todo/cbox-queue-autoscale-custom-queue-drivers.md
-        'sync',
-    ],
+    'excluded' => [],
 
     /*
     |--------------------------------------------------------------------------

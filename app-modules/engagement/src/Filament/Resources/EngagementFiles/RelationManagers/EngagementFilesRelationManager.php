@@ -51,7 +51,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Storage;
 
 class EngagementFilesRelationManager extends RelationManager
 {
@@ -133,14 +132,10 @@ class EngagementFilesRelationManager extends RelationManager
             ->recordActions([
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
-                    ->action(
-                        fn (EngagementFile $record) => Storage::disk('s3')
-                            ->download(
-                                $record
-                                    ->getMedia('file')
-                                    ->first()
-                                    ->getPathRelativeToRoot()
-                            )
+                    ->authorize('view')
+                    ->url(
+                        fn (EngagementFile $record): string => route('engagement-file-download', ['file' => $record]),
+                        shouldOpenInNewTab: true,
                     ),
                 EditAction::make(),
                 DeleteAction::make(),

@@ -329,6 +329,7 @@ class StudentImporter extends Importer
 
             if (filled($this->data[$careTeamRoleColumn])) {
                 $careTeamRole = CareTeamRole::query()
+                    ->where('type', CareTeamRoleType::Student)
                     ->where(new Expression('lower(name)'), Str::lower($this->data[$careTeamRoleColumn]))
                     ->first();
             }

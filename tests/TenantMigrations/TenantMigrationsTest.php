@@ -40,6 +40,7 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
@@ -58,6 +59,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
+use App\Enums\CareTeamRoleType;
 use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
@@ -792,6 +794,112 @@ describe('sms templates name citext change', function (): void {
                 expect($template1->refresh()->name)->toBe($maxLengthUpper);
                 expect($template2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
                 expect($template3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (care-team-role-name-citext) - Delete this describe and everything contained within
+describe('care team roles name citext change', function (): void {
+    it('renames case-insensitive duplicate care team role names', function (): void {
+        isolatedMigration(
+            '2026_11_02_223000_convert_care_team_roles_name_to_citext',
+            function (): void {
+                $role1 = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(3)]);
+                $role2 = CareTeamRole::factory()->create(['name' => 'advisor', 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(2)]);
+                $role3 = CareTeamRole::factory()->create(['name' => 'ADVISOR', 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(1)]);
+
+                // Roles of another type never collide with these, even when the names match case-insensitively.
+                $prospectRole1 = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Prospect, 'created_at' => now()->subMinutes(5)]);
+                $prospectRole2 = CareTeamRole::factory()->create(['name' => 'advisor', 'type' => CareTeamRoleType::Prospect, 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted role is excluded from de-duplication and must be left untouched.
+                $deletedRole = CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(4)]);
+                $deletedRole->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($role1->refresh()->name)->toBe('Advisor');
+                expect($role2->refresh()->name)->toBe('advisor-2');
+                expect($role3->refresh()->name)->toBe('ADVISOR-3');
+                expect($prospectRole1->refresh()->name)->toBe('Advisor');
+                expect($prospectRole2->refresh()->name)->toBe('advisor-2');
+                expect($deletedRole->refresh()->name)->toBe('Advisor');
+
+                expect(fn () => CareTeamRole::factory()->create(['name' => 'aDVISOR', 'type' => CareTeamRoleType::Student]))
+                    ->toThrow(QueryException::class);
+
+                expect(fn () => CareTeamRole::factory()->create(['name' => 'aDVISOR', 'type' => CareTeamRoleType::Prospect]))
+                    ->toThrow(QueryException::class);
+
+                CareTeamRole::factory()->create(['name' => 'Coach', 'type' => CareTeamRoleType::Student]);
+
+                expect(CareTeamRole::factory()->create(['name' => 'coach', 'type' => CareTeamRoleType::Prospect])->name)->toBe('coach');
+            }
+        );
+    });
+
+    it('allows a live care team role to reuse a soft-deleted care team role name after migrating', function (): void {
+        isolatedMigration(
+            '2026_11_02_223000_convert_care_team_roles_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student])->delete();
+                $role = CareTeamRole::factory()->create(['name' => 'advisor', 'type' => CareTeamRoleType::Student]);
+
+                expect($role->refresh()->name)->toBe('advisor');
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated care team role name', function (): void {
+        isolatedMigration(
+            '2026_11_02_223000_convert_care_team_roles_name_to_citext',
+            function (): void {
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $role1 = CareTeamRole::factory()->create(['name' => $maxLengthUpper, 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(2)]);
+                $role2 = CareTeamRole::factory()->create(['name' => $maxLengthLower, 'type' => CareTeamRoleType::Student, 'created_at' => now()->subMinutes(1)]);
+                $role3 = CareTeamRole::factory()->create(['name' => $truncatedCollision, 'type' => CareTeamRoleType::Student, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($role1->refresh()->name)->toBe($maxLengthUpper);
+                expect($role2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($role3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+
+    it('can be rolled back when a live care team role reuses a soft-deleted care team role name', function (): void {
+        isolatedMigration(
+            '2026_11_02_223000_convert_care_team_roles_name_to_citext',
+            function (): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The partial unique index ignores soft-deleted rows, so down() must restore a
+                // partial (not all-row) index for this valid post-migration data.
+                CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student])->delete();
+                CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+
+                $remigrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
+
+                expect($remigrate)->toBe(Command::SUCCESS);
             }
         );
     });

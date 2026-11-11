@@ -39,11 +39,13 @@ namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\Pages;
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
+use App\Features\CareTeamRoleNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditProspectCareTeamRole extends EditRecord
 {
@@ -56,7 +58,13 @@ class EditProspectCareTeamRole extends EditRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
-                    ->unique(ignoreRecord: true),
+                    // TODO: Cleanup Task (care-team-role-name-citext) - replace the modifyRuleUsing closure with a plain $rule->where('type', ...)->withoutTrashed()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => CareTeamRoleNameCitextFeature::active()
+                            ? $rule->where('type', CareTeamRoleType::Prospect->value)->withoutTrashed()
+                            : $rule,
+                    ),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->hint(function (?CareTeamRole $record, $state): ?string {
