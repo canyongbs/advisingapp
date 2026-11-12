@@ -79,7 +79,7 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
         return [(new WithoutOverlapping($this->link->getKey()))->dontRelease()->expireAfter($this->timeout)];
     }
 
-    public function handle(LlamaParseV2Client $llamaParseV2Client): void
+    public function handle(LlamaParseV2Client $llamaParseV2Client, GetLlamaParseWebhookParameters $getLlamaParseWebhookParameters): void
     {
         $this->link->refresh();
 
@@ -119,7 +119,7 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
                 'source_url' => $this->link->url,
                 // Always parse the current page rather than a cached copy, so Keep Current refreshes pick up changes.
                 'disable_cache' => true,
-                ...app(GetLlamaParseWebhookParameters::class)(),
+                ...($getLlamaParseWebhookParameters)(),
             ]);
         } catch (Throwable $exception) {
             report($exception);
