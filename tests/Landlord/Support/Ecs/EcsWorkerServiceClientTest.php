@@ -97,7 +97,7 @@ it('identifies the task and the service deployment that started it', function ()
         serviceName: 'advisingapp-worker-dev-service',
         startedBy: 'ecs-svc/111',
     ))
-        ->and($calls[0])->toMatchArray([
+        ->and($calls[0])->toMatchArray([ // @phpstan-ignore offsetAccess.notFound
             'cluster' => 'arn:aws:ecs:us-west-2:111111111111:cluster/advisingapp-dev',
             'tasks' => ['arn:aws:ecs:us-west-2:111111111111:task/advisingapp-dev/task-a'],
         ]);
@@ -139,7 +139,7 @@ it('describes the service deployments and its desired and running counts', funct
         ->and($state->deploymentCount)->toBe(2)
         ->and($state->desiredCount)->toBe(2)
         ->and($state->runningCount)->toBe(3)
-        ->and($calls[0])->toMatchArray([
+        ->and($calls[0])->toMatchArray([ // @phpstan-ignore offsetAccess.notFound
             'cluster' => 'cluster-arn',
             'services' => ['advisingapp-worker-dev-service'],
         ]);
@@ -169,7 +169,7 @@ it('lists every task the service is keeping running', function () use ($clientFo
     $runningTaskArns = $clientFor($aws)->runningTaskArns(new EcsTaskIdentity('task-a', 'cluster-arn', 'advisingapp-worker-dev-service', 'ecs-svc/111'));
 
     expect($runningTaskArns)->toBe(['task-a', 'task-b', 'task-c'])
-        ->and($calls[0])->toMatchArray([
+        ->and($calls[0])->toMatchArray([ // @phpstan-ignore offsetAccess.notFound
             'cluster' => 'cluster-arn',
             'serviceName' => 'advisingapp-worker-dev-service',
             'desiredStatus' => 'RUNNING',

@@ -79,7 +79,8 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
             ->query(
                 Engagement::query()
                     ->whereHas('recipient')
-                    ->with([/** @phpstan-ignore argument.type */
+                    ->with([
+                        /** @phpstan-ignore argument.type */
                         'latestEmailMessage',
                         'latestSmsMessage',
                         'recipient' => function (MorphTo $morphTo): void {
@@ -259,7 +260,7 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
 
                 if ($shouldApplyFilter) {
                     app(TranslateGroupFilters::class)
-                        ->applyFilterToQuery($data['value'], $query);
+                        ->applyFilterToQuery($data['value'], $query); // @phpstan-ignore argument.type
                 } else {
                     $query->whereRaw('1 = 0');
                 }
