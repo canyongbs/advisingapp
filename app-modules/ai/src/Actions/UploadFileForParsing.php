@@ -41,9 +41,9 @@ use AdvisingApp\Ai\Enums\LlamaParseV2Tier;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\LlamaParseFileParsingFeature;
-use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use Throwable;
 
 class UploadFileForParsing
@@ -92,8 +92,9 @@ class UploadFileForParsing
      */
     protected function openFileStream(string $path): mixed
     {
-        /** @var AwsS3V3Adapter $s3Adapter */
         $s3Adapter = Storage::disk('s3')->getAdapter();
+
+        assert($s3Adapter instanceof AwsS3V3Adapter);
 
         invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
         $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $path)->replace('\\', '/');
@@ -184,8 +185,9 @@ class UploadFileForParsing
             return file_get_contents($path) ?: null;
         }
 
-        /** @var AwsS3V3Adapter $s3Adapter */
         $s3Adapter = Storage::disk('s3')->getAdapter();
+
+        assert($s3Adapter instanceof AwsS3V3Adapter);
 
         invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
         $fileS3Path = (string) str('s3://' . config('filesystems.disks.s3.bucket') . '/' . $path)->replace('\\', '/');
