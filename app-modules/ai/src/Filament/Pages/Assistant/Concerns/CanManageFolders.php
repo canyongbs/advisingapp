@@ -60,6 +60,9 @@ trait CanManageFolders
         $this->folders = $this->getFolders();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getFolders(): array
     {
         /** @var User $user */

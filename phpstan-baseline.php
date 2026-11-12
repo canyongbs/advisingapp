@@ -606,12 +606,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Notifications/AuthorLinkedApplicationSubmissionCreatedNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Notifications\\\\AuthorLinkedApplicationSubmissionCreatedNotification\\:\\:toDatabase\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Notifications/AuthorLinkedApplicationSubmissionCreatedNotification.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Providers\\\\ApplicationServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -622,30 +616,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/tests/Tenant/ApplicationWidgetApiTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getCanManageThreadsForms\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getFolders\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:getThreadsWithoutAFolder\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:selectThread\\(\\) has parameter \\$thread with no value type specified in iterable type array\\.$#',
@@ -774,12 +744,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/audit/src/Overrides/BelongsToMany.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany\\:\\:sync\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/audit/src/Overrides/BelongsToMany.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property OwenIt\\\\Auditing\\\\Contracts\\\\Auditable\\:\\:\\$auditCustomNew\\.$#',
     'identifier' => 'property.notFound',
     'count' => 4,
@@ -825,12 +789,6 @@ $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\:\\:sync\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/audit/src/Overrides/MorphToMany.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\:\\:sync\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 3,
     'path' => __DIR__ . '/app-modules/audit/src/Overrides/MorphToMany.php',
 ];
 $ignoreErrors[] = [
@@ -902,12 +860,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
     'identifier' => 'MeliorStan.propertyNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\Auth\\\\Login\\:\\:getSsoFormActions\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
@@ -1074,18 +1026,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Settings\\\\AzureSsoSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Settings/AzureSsoSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Settings\\\\GoogleSsoSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Settings/GoogleSsoSettings.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Authorization\\\\Settings\\\\LocalPasswordSettings\\:\\:\\$blacklistCommonPasswords \\(bool\\) on left side of \\?\\? is not nullable\\.$#',
     'identifier' => 'nullCoalesce.property',
     'count' => 1,
@@ -1200,42 +1140,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/DataTransferObjects/CampaignActionsCreationData.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CampaignActionBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CampaignActionBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\EngagementBatchEmailBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/EngagementBatchEmailBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\EngagementBatchSmsBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/EngagementBatchSmsBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\EventBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/EventBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\InteractionBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/InteractionBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\SubscriptionBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/SubscriptionBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$livewire of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -1245,12 +1149,6 @@ $ignoreErrors[] = [
     'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\TaskBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
 ];
 $ignoreErrors[] = [

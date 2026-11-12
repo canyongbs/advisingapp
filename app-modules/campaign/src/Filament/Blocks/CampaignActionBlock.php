@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Carbon\CarbonInterface;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 
 abstract class CampaignActionBlock extends Block
@@ -54,6 +55,9 @@ abstract class CampaignActionBlock extends Block
         return parent::make($name ?? static::type());
     }
 
+    /**
+     * @return array<Component>
+     */
     abstract public function generateFields(): array;
 
     abstract public static function type(): string;

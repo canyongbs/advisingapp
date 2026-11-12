@@ -47,6 +47,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -64,6 +65,9 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         return [
