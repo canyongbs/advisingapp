@@ -899,6 +899,8 @@ describe('care team roles name citext change', function (): void {
 
                 expect($migrate)->toBe(Command::SUCCESS);
 
+                // The partial unique index ignores soft-deleted rows, so down() must restore a
+                // partial (not all-row) index for this valid post-migration data.
                 CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student])->delete();
                 CareTeamRole::factory()->create(['name' => 'Advisor', 'type' => CareTeamRoleType::Student]);
 

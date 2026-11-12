@@ -57,15 +57,7 @@ class WorkflowObserver
             return;
         }
 
-        if ($workflow->getAttribute('related_type') !== null || $workflow->getAttribute('related_id') !== null) {
-            return;
-        }
-
         $trigger = $workflow->workflowTrigger;
-
-        if ($trigger === null) {
-            return;
-        }
 
         $workflow->setAttribute('related_type', $trigger->related_type);
         $workflow->setAttribute('related_id', $trigger->related_id);
