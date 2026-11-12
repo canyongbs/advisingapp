@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 
+// TODO: Cleanup Task (llamaparse-file-parsing): `$assistantFile` and `$advisorFile` have no start time, so only `FetchAiFilesParsingResults::pollFilesStillParsingOnV1()` picks them up. Create them with `parsingInProgress()` once that method is removed.
 it('dispatches a parsing results job for each recent unparsed file and submits each recent unparsed link', function (): void {
     Queue::fake();
 

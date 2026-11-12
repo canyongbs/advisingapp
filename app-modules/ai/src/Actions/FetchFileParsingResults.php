@@ -77,7 +77,7 @@ class FetchFileParsingResults
         } catch (RequestException $exception) {
             // V2 does not know about jobs that were submitted to V1, so a file that was still being parsed on V1 when
             // V2 was enabled is fetched from V1 instead.
-            // TODO: Cleanup Task (llamaparse-file-parsing): remove this fallback, along with `executeV1()`, `checkJobStatus()`, `fetchResults()` and the `AiIntegrationsSettings` they use.
+            // TODO: Cleanup Task (llamaparse-file-parsing): remove this fallback, along with `executeV1()`, `checkJobStatus()`, `fetchResults()` and the `$aiIntegrationsSettings` constructor property they use.
             if ($exception->response->notFound()) {
                 return $this->executeV1($fileId, $mimeType);
             }
@@ -157,6 +157,7 @@ class FetchFileParsingResults
                 'error_message' => $statusResponse->json('error_message'),
             ]);
 
+            // TODO: Cleanup Task (llamaparse-file-parsing): only V1 reports too many pages, so remove `FileParsingTooManyPagesException`, the places that catch it, and `FileParsingError::TooManyPages` along with V1.
             if ($errorCode === 'TOO_MANY_PAGES') {
                 throw new FileParsingTooManyPagesException($fileId);
             }
