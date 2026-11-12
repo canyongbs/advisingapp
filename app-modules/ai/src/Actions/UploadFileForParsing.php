@@ -70,7 +70,7 @@ class UploadFileForParsing
         try {
             $fileId = LlamaParseFileParsingFeature::active()
                 ? $this->uploadToLlamaParse($resource, $name, $mimeType)
-                // TODO: Cleanup Task (llamaparse-file-parsing): delete this V1 upload, along with `uploadToLlamaParseV1()` and the `AiIntegrationsSettings` it uses.
+                // TODO: Cleanup Task (llamaparse-file-parsing): delete this V1 upload, along with `uploadToLlamaParseV1()`, the `$aiIntegrationsSettings` constructor property it uses, and that argument in `UploadFileForParsingTest`.
                 : $this->uploadToLlamaParseV1($resource, $name, $mimeType);
         } catch (Throwable $exception) {
             report($exception);

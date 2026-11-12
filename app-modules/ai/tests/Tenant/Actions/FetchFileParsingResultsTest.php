@@ -109,6 +109,7 @@ it('throws a generic parsing failure when a completed parse job has no content',
         ->toThrow(FileParsingFailedException::class, 'LlamaParse completed the parse job [pjb-123] without any content.');
 });
 
+// TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the V1 fallback.
 it('fetches the parsing results from V1 for a file that was submitted to V1', function (): void {
     $fileId = '3b0b1f7e-2c6a-4f43-9d5f-1d2a2b7f9c10';
 
