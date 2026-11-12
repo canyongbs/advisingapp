@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Audit\Overrides\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Events\AuditCustom;
@@ -100,10 +102,10 @@ trait AttachOverrides
     }
 
     /**
-     * @param mixed $ids
-     * @param mixed $detaching
+     * @param Collection<array-key, mixed>|Model|array<mixed>|int|string $ids
+     * @param bool $detaching
      *
-     * @return array<string, array<int|string, mixed>>
+     * @return array{attached: array<mixed>, detached: array<mixed>, updated: array<mixed>}
      */
     public function sync($ids, $detaching = true)
     {
