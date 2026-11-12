@@ -36,29 +36,26 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // CREATE INDEX CONCURRENTLY cannot run inside a transaction block.
+    public $withinTransaction = false;
+
     public function up(): void
     {
-        DB::transaction(function (): void {
-            foreach (['ai_assistant_files', 'customer_advisor_files', 'ai_message_files'] as $tableName) {
-                Schema::table($tableName, function (Blueprint $table): void {
-                    $table->index('file_id');
-                });
-            }
-        });
+        foreach (['ai_assistant_files', 'customer_advisor_files', 'ai_message_files'] as $tableName) {
+            // A failed concurrent build leaves an invalid index behind, so a retry must drop it before building again.
+            DB::statement("DROP INDEX CONCURRENTLY IF EXISTS {$tableName}_file_id_index");
+
+            // Built concurrently so files and their parsing results can still be saved while the index builds.
+            DB::statement("CREATE INDEX CONCURRENTLY {$tableName}_file_id_index ON {$tableName} (file_id)");
+        }
     }
 
     public function down(): void
     {
-        DB::transaction(function (): void {
-            foreach (['ai_assistant_files', 'customer_advisor_files', 'ai_message_files'] as $tableName) {
-                Schema::table($tableName, function (Blueprint $table): void {
-                    $table->dropIndex(['file_id']);
-                });
-            }
-        });
+        foreach (['ai_assistant_files', 'customer_advisor_files', 'ai_message_files'] as $tableName) {
+            DB::statement("DROP INDEX CONCURRENTLY IF EXISTS {$tableName}_file_id_index");
+        }
     }
 };
