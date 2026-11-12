@@ -35,11 +35,21 @@
 */
 
 use AdvisingApp\Ai\Actions\GetLlamaParseWebhookSigningSecret;
+use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\Advisors\FetchAiMessageFileParsingResults;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorFileParsingResults;
 use AdvisingApp\Ai\Jobs\FetchAiLinkParsingResults;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\TestResponse;
 
@@ -81,8 +91,95 @@ it('dispatches a check of the parse job for the link it belongs to', function (s
     'AI assistant link' => [AiAssistantLink::class],
 ]);
 
-it('ignores a webhook for a parse job that no link is waiting on', function (array $data) use ($sendSignedWebhook): void {
+$fileDataset = [
+    'customer advisor file' => [
+        fn (): CustomerAdvisorFile => CustomerAdvisorFile::factory()->parsingInProgress()->create(),
+        FetchCustomerAdvisorFileParsingResults::class,
+    ],
+    'AI assistant file' => [
+        fn (): AiAssistantFile => AiAssistantFile::factory()->parsingInProgress()->create(['assistant_id' => AiAssistant::factory()]),
+        FetchAiAssistantFileParsingResults::class,
+    ],
+    'chat file' => [
+        fn (): AiMessageFile => AiMessageFile::factory()->parsingInProgress()->create(),
+        FetchAiMessageFileParsingResults::class,
+    ],
+];
+
+it('dispatches a check of the parse job for the file it belongs to', function (Closure $createFile, string $jobClass) use ($sendSignedWebhook): void {
+    $file = $createFile();
+
+    assert($file instanceof Model && $file instanceof AiFile);
+
+    Queue::fake();
+
+    $sendSignedWebhook([
+        'event_id' => 'evt-123',
+        'event_type' => 'parse.success',
+        'data' => ['id' => $file->getFileId(), 'job_id' => $file->getFileId()],
+    ])->assertNoContent();
+
+    Queue::assertPushed($jobClass, fn (FetchCustomerAdvisorFileParsingResults|FetchAiAssistantFileParsingResults|FetchAiMessageFileParsingResults $job): bool => $job->uniqueId() === $file->getKey());
+    Queue::assertCount(1);
+})->with($fileDataset);
+
+// TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the feature flag.
+it('dispatches a check of the parse job for a file while LlamaParse link parsing is inactive', function () use ($sendSignedWebhook): void {
+    $file = CustomerAdvisorFile::factory()->parsingInProgress()->create();
+
+    LlamaParseLinkParsingFeature::deactivate();
+
+    Queue::fake();
+
+    $sendSignedWebhook([
+        'event_id' => 'evt-123',
+        'event_type' => 'parse.success',
+        'data' => ['id' => $file->file_id, 'job_id' => $file->file_id],
+    ])->assertNoContent();
+
+    Queue::assertPushed(FetchCustomerAdvisorFileParsingResults::class, fn (FetchCustomerAdvisorFileParsingResults $job): bool => $job->uniqueId() === $file->getKey());
+});
+
+// TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the feature flag.
+it('ignores a webhook for a file while LlamaParse file parsing is inactive', function (Closure $createFile) use ($sendSignedWebhook): void {
+    $file = $createFile();
+
+    assert($file instanceof Model && $file instanceof AiFile);
+
+    LlamaParseFileParsingFeature::deactivate();
+
+    Queue::fake();
+
+    $sendSignedWebhook([
+        'event_id' => 'evt-123',
+        'event_type' => 'parse.success',
+        'data' => ['id' => $file->getFileId(), 'job_id' => $file->getFileId()],
+    ])->assertNoContent();
+
+    Queue::assertNothingPushed();
+})->with($fileDataset);
+
+it('ignores a webhook for a file that was deleted', function (Closure $createFile) use ($sendSignedWebhook): void {
+    $file = $createFile();
+
+    assert($file instanceof Model && $file instanceof AiFile);
+
+    $file->delete();
+
+    Queue::fake();
+
+    $sendSignedWebhook([
+        'event_id' => 'evt-123',
+        'event_type' => 'parse.success',
+        'data' => ['id' => $file->getFileId(), 'job_id' => $file->getFileId()],
+    ])->assertNoContent();
+
+    Queue::assertNothingPushed();
+})->with($fileDataset);
+
+it('ignores a webhook for a parse job that no link or file is waiting on', function (array $data) use ($sendSignedWebhook): void {
     CustomerAdvisorLink::factory()->parsingInProgress()->create();
+    CustomerAdvisorFile::factory()->parsingInProgress()->create();
 
     Queue::fake();
 
@@ -92,7 +189,7 @@ it('ignores a webhook for a parse job that no link is waiting on', function (arr
         'data' => $data,
     ])->assertNoContent();
 
-    Queue::assertNotPushed(FetchAiLinkParsingResults::class);
+    Queue::assertNothingPushed();
 })->with([
     'unknown job ID' => [['id' => 'pjb-unknown', 'job_id' => 'pjb-unknown']],
     'no job ID' => [[]],
@@ -112,5 +209,5 @@ it('ignores a webhook while LlamaParse link parsing is inactive', function () us
         'data' => ['id' => $link->parsing_job_id, 'job_id' => $link->parsing_job_id],
     ])->assertNoContent();
 
-    Queue::assertNotPushed(FetchAiLinkParsingResults::class);
+    Queue::assertNothingPushed();
 });
