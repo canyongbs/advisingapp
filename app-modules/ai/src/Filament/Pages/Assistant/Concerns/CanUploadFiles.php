@@ -47,6 +47,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 use Livewire\Attributes\Computed;
@@ -113,12 +114,17 @@ trait CanUploadFiles
                 // Chat files are checked while the page is open rather than by the scheduled check, so they are given up on
                 // here. A chat file is created as soon as it is submitted for parsing, so it is timed from then.
                 if (LlamaParseFileParsingFeature::active() && $file->created_at->isBefore(now()->subHours(2))) {
+                    if (! $this->giveUpOnFileWithoutParsingResults($file)) {
+                        continue;
+                    }
+
                     Log::warning('LlamaParse file parsing timed out.', [
                         'file_id' => $file->file_id,
                         'created_at' => $file->created_at->toIso8601String(),
                     ]);
 
-                    $this->handleParsingError($file, FileParsingError::Generic);
+                    $this->removeUploadedFile($file->getKey());
+                    $this->notifyParsingFailed(FileParsingError::Generic);
 
                     continue;
                 }
@@ -218,6 +224,32 @@ trait CanUploadFiles
 
         $file->delete();
 
+        $this->notifyParsingFailed($error);
+    }
+
+    /**
+     * The webhook can store a chat file's parsing results while this page is checking on it, so the file is locked and
+     * reloaded first, and only deleted if it still has none. Returns whether it was deleted.
+     */
+    protected function giveUpOnFileWithoutParsingResults(AiMessageFile $file): bool
+    {
+        return DB::transaction(function () use ($file): bool {
+            AiMessageFile::query()->whereKey($file->getKey())->lockForUpdate()->first();
+
+            $file->refresh();
+
+            if ($file->trashed() || filled($file->parsing_results)) {
+                return false;
+            }
+
+            $file->delete();
+
+            return true;
+        });
+    }
+
+    protected function notifyParsingFailed(FileParsingError $error): void
+    {
         Notification::make()
             ->title('File Upload Failed')
             ->body($error->getNotificationBody())
