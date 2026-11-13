@@ -10,6 +10,7 @@ created: 2026-10-05
 ## Additional Cleanup
 
 Search for `// TODO: Unified Inbox Addon Cleanup -` and follow the instructions there.
+
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag
 removals (keep the active path, drop the inactive path), and do NOT include file
