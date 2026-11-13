@@ -36,12 +36,11 @@
 
 namespace AdvisingApp\Ai\Jobs;
 
-use AdvisingApp\Ai\Actions\GetLlamaParseWebhookSigningSecret;
+use AdvisingApp\Ai\Actions\GetLlamaParseWebhookParameters;
 use AdvisingApp\Ai\Enums\LlamaParseV2Tier;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
-use App\Models\Tenant;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -80,7 +79,7 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
         return [(new WithoutOverlapping($this->link->getKey()))->dontRelease()->expireAfter($this->timeout)];
     }
 
-    public function handle(LlamaParseV2Client $llamaParseV2Client): void
+    public function handle(LlamaParseV2Client $llamaParseV2Client, GetLlamaParseWebhookParameters $getLlamaParseWebhookParameters): void
     {
         $this->link->refresh();
 
@@ -120,7 +119,7 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
                 'source_url' => $this->link->url,
                 // Always parse the current page rather than a cached copy, so Keep Current refreshes pick up changes.
                 'disable_cache' => true,
-                ...$this->getWebhookParameters(),
+                ...($getLlamaParseWebhookParameters)(),
             ]);
         } catch (Throwable $exception) {
             report($exception);
@@ -146,36 +145,6 @@ class SubmitAiLinkForParsing implements ShouldQueue, TenantAware, ShouldBeUnique
     public function refreshesExistingParsingResults(): bool
     {
         return $this->refreshExistingParsingResults;
-    }
-
-    /**
-     * LlamaParse calls this webhook as soon as the parse job finishes. It can only reach a public URL, so a local
-     * environment relies on the every-minute sweep checking on the parse job instead.
-     *
-     * @return array<string, mixed>
-     */
-    protected function getWebhookParameters(): array
-    {
-        if (app()->environment('local')) {
-            return [];
-        }
-
-        $tenant = Tenant::current();
-
-        assert($tenant instanceof Tenant);
-
-        return [
-            'webhook_configurations' => [
-                [
-                    // A full `route()` URL respects `app.force_https`, and LlamaParse only accepts an HTTPS webhook URL.
-                    'webhook_url' => route('inbound.webhook.llamaparse'),
-                    'webhook_events' => ['parse.success', 'parse.partial_success', 'parse.error', 'parse.cancelled'],
-                    'webhook_signing_secret' => app(GetLlamaParseWebhookSigningSecret::class)($tenant),
-                    // The default "string" format sends the payload as a JSON-encoded string, so its job ID could not be read.
-                    'webhook_output_format' => 'json',
-                ],
-            ],
-        ];
     }
 
     /**

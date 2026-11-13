@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Actions\GetLlamaParseWebhookParameters;
 use AdvisingApp\Ai\Actions\GetLlamaParseWebhookSigningSecret;
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
@@ -75,7 +76,7 @@ it('submits the link to LlamaParse and stores the parse job', function (string $
 
     expect($link->parsing_job_id)->toBeNull();
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $link->refresh();
 
@@ -116,7 +117,7 @@ it('does not submit a link that was deleted after this was queued', function (bo
 
     $link->delete();
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Http::assertNothingSent();
 
@@ -136,7 +137,7 @@ it('marks a link as failed without submitting it once it could not be submitted 
         'created_at' => now()->subHour()->subMinute(),
     ]);
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     expect($link->refresh()->parsing_failed_at)->not->toBeNull()
         ->and($link->parsing_job_id)->toBeNull();
@@ -157,7 +158,7 @@ it('submits a link that was never tried, even after its first hour', function ()
 
     expect($link->parsing_last_checked_at)->toBeNull();
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $link->refresh();
 
@@ -184,7 +185,7 @@ it('does not mark a link as failed while its last submission within the hour is 
         },
     ]);
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $link->refresh();
 
@@ -203,7 +204,7 @@ it('does not ask LlamaParse to call the webhook in the local environment', funct
 
     $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     expect($link->refresh()->parsing_job_id)->toBe('pjb-123');
 
@@ -222,7 +223,7 @@ it('does not change the `updated_at` of the link', function (): void {
 
     $updatedAt = $link->updated_at;
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     expect($link->refresh()->parsing_job_id)->toBe('pjb-123')
         ->and($link->updated_at->toDateTimeString())->toBe($updatedAt->toDateTimeString());
@@ -237,7 +238,7 @@ it('does not submit a link that already has a parse job in progress', function (
 
     $parsingJobId = $link->parsing_job_id;
 
-    (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Http::assertNothingSent();
 
@@ -256,7 +257,7 @@ it('does not submit a link that another submission started a parse job for after
         'parsing_started_at' => now(),
     ]);
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Http::assertNothingSent();
 
@@ -281,7 +282,7 @@ it('does not submit a link while another submission of it is running', function 
     (new Pipeline(app()))
         ->send($job)
         ->through($middleware)
-        ->then(fn (SubmitAiLinkForParsing $job) => $job->handle(app(LlamaParseV2Client::class)));
+        ->then(fn (SubmitAiLinkForParsing $job) => $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class)));
 
     $runningSubmissionLock->release();
 
@@ -295,7 +296,7 @@ it('does not submit a link that is already parsed or has failed unless it is bei
 
     $link = $applyState(CustomerAdvisorLink::factory())->create();
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Http::assertNothingSent();
 
@@ -312,7 +313,7 @@ it('leaves a link that is still being submitted for the first time to the every-
 
     $job = (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->withFakeQueueInteractions();
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Http::assertNothingSent();
     $job->assertNotReleased();
@@ -340,7 +341,7 @@ it('submits a parsed link that is being refreshed, keeping its existing parsing 
         'parsing_results' => 'Existing parsing results',
     ]);
 
-    (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $link->refresh();
 
@@ -360,7 +361,7 @@ it('reports an error response and leaves the link to be submitted again', functi
 
     $job = (new SubmitAiLinkForParsing($link))->withFakeQueueInteractions();
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Exceptions::assertReported(RequestException::class);
 
@@ -384,7 +385,7 @@ it('reports a missing API key without sending a request', function (): void {
 
     $link = CustomerAdvisorLink::factory()->create(['parsing_results' => null]);
 
-    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class));
+    (new SubmitAiLinkForParsing($link))->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Exceptions::assertReported(LlamaParseApiKeyNotConfiguredException::class);
     Http::assertNothingSent();
@@ -406,7 +407,7 @@ it('retries a refresh that cannot be submitted, keeping its existing parsing res
     assert($job->job instanceof FakeJob);
     $job->job->attempts = $attempt;
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     Exceptions::assertReported(RequestException::class);
     $job->assertReleased(delay: $retryDelayInSeconds);
@@ -436,7 +437,7 @@ it('marks a refresh as failed after its last attempt, keeping its existing parsi
 
     expect($link->parsing_failed_at)->toBeNull();
 
-    $job->handle(app(LlamaParseV2Client::class));
+    $job->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $job->assertNotReleased();
 
