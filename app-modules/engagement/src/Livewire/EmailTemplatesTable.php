@@ -59,6 +59,11 @@ class EmailTemplatesTable extends Component implements HasActions, HasForms, Has
     use InteractsWithForms;
     use InteractsWithTable;
 
+    public function boot(): void
+    {
+        abort_unless(EmailTemplateResource::canViewAny(), 403);
+    }
+
     public function table(Table $table): Table
     {
         return $table
