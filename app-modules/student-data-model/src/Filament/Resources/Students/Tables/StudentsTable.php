@@ -37,10 +37,14 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables;
 
 use AdvisingApp\Alert\Filament\Filters\AlertStatusConstraint;
+use AdvisingApp\StudentDataModel\Filament\Filters\EnrolledTermConstraint;
 use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByFirstTerm;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\MatchedEnrolledTermsFeature;
 use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\AttributeTextOperator;
@@ -62,6 +66,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
@@ -201,9 +206,9 @@ class StudentsTable
                     ->label('Enrollment Earned')
                     ->relationship('enrollments', 'unt_earned')
                     ->icon(Heroicon::CheckBadge),
-                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'firstTermEnrollment', 'First Enrolled Term')
+                self::makeFirstEnrolledTermConstraint()
                     ->icon(Heroicon::CalendarDays),
-                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'mostRecentTermEnrollment', 'Most Recent Enrolled Term')
+                self::makeMostRecentEnrolledTermConstraint()
                     ->icon(Heroicon::CalendarDays),
                 TermAttributeConstraint::make('termAttribute'),
             ],
@@ -479,22 +484,34 @@ class StudentsTable
     }
 
     /**
-     * @return array<ExistingValuesSelectConstraint>
+     * @return array<SelectConstraint>
      */
     private static function getEnrollmentTermConstraints(): array
     {
         return [
-            self::createEnrollmentTermConstraint(
-                'firstEnrollmentTerm.semester_name',
-                'firstTermEnrollment',
-                'First Enrolled Term'
-            )->icon('heroicon-m-academic-cap'),
-            self::createEnrollmentTermConstraint(
-                'mostRecentEnrollmentTerm.semester_name',
-                'mostRecentTermEnrollment',
-                'Most Recent Enrolled Term'
-            )->icon('heroicon-m-academic-cap'),
+            self::makeFirstEnrolledTermConstraint()->icon('heroicon-m-academic-cap'),
+            self::makeMostRecentEnrolledTermConstraint()->icon('heroicon-m-academic-cap'),
         ];
+    }
+
+    private static function makeFirstEnrolledTermConstraint(): SelectConstraint
+    {
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'firstTermEnrollment', 'First Enrolled Term');
+        }
+
+        return EnrolledTermConstraint::make('firstEnrolledTerm', new OrderByFirstTerm())
+            ->label('First Enrolled Term');
+    }
+
+    private static function makeMostRecentEnrolledTermConstraint(): SelectConstraint
+    {
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'mostRecentTermEnrollment', 'Most Recent Enrolled Term');
+        }
+
+        return EnrolledTermConstraint::make('mostRecentEnrolledTerm', new OrderByMostRecentTerm())
+            ->label('Most Recent Enrolled Term');
     }
 
     /**
