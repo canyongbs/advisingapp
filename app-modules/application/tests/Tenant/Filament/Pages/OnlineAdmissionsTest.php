@@ -136,6 +136,42 @@ describe('actions', function (): void {
     });
 });
 
+describe('old cluster URLs', function (): void {
+    $oldSubmissionStatesUrl = fn (): string => OnlineAdmissions::getUrl() . '/application-submission-states';
+
+    it('redirects the old list URL to the submission states tab', function () use ($oldSubmissionStatesUrl): void {
+        asSuperAdmin();
+
+        get($oldSubmissionStatesUrl())
+            ->assertRedirect(OnlineAdmissions::getUrl(['tab' => OnlineAdmissionsTab::SubmissionStates->value]));
+    });
+
+    it('redirects the old create URL to the resource create page', function () use ($oldSubmissionStatesUrl): void {
+        asSuperAdmin();
+
+        get("{$oldSubmissionStatesUrl()}/create")
+            ->assertRedirect(ApplicationSubmissionStateResource::getUrl('create'));
+    });
+
+    it('redirects the old view URL to the resource view page', function () use ($oldSubmissionStatesUrl): void {
+        asSuperAdmin();
+
+        $state = ApplicationSubmissionState::factory()->create();
+
+        get("{$oldSubmissionStatesUrl()}/{$state->getRouteKey()}")
+            ->assertRedirect(ApplicationSubmissionStateResource::getUrl('view', ['record' => $state]));
+    });
+
+    it('redirects the old edit URL to the resource edit page', function () use ($oldSubmissionStatesUrl): void {
+        asSuperAdmin();
+
+        $state = ApplicationSubmissionState::factory()->create();
+
+        get("{$oldSubmissionStatesUrl()}/{$state->getRouteKey()}/edit")
+            ->assertRedirect(ApplicationSubmissionStateResource::getUrl('edit', ['record' => $state]));
+    });
+});
+
 describe('authorization', function () use ($enableOnlineAdmissions, $getTabLabels): void {
     it('shows the `Submission States` tab to a user with the `settings.view-any` permission', function () use ($enableOnlineAdmissions, $getTabLabels): void {
         $enableOnlineAdmissions();

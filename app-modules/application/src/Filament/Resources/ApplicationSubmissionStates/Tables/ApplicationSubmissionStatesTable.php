@@ -55,6 +55,11 @@ class ApplicationSubmissionStatesTable
     {
         return $table
             ->query(fn (): Builder => ApplicationSubmissionStateResource::getEloquentQuery())
+            ->recordUrl(fn (ApplicationSubmissionState $record): ?string => match (true) {
+                 ApplicationSubmissionStateResource::canView($record) => ApplicationSubmissionStateResource::getUrl('view', ['record' => $record]),
+                 ApplicationSubmissionStateResource::canEdit($record) => ApplicationSubmissionStateResource::getUrl('edit', ['record' => $record]),
+                 default => null,
+             })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
