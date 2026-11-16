@@ -34,16 +34,25 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Alert\Models\StudentAlert;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\StudentDataModel\Actions\CompleteStudentDataImport;
 use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Models\Import;
 use App\Models\User;
+use Filament\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 
 $createImport = function (User $user, string $importer): Import {
@@ -105,5 +114,66 @@ describe('enrollments', function () use ($createStudentDataImportWithEnrollment)
 
         expect(Enrollment::query()->sole()->sisid)->toBe('S1')
             ->and(DB::scalar("select to_regclass('enrollment_terms')"))->toBeNull();
+    });
+});
+
+describe('dependent views', function () use ($createStudentDataImportWithEnrollment): void {
+    it('replaces the tables while enabled alerts depend on them, and keeps the alerts and matched terms working', function () use ($createStudentDataImportWithEnrollment): void {
+        $firstGenerationAlert = AlertConfiguration::factory()
+            ->state(['preset' => AlertPreset::FirstGenerationStudent])
+            ->enabled()
+            ->create();
+
+        $newStudentAlert = AlertConfiguration::factory()
+            ->state([
+                'preset' => AlertPreset::NewStudent,
+                'configuration_id' => NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1])->getKey(),
+                'configuration_type' => new NewStudentAlertConfiguration()->getMorphClass(),
+            ])
+            ->enabled()
+            ->create();
+
+        app(GenerateStudentAlertsView::class)->execute();
+
+        $term = Term::factory()->create();
+
+        $studentDataImport = $createStudentDataImportWithEnrollment(['sis_term_id' => $term->sis_term_id, 'semester_code' => '4201']);
+        DB::table("import_{$studentDataImport->studentsImport->getKey()}_students")->update(['firstgen' => true]);
+
+        app(CompleteStudentDataImport::class)->execute($studentDataImport);
+
+        expect($studentDataImport->refresh()->completed_at)->not->toBeNull()
+            ->and(Enrollment::query()->sole()->term?->getKey())->toBe($term->getKey())
+            ->and(StudentAlert::query()->where('sisid', 'S1')->pluck('alert_configuration_id')->all())
+            ->toEqualCanonicalizing([$firstGenerationAlert->getKey(), $newStudentAlert->getKey()]);
+    });
+
+    it('keeps the existing data, cancels the import and notifies the user when the tables cannot be replaced', function () use ($createStudentDataImportWithEnrollment): void {
+        Exceptions::fake();
+        Notification::fake();
+
+        $existingStudent = Student::factory()->create();
+
+        // Materialized views cannot be recreated, so one depending on `students` stops the table from being replaced.
+        DB::statement('create materialized view import_blocking_view as select sisid from students');
+
+        $studentDataImport = $createStudentDataImportWithEnrollment([]);
+
+        app(CompleteStudentDataImport::class)->execute($studentDataImport);
+
+        expect(Student::query()->pluck('sisid')->all())->toBe([$existingStudent->getKey()])
+            ->and(Enrollment::query()->exists())->toBeFalse()
+            ->and(DB::scalar('select to_regclass(?)', ["import_{$studentDataImport->studentsImport->getKey()}_students"]))->toBeNull()
+            ->and(DB::scalar('select to_regclass(?)', ["import_{$studentDataImport->studentsImport->getKey()}_care_teams"]))->toBeNull()
+            ->and(DB::scalar('select to_regclass(?)', ["import_{$studentDataImport->enrollmentsImport->getKey()}_enrollments"]))->toBeNull()
+            ->and($studentDataImport->refresh()->canceled_at)->not->toBeNull();
+
+        Exceptions::assertReported(fn (RuntimeException $exception): bool => str_contains($exception->getMessage(), 'materialized view import_blocking_view'));
+
+        Notification::assertSentTo(
+            $studentDataImport->user,
+            DatabaseNotification::class,
+            fn (DatabaseNotification $notification): bool => $notification->data['title'] === 'Import failed',
+        );
     });
 });

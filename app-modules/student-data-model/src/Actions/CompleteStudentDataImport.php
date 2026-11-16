@@ -38,11 +38,13 @@ namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
+use App\Actions\RecreateDependentViews;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 
 class CompleteStudentDataImport
 {
@@ -65,92 +67,52 @@ class CompleteStudentDataImport
 
         $totalFailedRowsCount = $studentsImportFailedRowsCount + $emailAddressesImportFailedRowsCount + $phoneNumbersImportFailedRowsCount + $addressesImportFailedRowsCount + $programsImportFailedRowsCount + $enrollmentsImportFailedRowsCount;
 
+        $hasReplacingTablesFailed = false;
+
         if (! $totalFailedRowsCount) {
-            DB::transaction(function () use ($import): void {
-                DB::table("import_{$import->studentsImport->getKey()}_students")
-                    ->update([
-                        'primary_email_id' => $import->emailAddressesImport ? DB::raw("(SELECT email.id FROM \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)") : null,
-                        'primary_phone_id' => $import->phoneNumbersImport ? DB::raw("(SELECT phone.id FROM \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)") : null,
-                        'primary_address_id' => $import->addressesImport ? DB::raw("(SELECT address.id FROM \"import_{$import->addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)") : null,
-                    ]);
+            $replacedTables = array_keys(array_filter([
+                'students' => true,
+                'student_email_addresses' => filled($import->emailAddressesImport),
+                'student_phone_numbers' => filled($import->phoneNumbersImport),
+                'student_addresses' => filled($import->addressesImport),
+                'programs' => filled($import->programsImport),
+                'enrollments' => filled($import->enrollmentsImport),
+            ]));
 
-                DB::statement('drop table "students"');
-                DB::statement("alter table \"import_{$import->studentsImport->getKey()}_students\" rename to \"students\"");
+            try {
+                // Views such as `enrollment_terms` and the generated `student_alerts` depend on these tables, so they are recreated around the swap.
+                app(RecreateDependentViews::class)($replacedTables, fn () => $this->replaceTables($import));
+            } catch (Throwable $exception) {
+                report($exception);
 
-                DB::statement("insert into care_teams
-                    (id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id)
-                    select id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id
-                    from \"import_{$import->studentsImport->getKey()}_care_teams\"
-                    on conflict (user_id, educatable_id, educatable_type) do update
-                    set care_team_role_id = excluded.care_team_role_id, updated_at = excluded.updated_at
-                    where excluded.updated_at > care_teams.updated_at");
+                $this->dropTemporaryTables($import);
 
-                DB::statement("drop table \"import_{$import->studentsImport->getKey()}_care_teams\"");
+                $import->canceled_at = now()->toImmutable();
+                $import->save();
 
-                if ($import->emailAddressesImport) {
-                    DB::statement('drop table "student_email_addresses"');
-                    DB::statement("alter table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" rename to \"student_email_addresses\"");
-                }
+                $hasReplacingTablesFailed = true;
+            }
 
-                if ($import->phoneNumbersImport) {
-                    DB::statement('drop table "student_phone_numbers"');
-                    DB::statement("alter table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" rename to \"student_phone_numbers\"");
-                }
-
-                if ($import->addressesImport) {
-                    DB::statement('drop table "student_addresses"');
-                    DB::statement("alter table \"import_{$import->addressesImport->getKey()}_addresses\" rename to \"student_addresses\"");
-                }
-
-                if ($import->programsImport) {
-                    DB::statement('drop table "programs"');
-                    DB::statement("alter table \"import_{$import->programsImport->getKey()}_programs\" rename to \"programs\"");
-                }
-
-                if ($import->enrollmentsImport) {
-                    // The `enrollment_terms` view depends on `enrollments`, so it is recreated from its current definition around the swap.
-                    $enrollmentTermsViewDefinition = DB::scalar("select pg_get_viewdef(to_regclass('enrollment_terms'))");
-
-                    DB::statement('drop view if exists "enrollment_terms"');
-                    DB::statement('drop table "enrollments"');
-                    DB::statement("alter table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
-
-                    if (filled($enrollmentTermsViewDefinition)) {
-                        DB::statement("create view \"enrollment_terms\" as {$enrollmentTermsViewDefinition}");
-                    }
-                }
-            });
-
-            // The phone number table was just swapped in via raw SQL, which
-            // bypasses model observers, so queue lookups for any new numbers.
-            dispatch(new QueuePhoneNumberLookups());
+            if (! $hasReplacingTablesFailed) {
+                // The phone number table was just swapped in via raw SQL, which
+                // bypasses model observers, so queue lookups for any new numbers.
+                dispatch(new QueuePhoneNumberLookups());
+            }
         } else {
-            DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_students\"");
-
-            DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_care_team\"");
-
-            if ($import->emailAddressesImport) {
-                DB::statement("drop table if exists \"import_{$import->emailAddressesImport->getKey()}_email_addresses\"");
-            }
-
-            if ($import->phoneNumbersImport) {
-                DB::statement("drop table if exists \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\"");
-            }
-
-            if ($import->addressesImport) {
-                DB::statement("drop table if exists \"import_{$import->addressesImport->getKey()}_addresses\"");
-            }
-
-            if ($import->programsImport) {
-                DB::statement("drop table if exists \"import_{$import->programsImport->getKey()}_programs\"");
-            }
-
-            if ($import->enrollmentsImport) {
-                DB::statement("drop table if exists \"import_{$import->enrollmentsImport->getKey()}_enrollments\"");
-            }
+            $this->dropTemporaryTables($import);
         }
 
         if (! $import->studentsImport->user instanceof Authenticatable) {
+            return;
+        }
+
+        if ($hasReplacingTablesFailed) {
+            Notification::make()
+                ->title('Import failed')
+                ->body('Your student data import has finished, but the data could not be saved, so nothing was changed. Please try again, and contact support if this keeps happening.')
+                ->danger()
+                ->sendToDatabase($import->studentsImport->user, isEventDispatched: true);
+
             return;
         }
 
@@ -255,5 +217,83 @@ class CompleteStudentDataImport
             ->body($body)
             ->success()
             ->sendToDatabase($import->studentsImport->user, isEventDispatched: true);
+    }
+
+    /**
+     * Replaces the imported tables with their `import_*` copies, and merges in the imported care teams.
+     */
+    private function replaceTables(StudentDataImport $import): void
+    {
+        DB::table("import_{$import->studentsImport->getKey()}_students")
+            ->update([
+                'primary_email_id' => $import->emailAddressesImport ? DB::raw("(SELECT email.id FROM \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" email WHERE email.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND email.\"order\" = 1 LIMIT 1)") : null,
+                'primary_phone_id' => $import->phoneNumbersImport ? DB::raw("(SELECT phone.id FROM \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" phone WHERE phone.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND phone.\"order\" = 1 LIMIT 1)") : null,
+                'primary_address_id' => $import->addressesImport ? DB::raw("(SELECT address.id FROM \"import_{$import->addressesImport->getKey()}_addresses\" address WHERE address.sisid = \"import_{$import->studentsImport->getKey()}_students\".sisid AND address.\"order\" = 1 LIMIT 1)") : null,
+            ]);
+
+        DB::statement('drop table "students"');
+        DB::statement("alter table \"import_{$import->studentsImport->getKey()}_students\" rename to \"students\"");
+
+        DB::statement("insert into care_teams
+            (id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id)
+            select id, user_id, educatable_id, educatable_type, created_at, updated_at, care_team_role_id
+            from \"import_{$import->studentsImport->getKey()}_care_teams\"
+            on conflict (user_id, educatable_id, educatable_type) do update
+            set care_team_role_id = excluded.care_team_role_id, updated_at = excluded.updated_at
+            where excluded.updated_at > care_teams.updated_at");
+
+        DB::statement("drop table \"import_{$import->studentsImport->getKey()}_care_teams\"");
+
+        if ($import->emailAddressesImport) {
+            DB::statement('drop table "student_email_addresses"');
+            DB::statement("alter table \"import_{$import->emailAddressesImport->getKey()}_email_addresses\" rename to \"student_email_addresses\"");
+        }
+
+        if ($import->phoneNumbersImport) {
+            DB::statement('drop table "student_phone_numbers"');
+            DB::statement("alter table \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\" rename to \"student_phone_numbers\"");
+        }
+
+        if ($import->addressesImport) {
+            DB::statement('drop table "student_addresses"');
+            DB::statement("alter table \"import_{$import->addressesImport->getKey()}_addresses\" rename to \"student_addresses\"");
+        }
+
+        if ($import->programsImport) {
+            DB::statement('drop table "programs"');
+            DB::statement("alter table \"import_{$import->programsImport->getKey()}_programs\" rename to \"programs\"");
+        }
+
+        if ($import->enrollmentsImport) {
+            DB::statement('drop table "enrollments"');
+            DB::statement("alter table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
+        }
+    }
+
+    private function dropTemporaryTables(StudentDataImport $import): void
+    {
+        DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_students\"");
+
+        DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_care_teams\"");
+
+        if ($import->emailAddressesImport) {
+            DB::statement("drop table if exists \"import_{$import->emailAddressesImport->getKey()}_email_addresses\"");
+        }
+
+        if ($import->phoneNumbersImport) {
+            DB::statement("drop table if exists \"import_{$import->phoneNumbersImport->getKey()}_phone_numbers\"");
+        }
+
+        if ($import->addressesImport) {
+            DB::statement("drop table if exists \"import_{$import->addressesImport->getKey()}_addresses\"");
+        }
+
+        if ($import->programsImport) {
+            DB::statement("drop table if exists \"import_{$import->programsImport->getKey()}_programs\"");
+        }
+
+        if ($import->enrollmentsImport) {
+            DB::statement("drop table if exists \"import_{$import->enrollmentsImport->getKey()}_enrollments\"");
+        }
     }
 }
