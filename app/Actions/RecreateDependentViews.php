@@ -48,7 +48,8 @@ use RuntimeException;
  * transaction, so readers wait for it rather than see a view missing, and a failure leaves the tables and views as they were.
  *
  * Each view is recreated with its definition, options, column defaults, comments, security labels, triggers, rules, privileges and owner.
- * Privileges are recreated as granted by the view's owner, as Postgres only lets the current user be the grantor.
+ * Privileges are recreated as granted by the view's owner, as Postgres only lets the current user be the grantor. A view's triggers and
+ * rules always fire in the default mode, as Postgres does not allow disabling them or making them replica or always, so it is not kept.
  *
  * Anything else that depends on the tables or views cannot be recreated this way (e.g. materialized views, functions with a `BEGIN ATOMIC`
  * body or that return a view's row type, foreign keys from other tables, or views that are part of an extension), so nothing is dropped
