@@ -172,6 +172,8 @@ class ManageInstitutionDetails extends Page
         }
 
         $this->getSavedNotification()->send();
+
+        $this->redirect(static::getUrl(['tab' => InstitutionDetailsTab::Branding->value]));
     }
 
     public function saveDisplay(): void
