@@ -13,6 +13,8 @@ created: 2026-11-16
 
 ## Additional Cleanup
 
+- Search for `TODO: Cleanup Task (matched-enrolled-terms)` and follow the instructions at each site.
+
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag
 removals (keep the active path, drop the inactive path), and do NOT include file

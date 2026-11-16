@@ -39,11 +39,15 @@ use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\Students;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
 it('is gated with proper access control', function (): void {
     $user = User::factory()->create();
@@ -85,4 +89,59 @@ it('grants access to a user belonging to a department that has been granted acce
     ]);
 
     get(Students::getUrl())->assertSuccessful();
+});
+
+describe('live filter from the URL', function (): void {
+    /**
+     * @param array<string, mixed> $rule
+     *
+     * @return array<string, mixed>
+     */
+    $livePopulation = fn (array $rule): array => [
+        'type' => 'live',
+        'liveFilters' => ['queryBuilder' => ['rules' => ['aBcD' => $rule]]],
+    ];
+
+    it('converts legacy enrolled term rules to the rules that compare matched term names', function () use ($livePopulation): void {
+        asSuperAdmin();
+
+        $term = Term::factory()->create(['name' => 'FA-20']);
+        Enrollment::factory()->create(['sis_term_id' => $term->sis_term_id, 'semester_name' => 'Fall 2020']);
+
+        Livewire::withQueryParams(['population' => $livePopulation([
+            'type' => 'firstEnrollmentTerm.semester_name',
+            'data' => ['operator' => 'is', 'settings' => ['values' => ['fall 2020', 'never enrolled']]],
+        ])])
+            ->test(Students::class)
+            ->assertSet('population', $livePopulation([
+                'type' => 'firstEnrolledTerm',
+                'data' => ['operator' => 'is', 'settings' => ['values' => ['fa-20', 'never enrolled']]],
+            ]));
+    });
+
+    it('removes a live filter that uses a filter that is no longer available', function () use ($livePopulation): void {
+        asSuperAdmin();
+
+        Livewire::withQueryParams(['population' => $livePopulation([
+            'type' => 'removedFilter',
+            'data' => ['operator' => 'is', 'settings' => ['values' => ['x']]],
+        ])])
+            ->test(Students::class)
+            ->assertSet('population', null)
+            ->assertNotified('Live filter removed');
+    });
+
+    it('keeps a live filter that only uses available filters', function () use ($livePopulation): void {
+        asSuperAdmin();
+
+        $population = $livePopulation([
+            'type' => 'firstEnrolledTerm',
+            'data' => ['operator' => 'is', 'settings' => ['values' => ['fa-20']]],
+        ]);
+
+        Livewire::withQueryParams(['population' => $population])
+            ->test(Students::class)
+            ->assertSet('population', $population)
+            ->assertNotNotified();
+    });
 });
