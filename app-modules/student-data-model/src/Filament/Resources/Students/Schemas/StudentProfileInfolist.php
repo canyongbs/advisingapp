@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\MatchedEnrolledTermsFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -116,9 +117,15 @@ class StudentProfileInfolist
                         Subsection::make([
                             TextEntry::make('firstTermEnrollment.semester_name')
                                 ->label('First Term')
+                                ->state(fn (Student $record): ?string => MatchedEnrolledTermsFeature::active()
+                                    ? $record->firstTermEnrollment?->getTermDisplayName()
+                                    : $record->firstTermEnrollment?->semester_name)
                                 ->placeholder('-'),
                             TextEntry::make('mostRecentTermEnrollment.semester_name')
                                 ->label('Recent Term')
+                                ->state(fn (Student $record): ?string => MatchedEnrolledTermsFeature::active()
+                                    ? $record->mostRecentTermEnrollment?->getTermDisplayName()
+                                    : $record->mostRecentTermEnrollment?->semester_name)
                                 ->placeholder('-'),
                             TextEntry::make('holds')
                                 ->label('SIS Holds')

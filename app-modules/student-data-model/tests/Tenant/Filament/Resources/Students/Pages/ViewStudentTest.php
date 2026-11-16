@@ -54,9 +54,12 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\In
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\TermAttributesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\MatchedEnrolledTermsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
@@ -620,5 +623,79 @@ describe('archiving', function (): void {
         $student->archive();
 
         get($url)->assertNotFound();
+    });
+});
+
+describe('profile terms', function (): void {
+    $createStudentWithEnrollments = function (): Student {
+        $firstTerm = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
+        $mostRecentTerm = Term::factory()->create(['name' => 'SP-21', 'start_date' => '2021-01-15']);
+
+        $student = Student::factory()->create();
+
+        Enrollment::factory()->for($student, 'student')->create([
+            'sis_term_id' => $firstTerm->sis_term_id,
+            'semester_code' => '4201',
+            'semester_name' => 'Fall Semester 2020',
+            'start_date' => '2020-09-01',
+        ]);
+
+        Enrollment::factory()->for($student, 'student')->create([
+            'sis_term_id' => $mostRecentTerm->sis_term_id,
+            'semester_code' => '4202',
+            'semester_name' => 'Spring Semester 2021',
+            'start_date' => '2021-01-15',
+        ]);
+
+        return $student;
+    };
+
+    it('shows the display names of the first and most recent matched terms', function () use ($createStudentWithEnrollments): void {
+        asSuperAdmin();
+
+        $student = $createStudentWithEnrollments();
+
+        Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
+            ->assertOk()
+            ->assertSchemaComponentStateSet('firstTermEnrollment.semester_name', 'FA-20 (Sep 2020)', 'profile')
+            ->assertSchemaComponentStateSet('mostRecentTermEnrollment.semester_name', 'SP-21 (Jan 2021)', 'profile');
+    });
+
+    it('shows the semester names of the first and most recent enrollments when they are not matched to a term', function (): void {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        Enrollment::factory()->for($student, 'student')->create([
+            'sis_term_id' => null,
+            'semester_code' => '4201',
+            'semester_name' => 'Fall Semester 2020',
+            'start_date' => '2020-09-01',
+        ]);
+
+        Enrollment::factory()->for($student, 'student')->create([
+            'sis_term_id' => null,
+            'semester_code' => '4202',
+            'semester_name' => 'Spring Semester 2021',
+            'start_date' => '2021-01-15',
+        ]);
+
+        Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
+            ->assertOk()
+            ->assertSchemaComponentStateSet('firstTermEnrollment.semester_name', 'Fall Semester 2020', 'profile')
+            ->assertSchemaComponentStateSet('mostRecentTermEnrollment.semester_name', 'Spring Semester 2021', 'profile');
+    });
+
+    it('shows the semester names of the first and most recent enrollments when the feature is inactive', function () use ($createStudentWithEnrollments): void {
+        MatchedEnrolledTermsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $student = $createStudentWithEnrollments();
+
+        Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
+            ->assertOk()
+            ->assertSchemaComponentStateSet('firstTermEnrollment.semester_name', 'Fall Semester 2020', 'profile')
+            ->assertSchemaComponentStateSet('mostRecentTermEnrollment.semester_name', 'Spring Semester 2021', 'profile');
     });
 });
