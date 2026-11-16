@@ -170,7 +170,7 @@ class CompleteStudentDataImport
 
             if ($enrollmentsImportFailedRowsCount) {
                 $body .= ' ' . number_format($enrollmentsImportFailedRowsCount) . ' ' . Str::plural('enrollment', $enrollmentsImportFailedRowsCount) . ' failed to import.';
-                $actions = Action::make('downloadFailedEnrollmentsRowsCsv')
+                $actions[] = Action::make('downloadFailedEnrollmentsRowsCsv')
                     ->label('Download failed enrollment data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->enrollmentsImport], absolute: false), shouldOpenInNewTab: true)
