@@ -42,45 +42,41 @@ use Livewire\Livewire;
 /**
  * @return array{AiAssistant, AiAssistant, AiAssistant}
  */
-function createEmployeeAdvisorsForSorting(): array
-{
+$createEmployeeAdvisorsForSorting = function (): array {
     $tutoring = AiAssistant::factory()->create([
         'name' => 'Tutoring Services - Staff Advisor',
         'is_default' => false,
         'created_at' => now()->subDays(30),
         'updated_at' => now()->subDays(2),
     ]);
-
     $financialAid = AiAssistant::factory()->create([
         'name' => 'Financial Aid Handbook Advisor',
         'is_default' => false,
         'created_at' => now()->subDays(20),
         'updated_at' => now()->subDays(25),
     ]);
-
     $admissions = AiAssistant::factory()->create([
         'name' => 'Admissions FAQ Advisor',
         'is_default' => false,
         'created_at' => now()->subDays(10),
         'updated_at' => now()->subDays(12),
     ]);
-
     AiAssistantUse::factory()->count(5)->create(['assistant_id' => $tutoring->id, 'created_at' => now()->subDays(3)]);
     AiAssistantUse::factory()->count(1)->create(['assistant_id' => $financialAid->id, 'created_at' => now()->subDays(3)]);
     AiAssistantUse::factory()->count(3)->create(['assistant_id' => $admissions->id, 'created_at' => now()->subDays(3)]);
 
     return [$tutoring, $financialAid, $admissions];
-}
+};
 
-it('lists employee advisors newest first by default', function (): void {
-    [$tutoring, $financialAid, $admissions] = createEmployeeAdvisorsForSorting();
+it('lists employee advisors newest first by default', function () use ($createEmployeeAdvisorsForSorting): void {
+    [$tutoring, $financialAid, $admissions] = $createEmployeeAdvisorsForSorting();
 
     Livewire::test(EmployeeAdvisorTable::class, ['cacheTag' => 'report-employee-advisor'])
         ->assertCanSeeTableRecords([$admissions, $financialAid, $tutoring], inOrder: true);
 });
 
-it('does not list default advisors', function (): void {
-    [$tutoring] = createEmployeeAdvisorsForSorting();
+it('does not list default advisors', function () use ($createEmployeeAdvisorsForSorting): void {
+    [$tutoring] = $createEmployeeAdvisorsForSorting();
 
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
@@ -89,8 +85,8 @@ it('does not list default advisors', function (): void {
         ->assertCanNotSeeTableRecords([$defaultAdvisor]);
 });
 
-it('sorts by the selected column', function (string $column, string $direction, array $expectedOrder): void {
-    $advisors = createEmployeeAdvisorsForSorting();
+it('sorts by the selected column', function (string $column, string $direction, array $expectedOrder) use ($createEmployeeAdvisorsForSorting): void {
+    $advisors = $createEmployeeAdvisorsForSorting();
 
     $expected = collect($expectedOrder)->map(fn (int $index): AiAssistant => $advisors[$index]);
 
