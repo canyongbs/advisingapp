@@ -201,9 +201,9 @@ class StudentsTable
                     ->label('Enrollment Earned')
                     ->relationship('enrollments', 'unt_earned')
                     ->icon(Heroicon::CheckBadge),
-                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
+                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'firstTermEnrollment', 'First Enrolled Term')
                     ->icon(Heroicon::CalendarDays),
-                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
+                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'mostRecentTermEnrollment', 'Most Recent Enrolled Term')
                     ->icon(Heroicon::CalendarDays),
                 TermAttributeConstraint::make('termAttribute'),
             ],
@@ -486,29 +486,33 @@ class StudentsTable
         return [
             self::createEnrollmentTermConstraint(
                 'firstEnrollmentTerm.semester_name',
+                'firstTermEnrollment',
                 'First Enrolled Term'
             )->icon('heroicon-m-academic-cap'),
             self::createEnrollmentTermConstraint(
                 'mostRecentEnrollmentTerm.semester_name',
+                'mostRecentTermEnrollment',
                 'Most Recent Enrolled Term'
             )->icon('heroicon-m-academic-cap'),
         ];
     }
 
-    private static function createEnrollmentTermConstraint(string $field, string $label): ExistingValuesSelectConstraint
+    /**
+     * The name is stored in saved groups' filters, so it is kept even though it no longer names the relationship.
+     */
+    private static function createEnrollmentTermConstraint(string $name, string $relationship, string $label): ExistingValuesSelectConstraint
     {
-        return ExistingValuesSelectConstraint::make($field)
+        return ExistingValuesSelectConstraint::make($name)
             ->label($label)
+            ->relationship($relationship, 'semester_name')
             ->multiple()
-            ->options(function () use ($field) {
-                [$relationship, $column] = explode('.', $field, 2);
-
+            ->options(function () use ($relationship) {
                 return Student::query()
                     ->tap(new WithoutArchivedStudents())
                     ->join('enrollments', function (JoinClause $join) use ($relationship): void {
                         $join->on('students.sisid', '=', 'enrollments.sisid');
 
-                        if ($relationship === 'firstEnrollmentTerm') {
+                        if ($relationship === 'firstTermEnrollment') {
                             $join->whereRaw('enrollments.start_date = (
                                 SELECT MIN(e2.start_date)
                                 FROM enrollments e2
@@ -516,7 +520,7 @@ class StudentsTable
                                 AND e2.semester_name IS NOT NULL
                                 AND e2.start_date IS NOT NULL
                             )');
-                        } elseif ($relationship === 'mostRecentEnrollmentTerm') {
+                        } elseif ($relationship === 'mostRecentTermEnrollment') {
                             $join->whereRaw('enrollments.start_date = (
                                 SELECT MAX(e2.start_date)
                                 FROM enrollments e2
@@ -526,10 +530,10 @@ class StudentsTable
                             )');
                         }
                     })
-                    ->whereNotNull("enrollments.{$column}")
+                    ->whereNotNull('enrollments.semester_name')
                     ->distinct()
-                    ->orderBy("enrollments.{$column}")
-                    ->pluck("enrollments.{$column}")
+                    ->orderBy('enrollments.semester_name')
+                    ->pluck('enrollments.semester_name')
                     ->filter()
                     ->unique()
                     ->sort()

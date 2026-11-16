@@ -63,6 +63,9 @@ use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Scopes\JoinMatchedTerm;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByFirstTerm;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
 use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
@@ -70,6 +73,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\MatchedEnrolledTermsFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -221,33 +225,45 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
+     * The enrollment in the student's first term: the one matched to the earliest term, or when none is matched, the one with the earliest start date and a semester code.
+     *
      * @return HasOne<Enrollment, $this>
      */
-    public function firstEnrollmentTerm(): HasOne
+    public function firstTermEnrollment(): HasOne
     {
-        return $this->enrollments()
-            ->one()
-            ->ofMany([
-                'start_date' => 'min',
-            ], function (Builder $query): void {
-                $query->whereNotNull('semester_code')
-                    ->whereNotNull('start_date');
-            });
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return $this->enrollments()
+                ->one()
+                ->ofMany([
+                    'start_date' => 'min',
+                ], function (Builder $query): void {
+                    $query->whereNotNull('semester_code')
+                        ->whereNotNull('start_date');
+                });
+        }
+
+        return $this->termEnrollment(new OrderByFirstTerm(), startDateDirection: 'asc');
     }
 
     /**
+     * The enrollment in the student's most recent term: the one matched to the most recent term, or when none is matched, the one with the latest start date and a semester code.
+     *
      * @return HasOne<Enrollment, $this>
      */
-    public function mostRecentEnrollmentTerm(): HasOne
+    public function mostRecentTermEnrollment(): HasOne
     {
-        return $this->enrollments()
-            ->one()
-            ->ofMany([
-                'start_date' => 'max',
-            ], function (Builder $query): void {
-                $query->whereNotNull('semester_code')
-                    ->whereNotNull('start_date');
-            });
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return $this->enrollments()
+                ->one()
+                ->ofMany([
+                    'start_date' => 'max',
+                ], function (Builder $query): void {
+                    $query->whereNotNull('semester_code')
+                        ->whereNotNull('start_date');
+                });
+        }
+
+        return $this->termEnrollment(new OrderByMostRecentTerm(), startDateDirection: 'desc');
     }
 
     /**
@@ -670,5 +686,39 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             'studentPhoneNumber' => 'phoneNumbers',
             default => parent::childRouteBindingRelationshipName($childType),
         };
+    }
+
+    /**
+     * Picks one enrollment per student with a correlated subquery, so it only resolves the terms of that student's enrollments.
+     * Enrollments matched to a term come first in the term order, then unmatched ones with a semester code and start date.
+     *
+     * @param 'asc'|'desc' $startDateDirection Orders enrollments in the same term, and unmatched enrollments.
+     *
+     * @return HasOne<Enrollment, $this>
+     */
+    private function termEnrollment(OrderByFirstTerm|OrderByMostRecentTerm $orderTerms, string $startDateDirection): HasOne
+    {
+        // The `enrollments` table is aliased, as the subquery is correlated with the relationship's own `enrollments` table.
+        $candidateEnrollments = Enrollment::query()
+            ->withTrashed()
+            ->from('enrollments', 'candidate_enrollments')
+            ->tap(new JoinMatchedTerm(includeUnmatched: true, enrollmentsTable: 'candidate_enrollments'))
+            ->select('candidate_enrollments.id')
+            ->whereColumn('candidate_enrollments.sisid', 'enrollments.sisid')
+            ->whereNull('candidate_enrollments.deleted_at')
+            ->where(fn (Builder $query) => $query
+                ->whereNotNull('terms.id')
+                ->orWhere(fn (Builder $query) => $query
+                    ->whereNotNull('candidate_enrollments.semester_code')
+                    ->whereNotNull('candidate_enrollments.start_date')))
+            ->orderByRaw('terms.id IS NULL')
+            ->tap($orderTerms)
+            ->orderBy('candidate_enrollments.start_date', $startDateDirection)
+            ->orderBy('candidate_enrollments.id')
+            ->limit(1);
+
+        return $this->enrollments()
+            ->one()
+            ->where('enrollments.id', $candidateEnrollments);
     }
 }

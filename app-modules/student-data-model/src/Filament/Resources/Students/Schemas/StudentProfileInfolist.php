@@ -114,10 +114,10 @@ class StudentProfileInfolist
                                 ->placeholder('-'),
                         ]),
                         Subsection::make([
-                            TextEntry::make('firstEnrollmentTerm.semester_name')
+                            TextEntry::make('firstTermEnrollment.semester_name')
                                 ->label('First Term')
                                 ->placeholder('-'),
-                            TextEntry::make('mostRecentEnrollmentTerm.semester_name')
+                            TextEntry::make('mostRecentTermEnrollment.semester_name')
                                 ->label('Recent Term')
                                 ->placeholder('-'),
                             TextEntry::make('holds')

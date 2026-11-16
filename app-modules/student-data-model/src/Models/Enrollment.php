@@ -121,4 +121,12 @@ class Enrollment extends Model
             secondLocalKey: 'term_id',
         );
     }
+
+    /**
+     * The display name of the matched term, otherwise the enrollment's `semester_name`.
+     */
+    public function getTermDisplayName(): ?string
+    {
+        return $this->term?->getDisplayName() ?? $this->semester_name;
+    }
 }

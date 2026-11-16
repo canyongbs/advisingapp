@@ -192,8 +192,8 @@ it('can include related student relationships', function (string $relationship, 
     '`primaryEmailAddress`' => ['primary_email_address', 'primary_email_address'],
     '`phoneNumbers`' => ['phone_numbers', 'phone_numbers'],
     '`primaryPhoneNumber`' => ['primary_phone_number', 'primary_phone_number'],
-    '`firstEnrollmentTerm`' => ['first_enrollment_term', 'first_enrollment_term'],
-    '`mostRecentEnrollmentTerm`' => ['most_recent_enrollment_term', 'most_recent_enrollment_term'],
+    '`firstTermEnrollment`' => ['first_enrollment_term', 'first_enrollment_term'],
+    '`mostRecentTermEnrollment`' => ['most_recent_enrollment_term', 'most_recent_enrollment_term'],
 ]);
 
 it('does not list archived students', function (): void {
