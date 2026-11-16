@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
@@ -224,6 +225,28 @@ describe('enrolled term constraints', function () use ($enrolledTermConstraintOp
             ->toBe([$firstSpringSecondFall->getKey()])
             ->and($studentsMatchingEnrolledTerms('mostRecentEnrolledTerm', ['sp-21'], isInverse: true))
             ->toBe([$firstSpringSecondFall->getKey()]);
+    });
+
+    it('ignores a selection that is not a list of term names, as live report filters come from the URL', function () use ($createStudents): void {
+        ['firstFallSecondSpring' => $firstFallSecondSpring, 'firstSpringSecondFall' => $firstSpringSecondFall, 'withoutMatchedTerms' => $withoutMatchedTerms, 'withoutEnrollments' => $withoutEnrollments] = $createStudents();
+
+        $students = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, [
+            'queryBuilder' => [
+                'rules' => [
+                    'aBcD' => [
+                        'type' => 'firstEnrolledTerm',
+                        'data' => ['operator' => 'is', 'settings' => ['values' => 'fa-20']],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect($students->pluck('sisid')->all())->toEqualCanonicalizing([
+            $firstFallSecondSpring->getKey(),
+            $firstSpringSecondFall->getKey(),
+            $withoutMatchedTerms->getKey(),
+            $withoutEnrollments->getKey(),
+        ]);
     });
 
     it('resolves the members of a saved group', function () use ($createStudents): void {

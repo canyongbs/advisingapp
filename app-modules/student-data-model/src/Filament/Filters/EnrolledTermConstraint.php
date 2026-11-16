@@ -67,7 +67,9 @@ class EnrolledTermConstraint
             ->operators([
                 IsOperator::make()
                     ->baseQuery(function (Builder $query, array $settings, bool $isInverse) use ($orderTerms): Builder {
-                        $termNames = array_values(array_filter($settings['values'] ?? [], is_string(...)));
+                        // Live report filters come from the URL, so a malformed selection is ignored rather than trusted to be a list.
+                        $values = $settings['values'] ?? null;
+                        $termNames = is_array($values) ? array_values(array_filter($values, is_string(...))) : [];
 
                         if (blank($termNames)) {
                             return $query;
