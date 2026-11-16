@@ -34,43 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
+namespace AdvisingApp\Engagement\Livewire;
 
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
-class ListEmailTemplates extends ListRecords
+class EmailTemplatesTable extends Component implements HasActions, HasForms, HasTable
 {
-    protected static string $resource = EmailTemplateResource::class;
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
 
     public function table(Table $table): Table
     {
         return $table
+            ->query(EmailTemplate::query())
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('description'),
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', EmailTemplate::class)
+                    ->url(fn (): string => EmailTemplateResource::getUrl('create')),
+            ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (EmailTemplate $record): string => EmailTemplateResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize('deleteAny', EmailTemplate::class)
                         ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function render(): View
     {
-        return [
-            CreateAction::make(),
-        ];
+        return view('engagement::livewire.unified-inbox-table');
     }
 }

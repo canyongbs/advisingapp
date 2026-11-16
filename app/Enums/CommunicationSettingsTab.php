@@ -34,17 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use App\Models\User;
+use Filament\Support\Contracts\HasLabel;
 
-class Communication extends Cluster
+enum CommunicationSettingsTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case Notifications = 'notifications';
 
-    protected static ?string $navigationLabel = 'Communication Settings';
+    case Email = 'email';
 
-    protected static ?int $navigationSort = 40;
+    case Text = 'text';
+
+    public function canView(): bool
+    {
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        // These authorization checks have been preserved from the original Communication Settings cluster sub-pages.
+        return match ($this) {
+            self::Notifications => $user->can('settings.view-any'),
+            self::Email => EmailTemplateResource::canViewAny(),
+            self::Text => SmsTemplateResource::canViewAny(),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Notifications => 'Notifications',
+            self::Email => 'Email',
+            self::Text => 'Text',
+        };
+    }
 }
