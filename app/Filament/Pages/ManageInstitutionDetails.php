@@ -55,6 +55,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 use UnitEnum;
 
@@ -152,9 +153,11 @@ class ManageInstitutionDetails extends Page
     {
         abort_unless($this->canUpdateSettings(), 403);
 
-        $settings = app(InstitutionDetailsSettings::class);
-        $settings->fill($this->profileForm->getState());
-        $settings->save();
+        DB::transaction(function (): void {
+            $settings = app(InstitutionDetailsSettings::class);
+            $settings->fill($this->profileForm->getState());
+            $settings->save();
+        });
 
         $this->getSavedNotification()->send();
     }
@@ -163,13 +166,15 @@ class ManageInstitutionDetails extends Page
     {
         abort_unless($this->canUpdateSettings(), 403);
 
-        $settings = app(CollegeBrandingSettings::class);
-        $settings->fill($this->brandingForm->getState());
-        $settings->save();
+        DB::transaction(function (): void {
+            $settings = app(CollegeBrandingSettings::class);
+            $settings->fill($this->brandingForm->getState());
+            $settings->save();
 
-        if (! $settings->dismissible) {
-            User::query()->update(['is_branding_bar_dismissed' => false]);
-        }
+            if (! $settings->dismissible) {
+                User::query()->update(['is_branding_bar_dismissed' => false]);
+            }
+        });
 
         $this->getSavedNotification()->send();
 
@@ -180,9 +185,11 @@ class ManageInstitutionDetails extends Page
     {
         abort_unless($this->canUpdateSettings(), 403);
 
-        $settings = app(DisplaySettings::class);
-        $settings->fill($this->displayForm->getState());
-        $settings->save();
+        DB::transaction(function (): void {
+            $settings = app(DisplaySettings::class);
+            $settings->fill($this->displayForm->getState());
+            $settings->save();
+        });
 
         $this->getSavedNotification()->send();
     }
