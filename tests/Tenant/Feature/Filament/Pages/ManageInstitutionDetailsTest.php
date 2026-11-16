@@ -150,7 +150,8 @@ it('can update the branding settings', function (): void {
         ], 'brandingForm')
         ->call('saveBranding')
         ->assertHasNoFormErrors(form: 'brandingForm')
-        ->assertNotified();
+        ->assertNotified()
+        ->assertRedirect(ManageInstitutionDetails::getUrl(['tab' => InstitutionDetailsTab::Branding->value]));
 
     $settings = app(CollegeBrandingSettings::class);
 
