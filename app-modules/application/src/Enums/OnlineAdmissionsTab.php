@@ -34,17 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Application\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use Filament\Support\Contracts\HasLabel;
 
-class OnlineAdmissions extends Cluster
+enum OnlineAdmissionsTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case SubmissionStates = 'submission-states';
 
-    protected static ?int $navigationSort = 10;
+    public function canView(): bool
+    {
+        return match ($this) {
+            self::SubmissionStates => ApplicationSubmissionStateResource::canViewAny(),
+        };
+    }
 
-    protected static ?string $title = 'Admissions';
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::SubmissionStates => 'Submission States',
+        };
+    }
 }

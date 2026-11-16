@@ -34,16 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Tables;
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -51,13 +49,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListApplicationSubmissionStates extends ListRecords
+class ApplicationSubmissionStatesTable
 {
-    protected static string $resource = ApplicationSubmissionStateResource::class;
-
-    public function table(Table $table): Table
+    public static function configure(Table $table): Table
     {
         return $table
+            ->query(fn (): Builder => ApplicationSubmissionStateResource::getEloquentQuery())
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -81,19 +78,18 @@ class ListApplicationSubmissionStates extends ListRecords
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', ApplicationSubmissionState::class)
+                    ->url(fn (): string => ApplicationSubmissionStateResource::getUrl('create')),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([]),
+            ->recordActions([
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('edit', ['record' => $record])),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

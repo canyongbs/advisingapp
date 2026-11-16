@@ -107,8 +107,10 @@ class EditApplicationSubmissionState extends EditRecord
     {
         return [
             ViewAction::make(),
-            ArchiveAction::make(),
-            DeleteAction::make(),
+            ArchiveAction::make()
+                ->successRedirectUrl(fn (): string => ApplicationSubmissionStateResource::getIndexUrl()),
+            DeleteAction::make()
+                ->successRedirectUrl(fn (): string => ApplicationSubmissionStateResource::getIndexUrl()),
         ];
     }
 }

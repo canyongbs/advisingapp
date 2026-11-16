@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates;
 
+use AdvisingApp\Application\Filament\Pages\OnlineAdmissions;
+use AdvisingApp\Application\Enums\OnlineAdmissionsTab;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\CreateApplicationSubmissionState;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ListApplicationSubmissionStates;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ViewApplicationSubmissionState;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Filament\Clusters\OnlineAdmissions;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ApplicationSubmissionStateResource extends Resource
 {
@@ -54,15 +55,19 @@ class ApplicationSubmissionStateResource extends Resource
 
     protected static ?string $modelLabel = 'submission state';
 
-    protected static ?string $cluster = OnlineAdmissions::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListApplicationSubmissionStates::route('/'),
             'create' => CreateApplicationSubmissionState::route('/create'),
             'view' => ViewApplicationSubmissionState::route('/{record}'),
             'edit' => EditApplicationSubmissionState::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return OnlineAdmissions::getUrl(['tab' => OnlineAdmissionsTab::SubmissionStates->value], $isAbsolute, $panel, $tenant);
     }
 }
