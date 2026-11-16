@@ -144,8 +144,9 @@ describe('authorization', function () use ($enableOnlineAdmissions, $getTabLabel
         $user->givePermissionTo('settings.view-any');
         actingAs($user);
 
-        $component = Livewire::test(OnlineAdmissions::class)
-            ->assertSuccessful();
+        $component = Livewire::test(OnlineAdmissions::class);
+
+        $component->assertSuccessful();
 
         expect($getTabLabels($component))->toContain('Submission States');
     });
