@@ -34,17 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use App\Models\User;
+use Filament\Support\Contracts\HasLabel;
 
-class InstitutionDetails extends Cluster
+enum InstitutionDetailsTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case Profile = 'profile';
 
-    protected static ?string $navigationLabel = 'Institution Details';
+    case Branding = 'branding';
 
-    protected static ?int $navigationSort = 70;
+    case DatesAndTimes = 'dates-and-times';
+
+    public function canView(): bool
+    {
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        // These authorization checks have been preserved from the original settings pages.
+        return match ($this) {
+            self::Profile, self::Branding, self::DatesAndTimes => $user->can('settings.view-any'),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Profile => 'Profile',
+            self::Branding => 'Branding',
+            self::DatesAndTimes => 'Dates and Times',
+        };
+    }
 }

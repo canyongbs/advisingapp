@@ -34,63 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Schemas;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Models\User;
-use App\Settings\DisplaySettings;
 use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 
-class ManageDisplaySettings extends SettingsPage
+class DisplaySettingsForm
 {
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TimezoneSelect::make('timezone')
                     ->helperText('Default: ' . config('app.timezone')),
             ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+            ->columns(2);
     }
 }
