@@ -34,15 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Alert\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use App\Enums\Feature;
+use App\Models\User;
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Facades\Gate;
 
-class EarlyAlerts extends Cluster
+enum EarlyAlertTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case StudentAlerts = 'student-alerts';
 
-    protected static ?int $navigationSort = 60;
+    public function canView(): bool
+    {
+        if (! Gate::check(Feature::EarlyAlert->getGateName())) {
+            return false;
+        }
+
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        // These authorization checks have been preserved from the original Student Alerts page.
+        return match ($this) {
+            self::StudentAlerts => $user->can('settings.view-any'),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::StudentAlerts => 'Student Alerts',
+        };
+    }
 }
