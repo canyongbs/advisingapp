@@ -144,6 +144,12 @@ class EmailFirstLogin extends Login
         $user = Filament::auth()->user();
         assert($user instanceof User);
 
+        if ($this->needsMfa && ! $user->is($this->user)) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
+        }
+
         $this->user = $user;
 
         if (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel())) {
