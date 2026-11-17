@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Listeners\RememberLastLoginEmail;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
@@ -351,6 +352,12 @@ class EmailFirstLogin extends Login
         $component = parent::getEmailFormComponent();
 
         assert($component instanceof TextInput);
+
+        $rememberedEmail = request()->cookie(RememberLastLoginEmail::COOKIE_NAME);
+
+        if (is_string($rememberedEmail)) {
+            $component->default($rememberedEmail);
+        }
 
         return $component
             ->label('Email address')
