@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\EmailFirstLogin;
+use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
@@ -42,6 +44,7 @@ use Illuminate\Support\Facades\Cookie;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertAuthenticated;
+use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
 
 it('starts on the email step', function (): void {
@@ -199,4 +202,193 @@ it('does not remember the user when remember me is unchecked', function (): void
         ->assertHasNoFormErrors();
 
     expect(Cookie::queued($guard->getRecallerName()))->toBeNull();
+});
+
+it('requires multifactor setup when it is required and the user has not set it up', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    expect($user->hasEnabledMultifactor())->toBeFalse();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertHasNoFormErrors()
+        ->assertSet('needsMfaSetup', true)
+        ->assertSet('needsMFA', true);
+
+    assertGuest();
+
+    expect($user->refresh()->hasEnabledMultifactor())->toBeTrue();
+});
+
+it('shows the recovery codes after confirming multifactor setup and then logs the user in', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate');
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->refresh()->multifactor_secret));
+
+    $component
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertActionMounted('recoveryCodes');
+
+    assertGuest();
+
+    expect($user->refresh()->hasConfirmedMultifactor())->toBeTrue();
+
+    $component->callMountedAction();
+
+    assertAuthenticatedAs($user);
+});
+
+it('challenges a user with confirmed multifactor and logs them in with a valid code', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->multifactor_secret));
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertHasNoFormErrors()
+        ->assertSet('needsMFA', true)
+        ->assertSet('needsMfaSetup', false);
+
+    assertGuest();
+
+    $component
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    assertAuthenticatedAs($user);
+});
+
+it('keeps the user on the multifactor step when the code is invalid', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    $invalidCode = '12345'; // 5 digit code can never be valid
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->set('data.code', $invalidCode)
+        ->call('authenticate')
+        ->assertHasErrors('data.code')
+        ->assertSet('needsMFA', true)
+        ->assertSet('data.code', null);
+
+    assertGuest();
+});
+
+it('logs a user in with a recovery code and consumes it', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    $recoveryCode = $user->multifactor_recovery_codes[0];
+
+    expect($user->multifactor_recovery_codes)->toHaveCount(8);
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->call('toggleUsingRecoveryCodes')
+        ->set('data.code', $recoveryCode)
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    assertAuthenticatedAs($user);
+
+    expect($user->refresh()->multifactor_recovery_codes)
+        ->toHaveCount(7)
+        ->not->toContain($recoveryCode);
+});
+
+it('only shows the code field on the multifactor step', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertFormFieldHidden('code')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertFormFieldVisible('code')
+        ->assertFormFieldHidden('password')
+        ->assertFormFieldHidden('remember');
+});
+
+it('remembers the user after the multifactor challenge when remember me is left checked', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->multifactor_secret));
+
+    $guard = Filament::auth();
+    assert($guard instanceof SessionGuard);
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    expect(Cookie::queued($guard->getRecallerName()))->not->toBeNull();
+});
+
+it('remembers the user after the recovery codes modal when remember me is left checked', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $guard = Filament::auth();
+    assert($guard instanceof SessionGuard);
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate');
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->refresh()->multifactor_secret));
+
+    $component
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->callMountedAction();
+
+    expect(Cookie::queued($guard->getRecallerName()))->not->toBeNull();
 });
