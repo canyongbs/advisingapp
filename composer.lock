@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93baf8dfce7459801a90de93ef35351c",
+    "content-hash": "bbf11898171abe17c8b8aaf68744977a",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -704,11 +704,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/application",
-                "reference": "5097bfd1a046fa3927e32dda13fa0a2f2b6a27c8"
+                "reference": "651730b0808f4f64b021a1a9eb48cd4f68505a1a"
             },
             "require": {
                 "canyon-gbs/advising-app-form": "*",
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -740,10 +740,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/assistant",
-                "reference": "6b64f6594f6348f852984adc933dfd7d0d31dc67"
+                "reference": "cccfba1b4bb1e984b47906fbf882140a77be1e41"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -775,11 +775,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "20c456df44472bd7b49afb52fc45ec96c86b0c54"
+                "reference": "762d9d39e98ea12617a4e43fd2572b5515b07910"
             },
             "require": {
-                "filament/filament": "^4.0",
-                "filament/spatie-laravel-settings-plugin": "^4.0",
+                "filament/filament": "^5.0",
+                "filament/spatie-laravel-settings-plugin": "^5.0",
                 "owen-it/laravel-auditing": "^14.0",
                 "spatie/laravel-settings": "^3.2"
             },
@@ -813,10 +813,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "e04aafda20382970fe9b2f9d264d87c2479ca699"
+                "reference": "75c7205aa15187699eb4a078259ebbb1898aba52"
             },
             "require": {
-                "filament/filament": "^4.0",
+                "filament/filament": "^5.0",
                 "spatie/laravel-permission": "^6.0"
             },
             "type": "library",
@@ -849,10 +849,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/campaign",
-                "reference": "9f4a30998f9bd8979ad9be95a898ba31a863dbf6"
+                "reference": "41dfecb7c9248650a7320cdf3c9150e5da189d00"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -884,10 +884,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/care-team",
-                "reference": "77e223a3059c839c0c4f62bbf8900a65fed9c8b8"
+                "reference": "12baf0a939ec2ffe8cc1df86768b55e3e075dbd9"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -919,10 +919,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/consent",
-                "reference": "fe87869b88d29a5d01567cacf5e1b08f6932eb6c"
+                "reference": "af69f71dfb15935c60029579eaff618520da76a3"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -954,10 +954,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/engagement",
-                "reference": "471b568db6b69bec53e737503cc97fca67bcc625"
+                "reference": "1900ff0a66d5b3efdb5892e6c3d2d473ab9b17d4"
             },
             "require": {
-                "filament/filament": "^4.0",
+                "filament/filament": "^5.0",
                 "spatie/laravel-data": "^4.0"
             },
             "type": "library",
@@ -990,10 +990,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/form",
-                "reference": "1117d11ab499b4e0371ee8153f5e6f7c1fa3eb43"
+                "reference": "53388fc47d9ba52c9b5d6cdf6834117c386ce9ab"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1025,10 +1025,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-aws-ses-event-handling",
-                "reference": "b2005032619ebdd272325ff5609c21b386ec32ca"
+                "reference": "9e095fa7754e6b7126ca81c5cb1369c9d7398a50"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1060,10 +1060,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-google-analytics",
-                "reference": "88d7d0ecd3345f8fc1eadc846a72b964c0e2e60c"
+                "reference": "28ec0b1918c2417d61bfd193e857a472c2586564"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1095,10 +1095,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-google-recaptcha",
-                "reference": "0226698bf8716560eb094e6d12f177e6e9fcd3aa"
+                "reference": "3a62b837efbd731deceae65bd4ff522926194273"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1130,10 +1130,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-microsoft-clarity",
-                "reference": "0e97363e8ed37c3d1365f7f994bb69ee9e11e31c"
+                "reference": "a3bbb5c02f98ba5433328fe182173c040dce58c8"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1165,12 +1165,12 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-twilio",
-                "reference": "6e60df209d751190321848c92d42f9a1a824a87d"
+                "reference": "6bc95795390273275fc62d54a904b048e52285ae"
             },
             "require": {
                 "canyon-gbs/advising-app-engagement": "*",
                 "canyon-gbs/advising-app-webhook": "*",
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1202,10 +1202,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/interaction",
-                "reference": "efe3c2c16cabe36e2b44142896bc536beb3d5771"
+                "reference": "fb78687e001e44c24bcfe814c1f1fcfeb06845c3"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1237,10 +1237,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/meeting-center",
-                "reference": "95651d6e8f31419908d91bb25af4c16564ae912f"
+                "reference": "4cfa386a6a116d9a1f507fa2a83b49dc6585fcb5"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1275,10 +1275,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/notification",
-                "reference": "513af4970a03c6d324743499e4a3bdfdd5b67e8e"
+                "reference": "242ed1e63687f991172c9153a5113cfa68d2ea98"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1310,10 +1310,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/portal",
-                "reference": "11cdd9411371d5f6c7ee83e86a6542aa4128e9fa"
+                "reference": "00086806ec8e21210437298f01fb1b3a140cf23f"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1345,10 +1345,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/prospect",
-                "reference": "347a9a8a2c04df88a1eebab4e98ba64bb47e4d00"
+                "reference": "bb712a59dc7e5f558b302b167556b634f969e23b"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1380,10 +1380,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/report",
-                "reference": "bb57d8ae37b74f2c33d958461da063e18ca9aefd"
+                "reference": "caa27c8544e5812f257c55fd7ba90fd428a64d44"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1415,10 +1415,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/resource-hub",
-                "reference": "bf056c7dd07d4dea7de340fc235f10810116266f"
+                "reference": "364dd63b2a5132f8508a194a5732cf3c2bcad2fb"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1450,11 +1450,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/student-data-model",
-                "reference": "0b65f2fdc5a4debbb7ae8e864b995aff4a693d2a"
+                "reference": "ce053d8417dbb4f6bb4c5028bc7d7bd3ad42e0f4"
             },
             "require": {
                 "canyon-gbs/advising-app-notification": "*",
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1486,10 +1486,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/survey",
-                "reference": "ddb5618409d7c66c898810c34b6399e0c7236159"
+                "reference": "78048bbd00c50f405c875fefec33569c1917366a"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1521,10 +1521,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/task",
-                "reference": "afad713ea125de66834b3d9920e7412a59950a71"
+                "reference": "f84fa8c773619a6201d10ef9cba8272e24e587cd"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1556,10 +1556,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/team",
-                "reference": "eac22f3bf8aae633f7f8e35963b0b45b904dceb2"
+                "reference": "1efb52d0a7bc853baa68587bcfa9354ac9cac684"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1591,11 +1591,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/theme",
-                "reference": "cf6ceb31bf4e83b4413bcd5f8239f4f29d1cae29"
+                "reference": "94db9afee8348481139ceec254fb52c8da369fcf"
             },
             "require": {
-                "filament/filament": "^4.0",
-                "filament/spatie-laravel-settings-plugin": "^4.0",
+                "filament/filament": "^5.0",
+                "filament/spatie-laravel-settings-plugin": "^5.0",
                 "spatie/laravel-settings": "^3.2"
             },
             "type": "library",
@@ -1628,10 +1628,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/timeline",
-                "reference": "b17341689d2b599e48b080eb27df4d57ca268b47"
+                "reference": "9b4ac8afebaee815299ed09edb74e5f9ca648948"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1663,10 +1663,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/webhook",
-                "reference": "2fac7bf6550c2dcda805e9dac0894b257b01f2b0"
+                "reference": "d68f2a06e9bbec8124de87126b4bcebc9f057b50"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1698,10 +1698,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/ai",
-                "reference": "4835bf5e387a4a4669068a998ad4c1ff6117e685"
+                "reference": "d5236d031a11808309343a1706d96542ea4dcaa9"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1733,10 +1733,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/alert",
-                "reference": "839336f2da0c093456305dcabd1a4ceb85ca600b"
+                "reference": "3f1334a13fbb446bdd87aeb04ae79fc734a17049"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1768,10 +1768,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/basic-needs",
-                "reference": "4f3c31cca560c3094936380227284f26a30cd982"
+                "reference": "e98872242b15391865679f2f06b08bb215b85c78"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1803,10 +1803,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/concern",
-                "reference": "5b5c1ee98f19838b37004a3f94ae72f78d2e5e42"
+                "reference": "9850fa68779b85400007b4edd369d601ed19539e"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1838,10 +1838,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/group",
-                "reference": "36634662983a5d3c654f58b612aa83d6b1cdd8a1"
+                "reference": "a438e869d22dc9be61e95f2783333e3606581849"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1873,10 +1873,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-open-ai",
-                "reference": "eb1b445d675a482a60fefa9c58e242ce2b655722"
+                "reference": "697b6ef2037ca21125538a653d02d7d77147a2bf"
             },
             "require": {
-                "filament/filament": "^4.0",
+                "filament/filament": "^5.0",
                 "openai-php/client": "^v0.10",
                 "prism-php/prism": "^0.100"
             },
@@ -1910,11 +1910,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/multifactor-authentication",
-                "reference": "b729c37f0cc709357b592c08293c0cc901ede380"
+                "reference": "0d919902b4577f990bcac3c7402e8660482dacb4"
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",
-                "filament/filament": "^4.0",
+                "filament/filament": "^5.0",
                 "pragmarx/google2fa": "^8.0.1"
             },
             "type": "library",
@@ -1947,10 +1947,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/stock-media",
-                "reference": "cb7ab349c4c8df1a0f699c85783e21dd07a9c54c"
+                "reference": "2dfe62395e57174043434dec797cd55b21e66696"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1982,10 +1982,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/workflow",
-                "reference": "6fd16099ac196c432302688f7a70261a13ae47fb"
+                "reference": "c4f5a14243c2b240fb2fc629611bd040de86af1c"
             },
             "require": {
-                "filament/filament": "^4.0"
+                "filament/filament": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -3644,22 +3644,22 @@
         },
         {
             "name": "defstudio/filament-searchable-input",
-            "version": "v4.0.11",
+            "version": "v5.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/defstudio/filament-searchable-input.git",
-                "reference": "68129a6e6f5fca2da63ad1a933de23f387888600"
+                "reference": "3fe2833e356aff69eeeee67b0560e1a062c0884e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/defstudio/filament-searchable-input/zipball/68129a6e6f5fca2da63ad1a933de23f387888600",
-                "reference": "68129a6e6f5fca2da63ad1a933de23f387888600",
+                "url": "https://api.github.com/repos/defstudio/filament-searchable-input/zipball/3fe2833e356aff69eeeee67b0560e1a062c0884e",
+                "reference": "3fe2833e356aff69eeeee67b0560e1a062c0884e",
                 "shasum": ""
             },
             "require": {
-                "filament/filament": "^4.0",
-                "filament/forms": "^4.0",
-                "php": "^8.2",
+                "filament/filament": "^5.0",
+                "filament/forms": "^5.0",
+                "php": "^8.3",
                 "spatie/laravel-package-tools": "^1.15"
             },
             "require-dev": {
@@ -3667,15 +3667,14 @@
                 "laravel/pint": "^1.0",
                 "nunomaduro/collision": "^8.0",
                 "orchestra/testbench": "^9.0|^10.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-arch": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "pestphp/pest-plugin-livewire": "^3.0",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-arch": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0",
+                "pestphp/pest-plugin-livewire": "^4.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
-                "rector/rector": "^2.0",
-                "spatie/laravel-ray": "^1.26"
+                "rector/rector": "^2.0"
             },
             "type": "library",
             "extra": {
@@ -3730,7 +3729,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-20T22:10:22+00:00"
+            "time": "2026-03-17T10:13:22+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -4437,16 +4436,16 @@
         },
         {
             "name": "filament/actions",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "f717568823845da15fe35619024ee89f420a8b42"
+                "reference": "251bf264b629c6592fc8e7db7c336750ddf4c1e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/f717568823845da15fe35619024ee89f420a8b42",
-                "reference": "f717568823845da15fe35619024ee89f420a8b42",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/251bf264b629c6592fc8e7db7c336750ddf4c1e7",
+                "reference": "251bf264b629c6592fc8e7db7c336750ddf4c1e7",
                 "shasum": ""
             },
             "require": {
@@ -4476,26 +4475,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful action modals to any Livewire component.",
+            "description": "Encapsulate user interactions and business logic in reusable actions for Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:53+00:00"
+            "time": "2026-11-15T22:01:56+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "2086240cf3e89f995af6a90c76fbf2e0b980f7e7"
+                "reference": "715eedae259c4aff6b0ffaca720caa7ad507881e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/2086240cf3e89f995af6a90c76fbf2e0b980f7e7",
-                "reference": "2086240cf3e89f995af6a90c76fbf2e0b980f7e7",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/715eedae259c4aff6b0ffaca720caa7ad507881e",
+                "reference": "715eedae259c4aff6b0ffaca720caa7ad507881e",
                 "shasum": ""
             },
             "require": {
@@ -4534,26 +4533,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "A collection of full-stack components for accelerated Laravel app development.",
+            "description": "An open-source framework for building polished, maintainable business software with Laravel.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:59+00:00"
+            "time": "2026-11-15T22:04:19+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "7d82f39f3efa1d55560cf0648d352c48436058cf"
+                "reference": "3df415554fb40c38a47255b523a83ecd3c9a893b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/7d82f39f3efa1d55560cf0648d352c48436058cf",
-                "reference": "7d82f39f3efa1d55560cf0648d352c48436058cf",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/3df415554fb40c38a47255b523a83ecd3c9a893b",
+                "reference": "3df415554fb40c38a47255b523a83ecd3c9a893b",
                 "shasum": ""
             },
             "require": {
@@ -4587,26 +4586,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful forms to any Livewire component.",
+            "description": "Build reactive forms with reusable fields and validation for Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:56+00:00"
+            "time": "2026-11-15T22:04:07+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "0457d4e843c21abfbcc7d62423f36784e8e651be"
+                "reference": "139c17f78b6d7487549e313c1e020f0ca7f4da86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/0457d4e843c21abfbcc7d62423f36784e8e651be",
-                "reference": "0457d4e843c21abfbcc7d62423f36784e8e651be",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/139c17f78b6d7487549e313c1e020f0ca7f4da86",
+                "reference": "139c17f78b6d7487549e313c1e020f0ca7f4da86",
                 "shasum": ""
             },
             "require": {
@@ -4632,26 +4631,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful read-only infolists to any Livewire component.",
+            "description": "Display read-only information with reusable entries and layouts for Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:53+00:00"
+            "time": "2026-11-13T12:51:20+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
-                "reference": "d9c87f5656f412fc142787917fb6a2b965f07d7d"
+                "reference": "e4bd860fe0229d6df099d7e9bfac91594a639cdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/d9c87f5656f412fc142787917fb6a2b965f07d7d",
-                "reference": "d9c87f5656f412fc142787917fb6a2b965f07d7d",
+                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/e4bd860fe0229d6df099d7e9bfac91594a639cdc",
+                "reference": "e4bd860fe0229d6df099d7e9bfac91594a639cdc",
                 "shasum": ""
             },
             "require": {
@@ -4679,26 +4678,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful notifications to any Livewire app.",
+            "description": "Send in-app, database, and broadcast notifications with Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:49:08+00:00"
+            "time": "2026-11-15T21:53:14+00:00"
         },
         {
             "name": "filament/query-builder",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/query-builder.git",
-                "reference": "6c0229bbf8362ef8a6b47ec7308985a0d0754ebd"
+                "reference": "7ac919bbd58e0109ef32dec0df8b8d564d3f6a14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/query-builder/zipball/6c0229bbf8362ef8a6b47ec7308985a0d0754ebd",
-                "reference": "6c0229bbf8362ef8a6b47ec7308985a0d0754ebd",
+                "url": "https://api.github.com/repos/filamentphp/query-builder/zipball/7ac919bbd58e0109ef32dec0df8b8d564d3f6a14",
+                "reference": "7ac919bbd58e0109ef32dec0df8b8d564d3f6a14",
                 "shasum": ""
             },
             "require": {
@@ -4731,20 +4730,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:53+00:00"
+            "time": "2026-11-15T22:02:28+00:00"
         },
         {
             "name": "filament/schemas",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/schemas.git",
-                "reference": "7595e850b6980c8663764e0dda7245012d37751a"
+                "reference": "dbd06bda932cf9827aad8ca473962d116bb6f8a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/schemas/zipball/7595e850b6980c8663764e0dda7245012d37751a",
-                "reference": "7595e850b6980c8663764e0dda7245012d37751a",
+                "url": "https://api.github.com/repos/filamentphp/schemas/zipball/dbd06bda932cf9827aad8ca473962d116bb6f8a9",
+                "reference": "dbd06bda932cf9827aad8ca473962d116bb6f8a9",
                 "shasum": ""
             },
             "require": {
@@ -4770,26 +4769,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful UI to any Livewire component.",
+            "description": "Compose interfaces with reusable schema and layout components for Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:52+00:00"
+            "time": "2026-11-15T22:00:32+00:00"
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
-                "reference": "31c875df43de10bab30820828ffdc455f8de3ba3"
+                "reference": "9af32801065f024cdb2795aa84a5e10425e89670"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-media-library-plugin/zipball/31c875df43de10bab30820828ffdc455f8de3ba3",
-                "reference": "31c875df43de10bab30820828ffdc455f8de3ba3",
+                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-media-library-plugin/zipball/9af32801065f024cdb2795aa84a5e10425e89670",
+                "reference": "9af32801065f024cdb2795aa84a5e10425e89670",
                 "shasum": ""
             },
             "require": {
@@ -4813,20 +4812,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-06T18:17:31+00:00"
+            "time": "2026-11-13T13:22:50+00:00"
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
-                "reference": "6ae639c76c4244dd3d737121d299f59329557817"
+                "reference": "1e9f3a3952afb92c70b59e39083e93181fc26f3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-settings-plugin/zipball/6ae639c76c4244dd3d737121d299f59329557817",
-                "reference": "6ae639c76c4244dd3d737121d299f59329557817",
+                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-settings-plugin/zipball/1e9f3a3952afb92c70b59e39083e93181fc26f3f",
+                "reference": "1e9f3a3952afb92c70b59e39083e93181fc26f3f",
                 "shasum": ""
             },
             "require": {
@@ -4857,20 +4856,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-09-07T18:36:26+00:00"
+            "time": "2026-11-03T11:53:08+00:00"
         },
         {
             "name": "filament/support",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "5c81b43b3eb101d95b1ede2737b857bd56335cfb"
+                "reference": "7738cc2c47f26d1e74c9e344c9106e6d7036992f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/5c81b43b3eb101d95b1ede2737b857bd56335cfb",
-                "reference": "5c81b43b3eb101d95b1ede2737b857bd56335cfb",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/7738cc2c47f26d1e74c9e344c9106e6d7036992f",
+                "reference": "7738cc2c47f26d1e74c9e344c9106e6d7036992f",
                 "shasum": ""
             },
             "require": {
@@ -4882,7 +4881,7 @@
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^3.8.7",
+                "livewire/livewire": "^4.4.8",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",
@@ -4917,20 +4916,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:53+00:00"
+            "time": "2026-11-15T21:59:42+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "c43397feadd05b0c44b336c0573fd4ceddbc9c20"
+                "reference": "e172dbb2ed36cb027d12a93d36cc0a3de6255a42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/c43397feadd05b0c44b336c0573fd4ceddbc9c20",
-                "reference": "c43397feadd05b0c44b336c0573fd4ceddbc9c20",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/e172dbb2ed36cb027d12a93d36cc0a3de6255a42",
+                "reference": "e172dbb2ed36cb027d12a93d36cc0a3de6255a42",
                 "shasum": ""
             },
             "require": {
@@ -4957,26 +4956,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful tables to any Livewire component.",
+            "description": "Build interactive tables with filtering, sorting, actions, and pagination for Livewire.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:53+00:00"
+            "time": "2026-11-15T22:04:16+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v4.15.2",
+            "version": "v5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
-                "reference": "aebac6b18b17f2d0e6d71bf30ae5862a47501435"
+                "reference": "d2fc5ec7decb0e2d948d45130cd1cd25f6100381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/aebac6b18b17f2d0e6d71bf30ae5862a47501435",
-                "reference": "aebac6b18b17f2d0e6d71bf30ae5862a47501435",
+                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/d2fc5ec7decb0e2d948d45130cd1cd25f6100381",
+                "reference": "d2fc5ec7decb0e2d948d45130cd1cd25f6100381",
                 "shasum": ""
             },
             "require": {
@@ -5001,13 +5000,13 @@
             "license": [
                 "MIT"
             ],
-            "description": "Easily add beautiful dashboard widgets to any Livewire component.",
+            "description": "Build dashboards with charts, statistics, tables, and custom Livewire widgets.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-10-13T22:48:59+00:00"
+            "time": "2026-11-13T12:59:18+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -5967,27 +5966,27 @@
         },
         {
             "name": "internachi/modular-livewire",
-            "version": "1.1.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/InterNACHI/modular-livewire.git",
-                "reference": "ed25230dab2886caa43a45e29a935be62e432f16"
+                "reference": "d86441b3ac1ea14b06c20e272b9b06314ae795ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/InterNACHI/modular-livewire/zipball/ed25230dab2886caa43a45e29a935be62e432f16",
-                "reference": "ed25230dab2886caa43a45e29a935be62e432f16",
+                "url": "https://api.github.com/repos/InterNACHI/modular-livewire/zipball/d86441b3ac1ea14b06c20e272b9b06314ae795ec",
+                "reference": "d86441b3ac1ea14b06c20e272b9b06314ae795ec",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^11|^12|^13|dev-master|dev-main",
+                "illuminate/support": "^12|^13",
                 "internachi/modular": "^3.0",
                 "livewire/livewire": "^3.0|^4.0",
                 "php": ">=8.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.34",
-                "orchestra/testbench": "^9.11|^10.0|^11.0|dev-master|dev-main",
+                "orchestra/testbench": "^10.0|^11.0",
                 "phpunit/phpunit": "^10.5|^11.5|^12.5|^13.0"
             },
             "type": "library",
@@ -6026,9 +6025,9 @@
             ],
             "support": {
                 "issues": "https://github.com/InterNACHI/modular-livewire/issues",
-                "source": "https://github.com/InterNACHI/modular-livewire/tree/1.1.0"
+                "source": "https://github.com/InterNACHI/modular-livewire/tree/2.0.1"
             },
-            "time": "2026-05-21T14:58:17+00:00"
+            "time": "2026-09-07T18:25:57+00:00"
         },
         {
             "name": "internachi/modularize",
@@ -6344,73 +6343,6 @@
                 "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/4.3.6"
             },
             "time": "2026-10-24T14:38:24+00:00"
-        },
-        {
-            "name": "lab404/laravel-impersonate",
-            "version": "1.7.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/404labfr/laravel-impersonate.git",
-                "reference": "0008a39da8914cc946b6a5ed211230708ee736b3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/404labfr/laravel-impersonate/zipball/0008a39da8914cc946b6a5ed211230708ee736b3",
-                "reference": "0008a39da8914cc946b6a5ed211230708ee736b3",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0 | ^11.0 | ^12.0 | ^13.0",
-                "php": "^7.2 | ^8.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.3.3",
-                "orchestra/testbench": "^4.0 | ^5.0 | ^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0 | ^11.0",
-                "phpunit/phpunit": "^7.5 | ^8.0 | ^9.0 | ^10.0 | ^11.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Lab404\\Impersonate\\ImpersonateServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Lab404\\Impersonate\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marceau Casals",
-                    "email": "marceau@casals.fr"
-                }
-            ],
-            "description": "Laravel Impersonate is a plugin that allows to you to authenticate as your users.",
-            "keywords": [
-                "auth",
-                "impersonate",
-                "impersonation",
-                "laravel",
-                "laravel-package",
-                "laravel-plugin",
-                "package",
-                "plugin",
-                "user"
-            ],
-            "support": {
-                "issues": "https://github.com/404labfr/laravel-impersonate/issues",
-                "source": "https://github.com/404labfr/laravel-impersonate/tree/1.7.8"
-            },
-            "time": "2026-03-17T15:24:14+00:00"
         },
         {
             "name": "laravel-notification-channels/webpush",
@@ -8202,16 +8134,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.8.11",
+            "version": "v4.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "faee62c6a55e87befd24231bbdadca2aeca1cae5"
+                "reference": "8d7f8fc6138274a2f3384c9db354ca012215a259"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/faee62c6a55e87befd24231bbdadca2aeca1cae5",
-                "reference": "faee62c6a55e87befd24231bbdadca2aeca1cae5",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/8d7f8fc6138274a2f3384c9db354ca012215a259",
+                "reference": "8d7f8fc6138274a2f3384c9db354ca012215a259",
                 "shasum": ""
             },
             "require": {
@@ -8266,7 +8198,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.8.11"
+                "source": "https://github.com/livewire/livewire/tree/v4.4.8"
             },
             "funding": [
                 {
@@ -8274,7 +8206,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-21T01:43:35+00:00"
+            "time": "2026-10-21T12:53:46+00:00"
         },
         {
             "name": "lorisleiva/cron-translator",
@@ -12474,34 +12406,42 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v4.0.1",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "c5fcded0cf45680d46add3b16ffdaaeffd87b3bb"
+                "reference": "6b0977f3420eabff35f0d4f72b3ebfcc6f261576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/c5fcded0cf45680d46add3b16ffdaaeffd87b3bb",
-                "reference": "c5fcded0cf45680d46add3b16ffdaaeffd87b3bb",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/6b0977f3420eabff35f0d4f72b3ebfcc6f261576",
+                "reference": "6b0977f3420eabff35f0d4f72b3ebfcc6f261576",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^4.0|^5.0",
-                "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
                 "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.92.7"
             },
             "require-dev": {
-                "nunomaduro/collision": "^7.0|^8.0",
-                "nunomaduro/larastan": "^3.12",
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
                 "pestphp/pest": "^3.0|^4.0",
+                "pestphp/pest-plugin-arch": "^3.0|^4.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
                 "phpstan/phpstan-phpunit": "^1.0|^2.0",
+                "rector/rector": "^2.5",
                 "spatie/laravel-ray": "^1.26"
             },
+            "suggest": {
+                "rector/rector": "Needed to run vendor/bin/filament-fullcalendar-v5, which applies the 5.x upgrade to your widgets."
+            },
+            "bin": [
+                "bin/filament-fullcalendar-v5"
+            ],
             "type": "library",
             "extra": {
                 "laravel": {
@@ -12543,7 +12483,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v4.0.1"
+                "source": "https://github.com/saade/filament-fullcalendar"
             },
             "funding": [
                 {
@@ -12551,7 +12491,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-06T17:34:06+00:00"
+            "time": "2026-10-27T01:04:32+00:00"
         },
         {
             "name": "scrivo/highlight.php",
@@ -15349,21 +15289,20 @@
         },
         {
             "name": "stechstudio/filament-impersonate",
-            "version": "4.1.4",
+            "version": "v5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stechstudio/filament-impersonate.git",
-                "reference": "e9ef2e8c1ed4cc493572c60780a0555b4d9ecb1a"
+                "reference": "2c4f62925f6dd9ceb02271d3cd5f01433385ec62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stechstudio/filament-impersonate/zipball/e9ef2e8c1ed4cc493572c60780a0555b4d9ecb1a",
-                "reference": "e9ef2e8c1ed4cc493572c60780a0555b4d9ecb1a",
+                "url": "https://api.github.com/repos/stechstudio/filament-impersonate/zipball/2c4f62925f6dd9ceb02271d3cd5f01433385ec62",
+                "reference": "2c4f62925f6dd9ceb02271d3cd5f01433385ec62",
                 "shasum": ""
             },
             "require": {
-                "filament/filament": "^4.0|^5.0",
-                "lab404/laravel-impersonate": "^1.7"
+                "filament/filament": "^4.0|^5.0"
             },
             "require-dev": {
                 "orchestra/testbench": "^10.0",
@@ -15390,9 +15329,9 @@
             "description": "A Filament package to impersonate your users.",
             "support": {
                 "issues": "https://github.com/stechstudio/filament-impersonate/issues",
-                "source": "https://github.com/stechstudio/filament-impersonate/tree/4.1.4"
+                "source": "https://github.com/stechstudio/filament-impersonate/tree/v5.7.0"
             },
-            "time": "2026-02-11T14:11:18+00:00"
+            "time": "2026-11-04T01:29:17+00:00"
         },
         {
             "name": "symfony/clock",

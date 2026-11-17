@@ -32,6 +32,7 @@
     </COPYRIGHT>
 --}}
 @php
+    use App\Livewire\PromptLibraryTabs;
     use App\Settings\DisplaySettings;
     use Filament\Support\Enums\Size;
     use Illuminate\Support\Facades\Vite;
@@ -719,7 +720,7 @@
 
                     @if (! $hasMessages && $isInstitutionalAdvisor)
                         <div x-show="! isLoading">
-                            @livewire('promptlibrarytabs', ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
+                            @livewire(PromptLibraryTabs::class, ['thread' => $this->thread, 'isSmartPromptsTypePreselected' => true], key('prompt-library-tabs-' . $this->thread->assistant->id))
                         </div>
                     @endif
                 </div>

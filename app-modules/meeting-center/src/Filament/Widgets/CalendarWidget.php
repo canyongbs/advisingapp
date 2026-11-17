@@ -39,11 +39,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
 {
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         //TODO: We probably want to eventually automatically filter past events
         //Maybe reuse the shared filter capability of the kanban view

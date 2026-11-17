@@ -37,13 +37,13 @@
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 use function Tests\asSuperAdmin;
 
@@ -87,8 +87,8 @@ it('does not render super admin profile for regular user', function (): void {
 
     // Attempt to load the EditUser component with the super admin's route key
     Livewire::test(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
-        ->assertStatus(404);
-})->throws(ModelNotFoundException::class);
+        ->assertNotFound();
+});
 
 it('allows super admin user to impersonate', function (): void {
     $superAdmin = User::factory()->create();
@@ -102,7 +102,7 @@ it('allows super admin user to impersonate', function (): void {
         ->assertSuccessful()
         ->callAction(Impersonate::class);
 
-    expect($user->isImpersonated())->toBeTrue();
+    expect(Impersonation::isImpersonating())->toBeTrue();
     expect(auth()->id())->toBe($user->id);
 });
 

@@ -115,8 +115,8 @@
     @if (! app()->hasDebugModeEnabled())
         @script
             <script>
-                Livewire.hook('request', ({ fail }) => {
-                    fail(({ status, content, preventDefault }) => {
+                Livewire.interceptRequest(({ onError }) => {
+                    onError(({ preventDefault }) => {
                         preventDefault();
 
                         new FilamentNotification()

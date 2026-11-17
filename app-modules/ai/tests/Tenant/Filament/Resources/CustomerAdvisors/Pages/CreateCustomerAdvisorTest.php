@@ -270,8 +270,11 @@ test('Create Customer Advisor groups the introductory message fields in their ow
 
     actingAs($user);
 
-    $components = Livewire::test(CreateCustomerAdvisor::class)
-        ->instance()
+    $createCustomerAdvisor = Livewire::test(CreateCustomerAdvisor::class)->instance();
+
+    assert($createCustomerAdvisor instanceof CreateCustomerAdvisor);
+
+    $components = $createCustomerAdvisor
         ->getSchema('form')
         ->getComponents(withOriginalKeys: true);
 

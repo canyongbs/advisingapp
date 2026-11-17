@@ -62,9 +62,13 @@ it('do not show trashed filter if user does not has restore permission', functio
     $user->givePermissionTo('user.view-any', 'user.*.view');
     actingAs($user);
 
+    $listUsers = Livewire::test(ListUsers::class)->instance();
+
+    assert($listUsers instanceof ListUsers);
+
     assertNotInstanceOf(
         BaseFilter::class,
-        Livewire::test(ListUsers::class)->instance()->getTable()->getFilter(TrashedFilter::class),
+        $listUsers->getTable()->getFilter(TrashedFilter::class),
         sprintf('Failed asserting that a table filter with name [%s] does not exist on the [%s] component.', TrashedFilter::class, ListUsers::class)
     );
 });

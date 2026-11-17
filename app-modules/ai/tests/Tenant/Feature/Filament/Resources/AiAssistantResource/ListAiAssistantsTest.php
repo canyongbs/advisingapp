@@ -142,7 +142,11 @@ it('displays the archived status as a boolean icon', function (bool $archived) u
         ->assertCanSeeTableRecords([$assistant])
         ->assertTableColumnStateSet('archived_at', $archived, $assistant);
 
-    $column = $component->instance()->getTable()->getColumn('archived_at');
+    $listAiAssistants = $component->instance();
+
+    assert($listAiAssistants instanceof ListAiAssistants);
+
+    $column = $listAiAssistants->getTable()->getColumn('archived_at');
 
     expect($column->record($assistant)->toEmbeddedHtml())
         ->toContain('<svg')
