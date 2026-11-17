@@ -80,6 +80,15 @@ it('links the edit action to the resource edit page', function () use ($settings
         ->assertTableActionHasUrl('edit', EmailTemplateResource::getUrl('edit', ['record' => $template]), record: $template);
 });
 
+  it('forbids mounting without the `settings.view-any` permission', function (): void {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    actingAs($user);
+
+    Livewire::test(EmailTemplatesTable::class)
+      ->assertForbidden();
+  });
+
 describe('authorization', function () use ($settingsViewer): void {
     it('hides the create action without the `settings.create` permission', function () use ($settingsViewer): void {
         $user = $settingsViewer();

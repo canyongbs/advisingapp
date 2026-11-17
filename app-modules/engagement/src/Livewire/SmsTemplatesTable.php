@@ -59,6 +59,11 @@ class SmsTemplatesTable extends Component implements HasActions, HasForms, HasTa
     use InteractsWithForms;
     use InteractsWithTable;
 
+  public function boot(): void
+  {
+    abort_unless(SmsTemplateResource::canViewAny(), 403);
+  }
+
     public function table(Table $table): Table
     {
         return $table
