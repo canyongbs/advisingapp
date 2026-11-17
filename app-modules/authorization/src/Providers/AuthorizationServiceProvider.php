@@ -87,7 +87,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
         );
-        
+
         Event::listen(
             events: Login::class,
             listener: RememberLastLoginEmail::class

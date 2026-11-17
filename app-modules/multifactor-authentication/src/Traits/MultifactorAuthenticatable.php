@@ -127,7 +127,7 @@ trait MultifactorAuthenticatable
             }
 
             $lockedUser->forceFill([
-                'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null
+                'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
             ])->save();
 
             return true;
