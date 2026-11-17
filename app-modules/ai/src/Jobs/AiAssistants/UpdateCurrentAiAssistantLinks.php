@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
 use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use App\Features\AiAssistantKeepCurrentFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,10 +54,6 @@ class UpdateCurrentAiAssistantLinks implements ShouldQueue, TenantAware
 
     public function handle(): void
     {
-        if (! AiAssistantKeepCurrentFeature::active()) {
-            return;
-        }
-
         if (LlamaParseLinkParsingFeature::active()) {
             AiAssistantLink::query()
                 ->select('id')
