@@ -461,23 +461,25 @@ it('requires multifactor setup for an unenrolled user even when a code is submit
     $settings->required = true;
     $settings->save();
 
-    $firstUser = User::factory()->create();
-    $secondUser = User::factory()->create();
+    $user = User::factory()->create();
 
-    Livewire::test(EmailFirstLogin::class)
-        ->set('data.email', $firstUser->email)
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
         ->call('continue')
         ->set('data.password', 'password')
         ->call('authenticate')
-        ->assertSet('needsMfa', true)
-        ->set('data.email', $secondUser->email)
-        ->set('data.code', '123456')
+        ->assertSet('needsMfaSetup', true)
+        ->set('data.code', '123456');
+
+    $user->refresh()->disableMultifactorAuthentication();
+
+    $component
         ->call('authenticate')
         ->assertSet('needsMfaSetup', true);
 
     assertGuest();
 
-    expect($secondUser->refresh()->hasEnabledMultifactor())->toBeTrue();
+    expect($user->refresh()->hasEnabledMultifactor())->toBeTrue();
 });
 
 it('does not let the browser request the multifactor qr code', function (): void {
@@ -493,3 +495,32 @@ it('does not let the browser request the multifactor qr code', function (): void
         ->assertSet('needsMfa', true)
         ->call('getMultifactorQrCode');
 })->throws(MethodNotFoundException::class);
+
+it('does not allow switching to another account during a pending multifactor step', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $unenrolledUser = User::factory()->create();
+
+    $confirmedUser = User::factory()->create();
+    $confirmedUser->enableMultifactorAuthentication();
+    $confirmedUser->confirmMultifactorAuthentication();
+
+    $invalidCode = '12345'; // 5 digit code can never be valid
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $unenrolledUser->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfaSetup', true)
+        ->set('data.email', $confirmedUser->email)
+        ->set('data.code', $invalidCode)
+        ->call('authenticate')
+        ->assertHasErrors('data.password');
+
+    expect($component->get('user')->is($unenrolledUser))->toBeTrue();
+
+    assertGuest();
+});
