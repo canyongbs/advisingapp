@@ -450,6 +450,7 @@ it('does not show recovery codes before the multifactor code has been verified',
         ->set('data.password', 'password')
         ->call('authenticate')
         ->assertSet('needsMfa', true)
+        ->assertActionHidden('recoveryCodes')
         ->mountAction('recoveryCodes')
         ->assertActionNotMounted('recoveryCodes');
 
