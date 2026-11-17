@@ -200,7 +200,6 @@ class EmailFirstLogin extends Login
                 $this->hasVerifiedMfaSetup = true;
 
                 $this->mountAction('recoveryCodes', [
-                    'user' => $user,
                     'remember' => $data['remember'],
                 ]);
 
