@@ -268,7 +268,7 @@ class EmailFirstLogin extends Login
     }
 
     /**
-     * Resolve the entered email to its sign-in method: external users to to SSO,
+     * Resolve the entered email to its sign-in method: external users to SSO,
      * everyone else (including unknown emails) to the password step.
      */
     public function continue(): void
@@ -455,6 +455,7 @@ class EmailFirstLogin extends Login
 
     /**
      * @param  array<string, mixed>  $data
+     *
      * @return array<string, mixed>
      */
     protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array

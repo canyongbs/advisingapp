@@ -70,7 +70,10 @@
             @endif
         </p>
 
-        <form class="mt-6 flex flex-col gap-6" @unless ($onSsoStep) wire:submit="{{ $onEmailStep ? 'continue' : 'authenticate' }}" @endunless>
+        <form
+            class="mt-6 flex flex-col gap-6"
+            @unless ($onSsoStep) wire:submit="{{ $onEmailStep ? 'continue' : 'authenticate' }}" @endunless
+        >
             @if ($this->needsMfaSetup)
                 <h3 class="flex items-center gap-2 text-lg font-medium">
                     @svg('heroicon-o-question-mark-circle', 'w-6')
