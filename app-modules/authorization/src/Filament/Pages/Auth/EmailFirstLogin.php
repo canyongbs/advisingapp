@@ -397,7 +397,7 @@ class EmailFirstLogin extends Login
 
             Notification::make()
                 ->title('Single sign-on is unavailable')
-                ->body('Your account signs in with single sign-on, but no provider is set up. Please contact your administrator.')
+                ->body('Single sign-on is not currently configured. Please contact your administrator.')
                 ->warning()
                 ->send();
 

@@ -42,6 +42,8 @@ use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Features\SupportTesting\Testable;
@@ -168,10 +170,10 @@ it('checks remember me by default', function (): void {
 
 it('only shows remember me on the password step', function (): void {
     Livewire::test(EmailFirstLogin::class)
-        ->assertFormFieldHidden('remember')
+        ->assertSchemaComponentHidden('remember')
         ->set('data.email', 'user@example.com')
         ->call('continue')
-        ->assertFormFieldVisible('remember');
+        ->assertSchemaComponentVisible('remember');
 });
 
 it('remembers the user when remember me is left checked', function (): void {
@@ -386,12 +388,12 @@ it('only shows the code field on the multifactor step', function (): void {
     Livewire::test(EmailFirstLogin::class)
         ->set('data.email', $user->email)
         ->call('continue')
-        ->assertFormFieldHidden('code')
+        ->assertSchemaComponentHidden('code')
         ->set('data.password', 'password')
         ->call('authenticate')
-        ->assertFormFieldVisible('code')
-        ->assertFormFieldHidden('password')
-        ->assertFormFieldHidden('remember');
+        ->assertSchemaComponentVisible('code')
+        ->assertSchemaComponentHidden('password')
+        ->assertSchemaComponentHidden('remember');
 });
 
 it('remembers the user after the multifactor challenge when remember me is left checked', function (): void {
@@ -568,6 +570,7 @@ it('routes an external user based on the available single sign-on providers', fu
         fn (Testable $component, User $user) => $component
             ->assertNoRedirect()
             ->assertSet('step', 'sso')
+            ->assertSchemaComponentHidden('remember')
             ->assertActionVisible('azureSso')
             ->assertActionHasUrl('azureSso', route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $user->email]))
             ->assertActionVisible('googleSso')
@@ -596,6 +599,10 @@ it('redirects an external user in the mobile app to azure when google is also av
 
     $user = User::factory()->external()->create();
 
+    app()->rebinding('request', function (Application $app, Request $request): void {
+        $request->headers->set('User-Agent', EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN);
+    });
+
     Livewire::withHeaders(['User-Agent' => EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN])
         ->test(EmailFirstLogin::class)
         ->set('data.email', $user->email)
@@ -610,6 +617,10 @@ it('tells an external user in the mobile app that google sign-on is unavailable 
     $googleSettings->save();
 
     $user = User::factory()->external()->create();
+
+    app()->rebinding('request', function (Application $app, Request $request): void {
+        $request->headers->set('User-Agent', EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN);
+    });
 
     Livewire::withHeaders(['User-Agent' => EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN])
         ->test(EmailFirstLogin::class)
