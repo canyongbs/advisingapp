@@ -38,10 +38,12 @@ namespace AdvisingApp\Authorization\Providers;
 
 use AdvisingApp\Authorization\AuthorizationPlugin;
 use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
+use AdvisingApp\Authorization\Listeners\RememberLastLoginEmail;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Panel;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -84,6 +86,11 @@ class AuthorizationServiceProvider extends ServiceProvider
         Event::listen(
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
+        );
+        
+        Event::listen(
+            events: Login::class,
+            listener: RememberLastLoginEmail::class
         );
     }
 }
