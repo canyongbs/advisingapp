@@ -53,6 +53,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
+use function Pest\Laravel\get;
 use function Pest\Laravel\mock;
 
 it('starts on the email step', function (): void {
@@ -784,4 +785,48 @@ it('still sends a local user to the password step when single sign-on is availab
         ->call('continue')
         ->assertNoRedirect()
         ->assertSet('step', 'password');
+});
+
+it('does not show the switch tenant control or a google unavailable message for a normal browser', function (): void {
+    $googleSsoSettings = app(GoogleSsoSettings::class);
+    $googleSsoSettings->is_enabled = true;
+    $googleSsoSettings->client_id = 'test-client-id';
+    $googleSsoSettings->client_secret = 'test-client-secret';
+    $googleSsoSettings->save();
+
+    get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+        ->assertOk()
+        ->assertDontSee('Switch tenant')
+        ->assertDontSee(EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE);
+});
+
+it('shows the switch tenant control for the mobile app', function (): void {
+    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->assertSee('Switch tenant')
+        ->assertSee(EmailFirstLogin::SWITCH_TENANT_URL);
+});
+
+it('does not show the switch tenant control when google sso is not enabled and the user agent is not the mobile app', function (): void {
+    get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+        ->assertOk()
+        ->assertDontSee('Switch tenant');
+});
+
+it('does not offer google sign-in on the login page for the mobile app when google sso is enabled', function (): void {
+    $googleSsoSettings = app(GoogleSsoSettings::class);
+    $googleSsoSettings->is_enabled = true;
+    $googleSsoSettings->client_id = 'test-client-id';
+    $googleSsoSettings->client_secret = 'test-client-secret';
+    $googleSsoSettings->save();
+
+    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->assertDontSee(route('socialite.redirect', ['provider' => 'google']));
+});
+
+it('does not show a google unavailable message for the mobile app when google sso is not enabled', function (): void {
+    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->assertDontSee(EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE, false);
 });
