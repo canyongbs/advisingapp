@@ -78,6 +78,9 @@ class EmailFirstLogin extends Login
 
     #[Locked]
     public bool $usingRecoveryCode = false;
+    
+    #[Locked]
+    public bool $hasVerifiedMfaSetup = false;
 
     public function form(Schema $schema): Schema
     {
@@ -122,7 +125,7 @@ class EmailFirstLogin extends Login
 
     public function authenticate(): ?LoginResponse
     {
-        $this->user = null;
+        $this->hasVerifiedMfaSetup = false;
 
         try {
             $this->rateLimit(5);
@@ -151,8 +154,8 @@ class EmailFirstLogin extends Login
 
         $mfaSettings = app(MultifactorSettings::class);
 
-        if ($mfaSettings->required) {
-            if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+        if ($mfaSettings->required && ! $user->hasConfirmedMultifactor()) {
+            if (! $user->hasEnabledMultifactor() || empty($data['code'])) {
                 $user->enableMultifactorAuthentication();
 
                 Filament::auth()->logout();
@@ -188,6 +191,8 @@ class EmailFirstLogin extends Login
 
                 Filament::auth()->logout();
 
+                $this->hasVerifiedMfaSetup = true;
+
                 $this->mountAction('recoveryCodes', [
                     'user' => $user,
                     'remember' => $data['remember'],
@@ -212,6 +217,7 @@ class EmailFirstLogin extends Login
     {
         return Action::make('recoveryCodes')
             ->label('Recovery Codes')
+            ->visible(fn (): bool => $this->hasVerifiedMfaSetup && $this->user !== null)
             ->requiresConfirmation()
             ->modalDescription('')
             ->modalCancelAction(false)
@@ -229,7 +235,9 @@ class EmailFirstLogin extends Login
                 ]);
             })
             ->action(function (array $arguments): void {
-                Filament::auth()->login($arguments['user'], $arguments['remember'] ?? false);
+                assert($this->user instanceof User);
+
+                Filament::auth()->login($this->user, $arguments['remember'] ?? false);
 
                 session()->regenerate();
 
@@ -237,7 +245,7 @@ class EmailFirstLogin extends Login
             });
     }
 
-    public function getMultifactorQrCode(): string
+    protected function getMultifactorQrCode(): string
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }
@@ -314,7 +322,7 @@ class EmailFirstLogin extends Login
     protected function isValidCode(User $user, string $code): bool
     {
         if ($this->usingRecoveryCode) {
-            $recoveryCodes = $user->multifactor_recovery_codes;
+            $recoveryCodes = $user->multifactor_recovery_codes ?? [];
 
             assert(is_array($recoveryCodes));
 
