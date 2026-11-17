@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Actions\GetLlamaParseWebhookParameters;
 use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
 use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
@@ -181,7 +182,7 @@ it('does not mark an old link as failed while its Keep Current refresh is waitin
 
     $refresh = (new SubmitAiLinkForParsing($link, refreshExistingParsingResults: true))->withFakeQueueInteractions();
 
-    $refresh->handle(app(LlamaParseV2Client::class));
+    $refresh->handle(app(LlamaParseV2Client::class), app(GetLlamaParseWebhookParameters::class));
 
     $refresh->assertReleased();
 
