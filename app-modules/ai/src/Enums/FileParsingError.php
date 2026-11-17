@@ -46,7 +46,7 @@ enum FileParsingError: string
     public function getNotificationBody(): string
     {
         return match ($this) {
-            self::TooManyPages => "We apologize, the file you attempted to upload did not succeed. This file you attempted to upload exceeded the page limit of 700 pages. Please break up the file so that it doesn't exceed the file size limit of " . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . ' or the page limit of 700 pages and try again. Thank you.',
+            self::TooManyPages => "We apologize, the file you attempted to upload did not succeed. This file you attempted to upload exceeded the page limit of 10,000 pages. Please break up the file so that it doesn't exceed the file size limit of " . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . ' or the page limit of 10,000 pages and try again. Thank you.',
             self::Generic => 'We apologize, the file you attempted to upload did not succeed. If this continues, please contact support for assistance as there may be an issue that requires our help to resolve.',
         };
     }

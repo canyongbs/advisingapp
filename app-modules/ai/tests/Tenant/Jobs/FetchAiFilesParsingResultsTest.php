@@ -51,11 +51,13 @@ use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 
+// TODO: Cleanup Task (llamaparse-file-parsing): `$assistantFile` and `$advisorFile` have no start time, so only `FetchAiFilesParsingResults::pollFilesStillParsingOnV1()` picks them up. Create them with `parsingInProgress()` once that method is removed.
 it('dispatches a parsing results job for each recent unparsed file and submits each recent unparsed link', function (): void {
     Queue::fake();
 
@@ -223,6 +225,76 @@ it('checks on parse jobs submitted at least 5 minutes ago that were not checked 
     'customer advisor link' => [CustomerAdvisorLink::class],
     'AI assistant link' => [AiAssistantLink::class],
 ]);
+
+it('checks on files submitted at least 5 minutes ago that were not checked in the last 5 minutes', function (Closure $createFileBeingParsed, string $job): void {
+    Queue::fake();
+
+    $dueFile = $createFileBeingParsed([
+        'parsing_started_at' => now()->subMinutes(6),
+        'parsing_last_checked_at' => null,
+    ]);
+
+    // Files are given up on after 2 hours rather than 1, so they must still be checked after an hour.
+    $longRunningFile = $createFileBeingParsed([
+        'created_at' => now()->subMinutes(90),
+        'parsing_started_at' => now()->subMinutes(90),
+        'parsing_last_checked_at' => now()->subMinutes(6),
+    ]);
+
+    $recentlySubmittedFile = $createFileBeingParsed([
+        'parsing_started_at' => now()->subMinutes(2),
+        'parsing_last_checked_at' => null,
+    ]);
+
+    $recentlyCheckedFile = $createFileBeingParsed([
+        'parsing_started_at' => now()->subMinutes(30),
+        'parsing_last_checked_at' => now()->subMinute(),
+    ]);
+
+    // Discard anything pushed by model observers while arranging the records.
+    Queue::fake();
+
+    (new FetchAiFilesParsingResults())->handle();
+
+    Queue::assertPushed($job, fn (FetchAiAssistantFileParsingResults|FetchCustomerAdvisorFileParsingResults $pushedJob): bool => $pushedJob->uniqueId() === $dueFile->getKey());
+    Queue::assertPushed($job, fn (FetchAiAssistantFileParsingResults|FetchCustomerAdvisorFileParsingResults $pushedJob): bool => $pushedJob->uniqueId() === $longRunningFile->getKey());
+    Queue::assertNotPushed($job, fn (FetchAiAssistantFileParsingResults|FetchCustomerAdvisorFileParsingResults $pushedJob): bool => $pushedJob->uniqueId() === $recentlySubmittedFile->getKey());
+    Queue::assertNotPushed($job, fn (FetchAiAssistantFileParsingResults|FetchCustomerAdvisorFileParsingResults $pushedJob): bool => $pushedJob->uniqueId() === $recentlyCheckedFile->getKey());
+})->with([
+    'customer advisor file' => [
+        fn (array $attributes): CustomerAdvisorFile => CustomerAdvisorFile::factory()->parsingInProgress()->create($attributes),
+        FetchCustomerAdvisorFileParsingResults::class,
+    ],
+    'AI assistant file' => [
+        fn (array $attributes): AiAssistantFile => AiAssistantFile::factory()->parsingInProgress()->create(['assistant_id' => AiAssistant::factory(), ...$attributes]),
+        FetchAiAssistantFileParsingResults::class,
+    ],
+]);
+
+// TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the feature flag.
+it('checks on recent unparsed files every minute while LlamaParse file parsing is inactive', function (): void {
+    LlamaParseFileParsingFeature::deactivate();
+
+    Queue::fake();
+
+    $recentlyCheckedFile = CustomerAdvisorFile::factory()->parsingInProgress()->create([
+        'parsing_started_at' => now()->subMinutes(2),
+        'parsing_last_checked_at' => now()->subMinute(),
+    ]);
+
+    $olderFile = CustomerAdvisorFile::factory()->parsingInProgress()->create([
+        'created_at' => now()->subMinutes(90),
+        'parsing_started_at' => now()->subMinutes(90),
+    ]);
+
+    // Discard anything pushed by model observers while arranging the records.
+    Queue::fake();
+
+    (new FetchAiFilesParsingResults())->handle();
+
+    Queue::assertPushed(FetchCustomerAdvisorFileParsingResults::class, fn (FetchCustomerAdvisorFileParsingResults $job): bool => $job->uniqueId() === $recentlyCheckedFile->getKey());
+    Queue::assertNotPushed(FetchCustomerAdvisorFileParsingResults::class, fn (FetchCustomerAdvisorFileParsingResults $job): bool => $job->uniqueId() === $olderFile->getKey());
+});
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the Jina fallback.
 it('dispatches the Jina parsing jobs for recent unparsed links while LlamaParse link parsing is inactive', function (): void {

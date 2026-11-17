@@ -42,10 +42,12 @@ use AdvisingApp\Ai\Enums\FileParsingError;
 use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
 use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\AiMessageFile;
+use App\Features\LlamaParseFileParsingFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -108,6 +110,19 @@ trait CanUploadFiles
             }
 
             if (blank($result->parsingResults)) {
+                // Chat files are checked while the page is open rather than by the scheduled check, so they are given up on
+                // here. A chat file is created as soon as it is submitted for parsing, so it is timed from then.
+                if (LlamaParseFileParsingFeature::active() && $file->created_at->isBefore(now()->subHours(2))) {
+                    Log::warning('LlamaParse file parsing timed out.', [
+                        'file_id' => $file->file_id,
+                        'created_at' => $file->created_at->toIso8601String(),
+                    ]);
+
+                    $this->handleParsingError($file, FileParsingError::Generic);
+
+                    continue;
+                }
+
                 $hasFilesWithoutParsingResults = true;
 
                 continue;
