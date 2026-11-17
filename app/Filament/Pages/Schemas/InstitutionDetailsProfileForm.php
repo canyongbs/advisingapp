@@ -34,37 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Schemas;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Models\User;
 use App\Settings\InstitutionDetailsSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 
-class ManageInstitutionDetailsSettings extends SettingsPage
+class InstitutionDetailsProfileForm
 {
-    protected static ?string $navigationLabel = 'Profile';
-
-    protected static ?int $navigationSort = 10;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    protected static string $settings = InstitutionDetailsSettings::class;
-
-    protected static ?string $title = 'Profile';
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -97,24 +76,6 @@ class ManageInstitutionDetailsSettings extends SettingsPage
                     )
                     ->columnSpanFull(),
             ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+            ->columns(2);
     }
 }

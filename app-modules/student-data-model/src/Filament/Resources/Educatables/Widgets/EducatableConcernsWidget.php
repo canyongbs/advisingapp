@@ -60,7 +60,7 @@ class EducatableConcernsWidget extends Widget
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<string, mixed>>
      */
     protected function getStatusCounts(): array
     {

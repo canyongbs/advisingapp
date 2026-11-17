@@ -52,7 +52,7 @@ jobs:
 
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@c33688ce81fd884ddd70d51cadeb62b6fb974750 #1.15.8
+              uses: shivammathur/cache-extensions@695b1b465eba861efe67cbbc31252c27f5ed253d #1.15.11
               with:
                   php-version: ${{ env.php-version }}
                   extensions: ${{ env.php-extensions }}
@@ -100,7 +100,7 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+              uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -262,7 +262,7 @@ jobs:
         steps:
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@c33688ce81fd884ddd70d51cadeb62b6fb974750 #1.15.8
+              uses: shivammathur/cache-extensions@695b1b465eba861efe67cbbc31252c27f5ed253d #1.15.11
               with:
                   php-version: ${{ env.php-version }}
                   extensions: ${{ env.php-extensions }}
@@ -437,7 +437,7 @@ jobs:
 
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@c33688ce81fd884ddd70d51cadeb62b6fb974750 #1.15.8
+              uses: shivammathur/cache-extensions@695b1b465eba861efe67cbbc31252c27f5ed253d #1.15.11
               with:
                   php-version: ${{ env.php-version }}
                   extensions: ${{ env.php-extensions }}

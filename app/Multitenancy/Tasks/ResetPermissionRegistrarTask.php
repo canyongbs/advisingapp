@@ -34,63 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Multitenancy\Tasks;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Models\User;
-use App\Settings\DisplaySettings;
-use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
+use Spatie\Multitenancy\Contracts\IsTenant;
+use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use Spatie\Permission\PermissionRegistrar;
 
-class ManageDisplaySettings extends SettingsPage
+/**
+ * The registrar is a singleton that keeps the cache store it resolved when it was first built, so without this it keeps
+ * reading and clearing the permission cache of whichever tenant context was active at that moment. That left a permission
+ * cache that migrations could not clear, hiding newly seeded permissions from the web app.
+ */
+class ResetPermissionRegistrarTask implements SwitchTenantTask
 {
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
+    public function makeCurrent(IsTenant $tenant): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
+        $this->forgetPermissionRegistrar();
     }
 
-    public function form(Schema $schema): Schema
+    public function forgetCurrent(): void
     {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
+        $this->forgetPermissionRegistrar();
     }
 
-    public function save(): void
+    protected function forgetPermissionRegistrar(): void
     {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+        app()->forgetInstance(PermissionRegistrar::class);
     }
 }

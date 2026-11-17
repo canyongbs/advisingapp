@@ -51,6 +51,7 @@ use Exception;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -66,7 +67,7 @@ class CareTeamBlock extends CampaignActionBlock
     }
 
     /**
-     * @return array<int, mixed>
+     * @return array<Component>
      */
     public function generateFields(): array
     {
