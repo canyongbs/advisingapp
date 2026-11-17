@@ -50,6 +50,7 @@ use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\TestResponse;
 
@@ -112,6 +113,7 @@ it('dispatches a check of the parse job for the file it belongs to', function (C
     assert($file instanceof Model && $file instanceof AiFile);
 
     Queue::fake();
+    $log = Log::spy();
 
     $sendSignedWebhook([
         'event_id' => 'evt-123',
@@ -121,6 +123,8 @@ it('dispatches a check of the parse job for the file it belongs to', function (C
 
     Queue::assertPushed($jobClass, fn (FetchCustomerAdvisorFileParsingResults|FetchAiAssistantFileParsingResults|FetchAiMessageFileParsingResults $job): bool => $job->uniqueId() === $file->getKey());
     Queue::assertCount(1);
+
+    $log->shouldNotHaveReceived('info', ['LlamaParse sent a webhook for a parse job that is not being tracked.', ['parsing_job_id' => $file->getFileId()]]);
 })->with($fileDataset);
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the feature flag.
@@ -194,6 +198,20 @@ it('ignores a webhook for a parse job that no link or file is waiting on', funct
     'unknown job ID' => [['id' => 'pjb-unknown', 'job_id' => 'pjb-unknown']],
     'no job ID' => [[]],
 ]);
+
+it('logs a webhook for a parse job that is not being tracked', function () use ($sendSignedWebhook): void {
+    $log = Log::spy();
+
+    $sendSignedWebhook([
+        'event_id' => 'evt-123',
+        'event_type' => 'parse.success',
+        'data' => ['id' => 'pjb-unknown', 'job_id' => 'pjb-unknown'],
+    ])->assertNoContent();
+
+    $log->shouldHaveReceived('info')
+        ->once()
+        ->with('LlamaParse sent a webhook for a parse job that is not being tracked.', ['parsing_job_id' => 'pjb-unknown']);
+});
 
 // TODO: Cleanup Task (llamaparse-link-parsing): remove this test along with the feature flag.
 it('ignores a webhook while LlamaParse link parsing is inactive', function () use ($sendSignedWebhook): void {

@@ -49,6 +49,7 @@ use App\Features\LlamaParseFileParsingFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class LlamaParseInboundWebhookController
 {
@@ -109,6 +110,14 @@ class LlamaParseInboundWebhookController
 
         if ($file = AiMessageFile::query()->where('file_id', $parsingJobId)->first()) {
             dispatch(new FetchAiMessageFileParsingResults($file));
+
+            return;
         }
+
+        // Not an error: the file may have been deleted, or not saved yet, when the webhook arrived, and a later
+        // delivery for a link whose parse job was already handled also ends up here.
+        Log::info('LlamaParse sent a webhook for a parse job that is not being tracked.', [
+            'parsing_job_id' => $parsingJobId,
+        ]);
     }
 }
