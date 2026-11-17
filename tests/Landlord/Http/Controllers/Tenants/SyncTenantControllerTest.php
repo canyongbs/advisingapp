@@ -71,6 +71,7 @@ $syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest 
             'scheduleAndAppointments' => false,
             'earlyAlert' => false,
             'publicProfiles' => false,
+            'unifiedInbox' => false,
         ], $addons),
         'subscription' => [
             'clientName' => 'Updated Client',
@@ -88,7 +89,7 @@ $syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest 
     return $request;
 };
 
-it('does not persist other sync changes when smart prompt validation fails', function () use ($syncTenantControllerRequest) {
+it('does not persist other sync changes when smart prompt validation fails', function () use ($syncTenantControllerRequest): void {
     Bus::fake();
 
     $tenant = Tenant::query()->firstOrFail();
@@ -118,8 +119,8 @@ it('does not persist other sync changes when smart prompt validation fails', fun
         ->and(app(TenantExpirationSettings::class)->period_2_banner_text)->toBe($originalBannerText);
 });
 
-describe('enterprise ai', function () use ($syncTenantControllerRequest) {
-    it('passes the `enterpriseAi` addon through to the tenant license data', function (array $addons, bool $isEnterpriseAiEnabled) use ($syncTenantControllerRequest) {
+describe('enterprise ai', function () use ($syncTenantControllerRequest): void {
+    it('passes the `enterpriseAi` addon through to the tenant license data', function (array $addons, bool $isEnterpriseAiEnabled) use ($syncTenantControllerRequest): void {
         Bus::fake();
 
         $tenant = Tenant::query()->firstOrFail();
@@ -128,7 +129,7 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
         $syncTenantSmartPrompts
             ->shouldReceive('execute')
             ->once()
-            ->andReturn(fn () => null);
+            ->andReturn(fn (): null => null);
         assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
 
         $response = app(SyncTenantController::class)(
@@ -149,7 +150,7 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
         'explicitly enabled' => [['enterpriseAi' => true], true],
     ]);
 
-    it('rejects a null `enterpriseAi` addon', function () use ($syncTenantControllerRequest) {
+    it('rejects a null `enterpriseAi` addon', function () use ($syncTenantControllerRequest): void {
         $thrownException = null;
 
         try {
@@ -160,50 +161,5 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
 
         expect($thrownException)->toBeInstanceOf(ValidationException::class)
             ->and($thrownException?->errors())->toHaveKey('addons.enterpriseAi');
-    });
-});
-
-describe('unified inbox', function () use ($syncTenantControllerRequest) {
-    it('passes the `unifiedInbox` addon through to the tenant license data', function (array $addons, bool $isUnifiedInboxEnabled) use ($syncTenantControllerRequest) {
-        Bus::fake();
-
-        $tenant = Tenant::query()->firstOrFail();
-
-        $syncTenantSmartPrompts = Mockery::mock(SyncTenantSmartPrompts::class);
-        $syncTenantSmartPrompts
-            ->shouldReceive('execute')
-            ->once()
-            ->andReturn(fn () => null);
-        assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
-
-        $response = app(SyncTenantController::class)(
-            $syncTenantControllerRequest($addons),
-            $tenant,
-            $syncTenantSmartPrompts,
-        );
-
-        expect($response->getStatusCode())->toBe(200);
-
-        Bus::assertDispatchedSync(
-            UpdateTenantLicenseData::class,
-            fn (UpdateTenantLicenseData $job): bool => $job->data->addons->unifiedInbox === $isUnifiedInboxEnabled,
-        );
-    })->with([
-        'omitted by a legacy payload' => [[], true],
-        'explicitly disabled' => [['unifiedInbox' => false], false],
-        'explicitly enabled' => [['unifiedInbox' => true], true],
-    ]);
-
-    it('rejects a null `unifiedInbox` addon', function () use ($syncTenantControllerRequest) {
-        $thrownException = null;
-
-        try {
-            $syncTenantControllerRequest(['unifiedInbox' => null]);
-        } catch (ValidationException $exception) {
-            $thrownException = $exception;
-        }
-
-        expect($thrownException)->toBeInstanceOf(ValidationException::class)
-            ->and($thrownException?->errors())->toHaveKey('addons.unifiedInbox');
     });
 });

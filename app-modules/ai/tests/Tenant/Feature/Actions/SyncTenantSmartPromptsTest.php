@@ -68,6 +68,7 @@ $syncTenantRequest = function (array $overrides = []): SyncTenantRequest {
             'scheduleAndAppointments' => false,
             'earlyAlert' => false,
             'publicProfiles' => false,
+            'unifiedInbox' => false,
         ],
         'subscription' => [
             'clientName' => 'Test Client',

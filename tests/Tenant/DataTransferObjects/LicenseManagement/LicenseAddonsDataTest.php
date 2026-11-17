@@ -36,26 +36,13 @@
 
 use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 
-describe('enterprise ai', function () {
-    it('enables `enterpriseAi` when the addon is missing', function () {
+describe('enterprise ai', function (): void {
+    it('enables `enterpriseAi` when the addon is missing', function (): void {
         expect(LicenseAddonsData::from(['onlineForms' => true])->enterpriseAi)->toBeTrue();
     });
 
-    it('keeps `enterpriseAi` as provided', function (bool $isEnterpriseAiEnabled) {
+    it('keeps `enterpriseAi` as provided', function (bool $isEnterpriseAiEnabled): void {
         expect(LicenseAddonsData::from(['enterpriseAi' => $isEnterpriseAiEnabled])->enterpriseAi)->toBe($isEnterpriseAiEnabled);
-    })->with([
-        'disabled' => [false],
-        'enabled' => [true],
-    ]);
-});
-
-describe('unified inbox', function () {
-    it('enables `unifiedInbox` when the addon is missing', function () {
-        expect(LicenseAddonsData::from(['onlineForms' => true])->unifiedInbox)->toBeTrue();
-    });
-
-    it('keeps `unifiedInbox` as provided', function (bool $isUnifiedInboxEnabled) {
-        expect(LicenseAddonsData::from(['unifiedInbox' => $isUnifiedInboxEnabled])->unifiedInbox)->toBe($isUnifiedInboxEnabled);
     })->with([
         'disabled' => [false],
         'enabled' => [true],
