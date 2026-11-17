@@ -38,6 +38,7 @@ use AdvisingApp\Ai\DataTransferObjects\LlamaParseV2ParseJobData;
 use AdvisingApp\Ai\Enums\LlamaParseV2JobStatus;
 use AdvisingApp\Ai\Enums\LlamaParseV2Tier;
 use AdvisingApp\Ai\Exceptions\LlamaParseApiKeyNotConfiguredException;
+use AdvisingApp\Ai\Exceptions\LlamaParseUnexpectedResponseException;
 use AdvisingApp\Ai\Services\LlamaParse\LlamaParseV2Client;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Http\Client\Request;
@@ -108,6 +109,18 @@ describe('creating a parse job', function (): void {
             && ($request['version'] === LlamaParseV2Client::VERSION));
     });
 
+    it('submits the parse job pinned to the given version instead', function (): void {
+        Http::fake([
+            'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['id' => 'pjb-123']),
+        ]);
+
+        app(LlamaParseV2Client::class)->createParseJob(LlamaParseV2Tier::CostEffective, [
+            'source_url' => 'https://example.com',
+        ], version: '2026-06-01');
+
+        Http::assertSent(fn (Request $request): bool => $request['version'] === '2026-06-01');
+    });
+
     it('throws when LlamaParse responds with an error', function (): void {
         Http::fake([
             'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['detail' => 'Invalid API key'], 401),
@@ -118,14 +131,18 @@ describe('creating a parse job', function (): void {
         ]))->toThrow(RequestException::class);
     });
 
-    it('throws when LlamaParse does not return a job ID', function (): void {
+    it('throws with the response payload when LlamaParse does not return a job ID', function (): void {
         Http::fake([
-            'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response([]),
+            'https://api.cloud.llamaindex.ai/api/v2/parse' => Http::response(['status' => 'ERROR', 'error_message' => 'The source URL could not be reached.']),
         ]);
 
         expect(fn (): string => app(LlamaParseV2Client::class)->createParseJob(LlamaParseV2Tier::CostEffective, [
             'source_url' => 'https://example.com',
-        ]))->toThrow(UnexpectedValueException::class);
+        ]))->toThrow(function (LlamaParseUnexpectedResponseException $exception): void { // @phpstan-ignore argument.type
+            expect($exception->context())->toBe([
+                'payload' => ['status' => 'ERROR', 'error_message' => 'The source URL could not be reached.'],
+            ]);
+        });
     });
 });
 
@@ -176,6 +193,16 @@ describe('uploading a file', function () use ($makeFileStream, $getUploadedConfi
         });
     });
 
+    it('uploads the file pinned to the given version instead', function () use ($makeFileStream, $getUploadedConfiguration): void {
+        Http::fake([
+            'https://api.cloud.llamaindex.ai/api/v2/parse/upload' => Http::response(['id' => 'pjb-123']),
+        ]);
+
+        app(LlamaParseV2Client::class)->uploadFile(LlamaParseV2Tier::CostEffective, $makeFileStream(), 'syllabus.pdf', 'application/pdf', [], version: '2026-06-01');
+
+        Http::assertSent(fn (Request $request): bool => $getUploadedConfiguration($request)['version'] === '2026-06-01');
+    });
+
     it('throws when LlamaParse responds with an error', function () use ($makeFileStream): void {
         Http::fake([
             'https://api.cloud.llamaindex.ai/api/v2/parse/upload' => Http::response(['detail' => 'Invalid API key'], 401),
@@ -185,13 +212,17 @@ describe('uploading a file', function () use ($makeFileStream, $getUploadedConfi
             ->toThrow(RequestException::class);
     });
 
-    it('throws when LlamaParse does not return a job ID', function () use ($makeFileStream): void {
+    it('throws with the response payload when LlamaParse does not return a job ID', function () use ($makeFileStream): void {
         Http::fake([
-            'https://api.cloud.llamaindex.ai/api/v2/parse/upload' => Http::response([]),
+            'https://api.cloud.llamaindex.ai/api/v2/parse/upload' => Http::response(['status' => 'ERROR', 'error_message' => 'The file could not be read.']),
         ]);
 
         expect(fn (): string => app(LlamaParseV2Client::class)->uploadFile(LlamaParseV2Tier::CostEffective, $makeFileStream(), 'syllabus.pdf', 'application/pdf', []))
-            ->toThrow(UnexpectedValueException::class);
+            ->toThrow(function (LlamaParseUnexpectedResponseException $exception): void { // @phpstan-ignore argument.type
+                expect($exception->context())->toBe([
+                    'payload' => ['status' => 'ERROR', 'error_message' => 'The file could not be read.'],
+                ]);
+            });
     });
 });
 
