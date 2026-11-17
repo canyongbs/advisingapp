@@ -37,6 +37,7 @@
     use Filament\Support\Icons\Heroicon;
 
     $onEmailStep = $this->step === 'email';
+    $onSsoStep = $this->step === 'sso';
 
     $onMultifactorStep = $this->needsMfa;
 @endphp
@@ -62,12 +63,14 @@
                 Enter the code from your authenticator app to finish signing in.
             @elseif ($onEmailStep)
                 Enter your email address to continue. We'll guide you to the right sign-in method based on your account.
+            @elseif ($onSsoStep)
+                Choose how you'd like to sign in.
             @else
                 Enter your password to finish signing in.
             @endif
         </p>
 
-        <form class="mt-6 flex flex-col gap-6" wire:submit="{{ $onEmailStep ? 'continue' : 'authenticate' }}">
+        <form class="mt-6 flex flex-col gap-6" @unless ($onSsoStep) wire:submit="{{ $onEmailStep ? 'continue' : 'authenticate' }}" @endunless>
             @if ($this->needsMfaSetup)
                 <h3 class="flex items-center gap-2 text-lg font-medium">
                     @svg('heroicon-o-question-mark-circle', 'w-6')
@@ -88,6 +91,16 @@
             {{ $this->form }}
 
             <x-filament::actions :actions="$this->getFormActions()" full-width />
+
+            @if ($onSsoStep)
+                <x-filament::actions :actions="[$this->azureSsoAction, $this->googleSsoAction]" full-width />
+            @endif
+
+            @if ($this->googleSsoUnavailableInMobileApp)
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE }}
+                </p>
+            @endif
 
             @if ($onMultifactorStep && ! $this->needsMfaSetup)
                 <div class="flex justify-center">
