@@ -37,6 +37,8 @@
     use Filament\Support\Icons\Heroicon;
 
     $onEmailStep = $this->step === 'email';
+
+    $onMultifactorStep = $this->needsMfa;
 @endphp
 
 <div
@@ -56,7 +58,9 @@
         </h1>
 
         <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
-            @if ($onEmailStep)
+            @if ($onMultifactorStep)
+                Enter the code from your authenticator app to finish signing in.
+            @elseif ($onEmailStep)
                 Enter your email address to continue. We'll guide you to the right sign-in method based on your account.
             @else
                 Enter your password to finish signing in.
@@ -64,11 +68,36 @@
         </p>
 
         <form class="mt-6 flex flex-col gap-6" wire:submit="{{ $onEmailStep ? 'continue' : 'authenticate' }}">
+            @if ($this->needsMfaSetup)
+                <h3 class="flex items-center gap-2 text-lg font-medium">
+                    @svg('heroicon-o-question-mark-circle', 'w-6')
+                    Multifactor authentication is required for your account.
+                </h3>
+                <p class="text-sm">
+                    To finish enabling two factor authentication, scan the following QR code using your phone's
+                    authenticator application or enter the setup key and provide the generated OTP code.
+                </p>
+                <div class="mt-3 flex space-x-4">
+                    <div>
+                        {!! $this->getMultifactorQrCode() !!}
+                        <p class="pt-2 text-sm">Setup key {{ decrypt($this->user->multifactor_secret) }}</p>
+                    </div>
+                </div>
+            @endif
+
             {{ $this->form }}
 
             <x-filament::actions :actions="$this->getFormActions()" full-width />
 
-            @unless ($onEmailStep)
+            @if ($onMultifactorStep && ! $this->needsMfaSetup)
+                <div class="flex justify-center">
+                    <x-filament::link tag="button" type="button" color="gray" wire:click="toggleUsingRecoveryCodes">
+                        {{ $this->usingRecoveryCode ? 'Use MFA Code' : 'Use Recovery Code' }}
+                    </x-filament::link>
+                </div>
+            @endif
+
+            @unless ($onEmailStep || $onMultifactorStep)
                 <div class="flex justify-center">
                     <x-filament::link tag="button" type="button" color="gray" wire:click="backToEmailStep">
                         Use a different email

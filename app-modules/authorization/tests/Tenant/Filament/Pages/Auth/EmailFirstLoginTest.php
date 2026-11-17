@@ -46,6 +46,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
+use function Pest\Laravel\mock;
 
 it('starts on the email step', function (): void {
     Livewire::test(EmailFirstLogin::class)
@@ -220,7 +221,7 @@ it('requires multifactor setup when it is required and the user has not set it u
         ->call('authenticate')
         ->assertHasNoFormErrors()
         ->assertSet('needsMfaSetup', true)
-        ->assertSet('needsMFA', true);
+        ->assertSet('needsMfa', true);
 
     assertGuest();
 
@@ -269,13 +270,36 @@ it('challenges a user with confirmed multifactor and logs them in with a valid c
         ->set('data.password', 'password')
         ->call('authenticate')
         ->assertHasNoFormErrors()
-        ->assertSet('needsMFA', true)
+        ->assertSet('needsMfa', true)
         ->assertSet('needsMfaSetup', false);
 
     assertGuest();
 
     $component
         ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    assertAuthenticatedAs($user);
+});
+
+it('passes a code with a leading zero to multifactor verification unchanged', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    mock(MultifactorService::class)
+        ->shouldReceive('verify')
+        ->once()
+        ->with(Mockery::mustBe('012345'), Mockery::type(User::class))
+        ->andReturnTrue();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->set('data.code', '012345')
         ->call('authenticate')
         ->assertHasNoFormErrors();
 
@@ -297,7 +321,7 @@ it('keeps the user on the multifactor step when the code is invalid', function (
         ->set('data.code', $invalidCode)
         ->call('authenticate')
         ->assertHasErrors('data.code')
-        ->assertSet('needsMFA', true)
+        ->assertSet('needsMfa', true)
         ->assertSet('data.code', null);
 
     assertGuest();

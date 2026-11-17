@@ -36,14 +36,20 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
+use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
+use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
+use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\Pages\Login;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
@@ -61,6 +67,18 @@ class EmailFirstLogin extends Login
     #[Locked]
     public string $step = 'email';
 
+    #[Locked]
+    public ?User $user = null;
+
+    #[Locked]
+    public bool $needsMfaSetup = false;
+
+    #[Locked]
+    public bool $needsMfa = false;
+
+    #[Locked]
+    public bool $usingRecoveryCode = false;
+
     public function form(Schema $schema): Schema
     {
         // Two distinct email inputs (different keys) so that on the password step Livewire renders a
@@ -73,12 +91,160 @@ class EmailFirstLogin extends Login
                 ->key('emailConfirmed')
                 ->disabled()
                 ->dehydrated()
-                ->visible(fn (): bool => $this->step === 'password'),
+                ->dehydratedWhenHidden(fn (): bool => $this->needsMfa)
+                ->visible(fn (): bool => $this->step === 'password' && ! $this->needsMfa),
             $this->getPasswordFormComponent()
-                ->visible(fn (): bool => $this->step === 'password'),
+                ->dehydratedWhenHidden(fn (): bool => $this->needsMfa)
+                ->visible(fn (): bool => $this->step === 'password' && ! $this->needsMfa),
             $this->getRememberFormComponent()
-                ->visible(fn (): bool => $this->step === 'password'),
+                ->dehydratedWhenHidden(fn (): bool => $this->needsMfa)
+                ->visible(fn (): bool => $this->step === 'password' && ! $this->needsMfa),
+            TextInput::make('code')
+                ->label(
+                    fn (): string => $this->usingRecoveryCode
+                        ? 'Multifactor Recovery Code'
+                        : 'Multifactor Authentication Code'
+                )
+                ->placeholder(fn (): string => $this->usingRecoveryCode ? 'abcdef-98765' : '###-###')
+                ->mask(fn (): ?string => $this->usingRecoveryCode ? null : '999-999')
+                ->stripCharacters(fn (): ?string => $this->usingRecoveryCode ? null : '-')
+                ->helperText(
+                    fn (): ?string => $this->usingRecoveryCode
+                        ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                        : null
+                )
+                ->rule('numeric', fn (): bool => ! $this->usingRecoveryCode)
+                ->string(fn (): bool => $this->usingRecoveryCode)
+                ->required(fn (): bool => $this->needsMfa)
+                ->visible(fn (): bool => $this->needsMfa),
         ]);
+    }
+
+    public function authenticate(): ?LoginResponse
+    {
+        $this->user = null;
+
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        $data = $this->form->getState();
+
+        if (! Filament::auth()->once($this->getCredentialsFromFormData($data))) {
+            $this->throwFailureValidationException();
+        }
+
+        $user = Filament::auth()->user();
+        assert($user instanceof User);
+
+        $this->user = $user;
+
+        if (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel())) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
+        }
+
+        $mfaSettings = app(MultifactorSettings::class);
+
+        if ($mfaSettings->required) {
+            if (! $user->hasConfirmedMultifactor() && empty($data['code'])) {
+                $user->enableMultifactorAuthentication();
+
+                Filament::auth()->logout();
+
+                $this->needsMfaSetup = true;
+                $this->needsMfa = true;
+
+                return null;
+            }
+        }
+
+        if ($user->hasEnabledMultifactor()) {
+            if (empty($data['code'])) {
+                Filament::auth()->logout();
+
+                $this->needsMfa = true;
+
+                return null;
+            }
+
+            if (! $this->isValidCode($user, $data['code'])) {
+                Filament::auth()->logout();
+
+                $this->data['code'] = null;
+
+                throw ValidationException::withMessages([
+                    'data.code' => 'Multifactor authentication failed.',
+                ]);
+            }
+
+            if (empty($user->multifactor_confirmed_at)) {
+                $user->confirmMultifactorAuthentication();
+
+                Filament::auth()->logout();
+
+                $this->mountAction('recoveryCodes', [
+                    'user' => $user,
+                    'remember' => $data['remember'],
+                ]);
+
+                return null;
+            }
+
+            if ($this->usingRecoveryCode) {
+                $user->destroyRecoveryCode($data['code']);
+            }
+        }
+
+        Filament::auth()->login($user, $data['remember'] ?? false);
+
+        session()->regenerate();
+
+        return app(LoginResponse::class);
+    }
+
+    public function recoveryCodesAction(): Action
+    {
+        return Action::make('recoveryCodes')
+            ->label('Recovery Codes')
+            ->requiresConfirmation()
+            ->modalDescription('')
+            ->modalCancelAction(false)
+            ->closeModalByClickingAway(false)
+            ->closeModalByEscaping(false)
+            ->modalCloseButton(false)
+            ->modalSubmitActionLabel('Okay')
+            ->modalContent(function (): View {
+                $codes = $this->user->multifactor_recovery_codes ?? [];
+
+                assert(is_array($codes));
+
+                return view('multifactor-authentication::filament.actions.recovery-codes-modal', [
+                    'codes' => collect($codes),
+                ]);
+            })
+            ->action(function (array $arguments): void {
+                Filament::auth()->login($arguments['user'], $arguments['remember'] ?? false);
+
+                session()->regenerate();
+
+                redirect()->intended(Filament::getUrl());
+            });
+    }
+
+    public function getMultifactorQrCode(): string
+    {
+        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
+    }
+
+    public function toggleUsingRecoveryCodes(): void
+    {
+        $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 
     /**
@@ -143,6 +309,21 @@ class EmailFirstLogin extends Login
     protected function getRememberFormComponent(): Component
     {
         return parent::getRememberFormComponent()->default(true);
+    }
+
+    protected function isValidCode(User $user, string $code): bool
+    {
+        if ($this->usingRecoveryCode) {
+            $recoveryCodes = $user->multifactor_recovery_codes;
+
+            assert(is_array($recoveryCodes));
+
+            return collect($recoveryCodes)->contains(function (string $recoveryCode) use ($code): bool {
+                return hash_equals($recoveryCode, $code);
+            });
+        }
+
+        return app(MultifactorService::class)->verify(code: $code, user: $user);
     }
 
     /**
