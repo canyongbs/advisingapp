@@ -72,8 +72,20 @@ class SocialiteController extends Controller
         $driver = $provider->driver()
             ->setConfig($provider->config());
 
+        $parameters = [];
+
         if (in_array($provider, [SocialiteProvider::Azure, SocialiteProvider::Google])) {
-            $driver->with(['prompt' => 'select_account']);
+            $parameters['prompt'] = 'select_account';
+        }
+
+        $loginHint = $request->query('login_hint');
+
+        if (is_string($loginHint) && filter_var($loginHint, FILTER_VALIDATE_EMAIL)) {
+            $parameters['login_hint'] = $loginHint;
+        }
+
+        if ($parameters !== []) {
+            $driver->with($parameters);
         }
 
         return $driver->redirect();
