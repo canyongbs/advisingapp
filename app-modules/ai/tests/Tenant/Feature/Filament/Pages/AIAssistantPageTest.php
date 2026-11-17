@@ -58,6 +58,7 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -1254,7 +1255,7 @@ test('super admin users do not show up in clone user search', function () use ($
 });
 
 describe('file parsing', function () use ($setUp): void {
-    $checkChatFile = function (int $uploadedMinutesAgo) use ($setUp): array {
+    $checkChatFile = function (int $uploadedMinutesAgo, ?Closure $parseJobResponse = null) use ($setUp): array {
         ['thread' => $thread] = $setUp();
 
         $settings = app(AiIntegrationsSettings::class);
@@ -1264,7 +1265,7 @@ describe('file parsing', function () use ($setUp): void {
         Http::preventStrayRequests();
 
         Http::fake([
-            'https://api.cloud.llamaindex.ai/api/v2/parse/*' => Http::response([
+            'https://api.cloud.llamaindex.ai/api/v2/parse/*' => $parseJobResponse ?? Http::response([
                 'job' => ['id' => 'pjb-123', 'status' => 'RUNNING'],
             ]),
         ]);
@@ -1305,6 +1306,22 @@ describe('file parsing', function () use ($setUp): void {
             ->and($page->files)->toBe([]);
 
         assertSoftDeleted($file);
+    });
+
+    it('does not give up on a chat file whose parsing results were stored while it was being checked', function () use ($checkChatFile): void {
+        // The webhook stores the results while the page is still waiting on LlamaParse, which reports the job as running.
+        [$page, $file] = $checkChatFile(uploadedMinutesAgo: 121, parseJobResponse: function (): PromiseInterface {
+            AiMessageFile::query()->where('file_id', 'pjb-123')->update(['parsing_results' => 'Course syllabus']);
+
+            return Http::response(['job' => ['id' => 'pjb-123', 'status' => 'RUNNING']]);
+        });
+
+        $page->isProcessingFiles();
+
+        expect($page->files)->toBe([$file->getKey()])
+            ->and($file->refresh()->parsing_results)->toBe('Course syllabus');
+
+        assertNotSoftDeleted($file);
     });
 
     // TODO: Cleanup Task (llamaparse-file-parsing): remove this test along with the feature flag.
