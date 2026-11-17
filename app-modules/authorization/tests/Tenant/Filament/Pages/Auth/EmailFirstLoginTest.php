@@ -41,6 +41,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\Cookie;
+use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertAuthenticated;
@@ -327,6 +328,27 @@ it('keeps the user on the multifactor step when the code is invalid', function (
     assertGuest();
 });
 
+it('keeps the multifactor setup step usable after an invalid submission', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfaSetup', true)
+        ->set('data.code', '')
+        ->call('authenticate')
+        ->assertHasErrors('data.code')
+        ->assertSet('needsMfaSetup', true);
+
+    assertGuest();
+});
+
 it('logs a user in with a recovery code and consumes it', function (): void {
     $user = User::factory()->create();
     $user->enableMultifactorAuthentication();
@@ -416,3 +438,58 @@ it('remembers the user after the recovery codes modal when remember me is left c
 
     expect(Cookie::queued($guard->getRecallerName()))->not->toBeNull();
 });
+
+it('does not show recovery codes before the multifactor code has been verified', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfa', true)
+        ->mountAction('recoveryCodes')
+        ->assertActionNotMounted('recoveryCodes');
+
+    assertGuest();
+});
+
+it('requires multifactor setup for an unenrolled user even when a code is submitted', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $firstUser = User::factory()->create();
+    $secondUser = User::factory()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $firstUser->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfa', true)
+        ->set('data.email', $secondUser->email)
+        ->set('data.code', '123456')
+        ->call('authenticate')
+        ->assertSet('needsMfaSetup', true);
+
+    assertGuest();
+
+    expect($secondUser->refresh()->hasEnabledMultifactor())->toBeTrue();
+});
+
+it('does not let the browser request the multifactor qr code', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfa', true)
+        ->call('getMultifactorQrCode');
+})->throws(MethodNotFoundException::class);

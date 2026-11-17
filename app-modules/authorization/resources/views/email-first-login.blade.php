@@ -123,4 +123,6 @@
             </x-filament::button>
         </x-filament::actions>
     @endif
+
+    <x-filament-actions::modals />
 </div>
