@@ -78,7 +78,7 @@ class EmailFirstLogin extends Login
 
     #[Locked]
     public bool $usingRecoveryCode = false;
-    
+
     #[Locked]
     public bool $hasVerifiedMfaSetup = false;
 
@@ -245,11 +245,6 @@ class EmailFirstLogin extends Login
             });
     }
 
-    protected function getMultifactorQrCode(): string
-    {
-        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
-    }
-
     public function toggleUsingRecoveryCodes(): void
     {
         $this->usingRecoveryCode = ! $this->usingRecoveryCode;
@@ -286,6 +281,11 @@ class EmailFirstLogin extends Login
     public function isMobileApp(): bool
     {
         return str((string) request()->userAgent())->contains(self::MOBILE_APP_USER_AGENT_TOKEN);
+    }
+
+    protected function getMultifactorQrCode(): string
+    {
+        return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }
 
     protected function throwFailureValidationException(): never
