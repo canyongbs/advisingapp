@@ -110,13 +110,14 @@ it('only offers the terms the student has attributes for, latest first', functio
 
     Term::factory()->create(['start_date' => '2023-01-10']);
 
-    $filter = Livewire::test(TermAttributesRelationManager::class, [
+    $relationManager = Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
-    ])
-        ->instance()
-        ->getTable()
-        ->getFilter('sis_term_id');
+    ])->instance();
+
+    assert($relationManager instanceof TermAttributesRelationManager);
+
+    $filter = $relationManager->getTable()->getFilter('sis_term_id');
 
     assert($filter instanceof SelectFilter);
 
@@ -132,13 +133,14 @@ it('does not offer deleted terms', function () use ($createTermAttribute): void 
     $createTermAttribute($student, Term::factory()->create(['sis_term_id' => '301']));
     $createTermAttribute($student, Term::factory()->create(['sis_term_id' => '302', 'deleted_at' => now()]));
 
-    $filter = Livewire::test(TermAttributesRelationManager::class, [
+    $relationManager = Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
-    ])
-        ->instance()
-        ->getTable()
-        ->getFilter('sis_term_id');
+    ])->instance();
+
+    assert($relationManager instanceof TermAttributesRelationManager);
+
+    $filter = $relationManager->getTable()->getFilter('sis_term_id');
 
     assert($filter instanceof SelectFilter);
 

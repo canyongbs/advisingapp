@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateApplicationSubmissionState extends CreateRecord
 {
@@ -58,7 +59,11 @@ class CreateApplicationSubmissionState extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
@@ -76,7 +81,7 @@ class CreateApplicationSubmissionState extends CreateRecord
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->helperText('Set this state as the default tab on the Submissions page.')
+                    ->helperText('Set this stage as the default tab on the Submissions page.')
                     ->hint(function (?bool $state): ?string {
                         if (! $state) {
                             return null;
@@ -90,7 +95,7 @@ class CreateApplicationSubmissionState extends CreateRecord
                             return null;
                         }
 
-                        return "The current default state is '{$currentDefault}', you are replacing it.";
+                        return "The current default stage is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger'),
             ]);

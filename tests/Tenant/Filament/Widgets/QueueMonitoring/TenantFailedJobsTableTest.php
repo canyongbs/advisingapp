@@ -68,7 +68,11 @@ it("lists only the current tenant's failed jobs under the tenant's name", functi
         ->assertTableColumnFormattedStateSet('exception', 'RuntimeException: Failed.', record: $tenantFailedJob)
         ->assertCountTableRecords(1);
 
-    expect($component->instance()->getTable()->getHeading())->toBe('Failed Jobs: ' . Tenant::current()->name)
+    $table = $component->instance();
+
+    assert($table instanceof TenantFailedJobsTable);
+
+    expect($table->getTable()->getHeading())->toBe('Failed Jobs: ' . Tenant::current()->name)
         ->and(FailedJob::on('landlord')->whereKey($landlordFailedJob->getKey())->exists())->toBeTrue();
 });
 

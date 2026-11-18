@@ -40,15 +40,7 @@ use AdvisingApp\Ai\Exceptions\AiLinkParsingFailedException;
 
 trait HasLlamaParseParsingState
 {
-    /**
-     * Saves changes to the parsing state without updating `updated_at` or recording an audit. The vector store
-     * re-uploads a link whenever its `updated_at` is newer than its vector store record, so only storing new parsing
-     * results should update it.
-     */
-    public function saveParsingState(): void
-    {
-        static::withoutTimestamps(fn (): bool => $this->saveQuietly());
-    }
+    use SavesLlamaParseParsingState;
 
     /**
      * Ends the current parsing attempt and reports it. Any existing parsing results are kept.

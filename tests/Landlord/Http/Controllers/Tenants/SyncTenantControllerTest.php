@@ -46,8 +46,9 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * @param array<string, mixed> $addons
+ * @param list<string> $omittedAddons
  */
-$syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest {
+$syncTenantControllerRequest = function (array $addons = [], array $omittedAddons = []): SyncTenantRequest {
     $request = SyncTenantRequest::create('/', 'POST', [
         'limits' => [
             'conversationalAiSeats' => 1,
@@ -59,7 +60,7 @@ $syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest 
             'employeeAdvisorsCount' => 1,
             'customerAdvisorsCount' => 1,
         ],
-        'addons' => array_merge([
+        'addons' => array_diff_key(array_merge([
             'employeeAdvisors' => false,
             'customerAdvisors' => false,
             'onlineForms' => false,
@@ -71,7 +72,8 @@ $syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest 
             'scheduleAndAppointments' => false,
             'earlyAlert' => false,
             'publicProfiles' => false,
-        ], $addons),
+            'unifiedInbox' => false,
+        ], $addons), array_flip($omittedAddons)),
         'subscription' => [
             'clientName' => 'Updated Client',
             'partnerName' => 'Updated Partner',
@@ -88,7 +90,7 @@ $syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest 
     return $request;
 };
 
-it('does not persist other sync changes when smart prompt validation fails', function () use ($syncTenantControllerRequest) {
+it('does not persist other sync changes when smart prompt validation fails', function () use ($syncTenantControllerRequest): void {
     Bus::fake();
 
     $tenant = Tenant::query()->firstOrFail();
@@ -118,8 +120,8 @@ it('does not persist other sync changes when smart prompt validation fails', fun
         ->and(app(TenantExpirationSettings::class)->period_2_banner_text)->toBe($originalBannerText);
 });
 
-describe('enterprise ai', function () use ($syncTenantControllerRequest) {
-    it('passes the `enterpriseAi` addon through to the tenant license data', function (array $addons, bool $isEnterpriseAiEnabled) use ($syncTenantControllerRequest) {
+describe('enterprise ai', function () use ($syncTenantControllerRequest): void {
+    it('passes the `enterpriseAi` addon through to the tenant license data', function (array $addons, bool $isEnterpriseAiEnabled) use ($syncTenantControllerRequest): void {
         Bus::fake();
 
         $tenant = Tenant::query()->firstOrFail();
@@ -128,7 +130,7 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
         $syncTenantSmartPrompts
             ->shouldReceive('execute')
             ->once()
-            ->andReturn(fn () => null);
+            ->andReturn(fn (): null => null);
         assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
 
         $response = app(SyncTenantController::class)(
@@ -149,7 +151,7 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
         'explicitly enabled' => [['enterpriseAi' => true], true],
     ]);
 
-    it('rejects a null `enterpriseAi` addon', function () use ($syncTenantControllerRequest) {
+    it('rejects a null `enterpriseAi` addon', function () use ($syncTenantControllerRequest): void {
         $thrownException = null;
 
         try {
@@ -163,8 +165,8 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
     });
 });
 
-describe('unified inbox', function () use ($syncTenantControllerRequest) {
-    it('passes the `unifiedInbox` addon through to the tenant license data', function (array $addons, bool $isUnifiedInboxEnabled) use ($syncTenantControllerRequest) {
+describe('unified inbox', function () use ($syncTenantControllerRequest): void {
+    it('passes the `unifiedInbox` addon through to the tenant license data', function (bool $isUnifiedInboxEnabled) use ($syncTenantControllerRequest): void {
         Bus::fake();
 
         $tenant = Tenant::query()->firstOrFail();
@@ -173,11 +175,11 @@ describe('unified inbox', function () use ($syncTenantControllerRequest) {
         $syncTenantSmartPrompts
             ->shouldReceive('execute')
             ->once()
-            ->andReturn(fn () => null);
+            ->andReturn(fn (): null => null);
         assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
 
         $response = app(SyncTenantController::class)(
-            $syncTenantControllerRequest($addons),
+            $syncTenantControllerRequest(['unifiedInbox' => $isUnifiedInboxEnabled]),
             $tenant,
             $syncTenantSmartPrompts,
         );
@@ -189,16 +191,28 @@ describe('unified inbox', function () use ($syncTenantControllerRequest) {
             fn (UpdateTenantLicenseData $job): bool => $job->data->addons->unifiedInbox === $isUnifiedInboxEnabled,
         );
     })->with([
-        'omitted by a legacy payload' => [[], true],
-        'explicitly disabled' => [['unifiedInbox' => false], false],
-        'explicitly enabled' => [['unifiedInbox' => true], true],
+        'disabled' => [false],
+        'enabled' => [true],
     ]);
 
-    it('rejects a null `unifiedInbox` addon', function () use ($syncTenantControllerRequest) {
+    it('rejects a null `unifiedInbox` addon', function () use ($syncTenantControllerRequest): void {
         $thrownException = null;
 
         try {
             $syncTenantControllerRequest(['unifiedInbox' => null]);
+        } catch (ValidationException $exception) {
+            $thrownException = $exception;
+        }
+
+        expect($thrownException)->toBeInstanceOf(ValidationException::class)
+            ->and($thrownException?->errors())->toHaveKey('addons.unifiedInbox');
+    });
+
+    it('rejects a missing `unifiedInbox` addon', function () use ($syncTenantControllerRequest): void {
+        $thrownException = null;
+
+        try {
+            $syncTenantControllerRequest(omittedAddons: ['unifiedInbox']);
         } catch (ValidationException $exception) {
             $thrownException = $exception;
         }

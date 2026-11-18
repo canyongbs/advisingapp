@@ -44,7 +44,6 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
-use Livewire\Mechanisms\ComponentRegistry;
 
 class AuthorizationPlugin implements Plugin
 {
@@ -83,8 +82,8 @@ class AuthorizationPlugin implements Plugin
                     ->name('auth.set-password');
             });
 
-        Livewire::component(app(ComponentRegistry::class)->getName(SetPassword::class), SetPassword::class);
-        Livewire::component(app(ComponentRegistry::class)->getName(ConfirmOneTimeLoginCode::class), ConfirmOneTimeLoginCode::class);
+        Livewire::component(SetPassword::class);
+        Livewire::component(ConfirmOneTimeLoginCode::class);
     }
 
     public function boot(Panel $panel): void

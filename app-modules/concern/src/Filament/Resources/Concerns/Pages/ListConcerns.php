@@ -157,7 +157,7 @@ class ListConcerns extends ListRecords
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->multiple()
                     ->preload()
-                    ->default(! is_null(SystemConcernStatusClassification::default()) ? [SystemConcernStatusClassification::default()] : []),
+                    ->default(fn (): array => array_filter([SystemConcernStatusClassification::default()?->getKey()])),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -194,7 +194,7 @@ class ListConcerns extends ListRecords
                                 ->string(),
                             Select::make('status_id')
                                 ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                                ->default(SystemConcernStatusClassification::default())
+                                ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                                 ->required(),
                         ])
                         ->columns(),

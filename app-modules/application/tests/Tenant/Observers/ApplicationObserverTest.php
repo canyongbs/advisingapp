@@ -37,7 +37,6 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationEmailAutoReply;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 use function Pest\Laravel\seed;
 
@@ -63,12 +62,4 @@ it('does not create an email auto reply for a new version of an application', fu
 
     expect($newVersion->emailAutoReply()->exists())->toBeFalse()
         ->and(ApplicationEmailAutoReply::query()->count())->toBe(1);
-});
-
-it('does not create an email auto reply when the feature is inactive', function (): void {
-    AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-    $application = Application::factory()->create();
-
-    expect($application->emailAutoReply()->exists())->toBeFalse();
 });

@@ -48,11 +48,11 @@ class ApplicationSubmissionStateResource extends Resource
 {
     protected static ?string $model = ApplicationSubmissionState::class;
 
-    protected static ?string $navigationLabel = 'Submission States';
+    protected static ?string $navigationLabel = 'Submission Stages';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = 'submission state';
+    protected static ?string $modelLabel = 'submission stage';
 
     protected static ?string $cluster = OnlineAdmissions::class;
 

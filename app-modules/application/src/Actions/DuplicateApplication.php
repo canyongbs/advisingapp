@@ -39,7 +39,6 @@ namespace AdvisingApp\Application\Actions;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationStep;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class DuplicateApplication
 {
@@ -55,9 +54,7 @@ class DuplicateApplication
         $this->updateStepContent($fieldMap);
         $this->replicateContentMedia($this->original, $this->replica);
 
-        if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            $this->replicateEmailAutoReply();
-        }
+        $this->replicateEmailAutoReply();
     }
 
     private function replicateSteps(): array

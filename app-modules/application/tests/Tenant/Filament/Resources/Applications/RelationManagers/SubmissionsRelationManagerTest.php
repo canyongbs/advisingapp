@@ -53,7 +53,15 @@ $testSubmissions = fn (Application $application): Testable => Livewire::test(Sub
     'pageClass' => ManageApplication::class,
 ]);
 
-test('tabs are generated for each state', function () use ($testSubmissions): void {
+$submissionsRelationManager = function (Application $application) use ($testSubmissions): SubmissionsRelationManager {
+    $component = $testSubmissions($application)->instance();
+
+    assert($component instanceof SubmissionsRelationManager);
+
+    return $component;
+};
+
+test('tabs are generated for each state', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -66,16 +74,14 @@ test('tabs are generated for each state', function () use ($testSubmissions): vo
 
     $application = Application::factory()->create();
 
-    $tabs = $testSubmissions($application)
-        ->instance()
-        ->getTabs();
+    $tabs = $submissionsRelationManager($application)->getTabs();
 
     expect($tabs)->toHaveKey('all');
     expect($tabs)->toHaveKey($receivedState->id);
     expect($tabs)->toHaveKey($reviewState->id);
 });
 
-test('tab label includes Archived when the state for that classification is archived but still has submissions', function () use ($testSubmissions): void {
+test('tab label includes Archived when the state for that classification is archived but still has submissions', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -92,9 +98,7 @@ test('tab label includes Archived when the state for that classification is arch
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = $testSubmissions($application)
-        ->instance()
-        ->getTabs();
+    $tabs = $submissionsRelationManager($application)->getTabs();
 
     $receivedKey = $receivedState->id;
 
@@ -102,7 +106,7 @@ test('tab label includes Archived when the state for that classification is arch
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
 });
 
-test('default active tab is the state with is_default true', function () use ($testSubmissions): void {
+test('default active tab is the state with is_default true', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -117,14 +121,12 @@ test('default active tab is the state with is_default true', function () use ($t
 
     $application = Application::factory()->create();
 
-    $defaultTab = $testSubmissions($application)
-        ->instance()
-        ->getDefaultActiveTab();
+    $defaultTab = $submissionsRelationManager($application)->getDefaultActiveTab();
 
     expect($defaultTab)->toBe($defaultState->id);
 });
 
-test('default active tab falls back to all when the default state is archived and unused', function () use ($testSubmissions): void {
+test('default active tab falls back to all when the default state is archived and unused', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     $defaultState = ApplicationSubmissionState::factory()->create([
@@ -140,14 +142,12 @@ test('default active tab falls back to all when the default state is archived an
     // @phpstan-ignore method.notFound
     $defaultState->archive();
 
-    $defaultTab = $testSubmissions($application)
-        ->instance()
-        ->getDefaultActiveTab();
+    $defaultTab = $submissionsRelationManager($application)->getDefaultActiveTab();
 
     expect($defaultTab)->toBe('all');
 });
 
-test('default tab falls back to all when no state has is_default true', function () use ($testSubmissions): void {
+test('default tab falls back to all when no state has is_default true', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -162,14 +162,12 @@ test('default tab falls back to all when no state has is_default true', function
 
     $application = Application::factory()->create();
 
-    $defaultTab = $testSubmissions($application)
-        ->instance()
-        ->getDefaultActiveTab();
+    $defaultTab = $submissionsRelationManager($application)->getDefaultActiveTab();
 
     expect($defaultTab)->toBe('all');
 });
 
-test('archived state that has submissions still appears as a tab', function () use ($testSubmissions): void {
+test('archived state that has submissions still appears as a tab', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -185,14 +183,12 @@ test('archived state that has submissions still appears as a tab', function () u
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = $testSubmissions($application)
-        ->instance()
-        ->getTabs();
+    $tabs = $submissionsRelationManager($application)->getTabs();
 
     expect($tabs)->toHaveKey($receivedState->id);
 });
 
-test('multiple states with the same classification each get their own tab', function () use ($testSubmissions): void {
+test('multiple states with the same classification each get their own tab', function () use ($submissionsRelationManager): void {
     asSuperAdmin();
 
     $firstReceivedState = ApplicationSubmissionState::factory()->create([
@@ -205,9 +201,7 @@ test('multiple states with the same classification each get their own tab', func
 
     $application = Application::factory()->create();
 
-    $tabs = $testSubmissions($application)
-        ->instance()
-        ->getTabs();
+    $tabs = $submissionsRelationManager($application)->getTabs();
 
     expect($tabs)->toHaveKey($firstReceivedState->id);
     expect($tabs)->toHaveKey($secondReceivedState->id);

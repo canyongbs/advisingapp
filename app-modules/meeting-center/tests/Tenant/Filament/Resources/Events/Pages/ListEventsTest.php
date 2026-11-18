@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -322,22 +321,5 @@ describe('duplication', function (): void {
             ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
 
         Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
-    });
-
-    it('does not copy the email auto reply to the duplicated event when the feature is inactive', function (): void {
-        $event = Event::factory()->create();
-        $emailAutoReply = $event->eventRegistrationForm->emailAutoReply()->firstOrFail();
-
-        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-        Livewire::test(ListEvents::class)
-            ->removeTableFilter('pastEvents')
-            ->callAction(TestAction::make('Duplicate')->table($event))
-            ->assertHasNoFormErrors();
-
-        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
-
-        expect($duplicatedEvent->eventRegistrationForm->emailAutoReply()->exists())->toBeFalse()
-            ->and($emailAutoReply->refresh()->form_id)->toBe($event->eventRegistrationForm->getKey());
     });
 });

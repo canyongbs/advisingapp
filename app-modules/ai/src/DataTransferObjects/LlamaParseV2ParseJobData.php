@@ -46,5 +46,6 @@ class LlamaParseV2ParseJobData extends Data
         public LlamaParseV2JobStatus $status,
         public ?string $errorMessage,
         public ?string $markdownFull,
+        public ?string $textFull,
     ) {}
 }

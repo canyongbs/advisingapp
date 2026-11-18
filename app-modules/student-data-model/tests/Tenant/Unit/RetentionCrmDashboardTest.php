@@ -116,7 +116,11 @@ it('exposes the advanced filtering population selector on the retention dashboar
         ->assertSet('population.type', 'saved')
         ->assertSet('population.groupId', (string) $group->getKey());
 
-    expect($component->instance()->getPopulationPayload())->toMatchArray([
+    $dashboard = $component->instance();
+
+    assert($dashboard instanceof RetentionCrmDashboard);
+
+    expect($dashboard->getPopulationPayload())->toMatchArray([
         'type' => 'saved',
         'groupId' => (string) $group->getKey(),
     ]);

@@ -40,6 +40,9 @@ use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -50,6 +53,7 @@ use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
@@ -71,9 +75,11 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
+use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
+use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
 use App\Features\MatchedEnrolledTermsFeature;
-use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\QueryException;
@@ -84,8 +90,6 @@ use Illuminate\Support\Str;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Laravel\assertNotSoftDeleted;
-use function Pest\Laravel\assertSoftDeleted;
 
 // Add tests for migration files here
 
@@ -207,98 +211,6 @@ test('2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload uses the
                 ->and($eventsWithoutTimestamps->map(fn (EmailMessageEvent $event): string => $event->refresh()->occurred_at->toDateTimeString())->unique()->all())
                 ->toBe(['2026-01-02 03:04:05'])
                 ->and($delivery->refresh()->occurred_at->toDateTimeString())->toBe('2026-05-06 07:08:09');
-        }
-    );
-});
-
-test('2026_10_12_154211_tmp_consolidate_student_group_filters deletes groups using removed filters and merges name filters', function () {
-    isolatedMigration(
-        '2026_10_12_154211_tmp_consolidate_student_group_filters',
-        function () {
-            $rule = fn (string $type, string $operator, string $text): array => [
-                'type' => $type,
-                'data' => ['operator' => $operator, 'settings' => ['text' => $text]],
-            ];
-            $orBlock = fn (array ...$groups): array => [
-                'type' => 'or',
-                'data' => ['groups' => array_map(fn (array $rules): array => ['rules' => $rules], $groups)],
-            ];
-            $createGroup = fn (GroupModel $model, ?array $rules, GroupType $type = GroupType::Dynamic): Group => Group::factory()->create([
-                'model' => $model,
-                'type' => $type,
-                'filters' => $rules === null ? null : ['queryBuilder' => ['rules' => $rules]],
-            ]);
-
-            $topLevelRemoved = $createGroup(GroupModel::Student, [
-                'a' => $rule('last', 'contains', 'Smith'),
-                'b' => $rule('sisid', 'equals', '123'),
-            ]);
-            $campaign = Campaign::factory()->for($topLevelRemoved, 'group')->create();
-
-            $nestedRemoved = $createGroup(GroupModel::Student, [
-                'a' => $orBlock(
-                    ['b' => $rule('holds', 'contains', 'X')],
-                    ['c' => $orBlock(['d' => $rule('enrollmentSisid', 'equals', '123')])],
-                ),
-            ]);
-
-            $tagsRule = [
-                'type' => 'tags',
-                'data' => ['operator' => 'isRelatedTo', 'settings' => ['values' => [(string) Str::uuid()]]],
-            ];
-            $legacyRules = [
-                'a' => $rule('last', 'contains', 'Smith'),
-                'b' => $orBlock(
-                    ['c' => $rule('first', 'startsWith.inverse', 'A'), 'd' => $tagsRule],
-                    ['e' => $orBlock(['f' => $rule('full_name', 'equals', 'Jo Bloggs')], ['g' => $rule('preferred', 'endsWith', 'y')])],
-                ),
-            ];
-            $merged = $createGroup(GroupModel::Student, $legacyRules);
-
-            $prospectFilters = [
-                'a' => $rule('phone', 'contains', '555'),
-                'b' => $rule('full_name', 'contains', 'Smith'),
-            ];
-            $prospect = $createGroup(GroupModel::Prospect, $prospectFilters);
-            $staticFilters = ['a' => $rule('sisid', 'equals', '123')];
-            $static = $createGroup(GroupModel::Student, $staticFilters, GroupType::Static);
-            $withoutFilters = $createGroup(GroupModel::Student, null);
-
-            expect(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_10_12_154211_tmp_consolidate_student_group_filters.php']);
-
-            $nameRule = fn (string $attribute, string $operator, string $text): array => [
-                'type' => 'name',
-                'data' => ['operator' => $attribute, 'settings' => ['operator' => $operator, 'text' => $text]],
-            ];
-
-            expect($migrate)->toBe(Command::SUCCESS)
-                ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe([
-                    'a' => $nameRule('lastName', 'contains', 'Smith'),
-                    'b' => $orBlock(
-                        ['c' => $nameRule('firstName', 'startsWith.inverse', 'A'), 'd' => $tagsRule],
-                        ['e' => $orBlock(['f' => $nameRule('fullName', 'equals', 'Jo Bloggs')], ['g' => $nameRule('preferredName', 'endsWith', 'y')])],
-                    ),
-                ])
-                ->and($prospect->refresh()->filters['queryBuilder']['rules'])->toBe($prospectFilters)
-                ->and($static->refresh()->filters['queryBuilder']['rules'])->toBe($staticFilters)
-                ->and($withoutFilters->refresh()->filters)->toBeNull()
-                ->and(StudentGroupFilterConsolidationFeature::active())->toBeTrue();
-
-            assertSoftDeleted($topLevelRemoved);
-            assertSoftDeleted($campaign);
-            assertSoftDeleted($nestedRemoved);
-            assertNotSoftDeleted($merged);
-            assertNotSoftDeleted($prospect);
-            assertNotSoftDeleted($static);
-            assertNotSoftDeleted($withoutFilters);
-
-            $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/group/database/migrations/2026_10_12_154211_tmp_consolidate_student_group_filters.php']);
-
-            expect($rollback)->toBe(Command::SUCCESS)
-                ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe($legacyRules)
-                ->and(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
         }
     );
 });
@@ -993,9 +905,155 @@ describe('care team roles name citext change', function (): void {
 
                 expect($rollback)->toBe(Command::SUCCESS);
 
+                // The rolled-back schema must still support running the migration again.
                 $remigrate = Artisan::call('migrate', ['--path' => 'app-modules/care-team/database/migrations/2026_11_02_223000_convert_care_team_roles_name_to_citext.php']);
 
                 expect($remigrate)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (workflow-name-citext) - Delete this describe and everything contained within
+describe('workflows name citext change', function (): void {
+    // Scope every workflow in a group to the same owning record (the trigger's related), since
+    // uniqueness is enforced per owner. A fresh trigger is needed per workflow (1:1), all pointing
+    // at the same Form.
+    $triggerFor = fn (Form $form): WorkflowTriggerFactory => WorkflowTrigger::factory()->state([
+        'related_type' => $form->getMorphClass(),
+        'related_id' => $form->getKey(),
+    ]);
+
+    it('renames case-insensitive duplicate workflow names within the same owner', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                $form = Form::factory()->create();
+
+                $workflow1 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow', 'created_at' => now()->subMinutes(3)]);
+                $workflow2 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'form workflow', 'created_at' => now()->subMinutes(2)]);
+                $workflow3 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'FORM WORKFLOW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted workflow sharing a name with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedWorkflow = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form workflow', 'created_at' => now()->subMinutes(4)]);
+                $deletedWorkflow->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name, the rest are renumbered by their own original value
+                expect($workflow1->refresh()->name)->toBe('Form Workflow');
+                expect($workflow2->refresh()->name)->toBe('form workflow-2');
+                expect($workflow3->refresh()->name)->toBe('FORM WORKFLOW-3');
+                // Untouched: excluded from the live dedup group entirely, despite the name collision
+                expect($deletedWorkflow->refresh()->name)->toBe('Form workflow');
+
+                // A further duplicate under the same owner is rejected by the scoped unique index.
+                expect(fn () => Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'form WORKFLOW']))
+                    ->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('allows workflows for different owners to share a name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                $formA = Form::factory()->create();
+                $formB = Form::factory()->create();
+
+                Workflow::factory()->for($triggerFor($formA), 'workflowTrigger')->create(['name' => 'Shared Workflow']);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // A workflow owned by a different record may reuse the same name case-insensitively.
+                $workflowB = Workflow::factory()->for($triggerFor($formB), 'workflowTrigger')->create(['name' => 'shared workflow']);
+
+                expect($workflowB->refresh()->name)->toBe('shared workflow');
+            }
+        );
+    });
+
+    it('can be rolled back when a live workflow reuses a soft-deleted workflow name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $form = Form::factory()->create();
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
+                // so a live record may reuse the exact name of a soft-deleted one. down() must
+                // restore a partial (not all-row) index so this data does not break the rollback.
+                $deletedWorkflow = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow']);
+                $deletedWorkflow->delete();
+                Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Form Workflow']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+
+    it('does not rename a case-variant duplicate onto an existing truncated name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                $form = Form::factory()->create();
+
+                $maxLengthUpper = str_repeat('A', 255);
+                $maxLengthLower = str_repeat('a', 255);
+                $truncatedCollision = str_repeat('a', 253) . '-2';
+
+                $workflow1 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $maxLengthUpper, 'created_at' => now()->subMinutes(2)]);
+                $workflow2 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $maxLengthLower, 'created_at' => now()->subMinutes(1)]);
+                $workflow3 = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => $truncatedCollision, 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($workflow1->refresh()->name)->toBe($maxLengthUpper);
+                expect($workflow2->refresh()->name)->toBe(str_repeat('a', 253) . '-3');
+                expect($workflow3->refresh()->name)->toBe($truncatedCollision);
+            }
+        );
+    });
+
+    it('does not rename a duplicate whose name contains a LIKE metacharacter onto an existing suffixed name', function () use ($triggerFor): void {
+        isolatedMigration(
+            '2026_11_03_130000_convert_workflows_name_to_citext',
+            function () use ($triggerFor): void {
+                // Regression: the de-duplicator seeds its "taken names" set with a LIKE query on the
+                // base name's prefix. A backslash is PostgreSQL's default LIKE escape character, so an
+                // unescaped prefix like "fall\outreach-%" never matches the live "fall\outreach-2" row.
+                // Without escaping, the duplicate is renamed straight onto "fall\outreach-2" and the
+                // unique index fails to build. The escaped pattern must find the suffixed row and skip
+                // to "-3" instead.
+                $form = Form::factory()->create();
+
+                $original = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'Fall\\Outreach', 'created_at' => now()->subMinutes(2)]);
+                $duplicate = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'fall\\outreach', 'created_at' => now()->subMinutes(1)]);
+                $existingSuffixed = Workflow::factory()->for($triggerFor($form), 'workflowTrigger')->create(['name' => 'fall\\outreach-2', 'created_at' => now()]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/workflow/database/migrations/2026_11_03_130000_convert_workflows_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest live record keeps its name.
+                expect($original->refresh()->name)->toBe('Fall\\Outreach');
+                // "-2" is already taken by a live row, so the next free suffix is used.
+                expect($duplicate->refresh()->name)->toBe('fall\\outreach-3');
+                // The pre-existing suffixed row is in its own group and is left untouched.
+                expect($existingSuffixed->refresh()->name)->toBe('fall\\outreach-2');
             }
         );
     });
@@ -1028,7 +1086,6 @@ describe('alert statuses name citext change', function () {
                 expect($concernStatus1->refresh()->name)->toBe('Under Review');
                 expect($concernStatus2->refresh()->name)->toBe('under review-2');
                 expect($concernStatus3->refresh()->name)->toBe('UNDER REVIEW-3');
-                // Untouched: excluded from the live dedup group entirely, despite the name collision
                 expect($deletedConcernStatus->refresh()->name)->toBe('Under review');
             }
         );
@@ -1758,3 +1815,107 @@ dataset('interaction setting citext migrations', [
     'interaction relations' => ['2026_11_03_105114_convert_interaction_relations_name_to_citext', InteractionRelation::class],
     'interaction initiatives' => ['2026_11_03_105117_convert_interaction_initiatives_name_to_citext', InteractionInitiative::class],
 ]);
+
+// TODO: Cleanup Task (application-name-citext) - Delete this describe and everything contained within
+describe('applications name citext change', function () {
+    it('renames case-insensitive duplicate application names', function () {
+        isolatedMigration(
+            '2026_10_29_100001_convert_applications_name_to_citext',
+            function () {
+                app(ApplicationSubmissionStateSeeder::class)->run();
+
+                $application1 = Application::factory()->create(['name' => 'Fall Admissions', 'created_at' => now()->subMinutes(3)]);
+                $application2 = Application::factory()->create(['name' => 'fall admissions', 'created_at' => now()->subMinutes(2)]);
+                $application3 = Application::factory()->create(['name' => 'FALL ADMISSIONS', 'created_at' => now()->subMinutes(1)]);
+
+                // An archived application sharing a name with the live duplicate group must be ignored
+                // by de-duplication: it should neither affect the live renumbering nor get renamed itself.
+                $archivedApplication = Application::factory()->create(['name' => 'Fall admissions', 'created_at' => now()->subMinutes(4)]);
+                $archivedApplication->archive();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($application1->refresh()->name)->toBe('Fall Admissions');
+                expect($application2->refresh()->name)->toBe('fall admissions-2');
+                expect($application3->refresh()->name)->toBe('FALL ADMISSIONS-3');
+                expect($archivedApplication->refresh()->name)->toBe('Fall admissions');
+
+                expect(fn () => Application::factory()->create(['name' => 'fall ADMISSIONS']))->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live application reuses an archived application name', function () {
+        isolatedMigration(
+            '2026_10_29_100001_convert_applications_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores archived rows.
+                app(ApplicationSubmissionStateSeeder::class)->run();
+
+                $archivedApplication = Application::factory()->create(['name' => 'Fall Admissions']);
+                $archivedApplication->archive();
+                Application::factory()->create(['name' => 'Fall Admissions']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100001_convert_applications_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task (application-name-citext) - Delete this describe and everything contained within
+describe('application submission states name citext change', function () {
+    it('renames case-insensitive duplicate submission state names', function () {
+        isolatedMigration(
+            '2026_10_29_100002_convert_application_submission_states_name_to_citext',
+            function () {
+                $state1 = ApplicationSubmissionState::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
+                $state2 = ApplicationSubmissionState::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
+                $state3 = ApplicationSubmissionState::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
+
+                // A soft-deleted state sharing a name with the live duplicate group must be ignored
+                // by de-duplication: it should neither affect the live renumbering nor get renamed itself.
+                $deletedState = ApplicationSubmissionState::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
+                $deletedState->delete();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect($state1->refresh()->name)->toBe('Under Review');
+                expect($state2->refresh()->name)->toBe('under review-2');
+                expect($state3->refresh()->name)->toBe('UNDER REVIEW-3');
+                expect($deletedState->refresh()->name)->toBe('Under review');
+
+                expect(fn () => ApplicationSubmissionState::factory()->create(['name' => 'under REVIEW']))->toThrow(QueryException::class);
+            }
+        );
+    });
+
+    it('can be rolled back when a live submission state reuses a soft-deleted state name', function () {
+        isolatedMigration(
+            '2026_10_29_100002_convert_application_submission_states_name_to_citext',
+            function () {
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Valid post-migration data: the partial unique index ignores soft-deleted rows.
+                $deletedState = ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+                $deletedState->delete();
+                ApplicationSubmissionState::factory()->create(['name' => 'Under Review']);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});

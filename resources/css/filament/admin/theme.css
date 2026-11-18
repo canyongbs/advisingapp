@@ -32,13 +32,12 @@
 </COPYRIGHT>
 */
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/saade/filament-fullcalendar/resources/css/filament-fullcalendar.css';
 @import 'tippy.js/dist/tippy.css';
 
-@config '../../../../tailwind.config.js';
+@source '../../../../vendor/saade/filament-fullcalendar/resources/views/**/*.blade.php';
 
-.min-w-kanban {
-    min-width: 20rem;
-}
+@config '../../../../tailwind.config.js';
 
 /* Bright Sun */
 .dark {

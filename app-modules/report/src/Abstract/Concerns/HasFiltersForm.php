@@ -99,4 +99,25 @@ trait HasFiltersForm
 
         return $filters;
     }
+
+    /**
+     * Mirrors the configuration Filament's `getFiltersForm()` applies before calling `filtersForm()`.
+     *
+     * Rehydrating an action mounted from inside the filters form (the population actions) resolves
+     * the schema through `cacheSchema('filtersForm')` before `bootedHasFiltersForm()` runs. That path
+     * skips `getFiltersForm()` and only applies this hook, so without it the cached form loses its
+     * `filters` state path and the date pickers stop binding to the filters until the page reloads.
+     */
+    protected function defaultFiltersForm(Schema $schema): Schema
+    {
+        return $schema
+            ->columns([
+                'md' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ])
+            ->extraAttributes(['wire:partial' => 'table-filters-form'])
+            ->live()
+            ->statePath('filters');
+    }
 }

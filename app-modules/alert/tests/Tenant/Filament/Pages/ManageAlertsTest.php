@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Tests\Tenant\Filament\Pages;
 
+use AdvisingApp\Alert\Enums\EarlyAlertTab;
 use AdvisingApp\Alert\Filament\Pages\ManageAlerts;
 use AdvisingApp\Alert\Jobs\RemoveAlertFiltersFromGroupsJob;
 use AdvisingApp\Alert\Models\AlertConfiguration;
@@ -45,8 +46,11 @@ use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use DOMDocument;
+use DOMXPath;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -80,6 +84,121 @@ it('is gated with proper access control', function (): void {
     $user->givePermissionTo('settings.view-any');
 
     get(ManageAlerts::getUrl())->assertSuccessful();
+});
+
+$getTabLabels = function (Testable $component): array {
+    $document = new DOMDocument();
+    $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $tabs = (new DOMXPath($document))->query('//*[@role="tab"]');
+    assert($tabs !== false);
+
+    $labels = [];
+
+    foreach ($tabs as $tab) {
+        $labels[] = trim((string) preg_replace('/\s+/', ' ', $tab->textContent));
+    }
+
+    return $labels;
+};
+
+describe('tabs and authorization', function () use ($getTabLabels): void {
+    it('shows the Student Alerts tab to a user who can view settings', function () use ($getTabLabels): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+
+        expect($getTabLabels(Livewire::test(ManageAlerts::class)))->toBe(['Student Alerts']);
+    });
+
+    it('returns 403 when the Early Alert feature is disabled', function (): void {
+        $settings = app(LicenseSettings::class);
+        $settings->data->addons->earlyAlert = false;
+        $settings->save();
+
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+
+        get(ManageAlerts::getUrl())->assertForbidden();
+    });
+
+    it('returns 403 when no tab is visible', function (): void {
+        $user = User::factory()->create();
+        actingAs($user);
+
+        get(ManageAlerts::getUrl())->assertForbidden();
+    });
+
+    it('opens the first visible tab when the requested tab is unknown', function (): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+
+        Livewire::withQueryParams(['tab' => 'does-not-exist'])
+            ->test(ManageAlerts::class)
+            ->assertSet('activeTab', EarlyAlertTab::StudentAlerts->value);
+    });
+
+    it('keeps the requested tab when it is visible', function (): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+
+        Livewire::withQueryParams(['tab' => EarlyAlertTab::StudentAlerts->value])
+            ->test(ManageAlerts::class)
+            ->assertSet('activeTab', EarlyAlertTab::StudentAlerts->value);
+    });
+});
+
+describe('view-only regression', function (): void {
+    beforeEach(function (): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+    });
+
+    it('disables the form for a user who cannot update settings', function (): void {
+        $alertConfig = AlertConfiguration::factory()
+            ->state(['preset' => AlertPreset::DorfGrade])
+            ->create();
+
+        Livewire::test(ManageAlerts::class)
+            ->assertFormFieldDisabled("{$alertConfig->id}.is_enabled");
+    });
+
+    it('hides the save button for a user who cannot update settings', function (): void {
+        Livewire::test(ManageAlerts::class)
+            ->assertDontSeeText('Save Changes');
+    });
+
+    it('rejects the save method for a user who cannot update settings', function (): void {
+        $alertConfig = AlertConfiguration::factory()
+            ->state(['preset' => AlertPreset::DorfGrade])
+            ->enabled()
+            ->create();
+
+        Livewire::test(ManageAlerts::class)
+            ->set('data', [(string) $alertConfig->id => ['is_enabled' => false]])
+            ->call('save')
+            ->assertForbidden();
+
+        $alertConfig->refresh();
+        expect($alertConfig->is_enabled)->toBeTrue();
+    });
+
+    it('rejects the confirm disable alerts action for a user who cannot update settings', function (): void {
+        Livewire::test(ManageAlerts::class)
+            ->mountAction('confirmDisableAlerts')
+            ->callMountedAction()
+            ->assertForbidden();
+    });
+});
+
+it('shows the save button to a user who can update settings', function (): void {
+    asSuperAdmin();
+
+    Livewire::test(ManageAlerts::class)
+        ->assertSeeText('Save Changes');
 });
 
 it('saves without showing modal when no alerts are being disabled', function (): void {

@@ -64,7 +64,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.view-any',
-            denyResponse: 'You do not have permission to view states.'
+            denyResponse: 'You do not have permission to view stages.'
         );
     }
 
@@ -72,7 +72,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.view',
-            denyResponse: 'You do not have permission to view this state.'
+            denyResponse: 'You do not have permission to view this stage.'
         );
     }
 
@@ -80,7 +80,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.create',
-            denyResponse: 'You do not have permission to create states.'
+            denyResponse: 'You do not have permission to create stages.'
         );
     }
 
@@ -88,19 +88,19 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.update',
-            denyResponse: 'You do not have permission to update this state.'
+            denyResponse: 'You do not have permission to update this stage.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         if ($model->submissions()->exists()) {
-            return Response::deny('Cannot delete a submission state that has associated submissions.');
+            return Response::deny('Cannot delete a submission stage that has associated submissions.');
         }
 
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
-            denyResponse: 'You do not have permission to delete this state.'
+            denyResponse: 'You do not have permission to delete this stage.'
         );
     }
 
@@ -108,7 +108,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
-            denyResponse: 'You do not have permission to delete any state.'
+            denyResponse: 'You do not have permission to delete any stage.'
         );
     }
 
@@ -116,7 +116,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
-            denyResponse: 'You do not have permission to archive this state.'
+            denyResponse: 'You do not have permission to archive this stage.'
         );
     }
 
@@ -124,7 +124,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.restore',
-            denyResponse: 'You do not have permission to restore this state.'
+            denyResponse: 'You do not have permission to restore this stage.'
         );
     }
 
@@ -132,19 +132,19 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.restore',
-            denyResponse: 'You do not have permission to restore any state.'
+            denyResponse: 'You do not have permission to restore any stage.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         if ($model->submissions()->exists()) {
-            return Response::deny('Cannot delete a submission state that has associated submissions.');
+            return Response::deny('Cannot delete a submission stage that has associated submissions.');
         }
 
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
-            denyResponse: 'You do not have permission to permanently delete this state.'
+            denyResponse: 'You do not have permission to permanently delete this stage.'
         );
     }
 
@@ -152,7 +152,7 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
-            denyResponse: 'You do not have permission to permanently delete any state.'
+            denyResponse: 'You do not have permission to permanently delete any stage.'
         );
     }
 

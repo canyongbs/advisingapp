@@ -38,24 +38,40 @@ namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas;
 
 use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Models\Workflow;
+use App\Features\WorkflowNameCitextFeature;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class WorkflowForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $record = $schema->getRecord();
+
+        $nameInput = TextInput::make('name')
+            ->required()
+            ->maxLength(255);
+
+        // Only enforce uniqueness once the citext migration has run.
+        // TODO: Cleanup Task (workflow-name-citext) - remove the `WorkflowNameCitextFeature::active()` guard and apply the unique rule unconditionally.
+        if (WorkflowNameCitextFeature::active() && $record instanceof Workflow) {
+            $nameInput = $nameInput->unique(
+                ignoreRecord: true,
+                modifyRuleUsing: fn (Unique $rule): Unique => $rule
+                    ->where('related_type', $record->related_type)
+                    ->where('related_id', $record->related_id)
+                    ->withoutTrashed(),
+            );
+        }
+
         $schema = $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255),
+            $nameInput,
             Toggle::make('is_enabled')
                 ->label('Enabled?')
                 ->inline(false),
         ]);
-
-        $record = $schema->getRecord();
 
         if ($record instanceof Workflow) {
             $typeFormClass = app(WorkflowTypeFormRegistry::class)

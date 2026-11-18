@@ -45,7 +45,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\MatchedEnrolledTermsFeature;
-use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\AttributeTextOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\PhoneNumberPartOperator;
@@ -124,10 +123,6 @@ class StudentsTable
      */
     public static function getQueryBuilderConstraints(): array
     {
-        if (! StudentGroupFilterConsolidationFeature::active()) {
-            return self::getLegacyQueryBuilderConstraints();
-        }
-
         return [
             'Advising & Support' => [
                 RelationshipConstraint::make('tags')
@@ -283,127 +278,6 @@ class StudentsTable
         ];
     }
 
-    /**
-     * @return array<BaseConstraint>
-     */
-    private static function getLegacyQueryBuilderConstraints(): array
-    {
-        return [
-            TextConstraint::make('full_name')
-                ->label('Full Name')
-                ->icon('heroicon-m-user'),
-            TextConstraint::make('first')
-                ->label('First Name')
-                ->icon('heroicon-m-user'),
-            TextConstraint::make('last')
-                ->label('Last Name')
-                ->icon('heroicon-m-user'),
-            TextConstraint::make('preferred')
-                ->label('Preferred Name')
-                ->icon('heroicon-m-user'),
-            TextConstraint::make('sisid')
-                ->label('Student ID')
-                ->icon('heroicon-m-finger-print'),
-            TextConstraint::make('otherid')
-                ->label('Other ID')
-                ->icon('heroicon-m-finger-print'),
-            TextConstraint::make('email')
-                ->label('Institutional Email')
-                ->relationship('primaryEmailAddress', 'address')
-                ->icon('heroicon-m-envelope'),
-            TextConstraint::make('phone')
-                ->label('Primary Phone')
-                ->relationship('primaryPhoneNumber', 'number')
-                ->icon('heroicon-m-phone'),
-            TextConstraint::make('address')
-                ->label('Primary Address line 1')
-                ->relationship('primaryAddress', 'line_1')
-                ->icon('heroicon-m-map-pin'),
-            TextConstraint::make('address_2')
-                ->label('Primary Address line 2')
-                ->relationship('primaryAddress', 'line_2')
-                ->icon('heroicon-m-map-pin'),
-            RelationshipConstraint::make('tags')
-                ->label('Tags')
-                ->icon('heroicon-m-rectangle-group')
-                ->selectable(
-                    IsRelatedToOperator::make()
-                        ->titleAttribute('name')
-                        ->multiple()
-                        ->preload(),
-                ),
-            ...self::getAlertConstraints(),
-            TextConstraint::make('holds')
-                ->icon('heroicon-m-exclamation-triangle'),
-            ExistingValuesSelectConstraint::make('gender')
-                ->label('Gender')
-                ->icon('heroicon-m-user-circle')
-                ->multiple(),
-            ExistingValuesSelectConstraint::make('ethnicity')
-                ->label('Ethnicity')
-                ->icon('heroicon-m-globe-alt')
-                ->multiple(),
-            BooleanConstraint::make('sap')
-                ->label('SAP')
-                ->icon('heroicon-m-academic-cap')
-                ->nullable(),
-            BooleanConstraint::make('dual')
-                ->nullable(),
-            BooleanConstraint::make('firstgen')
-                ->label('First Generation')
-                ->icon('heroicon-m-academic-cap')
-                ->nullable(),
-            BooleanConstraint::make('ferpa')
-                ->label('FERPA')
-                ->icon('heroicon-m-lock-open')
-                ->nullable(),
-            self::makeSubscribedConstraint()
-                ->icon('heroicon-m-bell'),
-            self::makeCareTeamConstraint()
-                ->icon('heroicon-m-user-group'),
-            RelationshipConstraint::make('programs')
-                ->multiple()
-                ->label('Number of Programs')
-                ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
-                ->icon('heroicon-m-academic-cap'),
-            TextConstraint::make('programDivision')
-                ->label('Program College')
-                ->relationship('programs', 'division'),
-            TextConstraint::make('programName')
-                ->label('Program Name')
-                ->relationship('programs', 'descr'),
-            self::makeProgramDetailConstraint(),
-            TextConstraint::make('programFoi')
-                ->label('Program Field of Interest')
-                ->relationship('programs', 'foi'),
-            NumberConstraint::make('programCumGpa')
-                ->label('Program Cumulative GPA')
-                ->relationship('programs', 'cum_gpa'),
-            self::makeEnrollmentsConstraint()
-                ->icon('heroicon-m-folder-open'),
-            TextConstraint::make('enrollmentSisid')
-                ->label('Enrollment SISID')
-                ->relationship('enrollments', 'sisid'),
-            TextConstraint::make('enrollmentDivision')
-                ->label('Enrollment College')
-                ->relationship('enrollments', 'division'),
-            TextConstraint::make('enrollmentClassNbr')
-                ->label('Enrollment Course')
-                ->relationship('enrollments', 'class_nbr'),
-            TextConstraint::make('enrollmentCrseGradeOff')
-                ->label('Enrollment Grade')
-                ->relationship('enrollments', 'crse_grade_off'),
-            NumberConstraint::make('enrollmentUntTaken')
-                ->label('Enrollment Attempted')
-                ->relationship('enrollments', 'unt_taken'),
-            NumberConstraint::make('enrollmentUntEarned')
-                ->label('Enrollment Earned')
-                ->relationship('enrollments', 'unt_earned'),
-            ...self::getEnrollmentTermConstraints(),
-            TermAttributeConstraint::make('termAttribute'),
-        ];
-    }
-
     private static function makeSubscribedConstraint(): Constraint
     {
         return Constraint::make('subscribed')
@@ -481,17 +355,6 @@ class StudentsTable
                         return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
                     }),
             ]);
-    }
-
-    /**
-     * @return array<SelectConstraint>
-     */
-    private static function getEnrollmentTermConstraints(): array
-    {
-        return [
-            self::makeFirstEnrolledTermConstraint()->icon('heroicon-m-academic-cap'),
-            self::makeMostRecentEnrolledTermConstraint()->icon('heroicon-m-academic-cap'),
-        ];
     }
 
     private static function makeFirstEnrolledTermConstraint(): SelectConstraint

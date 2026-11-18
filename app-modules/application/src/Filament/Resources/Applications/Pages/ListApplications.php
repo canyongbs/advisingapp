@@ -53,6 +53,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 class ListApplications extends ListRecords
 {
@@ -101,7 +102,13 @@ class ListApplications extends ListRecords
                         return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
-                                ->required(),
+                                ->required()
+                                ->string()
+                                ->maxLength(255)
+                                ->unique(
+                                    table: Application::class,
+                                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->whereNull('archived_at'),
+                                ),
                         ]);
                     })
                     ->beforeReplicaSaved(function (Application $replica, array $data): void {

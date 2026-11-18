@@ -38,30 +38,34 @@ namespace AdvisingApp\Alert\Filament\Pages;
 
 use AdvisingApp\Alert\Actions\FindGroupsUsingAlerts;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
+use AdvisingApp\Alert\Enums\EarlyAlertTab;
 use AdvisingApp\Alert\Jobs\RemoveAlertFiltersFromGroupsJob;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use App\Enums\Feature;
-use App\Filament\Clusters\EarlyAlerts;
+use App\Enums\NavigationGroup;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
-use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Url;
 use Throwable;
+use UnitEnum;
 
 /**
  * @property-read Schema $form
@@ -70,15 +74,16 @@ class ManageAlerts extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $cluster = EarlyAlerts::class;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
 
-    protected static ?string $navigationLabel = 'Alerts';
+    protected static ?string $navigationLabel = 'Early Alerts';
 
-    protected string $view = 'alert::filament.pages.manage-alerts';
+    protected static ?int $navigationSort = 60;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $title = 'Early Alerts';
 
-    protected static ?string $title = 'Student Alerts';
+    #[Url(as: 'tab')]
+    public ?string $activeTab = null;
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -94,20 +99,34 @@ class ManageAlerts extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        if (! Gate::check(Feature::EarlyAlert->getGateName())) {
-            return false;
-        }
-
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        return $user->can(['settings.view-any']);
+        return collect(EarlyAlertTab::cases())
+            ->contains(fn (EarlyAlertTab $tab): bool => $tab->canView());
     }
 
     public function mount(): void
     {
+        if (! EarlyAlertTab::tryFrom($this->activeTab ?? '')?->canView()) {
+            $this->activeTab = collect(EarlyAlertTab::cases())
+                ->first(fn (EarlyAlertTab $tab): bool => $tab->canView())?->value;
+        }
+
         $this->form->fill($this->getFormData());
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Tabs::make()
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        EarlyAlertTab::StudentAlerts->value => Tab::make(EarlyAlertTab::StudentAlerts->getLabel())
+                            ->visible(fn (): bool => EarlyAlertTab::StudentAlerts->canView())
+                            ->schema([
+                                $this->makeFormContentComponent('form', 'save'),
+                            ]),
+                    ]),
+            ]);
     }
 
     public function form(Schema $schema): Schema
@@ -120,9 +139,7 @@ class ManageAlerts extends Page implements HasForms
 
     public function save(): void
     {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
+        abort_unless(auth()->user()->can('settings.*.update'), 403);
 
         $data = $this->form->getState();
 
@@ -155,12 +172,30 @@ class ManageAlerts extends Page implements HasForms
             ->modalSubmitActionLabel('Proceed')
             ->modalCancelActionLabel('Cancel')
             ->action(function (): void {
+                abort_unless(auth()->user()->can('settings.*.update'), 403);
+
                 $this->performSave($this->pendingSaveData, dispatchFilterRemoval: true);
 
                 $this->pendingSaveData = [];
                 $this->alertIdsBeingDisabled = [];
                 $this->affectedGroupsData = [];
             });
+    }
+
+    protected function makeFormContentComponent(string $schema, string $submitHandler): Component
+    {
+        return Form::make([EmbeddedSchema::make($schema)])
+            ->id($schema)
+            ->livewireSubmitHandler($submitHandler)
+            ->footer([
+                Actions::make([
+                    Action::make($submitHandler)
+                        ->label('Save Changes')
+                        ->submit($submitHandler)
+                        ->keyBindings(['mod+s'])
+                        ->visible(fn (): bool => auth()->user()->can('settings.*.update')),
+                ]),
+            ]);
     }
 
     /**
@@ -339,27 +374,5 @@ class ManageAlerts extends Page implements HasForms
                     ...$innerSections,
                 ]),
         ];
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    protected function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return [
-            $this->getSaveFormAction(),
-        ];
-    }
-
-    protected function getSaveFormAction(): Action
-    {
-        return Action::make('save')
-            ->label('Save Changes')
-            ->submit('save')
-            ->keyBindings(['mod+s']);
     }
 }

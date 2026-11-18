@@ -39,7 +39,6 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
@@ -107,18 +106,6 @@ it('does not queue the `SendEventRegistrationFormEmailAutoReply` job when an att
     Queue::fake([SendEventRegistrationFormEmailAutoReply::class]);
 
     $submit($attendee, EventAttendeeStatus::NotAttending);
-
-    Queue::assertNotPushed(SendEventRegistrationFormEmailAutoReply::class);
-});
-
-it('does not queue the `SendEventRegistrationFormEmailAutoReply` job when the feature is inactive', function () use ($submit): void {
-    $attendee = EventAttendee::factory()->create(['status' => EventAttendeeStatus::Pending]);
-
-    AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-    Queue::fake([SendEventRegistrationFormEmailAutoReply::class]);
-
-    $submit($attendee, EventAttendeeStatus::Attending);
 
     Queue::assertNotPushed(SendEventRegistrationFormEmailAutoReply::class);
 });

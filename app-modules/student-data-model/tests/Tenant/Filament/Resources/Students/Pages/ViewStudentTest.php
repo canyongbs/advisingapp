@@ -63,7 +63,6 @@ use App\Features\MatchedEnrolledTermsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -610,8 +609,8 @@ describe('archiving', function (): void {
 
         $student->archive();
 
-        expect(fn () => Livewire::test(ViewStudent::class, ['record' => $student->getKey()]))
-            ->toThrow(ModelNotFoundException::class);
+        Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
+            ->assertNotFound();
     });
 
     it('returns not found for a direct URL to an archived student', function (): void {

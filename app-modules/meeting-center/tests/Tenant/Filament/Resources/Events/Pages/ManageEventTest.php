@@ -47,7 +47,6 @@ use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -374,25 +373,6 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
             ->and($form->emailAutoReply()->exists())->toBeFalse();
     });
 
-    it('does not move the email auto reply onto the new version when the feature is inactive', function () use ($getNewRegistrationFormVersion): void {
-        asSuperAdmin();
-
-        $event = Event::factory()->create();
-        $form = $event->eventRegistrationForm;
-        $emailAutoReply = $form->emailAutoReply()->firstOrFail();
-
-        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->call('saveRegistrationForm')
-            ->assertHasNoErrors();
-
-        $newVersion = $getNewRegistrationFormVersion($form);
-
-        expect($newVersion->emailAutoReply()->exists())->toBeFalse()
-            ->and($emailAutoReply->refresh()->form_id)->toBe($form->getKey());
-    });
-
     it('keeps saved details settings when the registration form is saved afterwards', function () use ($getNewRegistrationFormVersion): void {
         asSuperAdmin();
 
@@ -587,7 +567,7 @@ describe('registration form tab', function () use ($getNewRegistrationFormVersio
     });
 });
 
-describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
+describe('email auto reply tab', function () use ($richText): void {
     it('displays the email auto reply data', function () use ($richText): void {
         asSuperAdmin();
 
@@ -616,6 +596,8 @@ describe('email auto reply tab', function () use ($getTabLabels, $richText): voi
         $page = Livewire::withQueryParams(['tab' => 'email-auto-reply'])
             ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
             ->instance();
+
+        assert($page instanceof ManageEvent);
 
         $fieldNames = array_map(
             fn (Field $field): string => $field->getName(),
@@ -804,20 +786,6 @@ describe('email auto reply tab', function () use ($getTabLabels, $richText): voi
 
         expect(EventRegistrationForm::withoutGlobalScopes()->where('root_id', $form->root_id)->count())->toBe(1)
             ->and($form->fresh()?->archived_at)->toBeNull();
-    });
-
-    it('does not show or save the email auto reply when the feature is inactive', function () use ($getTabLabels): void {
-        asSuperAdmin();
-
-        $event = Event::factory()->create();
-
-        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-        $component = Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()]);
-
-        expect($getTabLabels($component))->not->toContain('Email Auto Reply');
-
-        $component->call('saveEmailAutoReply')->assertNotFound();
     });
 });
 

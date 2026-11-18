@@ -44,7 +44,6 @@ use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Features\MatchedEnrolledTermsFeature;
-use App\Features\StudentGroupFilterConsolidationFeature;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
@@ -387,8 +386,8 @@ it('summarizes a rule by its attribute', function (): void {
     expect($operator->getSummary())->toBe('Last Name starts with A');
 });
 
-it('offers the legacy filters until the consolidation migration has run', function (): void {
-    $constraintNames = fn (): array => collect(StudentsTable::getQueryBuilderConstraints())
+it('offers the consolidated filters instead of the removed legacy filters', function (): void {
+    $constraintNames = collect(StudentsTable::getQueryBuilderConstraints())
         ->flatten()
         ->map(fn (Constraint $constraint): string => $constraint->getName())
         ->all();
@@ -396,11 +395,6 @@ it('offers the legacy filters until the consolidation migration has run', functi
     $legacyNames = ['full_name', 'first', 'last', 'preferred', 'sisid', 'otherid', 'email', 'phone', 'address', 'address_2', 'enrollmentSisid'];
     $consolidatedNames = ['name', 'primaryPhone', 'primaryAddress'];
 
-    expect($constraintNames())->toContain(...$consolidatedNames)
-        ->and(array_intersect($constraintNames(), $legacyNames))->toBeEmpty();
-
-    StudentGroupFilterConsolidationFeature::deactivate();
-
-    expect($constraintNames())->toContain(...$legacyNames)
-        ->and(array_intersect($constraintNames(), $consolidatedNames))->toBeEmpty();
+    expect($constraintNames)->toContain(...$consolidatedNames)
+        ->and(array_intersect($constraintNames, $legacyNames))->toBeEmpty();
 });

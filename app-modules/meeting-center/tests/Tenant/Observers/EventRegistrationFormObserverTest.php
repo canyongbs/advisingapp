@@ -38,7 +38,6 @@ use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormEmailAutoReply;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 it('creates a disabled email auto reply for a new registration form', function (): void {
     expect(EventRegistrationFormEmailAutoReply::query()->count())->toBe(0);
@@ -64,12 +63,4 @@ it('does not create an email auto reply for a new version of a registration form
 
     expect($newVersion->emailAutoReply()->exists())->toBeFalse()
         ->and(EventRegistrationFormEmailAutoReply::query()->count())->toBe(1);
-});
-
-it('does not create an email auto reply when the feature is inactive', function (): void {
-    AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-    $event = Event::factory()->create();
-
-    expect($event->eventRegistrationForm->emailAutoReply()->exists())->toBeFalse();
 });

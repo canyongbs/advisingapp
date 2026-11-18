@@ -49,6 +49,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditApplicationSubmissionState extends EditRecord
 {
@@ -61,7 +62,12 @@ class EditApplicationSubmissionState extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
@@ -79,7 +85,7 @@ class EditApplicationSubmissionState extends EditRecord
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->helperText('Set this state as the default tab on the Submissions page.')
+                    ->helperText('Set this stage as the default tab on the Submissions page.')
                     ->hint(function (?ApplicationSubmissionState $record, ?bool $state): ?string {
                         if ($record?->is_default) {
                             return null;
@@ -97,7 +103,7 @@ class EditApplicationSubmissionState extends EditRecord
                             return null;
                         }
 
-                        return "The current default state is '{$currentDefault}', you are replacing it.";
+                        return "The current default stage is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger'),
             ]);

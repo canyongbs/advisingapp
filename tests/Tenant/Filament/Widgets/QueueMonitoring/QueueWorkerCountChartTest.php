@@ -58,6 +58,8 @@ it('charts each known queue under its name', function () {
 
     $chart = Livewire::test(QueueWorkerCountChart::class)->instance();
 
+    assert($chart instanceof QueueWorkerCountChart);
+
     $data = (fn (): array => $this->getData())->call($chart);
 
     expect(array_column($data['datasets'], 'label'))->toBe(['advisingapp-default', 'ad-hoc'])

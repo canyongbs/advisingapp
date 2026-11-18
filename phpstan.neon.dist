@@ -75,6 +75,12 @@ parameters:
                 - tests/*
                 - app-modules/*/tests/*
         -
+            message: '#Call to an undefined method Livewire\\Features\\SupportTesting\\Testable(<.+>)?::assert(Dont)?SeeLivewire\(\)\.#'
+            identifier: method.notFound
+            paths:
+                - tests/*
+                - app-modules/*/tests/*
+        -
             message: '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect\(\)#'
             identifier: method.notFound
             path: tests/Tenant/Unit/ArchTest.php

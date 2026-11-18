@@ -60,7 +60,7 @@ class ReportServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Livewire::component('report::live-filter-builder', LiveFilterBuilderComponent::class);
+        Livewire::component(LiveFilterBuilderComponent::class);
 
         Relation::morphMap([
             'report_user_access' => ReportUserAccess::class,

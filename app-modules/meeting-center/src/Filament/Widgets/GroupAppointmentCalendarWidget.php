@@ -41,6 +41,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class GroupAppointmentCalendarWidget extends FullCalendarWidget
@@ -55,11 +56,9 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
     public bool $hidePast = true;
 
     /**
-     * @param  array<string, mixed>  $info
-     *
      * @return array<int, mixed>
      */
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         $query = BookingGroupAppointment::query();
 
@@ -90,14 +89,6 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
                 ->start($appointment->starts_at)
                 ->end($appointment->ends_at))
             ->toArray();
-    }
-
-    /**
-     * @param  array<string, mixed>  $event
-     */
-    public function onEventClick(array $event): void
-    {
-        // No action on event click, to avoid error in the plugin
     }
 
     /**

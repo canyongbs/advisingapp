@@ -85,7 +85,11 @@ it('hydrates options saved as a list of label and value rows', function (): void
         ['label' => 'Canada', 'value' => 'ca'],
     ]]);
 
-    expect($host->instance()->form->getRawState()['options'])->toBe([
+    $hostInstance = $host->instance();
+
+    assert($hostInstance instanceof OptionsKeyValueTestHost);
+
+    expect($hostInstance->getSchema('form')?->getRawState()['options'])->toBe([
         ['key' => 'us', 'value' => 'United States'],
         ['key' => 'ca', 'value' => 'Canada'],
     ]);

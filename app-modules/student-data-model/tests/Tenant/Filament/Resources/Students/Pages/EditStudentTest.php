@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -88,8 +87,8 @@ describe('archiving', function (): void {
 
         $student->archive();
 
-        expect(fn () => Livewire::test(EditStudent::class, ['record' => $student->getKey()]))
-            ->toThrow(ModelNotFoundException::class);
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
+            ->assertNotFound();
     });
 
     it('explains what archiving does in the confirmation modal', function (): void {

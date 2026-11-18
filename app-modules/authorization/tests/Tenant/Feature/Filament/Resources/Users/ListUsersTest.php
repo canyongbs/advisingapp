@@ -43,7 +43,7 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Lab404\Impersonate\Services\ImpersonateManager;
+use Filament\Tables\Filters\SelectFilter;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -51,6 +51,7 @@ use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
@@ -133,7 +134,7 @@ it('allows super admin user to impersonate', function (): void {
         ->assertCountTableRecords(2)
         ->callTableAction(Impersonate::class, $user);
 
-    expect($user->isImpersonated())->toBeTrue()
+    expect(Impersonation::isImpersonating())->toBeTrue()
         ->and(auth()->id())->toBe($user->id);
 });
 
@@ -143,14 +144,14 @@ it('allows a user to leave impersonate', function (): void {
 
     $second = User::factory()->create();
 
-    app(ImpersonateManager::class)->take($first, $second);
+    Impersonation::enter($first, $second);
 
-    expect($second->isImpersonated())->toBeTrue()
+    expect(Impersonation::isImpersonating())->toBeTrue()
         ->and(auth()->id())->toBe($second->id);
 
-    $second->leaveImpersonation();
+    Impersonation::leave();
 
-    expect($second->isImpersonated())->toBeFalse()
+    expect(Impersonation::isImpersonating())->toBeFalse()
         ->and(auth()->id())->toBe($first->id);
 });
 
@@ -514,11 +515,17 @@ describe('enterprise ai', function (): void {
     it('excludes the `ConversationalAi` license from the license filter while Enterprise AI is disabled', function (): void {
         asSuperAdmin();
 
-        $licenseFilterOptions = fn (): array => Livewire::test(ListUsers::class)
-            ->instance()
-            ->getTable()
-            ->getFilter('licenses')
-            ->getOptions()['Licenses'];
+        $licenseFilterOptions = function (): array {
+            $listUsers = Livewire::test(ListUsers::class)->instance();
+
+            assert($listUsers instanceof ListUsers);
+
+            $licensesFilter = $listUsers->getTable()->getFilter('licenses');
+
+            assert($licensesFilter instanceof SelectFilter);
+
+            return $licensesFilter->getOptions()['Licenses'];
+        };
 
         expect($licenseFilterOptions())->toHaveKey(LicenseType::ConversationalAi->value);
 
