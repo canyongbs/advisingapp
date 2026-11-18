@@ -23,6 +23,7 @@
         "filepond-plugin-file-validate-type": "^1.2.9",
         "filepond-plugin-image-preview": "^4.6.12",
         "flowbite": "^3.0.0",
+        "happy-dom": "^21.0.4",
         "laravel-echo": "^1.14.0",
         "laravel-vite-plugin": "^3.2.1",
         "resolve-url-loader": "^5.0.0",

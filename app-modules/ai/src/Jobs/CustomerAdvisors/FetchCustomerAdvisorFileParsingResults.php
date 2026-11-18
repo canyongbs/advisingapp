@@ -42,13 +42,16 @@ use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
 use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Notifications\FileParsingFailedNotification;
+use App\Features\LlamaParseFileParsingFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
 class FetchCustomerAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
@@ -59,16 +62,46 @@ class FetchCustomerAdvisorFileParsingResults implements ShouldQueue, TenantAware
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 120;
+
     public int $uniqueFor = 900;
 
     public function __construct(
         protected CustomerAdvisorFile $file,
     ) {}
 
+    /**
+     * The uniqueness lock can expire while this job waits to run, so a second check of the same file may be queued.
+     * Only one runs at a time, and each checks the latest state of the file, so it is never notified about or deleted twice.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping($this->file->getKey()))->dontRelease()->expireAfter($this->timeout)];
+    }
+
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        if (filled($this->file->parsing_results)) {
+        $this->file->refresh();
+
+        // The file may have been removed or finished since this was dispatched. Reloading it ignores the soft-delete
+        // scope, so a removed file must be checked for here.
+        if ($this->file->trashed() || filled($this->file->parsing_results)) {
             return;
+        }
+
+        $isParsingStateTracked = LlamaParseFileParsingFeature::active();
+
+        if ($isParsingStateTracked) {
+            // A file that was still being parsed on V1 when V2 was enabled has no start time, so it is timed from when it was uploaded.
+            // TODO: Cleanup Task (llamaparse-file-parsing): remove this once no file is still being parsed on V1.
+            if (blank($this->file->parsing_started_at)) {
+                $this->file->parsing_started_at = $this->file->created_at;
+            }
+
+            $this->file->parsing_last_checked_at = now();
+            $this->file->saveParsingState();
         }
 
         try {
@@ -89,16 +122,36 @@ class FetchCustomerAdvisorFileParsingResults implements ShouldQueue, TenantAware
         }
 
         if (blank($result->parsingResults)) {
+            if ($isParsingStateTracked) {
+                $this->giveUpIfTimedOut();
+            }
+
             return;
         }
 
         $this->file->parsing_results = $result->parsingResults;
+        // Updates `updated_at`, so the vector store picks up the new parsing results.
         $this->file->save();
     }
 
     public function uniqueId(): string
     {
         return $this->file->id;
+    }
+
+    protected function giveUpIfTimedOut(): void
+    {
+        if ($this->file->parsing_started_at?->isAfter(now()->subHours(2))) {
+            return;
+        }
+
+        Log::warning('LlamaParse file parsing timed out.', [
+            'file_id' => $this->file->file_id,
+            'parsing_started_at' => $this->file->parsing_started_at?->toIso8601String(),
+        ]);
+
+        $this->notifyUser(FileParsingError::Generic);
+        $this->file->delete();
     }
 
     protected function notifyUser(FileParsingError $error): void

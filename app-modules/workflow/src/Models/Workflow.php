@@ -38,18 +38,23 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Database\Factories\WorkflowFactory;
+use AdvisingApp\Workflow\Observers\WorkflowObserver;
+use App\Features\WorkflowNameCitextFeature;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperWorkflow
  */
+#[ObservedBy(WorkflowObserver::class)]
 class Workflow extends Model implements Auditable
 {
     use UsesTenantConnection;
@@ -69,6 +74,29 @@ class Workflow extends Model implements Auditable
     protected $casts = [
         'is_enabled' => 'boolean',
     ];
+
+    public static function generateUniqueName(string $baseName, Model $related): string
+    {
+        if (! WorkflowNameCitextFeature::active()) {
+            return $baseName;
+        }
+
+        $name = $baseName;
+        $counter = 2;
+
+        while (
+            static::query()
+                ->where('related_type', $related->getMorphClass())
+                ->where('related_id', $related->getKey())
+                ->where('name', Str::lower($name))
+                ->exists()
+        ) {
+            $name = "{$baseName}-{$counter}";
+            $counter++;
+        }
+
+        return $name;
+    }
 
     /**
      * @return BelongsTo<WorkflowTrigger, $this>

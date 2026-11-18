@@ -61,4 +61,17 @@ class AiMessageFileFactory extends Factory
             'parsing_results' => $this->faker->text(),
         ];
     }
+
+    /**
+     * A chat file is saved as soon as it is submitted for parsing, before it is sent with a message.
+     */
+    public function parsingInProgress(): self
+    {
+        return $this->state([
+            'message_id' => null,
+            'file_id' => 'pjb-' . $this->faker->uuid(),
+            'mime_type' => 'application/pdf',
+            'parsing_results' => null,
+        ]);
+    }
 }

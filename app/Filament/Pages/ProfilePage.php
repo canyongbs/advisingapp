@@ -48,7 +48,6 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -243,7 +242,7 @@ abstract class ProfilePage extends Page
     }
 
     /**
-     * @return array<string, Grid>
+     * @return array<int, Flex>
      */
     protected function getHoursForDays(string $key): array
     {

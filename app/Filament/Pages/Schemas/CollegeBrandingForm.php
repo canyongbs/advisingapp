@@ -34,41 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Theme\Filament\Pages;
+namespace App\Filament\Pages\Schemas;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Models\User;
-use App\Settings\CollegeBrandingSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
-class ManageCollegeBrandingSettings extends SettingsPage
+class CollegeBrandingForm
 {
-    protected static ?string $navigationLabel = 'Branding';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = CollegeBrandingSettings::class;
-
-    protected static ?string $title = 'Branding';
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -95,41 +71,6 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->visible(fn (Get $get): mixed => $get('is_enabled'))
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        // Save the settings first
-        parent::save();
-
-        // Retrieve the updated settings
-        $settings = app(CollegeBrandingSettings::class);
-
-        // Check the specific field
-        if (! $settings->dismissible) {
-            User::query()->update(['is_branding_bar_dismissed' => false]);
-        }
-    }
-
-    public function getRedirectUrl(): ?string
-    {
-        return ManageCollegeBrandingSettings::getUrl();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+            ->columns(2);
     }
 }

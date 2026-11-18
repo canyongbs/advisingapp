@@ -34,63 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Ai\Models\Concerns;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Models\User;
-use App\Settings\DisplaySettings;
-use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
-
-class ManageDisplaySettings extends SettingsPage
+trait SavesLlamaParseParsingState
 {
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
     /**
-     * @return array<Action | ActionGroup>
+     * Saves changes to the parsing state without updating `updated_at` or firing model events, such as recording an
+     * audit or the user who last updated the record. The vector store re-uploads a link or file whenever its
+     * `updated_at` is newer than its vector store record, so only storing new parsing results should update it.
      */
-    public function getFormActions(): array
+    public function saveParsingState(): void
     {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+        static::withoutTimestamps(fn (): bool => $this->saveQuietly());
     }
 }
