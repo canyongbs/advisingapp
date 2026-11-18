@@ -57,3 +57,15 @@ You can see an example of this in the `tests/TenantMigrationTests.php` changes i
 ## Temporary Nature
 
 These data migrations are temporary by design. Once the migration has been deployed and executed across all tenants, the migration file and its corresponding test can be removed in a subsequent release cycle.
+
+## Renaming a Constraint or Changing Its Stored Values
+
+Renaming a constraint, or changing what its stored values mean, breaks existing Groups in the same way as removing it, and it also has to survive the window between deploying the code and running the migration. So:
+
+1. Gate the new constraint behind a Feature Flag, and keep registering the old constraint, under its old name, while the flag is inactive.
+2. In a temporary data migration, rewrite the stored rules (the `type`, and the `settings` values if their meaning changes), and activate the flag **in the same transaction**, so a stored rule never names a constraint that is not registered.
+3. Make `down()` deactivate the flag and rename the rules back. If the old values cannot be rebuilt from the new ones, say so in `down()`'s docblock.
+
+Values are stored as the option keys the constraint offered when the Group was saved, so a new constraint should keep the same format (e.g. lowercased names) where it can, and the migration should map each old value to its new equivalent rather than dropping it.
+
+For a real-world example, see the migration `2026_11_16_162156_tmp_data_base_enrolled_term_filters_on_matched_terms.php` in `app-modules/group/database/migrations/` (ADVAPP-3066), which renames the First / Most Recent Enrolled Term constraints and replaces their saved semester names with the names of the matched terms.

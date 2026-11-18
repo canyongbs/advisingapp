@@ -126,3 +126,18 @@ describe('term', function () use ($createEnrollment): void {
             ->and($enrollments[$unmatchedEnrollment->getKey()]->term)->toBeNull();
     });
 });
+
+describe('getTermDisplayName', function () use ($createEnrollment): void {
+    it('is the display name of the matched term', function () use ($createEnrollment): void {
+        $term = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
+        $enrollment = $createEnrollment(['sis_term_id' => $term->sis_term_id, 'semester_name' => 'Fall 2020']);
+
+        expect($enrollment->getTermDisplayName())->toBe('FA-20 (Sep 2020)');
+    });
+
+    it('is the semester name when no term is matched', function () use ($createEnrollment): void {
+        $enrollment = $createEnrollment(['sis_term_id' => null, 'semester_name' => 'Fall 2020']);
+
+        expect($enrollment->getTermDisplayName())->toBe('Fall 2020');
+    });
+});

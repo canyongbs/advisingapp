@@ -37,10 +37,14 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables;
 
 use AdvisingApp\Alert\Filament\Filters\AlertStatusConstraint;
+use AdvisingApp\StudentDataModel\Filament\Filters\EnrolledTermConstraint;
 use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByFirstTerm;
+use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\MatchedEnrolledTermsFeature;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\AttributeTextOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\PhoneNumberPartOperator;
@@ -61,6 +65,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
@@ -196,9 +201,9 @@ class StudentsTable
                     ->label('Enrollment Earned')
                     ->relationship('enrollments', 'unt_earned')
                     ->icon(Heroicon::CheckBadge),
-                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
+                self::makeFirstEnrolledTermConstraint()
                     ->icon(Heroicon::CalendarDays),
-                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
+                self::makeMostRecentEnrolledTermConstraint()
                     ->icon(Heroicon::CalendarDays),
                 TermAttributeConstraint::make('termAttribute'),
             ],
@@ -352,20 +357,42 @@ class StudentsTable
             ]);
     }
 
-    private static function createEnrollmentTermConstraint(string $field, string $label): ExistingValuesSelectConstraint
+    private static function makeFirstEnrolledTermConstraint(): SelectConstraint
     {
-        return ExistingValuesSelectConstraint::make($field)
-            ->label($label)
-            ->multiple()
-            ->options(function () use ($field) {
-                [$relationship, $column] = explode('.', $field, 2);
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'firstTermEnrollment', 'First Enrolled Term');
+        }
 
+        return EnrolledTermConstraint::make('firstEnrolledTerm', new OrderByFirstTerm())
+            ->label('First Enrolled Term');
+    }
+
+    private static function makeMostRecentEnrolledTermConstraint(): SelectConstraint
+    {
+        if (! MatchedEnrolledTermsFeature::active()) {
+            return self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'mostRecentTermEnrollment', 'Most Recent Enrolled Term');
+        }
+
+        return EnrolledTermConstraint::make('mostRecentEnrolledTerm', new OrderByMostRecentTerm())
+            ->label('Most Recent Enrolled Term');
+    }
+
+    /**
+     * The name is stored in saved groups' filters, so it is kept even though it no longer names the relationship.
+     */
+    private static function createEnrollmentTermConstraint(string $name, string $relationship, string $label): ExistingValuesSelectConstraint
+    {
+        return ExistingValuesSelectConstraint::make($name)
+            ->label($label)
+            ->relationship($relationship, 'semester_name')
+            ->multiple()
+            ->options(function () use ($relationship) {
                 return Student::query()
                     ->tap(new WithoutArchivedStudents())
                     ->join('enrollments', function (JoinClause $join) use ($relationship): void {
                         $join->on('students.sisid', '=', 'enrollments.sisid');
 
-                        if ($relationship === 'firstEnrollmentTerm') {
+                        if ($relationship === 'firstTermEnrollment') {
                             $join->whereRaw('enrollments.start_date = (
                                 SELECT MIN(e2.start_date)
                                 FROM enrollments e2
@@ -373,7 +400,7 @@ class StudentsTable
                                 AND e2.semester_name IS NOT NULL
                                 AND e2.start_date IS NOT NULL
                             )');
-                        } elseif ($relationship === 'mostRecentEnrollmentTerm') {
+                        } elseif ($relationship === 'mostRecentTermEnrollment') {
                             $join->whereRaw('enrollments.start_date = (
                                 SELECT MAX(e2.start_date)
                                 FROM enrollments e2
@@ -383,10 +410,10 @@ class StudentsTable
                             )');
                         }
                     })
-                    ->whereNotNull("enrollments.{$column}")
+                    ->whereNotNull('enrollments.semester_name')
                     ->distinct()
-                    ->orderBy("enrollments.{$column}")
-                    ->pluck("enrollments.{$column}")
+                    ->orderBy('enrollments.semester_name')
+                    ->pluck('enrollments.semester_name')
                     ->filter()
                     ->unique()
                     ->sort()

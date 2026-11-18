@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Term;
+use App\Features\MatchedEnrolledTermsFeature;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 use function Tests\asSuperAdmin;
 
@@ -88,7 +94,9 @@ $enrolledTermConstraintOptions = function (string $name): array {
     return $constraint->getOptions();
 };
 
-it('does not offer enrolled terms that only archived students have', function () use ($enrolledTermConstraintOptions): void {
+it('does not offer enrolled terms that only archived students have when the feature is inactive', function () use ($enrolledTermConstraintOptions): void {
+    MatchedEnrolledTermsFeature::deactivate();
+
     asSuperAdmin();
 
     $active = Student::factory()->create();
@@ -112,6 +120,176 @@ it('does not offer enrolled terms that only archived students have', function ()
     expect($enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
         ->toContain('Active Term')
         ->not->toContain('Archived Only Term');
+});
+
+describe('enrolled term constraints', function () use ($enrolledTermConstraintOptions): void {
+    /**
+     * @param array<string> $values
+     *
+     * @return array<int, string>
+     */
+    $studentsMatchingEnrolledTerms = fn (string $type, array $values, bool $isInverse = false): array => QueryBuilderScope::make(
+        [
+            'rule' => [
+                'type' => $type,
+                'data' => [
+                    'operator' => $isInverse ? 'is.inverse' : 'is',
+                    'settings' => ['values' => $values],
+                ],
+            ],
+        ],
+        Arr::flatten(StudentsTable::getQueryBuilderConstraints()),
+    )(Student::query())
+        ->pluck((new Student())->getKeyName())
+        ->all();
+
+    /**
+     * @return array{firstFallSecondSpring: Student, firstSpringSecondFall: Student, withoutMatchedTerms: Student, withoutEnrollments: Student}
+     */
+    $createStudents = function (): array {
+        $earliestTerm = Term::factory()->create(['name' => 'SU-19', 'start_date' => '2019-06-01']);
+        $fallTerm = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
+        $springTerm = Term::factory()->create(['name' => 'SP-21', 'start_date' => '2021-01-15']);
+        $laterFallTerm = Term::factory()->create(['name' => 'FA-21', 'start_date' => '2021-09-01']);
+
+        $enroll = fn (Student $student, array $attributes): Enrollment => Enrollment::factory()->for($student, 'student')->create([
+            'id' => (string) Str::uuid(),
+            'sis_term_id' => null,
+            'semester_name' => null,
+            ...$attributes,
+        ]);
+
+        $firstFallSecondSpring = Student::factory()->create();
+        $enroll($firstFallSecondSpring, ['sis_term_id' => $earliestTerm->sis_term_id])->delete();
+        $enroll($firstFallSecondSpring, ['semester_name' => 'Unmatched', 'start_date' => '2000-01-01']);
+        $enroll($firstFallSecondSpring, ['sis_term_id' => $fallTerm->sis_term_id]);
+        $enroll($firstFallSecondSpring, ['semester_name' => 'sp-21']);
+
+        $firstSpringSecondFall = Student::factory()->create();
+        $enroll($firstSpringSecondFall, ['sis_term_id' => $springTerm->sis_term_id]);
+        $enroll($firstSpringSecondFall, ['sis_term_id' => $laterFallTerm->sis_term_id]);
+
+        $withoutMatchedTerms = Student::factory()->create();
+        $enroll($withoutMatchedTerms, ['semester_name' => 'Unmatched', 'semester_code' => '4201', 'start_date' => '2020-09-01']);
+
+        return [
+            'firstFallSecondSpring' => $firstFallSecondSpring,
+            'firstSpringSecondFall' => $firstSpringSecondFall,
+            'withoutMatchedTerms' => $withoutMatchedTerms,
+            'withoutEnrollments' => Student::factory()->create(),
+        ];
+    };
+
+    it('offers the names of the terms, most recent first, listing names differing only in case once', function () use ($enrolledTermConstraintOptions): void {
+        Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
+        Term::factory()->create(['name' => 'fa-20', 'start_date' => '2020-08-24']);
+        Term::factory()->create(['name' => 'SP-21', 'start_date' => '2021-01-15']);
+        Term::factory()->withoutSisTermId()->create(['name' => 'Manual Term']);
+        Term::factory()->create(['name' => 'Deleted Term', 'deleted_at' => now()]);
+
+        $expectedOptions = [
+            'sp-21' => 'SP-21',
+            'fa-20' => 'FA-20',
+            'manual term' => 'Manual Term',
+        ];
+
+        expect($enrolledTermConstraintOptions('firstEnrolledTerm'))->toBe($expectedOptions)
+            ->and($enrolledTermConstraintOptions('mostRecentEnrolledTerm'))->toBe($expectedOptions);
+    });
+
+    it('filters by the name of the first matched term, ignoring case', function () use ($studentsMatchingEnrolledTerms, $createStudents): void {
+        ['firstFallSecondSpring' => $firstFallSecondSpring, 'firstSpringSecondFall' => $firstSpringSecondFall] = $createStudents();
+
+        expect($studentsMatchingEnrolledTerms('firstEnrolledTerm', ['fa-20']))
+            ->toBe([$firstFallSecondSpring->getKey()])
+            ->and($studentsMatchingEnrolledTerms('firstEnrolledTerm', ['SP-21']))
+            ->toBe([$firstSpringSecondFall->getKey()])
+            ->and($studentsMatchingEnrolledTerms('firstEnrolledTerm', ['su-19', 'fa-21']))
+            ->toBe([]);
+    });
+
+    it('filters by the name of the most recent matched term, ignoring case', function () use ($studentsMatchingEnrolledTerms, $createStudents): void {
+        ['firstFallSecondSpring' => $firstFallSecondSpring, 'firstSpringSecondFall' => $firstSpringSecondFall] = $createStudents();
+
+        expect($studentsMatchingEnrolledTerms('mostRecentEnrolledTerm', ['sp-21']))
+            ->toBe([$firstFallSecondSpring->getKey()])
+            ->and($studentsMatchingEnrolledTerms('mostRecentEnrolledTerm', ['FA-21']))
+            ->toBe([$firstSpringSecondFall->getKey()]);
+    });
+
+    it('excludes students whose enrolled term has one of the names, leaving out students without a matched term', function () use ($studentsMatchingEnrolledTerms, $createStudents): void {
+        ['firstFallSecondSpring' => $firstFallSecondSpring, 'firstSpringSecondFall' => $firstSpringSecondFall] = $createStudents();
+
+        expect($studentsMatchingEnrolledTerms('firstEnrolledTerm', ['fa-20'], isInverse: true))
+            ->toBe([$firstSpringSecondFall->getKey()])
+            ->and($studentsMatchingEnrolledTerms('mostRecentEnrolledTerm', ['sp-21'], isInverse: true))
+            ->toBe([$firstSpringSecondFall->getKey()]);
+    });
+
+    it('ignores a selection that is not a list of term names, as live report filters come from the URL', function () use ($createStudents): void {
+        ['firstFallSecondSpring' => $firstFallSecondSpring, 'firstSpringSecondFall' => $firstSpringSecondFall, 'withoutMatchedTerms' => $withoutMatchedTerms, 'withoutEnrollments' => $withoutEnrollments] = $createStudents();
+
+        $students = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, [
+            'queryBuilder' => [
+                'rules' => [
+                    'aBcD' => [
+                        'type' => 'firstEnrolledTerm',
+                        'data' => ['operator' => 'is', 'settings' => ['values' => 'fa-20']],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect($students->pluck('sisid')->all())->toEqualCanonicalizing([
+            $firstFallSecondSpring->getKey(),
+            $firstSpringSecondFall->getKey(),
+            $withoutMatchedTerms->getKey(),
+            $withoutEnrollments->getKey(),
+        ]);
+    });
+
+    it('resolves the members of a saved group', function () use ($createStudents): void {
+        asSuperAdmin();
+
+        ['firstFallSecondSpring' => $firstFallSecondSpring] = $createStudents();
+
+        $group = Group::factory()->student()->dynamic()->create([
+            'filters' => [
+                'queryBuilder' => [
+                    'rules' => [
+                        'aBcD' => [
+                            'type' => 'firstEnrolledTerm',
+                            'data' => ['operator' => 'is', 'settings' => ['values' => ['fa-20']]],
+                        ],
+                        'eFgH' => [
+                            'type' => 'mostRecentEnrolledTerm',
+                            'data' => ['operator' => 'is', 'settings' => ['values' => ['sp-21']]],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect(app(TranslateGroupFilters::class)->execute($group)->pluck('sisid')->all())
+            ->toBe([$firstFallSecondSpring->getKey()]);
+    });
+
+    it('filters by the semester name of the first and most recent enrollments when the feature is inactive', function () use ($studentsMatchingEnrolledTerms): void {
+        MatchedEnrolledTermsFeature::deactivate();
+
+        $student = Student::factory()->create();
+        Enrollment::factory()->for($student, 'student')->create(['semester_code' => '4201', 'semester_name' => 'Fall 2020', 'start_date' => '2020-09-01']);
+        Enrollment::factory()->for($student, 'student')->create(['semester_code' => '4202', 'semester_name' => 'Spring 2021', 'start_date' => '2021-01-15']);
+
+        Student::factory()->create();
+
+        expect($studentsMatchingEnrolledTerms('firstEnrollmentTerm.semester_name', ['fall 2020']))
+            ->toBe([$student->getKey()])
+            ->and($studentsMatchingEnrolledTerms('mostRecentEnrollmentTerm.semester_name', ['spring 2021']))
+            ->toBe([$student->getKey()])
+            ->and($studentsMatchingEnrolledTerms('firstEnrollmentTerm.semester_name', ['spring 2021']))
+            ->toBe([]);
+    });
 });
 
 it('filters by the selected name attribute', function (string $attribute, string $column) use ($studentsMatchingRule): void {

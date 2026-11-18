@@ -146,8 +146,8 @@ class ListStudentsController
                 AllowedInclude::relationship('primary_email_address', 'primaryEmailAddress'),
                 AllowedInclude::relationship('phone_numbers', 'phoneNumbers'),
                 AllowedInclude::relationship('primary_phone_number', 'primaryPhoneNumber'),
-                AllowedInclude::relationship('first_enrollment_term', 'firstEnrollmentTerm'),
-                AllowedInclude::relationship('most_recent_enrollment_term', 'mostRecentEnrollmentTerm'),
+                AllowedInclude::relationship('first_enrollment_term', 'firstTermEnrollment'),
+                AllowedInclude::relationship('most_recent_enrollment_term', 'mostRecentTermEnrollment'),
             ])
             ->allowedSorts([
                 AllowedSort::field('sisid'),

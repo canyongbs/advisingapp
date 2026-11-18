@@ -34,9 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use AdvisingApp\StudentDataModel\Models\Term;
+use App\Features\MatchedEnrolledTermsFeature;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 use function Tests\asSuperAdmin;
 
@@ -145,5 +149,90 @@ describe('archiving', function (): void {
 
         expect($student->audits()->where('event', 'unarchived')->count())->toBe(1)
             ->and($student->audits()->where('event', 'updated')->count())->toBe($updatedAuditCount);
+    });
+});
+
+describe('term enrollments', function (): void {
+    $createEnrollment = fn (Student $student, array $attributes): Enrollment => Enrollment::factory()->for($student, 'student')->create([
+        'id' => (string) Str::uuid(),
+        'sis_term_id' => null,
+        'semester_code' => null,
+        'semester_name' => null,
+        'start_date' => null,
+        ...$attributes,
+    ]);
+
+    it('picks the enrollments in the first and most recent matched terms, by term rather than enrollment start date', function () use ($createEnrollment): void {
+        $student = Student::factory()->create();
+
+        $earliestTerm = Term::factory()->create(['start_date' => '2019-09-01']);
+        $firstTerm = Term::factory()->create(['start_date' => '2020-09-01']);
+        $mostRecentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
+        Term::factory()->withoutSisTermId()->create(['name' => 'Manual Term']);
+
+        $createEnrollment($student, ['sis_term_id' => $earliestTerm->sis_term_id])->delete();
+        $firstTermEnrollment = $createEnrollment($student, ['sis_term_id' => $firstTerm->sis_term_id, 'start_date' => '2022-01-01']);
+        $mostRecentTermEnrollment = $createEnrollment($student, ['sis_term_id' => $mostRecentTerm->sis_term_id, 'start_date' => '2018-01-01']);
+        $createEnrollment($student, ['semester_name' => 'manual term']);
+        $createEnrollment($student, ['semester_code' => '4201', 'semester_name' => 'Unmatched', 'start_date' => '2000-01-01']);
+        $createEnrollment($student, ['semester_code' => '4299', 'semester_name' => 'Unmatched', 'start_date' => '2030-01-01']);
+
+        expect($student->firstTermEnrollment->getKey())->toBe($firstTermEnrollment->getKey())
+            ->and($student->mostRecentTermEnrollment->getKey())->toBe($mostRecentTermEnrollment->getKey());
+    });
+
+    it('falls back to the enrollments with the earliest and latest start dates and a semester code when none is matched to a term', function () use ($createEnrollment): void {
+        $student = Student::factory()->create();
+
+        $createEnrollment($student, ['semester_name' => 'Unmatched', 'start_date' => '2000-01-01']);
+        $earliestEnrollment = $createEnrollment($student, ['semester_code' => '4201', 'start_date' => '2020-01-01']);
+        $latestEnrollment = $createEnrollment($student, ['semester_code' => '4203', 'start_date' => '2021-01-01']);
+        $createEnrollment($student, ['semester_code' => '4205']);
+
+        expect($student->firstTermEnrollment->getKey())->toBe($earliestEnrollment->getKey())
+            ->and($student->mostRecentTermEnrollment->getKey())->toBe($latestEnrollment->getKey());
+    });
+
+    it('eager loads the term enrollments of each student', function () use ($createEnrollment): void {
+        $firstTerm = Term::factory()->create(['start_date' => '2020-09-01']);
+        $mostRecentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
+
+        $student = Student::factory()->create();
+        $firstTermEnrollment = $createEnrollment($student, ['sis_term_id' => $firstTerm->sis_term_id]);
+        $mostRecentTermEnrollment = $createEnrollment($student, ['sis_term_id' => $mostRecentTerm->sis_term_id]);
+
+        $otherStudent = Student::factory()->create();
+        $otherStudentEnrollment = $createEnrollment($otherStudent, ['sis_term_id' => $firstTerm->sis_term_id]);
+
+        $studentWithoutEnrollments = Student::factory()->create();
+
+        $students = Student::query()
+            ->with(['firstTermEnrollment', 'mostRecentTermEnrollment'])
+            ->get()
+            ->keyBy('sisid');
+
+        expect($students[$student->sisid]->firstTermEnrollment->getKey())->toBe($firstTermEnrollment->getKey())
+            ->and($students[$student->sisid]->mostRecentTermEnrollment->getKey())->toBe($mostRecentTermEnrollment->getKey())
+            ->and($students[$otherStudent->sisid]->firstTermEnrollment->getKey())->toBe($otherStudentEnrollment->getKey())
+            ->and($students[$otherStudent->sisid]->mostRecentTermEnrollment->getKey())->toBe($otherStudentEnrollment->getKey())
+            ->and($students[$studentWithoutEnrollments->sisid]->firstTermEnrollment)->toBeNull()
+            ->and($students[$studentWithoutEnrollments->sisid]->mostRecentTermEnrollment)->toBeNull();
+    });
+
+    it('picks the enrollments with the earliest and latest start dates and a semester code when the feature is inactive', function () use ($createEnrollment): void {
+        MatchedEnrolledTermsFeature::deactivate();
+
+        $student = Student::factory()->create();
+
+        $firstTerm = Term::factory()->create(['start_date' => '2020-09-01']);
+        $mostRecentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
+
+        $createEnrollment($student, ['sis_term_id' => $firstTerm->sis_term_id, 'start_date' => '2022-01-01']);
+        $createEnrollment($student, ['sis_term_id' => $mostRecentTerm->sis_term_id, 'start_date' => '2018-01-01']);
+        $earliestEnrollment = $createEnrollment($student, ['semester_code' => '4201', 'start_date' => '2019-01-01']);
+        $latestEnrollment = $createEnrollment($student, ['semester_code' => '4203', 'start_date' => '2023-01-01']);
+
+        expect($student->firstTermEnrollment->getKey())->toBe($earliestEnrollment->getKey())
+            ->and($student->mostRecentTermEnrollment->getKey())->toBe($latestEnrollment->getKey());
     });
 });

@@ -96,7 +96,7 @@ class EnrollmentsRelationManager extends RelationManager
                         ->label('Semester Code'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
-                        ->state(fn (Enrollment $record): ?string => $record->term?->getDisplayName() ?? $record->semester_name),
+                        ->state(fn (Enrollment $record): ?string => $record->getTermDisplayName()),
                     TextEntry::make('sis_term_id')
                         ->label('SIS Term ID'),
                     TextEntry::make('start_date')

@@ -42,10 +42,12 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder;
 use AdvisingApp\Report\Filament\Tables\ReportGroupsTable;
+use AdvisingApp\StudentDataModel\Actions\ConvertLegacyEnrolledTermRules;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
@@ -85,6 +87,43 @@ trait HasPopulationFilter
      * Provided by {@see HasGroupModel}.
      */
     abstract public function groupModel(): ?GroupModel;
+
+    /**
+     * A live filter in the URL can predate changes to the group filters, which would otherwise be skipped and widen the population,
+     * so known legacy rules are converted, and a live filter that still uses a filter that no longer exists is cleared.
+     */
+    public function mountHasPopulationFilter(): void
+    {
+        if (($this->getPopulationType() !== 'live') || (! $this->hasLiveFilters($this->getSelectedLiveFilters()))) {
+            return;
+        }
+
+        $liveFilters = $this->getSelectedLiveFilters();
+
+        if ($this->getPopulationGroupModel() === GroupModel::Student) {
+            // TODO: Cleanup Task (matched-enrolled-terms): Remove this conversion and `ConvertLegacyEnrolledTermRules`, leaving the unavailable filter check below to handle any remaining legacy rules.
+            $liveFilters['queryBuilder']['rules'] = app(ConvertLegacyEnrolledTermRules::class)($liveFilters['queryBuilder']['rules']);
+        }
+
+        $availableTypes = array_map(
+            fn (Constraint $constraint): string => $constraint->getName(),
+            $this->getPopulationGroupModel()->queryBuilderConstraints(),
+        );
+
+        if (filled(array_diff($this->getRuleTypes($liveFilters['queryBuilder']['rules']), $availableTypes))) {
+            $this->population = null;
+
+            Notification::make()
+                ->title('Live filter removed')
+                ->body('This report\'s live filter uses filters that are no longer available, so it has been removed. Please build the live filter again.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $this->population['liveFilters'] = $liveFilters;
+    }
 
     /**
      * The payload handed to widgets (via `pageFilters`) so they can apply the population filter.
@@ -150,6 +189,40 @@ trait HasPopulationFilter
         $rules = data_get($filters, 'queryBuilder.rules');
 
         return is_array($rules) && filled($rules);
+    }
+
+    /**
+     * The types of the rules, including rules nested inside "or" blocks.
+     *
+     * @param array<array-key, mixed> $rules
+     *
+     * @return array<string>
+     */
+    protected function getRuleTypes(array $rules): array
+    {
+        $types = [];
+
+        foreach ($rules as $rule) {
+            if (! is_array($rule)) {
+                continue;
+            }
+
+            $type = $rule['type'] ?? null;
+
+            if ($type !== 'or') {
+                $types[] = is_string($type) ? $type : '';
+
+                continue;
+            }
+
+            foreach ($rule['data']['groups'] ?? [] as $orGroup) {
+                if (is_array($orGroup['rules'] ?? null)) {
+                    $types = [...$types, ...$this->getRuleTypes($orGroup['rules'])];
+                }
+            }
+        }
+
+        return array_values(array_unique($types));
     }
 
     protected function getSelectSavedGroupAction(): Action
