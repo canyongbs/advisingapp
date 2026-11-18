@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Concern\Filament\Resources\Concerns\Pages\ListConcerns;
 use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -46,6 +47,30 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Tests\asSuperAdmin;
+
+it('lists only concerns with the default status by default', function (): void {
+    asSuperAdmin();
+
+    $defaultStatus = ConcernStatus::factory()->create(['is_default' => true]);
+
+    $defaultStatusConcerns = Concern::factory()->count(2)->for($defaultStatus, 'status')->create();
+    $otherStatusConcerns = Concern::factory()->count(2)->create();
+
+    Livewire::test(ListConcerns::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords($defaultStatusConcerns)
+        ->assertCanNotSeeTableRecords($otherStatusConcerns);
+});
+
+it('defaults the status of a new concern to the default status', function (): void {
+    asSuperAdmin();
+
+    $defaultStatus = ConcernStatus::factory()->create(['is_default' => true]);
+
+    Livewire::test(ListConcerns::class)
+        ->mountAction(CreateAction::class)
+        ->assertSchemaStateSet(['status_id' => $defaultStatus->getKey()]);
+});
 
 it('hides the delete bulk action for users without the delete permission', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();

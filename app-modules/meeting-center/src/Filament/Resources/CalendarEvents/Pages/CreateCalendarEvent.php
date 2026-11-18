@@ -51,6 +51,26 @@ class CreateCalendarEvent extends CreateRecord
 {
     protected static string $resource = CalendarEventResource::class;
 
+    public function mount(): void
+    {
+        $this->authorizeAccess();
+
+        $user = auth()->user();
+
+        assert($user instanceof User);
+
+        $calendar = $user->calendar;
+
+        // The list page prompts the user to connect and select a calendar, which creating an event depends on.
+        if (blank($calendar) || blank($calendar->oauth_token) || blank($calendar->provider_id)) {
+            $this->redirect(CalendarEventResource::getUrl('index'));
+
+            return;
+        }
+
+        parent::mount();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema->components([

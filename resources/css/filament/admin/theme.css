@@ -39,10 +39,6 @@
 
 @config '../../../../tailwind.config.js';
 
-.min-w-kanban {
-    min-width: 20rem;
-}
-
 /* Bright Sun */
 .dark {
     --primary-50: rgb(255, 251, 235);
