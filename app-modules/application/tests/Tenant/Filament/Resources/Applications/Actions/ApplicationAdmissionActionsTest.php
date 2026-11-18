@@ -51,13 +51,13 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('update_submission_state action is labeled Update State', function (): void {
+test('update_submission_state action is labeled Update Stage', function (): void {
     $actions = ApplicationAdmissionActions::get();
 
     $action = collect($actions)->firstWhere(fn (Action $action): bool => $action->getName() === 'update_submission_state');
 
     expect($action)->not->toBeNull();
-    expect($action->getLabel())->toBe('Update State');
+    expect($action->getLabel())->toBe('Update Stage');
 });
 
 test('update_submission_state action is visible when submission state has allowed transitions', function (): void {

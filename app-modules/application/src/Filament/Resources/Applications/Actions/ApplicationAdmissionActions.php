@@ -59,10 +59,10 @@ class ApplicationAdmissionActions
         return [
             Action::make('update_submission_state')
                 ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('update', $record))
-                ->label('Update State')
+                ->label('Update Stage')
                 ->form(fn (ApplicationSubmission $record): array => [
                     Select::make('state_id')
-                        ->label('Submission State')
+                        ->label('Submission Stage')
                         ->relationship(
                             name: 'state',
                             titleAttribute: 'name',
@@ -95,7 +95,7 @@ class ApplicationAdmissionActions
                         report($exception);
 
                         Notification::make()
-                            ->title('Failed to update submission state')
+                            ->title('Failed to update submission stage')
                             ->danger()
                             ->send();
                     }

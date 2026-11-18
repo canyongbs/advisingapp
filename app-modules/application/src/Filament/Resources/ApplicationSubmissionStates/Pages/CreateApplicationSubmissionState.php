@@ -76,7 +76,7 @@ class CreateApplicationSubmissionState extends CreateRecord
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->helperText('Set this state as the default tab on the Submissions page.')
+                    ->helperText('Set this stage as the default tab on the Submissions page.')
                     ->hint(function (?bool $state): ?string {
                         if (! $state) {
                             return null;
@@ -90,7 +90,7 @@ class CreateApplicationSubmissionState extends CreateRecord
                             return null;
                         }
 
-                        return "The current default state is '{$currentDefault}', you are replacing it.";
+                        return "The current default stage is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger'),
             ]);

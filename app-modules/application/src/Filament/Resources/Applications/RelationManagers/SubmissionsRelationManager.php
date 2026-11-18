@@ -171,6 +171,7 @@ class SubmissionsRelationManager extends RelationManager
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
                 TextColumn::make('state')
+                    ->label('Stage')
                     ->badge()
                     ->state(function (ApplicationSubmission $record) {
                         return $record->state->name;
@@ -219,7 +220,7 @@ class SubmissionsRelationManager extends RelationManager
                     ->modalHeading(fn (ApplicationSubmission $record): string => "Submission Details: {$record->created_at}")
                     ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
-                            ->label('State')
+                            ->label('Stage')
                             ->badge()
                             ->state(function (ApplicationSubmission $record) {
                                 return $record->state->name;
