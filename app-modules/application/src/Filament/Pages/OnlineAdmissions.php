@@ -89,10 +89,10 @@ class OnlineAdmissions extends Page implements HasTable
 
     public static function getNavigationItemActiveRoutePattern(): string | array
     {
-      return [
-        static::getRouteName(),
-        ApplicationSubmissionStateResource::getRouteBaseName() . '.*',
-      ];
+        return [
+            static::getRouteName(),
+            ApplicationSubmissionStateResource::getRouteBaseName() . '.*',
+        ];
     }
 
     public static function canAccess(): bool
