@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Actions;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class DuplicateEvent
 {
@@ -57,9 +56,7 @@ class DuplicateEvent
         $this->replicateDescriptionMedia();
         $this->replicateHeroImage();
 
-        if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            $this->replicateEmailAutoReply();
-        }
+        $this->replicateEmailAutoReply();
     }
 
     private function replicateEventRegistrationForm(): void

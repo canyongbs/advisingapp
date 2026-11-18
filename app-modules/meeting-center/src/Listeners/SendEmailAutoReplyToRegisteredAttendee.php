@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Events\EventRegistrationFormSubmissionCreated;
 use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class SendEmailAutoReplyToRegisteredAttendee
 {
@@ -55,10 +54,6 @@ class SendEmailAutoReplyToRegisteredAttendee
      */
     public function handle(EventRegistrationFormSubmissionCreated $event): void
     {
-        if (! AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            return;
-        }
-
         $submission = $event->submission;
 
         if ($submission->attendee_status !== EventAttendeeStatus::Attending) {
