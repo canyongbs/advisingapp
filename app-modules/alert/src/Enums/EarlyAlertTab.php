@@ -54,7 +54,6 @@ enum EarlyAlertTab: string implements HasLabel
         $user = auth()->user();
         assert($user instanceof User);
 
-        // These authorization checks have been preserved from the original Student Alerts page.
         return match ($this) {
             self::StudentAlerts => $user->can('settings.view-any'),
         };
