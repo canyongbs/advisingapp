@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Jobs\AiAssistants\UpdateCurrentAiAssistantLinks;
 use AdvisingApp\Ai\Jobs\SubmitAiLinkForParsing;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use App\Features\AiAssistantKeepCurrentFeature;
 use App\Features\LlamaParseLinkParsingFeature;
 use Illuminate\Support\Facades\Queue;
 
@@ -148,21 +147,5 @@ it('dispatches `FetchAiAssistantLinkParsingResults` only for current links while
         return $job->uniqueId() === $nonCurrentLink->id;
     });
 
-    Queue::assertNotPushed(SubmitAiLinkForParsing::class);
-});
-
-//To Do: AiAssistantKeepCurrentFeature - Remove this test while feature flag cleanup
-it('does nothing while the feature is inactive', function (): void {
-    AiAssistantKeepCurrentFeature::deactivate();
-
-    Queue::fake();
-
-    AiAssistantLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
-
-    (new UpdateCurrentAiAssistantLinks())->handle();
-
-    Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class);
     Queue::assertNotPushed(SubmitAiLinkForParsing::class);
 });
