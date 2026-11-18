@@ -48,13 +48,13 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Livewire\Attributes\Url;
-use UnitEnum;
+use UnitEnum as UnitEnumContract;
 
 class OnlineAdmissions extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+  protected static string | UnitEnumContract | null $navigationGroup = NavigationGroup::Settings;
 
     protected static ?string $navigationLabel = 'Admissions';
 
@@ -62,14 +62,39 @@ class OnlineAdmissions extends Page implements HasTable
 
     protected static ?int $navigationSort = 10;
 
+    #[Url(as: 'reordering')]
+    public bool $isTableReordering = false;
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    #[Url(as: 'filters')]
+    public ?array $tableFilters = null;
+
+    #[Url(as: 'grouping')]
+    public ?string $tableGrouping = null;
+
+    /**
+     * @var ?string
+     */
+    #[Url(as: 'search')]
+    public $tableSearch = '';
+
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
+
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
     public static function canAccess(): bool
     {
+      self::assertNavigationGroupType(NavigationGroup::Settings);
+
         return collect(OnlineAdmissionsTab::cases())
             ->contains(fn (OnlineAdmissionsTab $tab): bool => $tab->canView());
     }
+
+    private static function assertNavigationGroupType(UnitEnumContract $navigationGroup): void {}
 
     public function mount(): void
     {

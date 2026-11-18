@@ -69,19 +69,28 @@ class ApplicationPlugin implements Plugin
                 Route::prefix('online-admissions/application-submission-states')
                     ->group(function (): void {
                         Route::get('/', fn (): RedirectResponse => redirect()->to(
-                            OnlineAdmissions::getUrl(['tab' => OnlineAdmissionsTab::SubmissionStates->value]),
+                      OnlineAdmissions::getUrl([
+                        ...request()->query(),
+                        'tab' => OnlineAdmissionsTab::SubmissionStates->value,
+                      ]),
                         ));
 
                         Route::get('/create', fn (): RedirectResponse => redirect()->to(
-                            ApplicationSubmissionStateResource::getUrl('create'),
+                      ApplicationSubmissionStateResource::getUrl('create', request()->query()),
                         ));
 
                         Route::get('/{record}', fn (string $record): RedirectResponse => redirect()->to(
-                            ApplicationSubmissionStateResource::getUrl('view', ['record' => $record]),
+                      ApplicationSubmissionStateResource::getUrl('view', [
+                        ...request()->query(),
+                        'record' => $record,
+                      ]),
                         ));
 
                         Route::get('/{record}/edit', fn (string $record): RedirectResponse => redirect()->to(
-                            ApplicationSubmissionStateResource::getUrl('edit', ['record' => $record]),
+                      ApplicationSubmissionStateResource::getUrl('edit', [
+                        ...request()->query(),
+                        'record' => $record,
+                      ]),
                         ));
                     });
             });

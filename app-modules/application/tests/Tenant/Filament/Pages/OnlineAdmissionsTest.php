@@ -128,6 +128,18 @@ it('defaults to the first visible tab when the requested tab is unknown', functi
         ->assertSet('activeTab', OnlineAdmissionsTab::SubmissionStates->value);
 });
 
+it('restores table search and sort from URL query parameters', function (): void {
+    asSuperAdmin();
+
+    Livewire::withQueryParams([
+        'search' => 'received',
+        'sort' => 'name:desc',
+    ])
+        ->test(OnlineAdmissions::class)
+        ->assertSet('tableSearch', 'received')
+        ->assertSet('tableSort', 'name:desc');
+});
+
 describe('actions', function () use ($getLinks): void {
     it('links the create action to the resource create page', function (): void {
         asSuperAdmin();
@@ -174,6 +186,25 @@ describe('old cluster URLs', function (): void {
 
         get($oldSubmissionStatesUrl())
             ->assertRedirect(OnlineAdmissions::getUrl(['tab' => OnlineAdmissionsTab::SubmissionStates->value]));
+    });
+
+    it('preserves table search and sort query parameters on old list URL redirects', function () use ($oldSubmissionStatesUrl): void {
+        asSuperAdmin();
+
+        $response = get($oldSubmissionStatesUrl() . '?search=received&sort=name:desc')
+            ->assertRedirect();
+
+        $location = $response->headers->get('Location');
+        expect($location)->not->toBeNull();
+
+        parse_str(parse_url((string) $location, PHP_URL_QUERY) ?? '', $query);
+
+        expect($query)
+            ->toMatchArray([
+                'tab' => OnlineAdmissionsTab::SubmissionStates->value,
+                'search' => 'received',
+                'sort' => 'name:desc',
+            ]);
     });
 
     it('redirects the old create URL to the resource create page', function () use ($oldSubmissionStatesUrl): void {
