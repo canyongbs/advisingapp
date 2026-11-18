@@ -55,7 +55,7 @@ class OnlineAdmissions extends Page implements HasTable
 {
     use InteractsWithTable;
 
-  protected static string | UnitEnumContract | null $navigationGroup = NavigationGroup::Settings;
+    protected static string | UnitEnumContract | null $navigationGroup = NavigationGroup::Settings;
 
     protected static ?string $navigationLabel = 'Admissions';
 
@@ -97,13 +97,11 @@ class OnlineAdmissions extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-      self::assertNavigationGroupType(NavigationGroup::Settings);
+        self::assertNavigationGroupType(NavigationGroup::Settings);
 
         return collect(OnlineAdmissionsTab::cases())
             ->contains(fn (OnlineAdmissionsTab $tab): bool => $tab->canView());
     }
-
-    private static function assertNavigationGroupType(UnitEnumContract $navigationGroup): void {}
 
     public function mount(): void
     {
@@ -138,4 +136,6 @@ class OnlineAdmissions extends Page implements HasTable
         return Tab::make($tab->getLabel())
             ->visible(fn (): bool => $tab->canView());
     }
+
+    private static function assertNavigationGroupType(UnitEnumContract $navigationGroup): void {}
 }
