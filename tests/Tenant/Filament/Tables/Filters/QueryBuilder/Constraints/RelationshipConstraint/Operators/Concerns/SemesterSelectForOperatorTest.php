@@ -37,7 +37,6 @@
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\TermsConsolidationFeature;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
@@ -137,23 +136,4 @@ it('summarizes `Unassigned` by its label', function () {
         ->getSummary();
 
     expect($summary)->toEndWith(' in semesters FA-20, Unassigned');
-});
-
-describe('when the `TermsConsolidationFeature` is inactive', function () use ($createEnrollment, $filterStudents) {
-    beforeEach(function () {
-        TermsConsolidationFeature::deactivate();
-    });
-
-    it('counts enrollments by their semester name, ignoring case', function () use ($createEnrollment, $filterStudents) {
-        $springTerm = Term::factory()->create(['name' => 'SP-21']);
-
-        $matchingStudent = Student::factory()->create();
-        $createEnrollment($matchingStudent, ['sis_term_id' => $springTerm->sis_term_id, 'semester_name' => 'FA-20']);
-
-        $otherStudent = Student::factory()->create();
-        $createEnrollment($otherStudent, ['semester_name' => 'SP-21']);
-
-        expect($filterStudents(EqualsOperatorWithEnrollmentSemester::class, ['count' => 1, 'semesters' => ['fa-20']]))
-            ->toBe([$matchingStudent->sisid]);
-    });
 });

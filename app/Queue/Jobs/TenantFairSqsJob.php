@@ -57,12 +57,9 @@ class TenantFairSqsJob extends SqsJob
             return $this->cachedRawBody;
         }
 
-        $legacyPointer = $this->legacyPointer();
+        $rawBody = parent::getRawBody();
 
-        $rawBody = $legacyPointer
-            ? $this->overflowStorage()->disk($this->tenantId())?->get($legacyPointer)
-            : parent::getRawBody();
-
+        /** @phpstan-ignore function.alreadyNarrowedType (The parent returns null, despite its docblock, when the offloaded payload is missing) */
         if (! is_string($rawBody)) {
             if (! $this->isDeleted()) {
                 $this->delete();
@@ -75,21 +72,9 @@ class TenantFairSqsJob extends SqsJob
     }
 
     #[Override]
-    public function delete(): void
-    {
-        parent::delete();
-
-        $legacyPointer = $this->legacyPointer();
-
-        if ($legacyPointer) {
-            $this->overflowStorage()->disk($this->tenantId())?->delete($legacyPointer);
-        }
-    }
-
-    #[Override]
     protected function overflowStore(): Repository
     {
-        return $this->overflowStorage()->store($this->tenantId());
+        return $this->container->make(SqsOverflowStorage::class)->store($this->tenantId());
     }
 
     protected function tenantId(): ?string
@@ -97,27 +82,5 @@ class TenantFairSqsJob extends SqsJob
         $body = json_decode($this->job['Body'] ?? '', true);
 
         return is_string($body['tenantId'] ?? null) ? $body['tenantId'] : null;
-    }
-
-    /**
-     * TODO: Cleanup Task (sqs-native-overflow): remove the legacy pointer handling from this class, once messages
-     * sent by the removed `defectivecode/laravel-sqs-extended` driver have left the queues.
-     *
-     * That driver sent `{"pointer": "sqs-payloads/<uuid>.json", "tenantId": "<id>"}` in place of large payloads.
-     */
-    protected function legacyPointer(): ?string
-    {
-        $body = json_decode($this->job['Body'] ?? '', true);
-
-        if (! is_array($body) || ! is_string($body['pointer'] ?? null) || isset($body['job'])) {
-            return null;
-        }
-
-        return $body['pointer'];
-    }
-
-    protected function overflowStorage(): SqsOverflowStorage
-    {
-        return $this->container->make(SqsOverflowStorage::class);
     }
 }

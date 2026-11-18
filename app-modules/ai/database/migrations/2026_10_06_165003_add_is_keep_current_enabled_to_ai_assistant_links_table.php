@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiAssistantKeepCurrentFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function (): void {
-            Schema::table('ai_assistant_links', function (Blueprint $table): void {
-                $table->boolean('is_keep_current_enabled')->default(false);
-            });
-
-            AiAssistantKeepCurrentFeature::activate();
+        Schema::table('ai_assistant_links', function (Blueprint $table): void {
+            $table->boolean('is_keep_current_enabled')->default(false);
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function (): void {
-            AiAssistantKeepCurrentFeature::deactivate();
-
-            Schema::table('ai_assistant_links', function (Blueprint $table): void {
-                $table->dropColumn('is_keep_current_enabled');
-            });
+        Schema::table('ai_assistant_links', function (Blueprint $table): void {
+            $table->dropColumn('is_keep_current_enabled');
         });
     }
 };

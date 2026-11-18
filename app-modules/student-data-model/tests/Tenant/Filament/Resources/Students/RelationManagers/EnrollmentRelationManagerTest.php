@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\TermsConsolidationFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
@@ -234,39 +233,5 @@ describe('terms', function (): void {
         ])
             ->mountAction(TestAction::make(ViewAction::class)->table($enrollment))
             ->assertSchemaComponentExists('semester_name', checkComponentUsing: fn (TextEntry $entry): bool => $entry->getState() === 'Fall 2020');
-    });
-
-    describe('when the `TermsConsolidationFeature` is inactive', function () use ($createEnrollment): void {
-        beforeEach(function (): void {
-            TermsConsolidationFeature::deactivate();
-        });
-
-        it('lists enrollments grouped by semester name', function () use ($createEnrollment): void {
-            $student = Student::factory()->create();
-
-            $springEnrollment = $createEnrollment($student, ['semester_name' => 'Spring 2021']);
-            $fallEnrollment = $createEnrollment($student, ['semester_name' => 'Fall 2020']);
-
-            Livewire::test(EnrollmentsRelationManager::class, [
-                'ownerRecord' => $student,
-                'pageClass' => ViewStudent::class,
-            ])
-                ->assertCanSeeTableRecords([$fallEnrollment, $springEnrollment], inOrder: true);
-        });
-
-        it('shows the semester name rather than the matched term when viewing an enrollment', function () use ($createEnrollment): void {
-            $student = Student::factory()->create();
-
-            $term = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
-
-            $enrollment = $createEnrollment($student, ['sis_term_id' => $term->sis_term_id, 'semester_name' => 'Fall 2020']);
-
-            Livewire::test(EnrollmentsRelationManager::class, [
-                'ownerRecord' => $student,
-                'pageClass' => ViewStudent::class,
-            ])
-                ->mountAction(TestAction::make(ViewAction::class)->table($enrollment))
-                ->assertSchemaComponentExists('semester_name', checkComponentUsing: fn (TextEntry $entry): bool => $entry->getState() === 'Fall 2020');
-        });
     });
 });

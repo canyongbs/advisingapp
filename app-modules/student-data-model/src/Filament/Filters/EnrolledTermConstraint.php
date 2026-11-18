@@ -91,8 +91,6 @@ class EnrolledTermConstraint
     private static function getTermNameOptions(): array
     {
         return Term::query()
-            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-            ->whereNull('deleted_at')
             ->tap(new OrderByMostRecentTerm())
             ->pluck('name')
             ->unique(fn (string $name): string => mb_strtolower($name), strict: true)

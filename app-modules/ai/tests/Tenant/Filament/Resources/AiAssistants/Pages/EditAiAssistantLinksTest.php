@@ -34,14 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistantLinks;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Repeater;
+use Livewire\Livewire;
 
-use App\Support\AbstractFeatureFlag;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 
-class AiAssistantKeepCurrentFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+beforeEach(function (): void {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+});
+
+it('shows the keep current toggle and saves it for a website', function (): void {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $user->givePermissionTo([
+        'assistant_custom.view-any',
+        'assistant_custom.*.view',
+        'assistant_custom.*.update',
+    ]);
+
+    $assistant = AiAssistant::factory()->create();
+
+    actingAs($user);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(EditAiAssistantLinks::class, ['record' => $assistant->getKey()])
+        ->fillForm([
+            'links' => [
+                ['url' => 'https://example.com', 'is_keep_current_enabled' => true],
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+
+    assertDatabaseHas('ai_assistant_links', [
+        'ai_assistant_id' => $assistant->getKey(),
+        'url' => 'https://example.com',
+        'is_keep_current_enabled' => true,
+    ]);
+});

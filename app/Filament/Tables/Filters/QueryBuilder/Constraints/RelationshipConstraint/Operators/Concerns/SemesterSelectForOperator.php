@@ -36,18 +36,14 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\Concerns;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Scopes\MatchedToTermNamed;
 use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutMatchedTerm;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\TermsConsolidationFeature;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 trait SemesterSelectForOperator
 {
@@ -66,32 +62,9 @@ trait SemesterSelectForOperator
 
     public static function semesterSelect(): Select
     {
-        if (TermsConsolidationFeature::active()) {
-            return Select::make('semesters')
-                ->label('Semester')
-                ->options(fn (): array => static::getTermSemesterOptions())
-                ->searchable()
-                ->multiple();
-        }
-
         return Select::make('semesters')
             ->label('Semester')
-            ->options(fn (): array => Enrollment::query()
-                ->whereNotNull('semester_name')
-                ->distinct()
-                ->orderBy('semester_name')
-                ->limit(50)
-                ->pluck('semester_name', 'semester_name')
-                ->all())
-            ->getSearchResultsUsing(fn (string $search): array => Enrollment::query()
-                ->whereNotNull('semester_name')
-                ->where(DB::raw('lower(semester_name)'), 'like', '%' . Str::lower($search) . '%')
-                ->distinct()
-                ->orderBy('semester_name')
-                ->limit(50)
-                ->pluck('semester_name', 'semester_name')
-                ->all())
-            ->getOptionLabelsUsing(fn (array $values): array => array_combine($values, $values))
+            ->options(fn (): array => static::getTermSemesterOptions())
             ->searchable()
             ->multiple();
     }
@@ -115,20 +88,12 @@ trait SemesterSelectForOperator
 
         $semesters = array_values(array_filter($semesters, filled(...)));
 
-        if (TermsConsolidationFeature::active()) {
-            return $query->whereHas(
-                $relationshipName,
-                fn (Builder $query) => static::applyTermSemestersToEnrollmentsQuery($query, $semesters),
-                $this->getQueryOperator(),
-                $count,
-            );
-        }
-
-        $lowerSemesters = array_map(mb_strtolower(...), $semesters);
-
-        return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters): void {
-            $query->whereIn(DB::raw('lower(semester_name)'), $lowerSemesters);
-        }, $this->getQueryOperator(), $count);
+        return $query->whereHas(
+            $relationshipName,
+            fn (Builder $query) => static::applyTermSemestersToEnrollmentsQuery($query, $semesters),
+            $this->getQueryOperator(),
+            $count,
+        );
     }
 
     public function getSummary(): string
@@ -157,8 +122,6 @@ trait SemesterSelectForOperator
     {
         // A union rather than a spread, which would renumber numeric names such as `2024`.
         return Term::query()
-            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-            ->whereNull('deleted_at')
             ->tap(new OrderByMostRecentTerm())
             ->pluck('name')
             ->unique(fn (string $name): string => mb_strtolower($name), strict: true)

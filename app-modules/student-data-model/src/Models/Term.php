@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
@@ -60,6 +61,7 @@ class Term extends Model implements Auditable
     use HasFactory;
 
     use HasUuids;
+    use SoftDeletes;
     use UsesTenantConnection;
 
     protected $table = 'terms';
@@ -97,8 +99,6 @@ class Term extends Model implements Auditable
     {
         return static::query()
             ->whereNotNull('sis_term_id')
-            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-            ->whereNull('deleted_at')
             ->exists();
     }
 
