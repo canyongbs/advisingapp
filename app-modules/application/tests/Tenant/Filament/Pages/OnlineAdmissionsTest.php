@@ -70,6 +70,26 @@ $getTabLabels = function (Testable $component): array {
     return $labels;
 };
 
+$getLinks = function (Testable $component): array {
+    $document = new DOMDocument();
+    $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $links = $document->getElementsByTagName('a');
+
+    $hrefs = [];
+
+    foreach ($links as $link) {
+        $href = trim($link->getAttribute('href'));
+
+        if (blank($href)) {
+            continue;
+        }
+
+        $hrefs[] = $href;
+    }
+
+    return $hrefs;
+};
+
 it('can render the online admissions page', function (): void {
     asSuperAdmin();
 
@@ -108,7 +128,7 @@ it('defaults to the first visible tab when the requested tab is unknown', functi
         ->assertSet('activeTab', OnlineAdmissionsTab::SubmissionStates->value);
 });
 
-describe('actions', function (): void {
+describe('actions', function () use ($getLinks): void {
     it('links the create action to the resource create page', function (): void {
         asSuperAdmin();
 
@@ -133,6 +153,16 @@ describe('actions', function (): void {
                 TestAction::make('edit')->table($state),
                 ApplicationSubmissionStateResource::getUrl('edit', ['record' => $state]),
             );
+    });
+
+    it('navigates table rows to the resource view page', function () use ($getLinks): void {
+        asSuperAdmin();
+
+        $state = ApplicationSubmissionState::factory()->create();
+
+        $component = Livewire::test(OnlineAdmissions::class);
+
+        expect($getLinks($component))->toContain(ApplicationSubmissionStateResource::getUrl('view', ['record' => $state]));
     });
 });
 
