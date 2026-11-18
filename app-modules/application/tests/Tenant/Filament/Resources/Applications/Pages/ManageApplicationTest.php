@@ -44,7 +44,6 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -343,28 +342,6 @@ describe('edit tab', function () use ($archiveAction): void {
             ->and($application->fresh()->emailAutoReply)->toBeNull();
     });
 
-    it('does not move the email auto reply onto the new application version when the feature is inactive', function (): void {
-        asSuperAdmin();
-
-        $application = Application::factory()->create();
-        $emailAutoReply = $application->emailAutoReply()->firstOrFail();
-
-        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
-            ->fillForm(['name' => 'Renamed'])
-            ->call('save')
-            ->assertHasNoFormErrors();
-
-        $newVersion = Application::query()
-            ->where('root_id', $application->root_id)
-            ->whereKeyNot($application->getKey())
-            ->firstOrFail();
-
-        expect($newVersion->emailAutoReply()->exists())->toBeFalse()
-            ->and($emailAutoReply->refresh()->application_id)->toBe($application->getKey());
-    });
-
     it('saves uploaded rich editor images onto the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false): void {
         asSuperAdmin();
         $disk = Storage::fake('s3-public');
@@ -596,7 +573,7 @@ describe('notifications tab', function (): void {
     });
 });
 
-describe('email auto reply tab', function () use ($getTabLabels, $richText): void {
+describe('email auto reply tab', function () use ($richText): void {
     it('displays the email auto reply data', function () use ($richText): void {
         asSuperAdmin();
 
@@ -744,20 +721,6 @@ describe('email auto reply tab', function () use ($getTabLabels, $richText): voi
 
         expect(Application::query()->where('root_id', $application->root_id)->count())->toBe(1)
             ->and($application->fresh()->isArchived())->toBeFalse();
-    });
-
-    it('does not show or save the email auto reply when the feature is inactive', function () use ($getTabLabels): void {
-        asSuperAdmin();
-
-        $application = Application::factory()->create();
-
-        AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-        $component = Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()]);
-
-        expect($getTabLabels($component))->not->toContain('Email Auto Reply');
-
-        $component->call('saveEmailAutoReply')->assertNotFound();
     });
 });
 

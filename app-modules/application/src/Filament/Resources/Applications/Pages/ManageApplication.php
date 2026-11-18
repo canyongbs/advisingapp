@@ -46,7 +46,6 @@ use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Filament\Schemas\EmailAutoReplyForm;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -135,7 +134,7 @@ class ManageApplication extends EditRecord
                     $this->makeFormContentComponent('notificationsForm', 'saveNotifications'),
                 ]),
             'email-auto-reply' => Tab::make('Email Auto Reply')
-                ->visible(fn (): bool => AdmissionsAndEventsEmailAutoReplyFeature::active() && ApplicationResource::canEdit($record))
+                ->visible(fn (): bool => ApplicationResource::canEdit($record))
                 ->schema([
                     $this->makeFormContentComponent('emailAutoReplyForm', 'saveEmailAutoReply'),
                 ]),
@@ -204,8 +203,6 @@ class ManageApplication extends EditRecord
 
     public function saveEmailAutoReply(): void
     {
-        abort_unless(AdmissionsAndEventsEmailAutoReplyFeature::active(), 404);
-
         ApplicationResource::authorizeEdit($this->getRecord());
 
         DB::transaction(fn () => $this->emailAutoReplyForm->getState());
@@ -239,9 +236,7 @@ class ManageApplication extends EditRecord
 
             $this->notificationsForm->fill($data);
 
-            if (AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-                $this->emailAutoReplyForm->fill([]);
-            }
+            $this->emailAutoReplyForm->fill([]);
         }
     }
 

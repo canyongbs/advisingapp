@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Observers;
 
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class EventRegistrationFormObserver
 {
@@ -50,10 +49,6 @@ class EventRegistrationFormObserver
 
     public function created(EventRegistrationForm $form): void
     {
-        if (! AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            return;
-        }
-
         if ($form->root_id !== $form->id) {
             return;
         }

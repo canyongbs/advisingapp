@@ -39,7 +39,6 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
 use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\freezeTime;
@@ -59,16 +58,4 @@ it('queues the `SendEventRegistrationFormEmailAutoReply` job five minutes after 
             && ($job->delay instanceof DateTimeInterface)
             && now()->addMinutes(5)->equalTo($job->delay),
     );
-});
-
-it('does not queue the `SendEventRegistrationFormEmailAutoReply` job when the feature is inactive', function (): void {
-    $attendee = EventAttendee::factory()->create(['status' => EventAttendeeStatus::Invited]);
-
-    AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
-
-    Queue::fake([SendEventRegistrationFormEmailAutoReply::class]);
-
-    event(new EventAttendeeInvited($attendee));
-
-    Queue::assertNotPushed(SendEventRegistrationFormEmailAutoReply::class);
 });

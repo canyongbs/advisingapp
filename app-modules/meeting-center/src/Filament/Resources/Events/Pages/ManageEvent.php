@@ -45,7 +45,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventInfolist;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventLandingPageForm;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -258,8 +257,7 @@ class ManageEvent extends EditRecord
 
     protected function canManageEmailAutoReply(): bool
     {
-        return AdmissionsAndEventsEmailAutoReplyFeature::active()
-            && EventResource::canEdit($this->getRecord())
+        return EventResource::canEdit($this->getRecord())
             && $this->getEventRegistrationForm() !== null;
     }
 

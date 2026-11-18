@@ -41,7 +41,6 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\seed;
@@ -136,19 +135,6 @@ it('does not send the email auto reply when the author cannot receive email', fu
     $application = $createApplicationWithEnabledEmailAutoReply();
 
     expect($student->canReceiveEmail())->toBeFalse();
-
-    Notification::fake();
-
-    $submit($application, $student);
-
-    Notification::assertNotSentTo($student, ApplicationSubmissionAutoReplyNotification::class);
-});
-
-it('does not send the email auto reply when the feature is inactive', function () use ($createApplicationWithEnabledEmailAutoReply, $submit): void {
-    $student = Student::factory()->create();
-    $application = $createApplicationWithEnabledEmailAutoReply();
-
-    AdmissionsAndEventsEmailAutoReplyFeature::deactivate();
 
     Notification::fake();
 

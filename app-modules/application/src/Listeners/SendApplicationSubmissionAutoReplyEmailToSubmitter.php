@@ -39,17 +39,12 @@ namespace AdvisingApp\Application\Listeners;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionAutoReplyNotification;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
 class SendApplicationSubmissionAutoReplyEmailToSubmitter implements ShouldQueueAfterCommit
 {
     public function handle(ApplicationSubmissionCreated $event): void
     {
-        if (! AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            return;
-        }
-
         $submission = $event->submission;
         $author = $submission->author;
 

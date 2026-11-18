@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Listeners;
 use AdvisingApp\MeetingCenter\Enums\EmailAutoReplyDeliveryPreference;
 use AdvisingApp\MeetingCenter\Events\EventAttendeeInvited;
 use AdvisingApp\MeetingCenter\Jobs\SendEventRegistrationFormEmailAutoReply;
-use App\Features\AdmissionsAndEventsEmailAutoReplyFeature;
 
 class SendEmailAutoReplyToInvitedAttendee
 {
@@ -47,10 +46,6 @@ class SendEmailAutoReplyToInvitedAttendee
 
     public function handle(EventAttendeeInvited $event): void
     {
-        if (! AdmissionsAndEventsEmailAutoReplyFeature::active()) {
-            return;
-        }
-
         dispatch(new SendEventRegistrationFormEmailAutoReply(
             attendee: $event->attendee,
             requiredDeliveryPreference: EmailAutoReplyDeliveryPreference::WhenInvited,
