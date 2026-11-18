@@ -76,6 +76,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                     ->searchable()
                     ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('view', ['record' => $record->submissible, 'tab' => 'edit'])),
                 TextColumn::make('state')
+                    ->label('Stage')
                     ->badge()
                     ->state(function (ApplicationSubmission $record) {
                         return $record->state->name;
@@ -101,7 +102,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                     ->modalHeading(fn (ApplicationSubmission $record): string => "Submission Details: {$record->created_at}")
                     ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
-                            ->label('State')
+                            ->label('Stage')
                             ->badge()
                             ->state(function (ApplicationSubmission $record) {
                                 return $record->state->name;

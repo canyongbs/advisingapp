@@ -53,8 +53,8 @@ class IsInApplicationSubmissionStateOperator extends Operator
     public function getLabel(): string
     {
         return $this->isInverse()
-            ? 'Is not in state'
-            : 'Is in state';
+            ? 'Is not in stage'
+            : 'Is in stage';
     }
 
     public function getSummary(): string
@@ -66,8 +66,8 @@ class IsInApplicationSubmissionStateOperator extends Operator
             ->join(', ', ' and ');
 
         return $this->isInverse()
-            ? "Admissions state is not {$stateNames}"
-            : "Admissions state is {$stateNames}";
+            ? "Admissions stage is not {$stateNames}"
+            : "Admissions stage is {$stateNames}";
     }
 
     /**
@@ -77,7 +77,7 @@ class IsInApplicationSubmissionStateOperator extends Operator
     {
         return [
             Select::make('states')
-                ->label('State')
+                ->label('Stage')
                 ->options(function (?array $state) {
                     $selectedIds = $state ?? [];
 
