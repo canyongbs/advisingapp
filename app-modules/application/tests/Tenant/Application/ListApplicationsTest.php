@@ -246,6 +246,29 @@ describe('duplication', function (): void {
             ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
     });
 
+    it('does not allow duplicating an application with a name that matches another application case-insensitively', function (): void {
+        $application = Application::factory()->create(['name' => 'Fall Admissions']);
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application), data: ['name' => 'FALL admissions'])
+            ->assertHasFormErrors(['name' => 'unique']);
+
+        expect(Application::count())->toBe(1);
+    });
+
+    it('allows duplicating an application with the name of an archived application case-insensitively', function (): void {
+        $archivedApplication = Application::factory()->create(['name' => 'Fall Admissions']);
+        $archivedApplication->archive();
+
+        $application = Application::factory()->create();
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application), data: ['name' => 'fall admissions'])
+            ->assertHasNoFormErrors();
+
+        expect(Application::query()->whereNull('archived_at')->where('name', 'fall admissions')->exists())->toBeTrue();
+    });
+
     it('does not duplicate application submissions', function (): void {
         $application = Application::factory()->create();
 
