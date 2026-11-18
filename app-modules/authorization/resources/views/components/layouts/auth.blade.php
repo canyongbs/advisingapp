@@ -39,9 +39,9 @@
             <x-filament-panels::logo />
         </div>
 
-        <div class="mx-auto flex w-full max-w-screen-lg flex-1 items-center justify-center px-4 py-8 md:px-6 lg:px-8">
+        <main class="mx-auto flex w-full max-w-screen-lg flex-1 items-center justify-center px-4 py-8 md:px-6 lg:px-8">
             {{ $slot }}
-        </div>
+        </main>
 
         <div class="mx-auto w-full max-w-screen-lg px-4 md:px-6 lg:px-8">
             <div
