@@ -53,6 +53,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Query\Expression;
@@ -70,6 +71,10 @@ class EmailFirstLogin extends Login
     public const GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE = "Google sign-in isn't available in the mobile app - please use another sign-in method.";
 
     protected string $view = 'authorization::email-first-login';
+
+    protected static string $layout = 'authorization::components.layouts.auth';
+
+    protected Width | string | null $maxWidth = Width::FourExtraLarge;
 
     #[Locked]
     public string $step = 'email';
