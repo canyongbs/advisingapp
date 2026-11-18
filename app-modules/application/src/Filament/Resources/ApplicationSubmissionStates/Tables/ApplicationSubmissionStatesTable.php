@@ -61,40 +61,40 @@ class ApplicationSubmissionStatesTable
                 default => null,
             })
             ->columns([
-               IdColumn::make(),
-               TextColumn::make('name')
-                   ->label('Name')
-                   ->formatStateUsing(fn (ApplicationSubmissionState $record): string => $record->name . (filled($record->archived_at) ? ' (Archived)' : ''))
-                   ->searchable()
-                   ->sortable(),
-               TextColumn::make('classification')
-                   ->label('Classification')
-                   ->searchable()
-                   ->sortable(),
-               ColorColumn::make('color')
-                   ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
-               TextColumn::make('submissions_count')
-                   ->label('# of Applications Submissions')
-                   ->counts('submissions')
-                   ->sortable(),
-               IconColumn::make('is_default')
-                   ->label('Default')
-                   ->boolean(),
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->formatStateUsing(fn (ApplicationSubmissionState $record): string => $record->name . (filled($record->archived_at) ? ' (Archived)' : ''))
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('classification')
+                    ->label('Classification')
+                    ->searchable()
+                    ->sortable(),
+                ColorColumn::make('color')
+                    ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
+                TextColumn::make('submissions_count')
+                    ->label('# of Applications Submissions')
+                    ->counts('submissions')
+                    ->sortable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->boolean(),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound
             ->headerActions([
-               CreateAction::make()
-                   ->authorize('create', ApplicationSubmissionState::class)
-                   ->url(fn (): string => ApplicationSubmissionStateResource::getUrl('create')),
+                CreateAction::make()
+                    ->authorize('create', ApplicationSubmissionState::class)
+                    ->url(fn (): string => ApplicationSubmissionStateResource::getUrl('create')),
             ])
             ->recordActions([
-               ViewAction::make()
-                   ->authorize('view')
-                   ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('view', ['record' => $record])),
-               EditAction::make()
-                   ->authorize('update')
-                   ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('edit', ['record' => $record])),
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (ApplicationSubmissionState $record): string => ApplicationSubmissionStateResource::getUrl('edit', ['record' => $record])),
             ]);
     }
 }
