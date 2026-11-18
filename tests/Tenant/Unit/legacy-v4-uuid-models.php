@@ -142,7 +142,6 @@ use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Hold;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
@@ -371,7 +370,6 @@ return [
     BouncedPhoneNumber::class,
     EmailAddressOptInOptOut::class,
     Enrollment::class,
-    EnrollmentSemester::class,
     Hold::class,
     Program::class,
     SmsOptOutPhoneNumber::class,

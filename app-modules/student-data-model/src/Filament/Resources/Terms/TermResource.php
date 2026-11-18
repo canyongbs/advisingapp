@@ -40,13 +40,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Terms\Pages\ManageTerms;
 use AdvisingApp\StudentDataModel\Filament\Resources\Terms\Schemas\TermForm;
 use AdvisingApp\StudentDataModel\Filament\Resources\Terms\Tables\TermsTable;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\TermsConsolidationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class TermResource extends Resource
@@ -63,11 +61,6 @@ class TermResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    public static function canAccess(): bool
-    {
-        return TermsConsolidationFeature::active() && parent::canAccess();
-    }
-
     public static function form(Schema $schema): Schema
     {
         return TermForm::configure($schema);
@@ -76,13 +69,6 @@ class TermResource extends Resource
     public static function table(Table $table): Table
     {
         return TermsTable::configure($table);
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-            ->whereNull('deleted_at');
     }
 
     public static function getPages(): array

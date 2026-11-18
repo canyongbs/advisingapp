@@ -34,47 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Database\Factories\EnrollmentSemesterFactory;
-use AdvisingApp\StudentDataModel\Observers\EnrollmentSemesterObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperEnrollmentSemester
- */
-#[ObservedBy(EnrollmentSemesterObserver::class)]
-class EnrollmentSemester extends Model implements Auditable
-{
-    use HasVersion4Uuids;
-    use UsesTenantConnection;
-
-    /** @use HasFactory<EnrollmentSemesterFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-        'order',
-    ];
-
-    protected $casts = [
-        'order' => 'integer',
-    ];
-
-    /** @return HasMany<Enrollment, $this> */
-    public function enrollments(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(Enrollment::class, 'semester_name', 'name');
+        DB::transaction(function (): void {
+            // Semesters were copied to terms with the same ID, so their audits now belong to the term.
+            DB::table('audits')
+                ->where('auditable_type', 'enrollment_semester')
+                ->whereIn('auditable_id', DB::table('terms')->select(DB::raw('id::text')))
+                ->update(['auditable_type' => 'term']);
+
+            DB::table('audits')->where('auditable_type', 'enrollment_semester')->delete();
+
+            Schema::drop('enrollment_semesters');
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function (): void {
+            Schema::create('enrollment_semesters', function (Blueprint $table): void {
+                $table->uuid('id')->primary();
+                $table->string('name')->index();
+                $table->unsignedInteger('order');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        });
+    }
+};
