@@ -37,6 +37,7 @@
 namespace AdvisingApp\Application\Filament\Pages;
 
 use AdvisingApp\Application\Enums\OnlineAdmissionsTab;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Tables\ApplicationSubmissionStatesTable;
 use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
@@ -85,6 +86,14 @@ class OnlineAdmissions extends Page implements HasTable
 
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
+
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+      return [
+        static::getRouteName(),
+        ApplicationSubmissionStateResource::getRouteBaseName() . '.*',
+      ];
+    }
 
     public static function canAccess(): bool
     {

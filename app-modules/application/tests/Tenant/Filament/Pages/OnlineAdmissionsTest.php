@@ -97,6 +97,14 @@ it('can render the online admissions page', function (): void {
         ->assertSuccessful();
 });
 
+it('includes submission state resource routes in the admissions navigation active pattern', function (): void {
+    expect(OnlineAdmissions::getNavigationItemActiveRoutePattern())
+        ->toBe([
+            OnlineAdmissions::getRouteName(),
+            ApplicationSubmissionStateResource::getRouteBaseName() . '.*',
+        ]);
+});
+
 it('lists submission states', function (): void {
     asSuperAdmin();
 
