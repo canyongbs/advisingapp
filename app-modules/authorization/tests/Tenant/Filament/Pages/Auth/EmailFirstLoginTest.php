@@ -794,23 +794,44 @@ it('does not show the switch tenant control or a google unavailable message for 
     $googleSsoSettings->client_secret = 'test-client-secret';
     $googleSsoSettings->save();
 
-    get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
-        ->assertDontSee('Switch tenant')
-        ->assertDontSee(EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE);
+        ->getContent();
+
+    assert(is_string($html));
+
+    $document = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
+
+    expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Dom\Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse()
+        ->and(collect($document->querySelectorAll('p'))->contains(fn (Dom\Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
 });
 
 it('shows the switch tenant control for the mobile app', function (): void {
-    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertSee('Switch tenant')
-        ->assertSee(EmailFirstLogin::SWITCH_TENANT_URL);
+        ->getContent();
+
+    assert(is_string($html));
+
+    $switchTenantLink = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)
+        ->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]');
+
+    expect($switchTenantLink)->not->toBeNull()
+        ->and(trim((string) $switchTenantLink?->textContent))->toBe('Switch tenant');
 });
 
 it('does not show the switch tenant control when google sso is not enabled and the user agent is not the mobile app', function (): void {
-    get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
-        ->assertDontSee('Switch tenant');
+        ->getContent();
+
+    assert(is_string($html));
+
+    $document = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
+
+    expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Dom\Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse();
 });
 
 it('does not offer google sign-in on the login page for the mobile app when google sso is enabled', function (): void {
@@ -820,13 +841,26 @@ it('does not offer google sign-in on the login page for the mobile app when goog
     $googleSsoSettings->client_secret = 'test-client-secret';
     $googleSsoSettings->save();
 
-    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertDontSee(route('socialite.redirect', ['provider' => 'google']));
+        ->getContent();
+
+    assert(is_string($html));
+
+    $googleRedirectLink = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)
+        ->querySelector('a[href^="' . route('socialite.redirect', ['provider' => 'google']) . '"]');
+
+    expect($googleRedirectLink)->toBeNull();
 });
 
 it('does not show a google unavailable message for the mobile app when google sso is not enabled', function (): void {
-    get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertDontSee(EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE, false);
+        ->getContent();
+
+    assert(is_string($html));
+
+    $paragraphs = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)->querySelectorAll('p');
+
+    expect(collect($paragraphs)->contains(fn (Dom\Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
 });
