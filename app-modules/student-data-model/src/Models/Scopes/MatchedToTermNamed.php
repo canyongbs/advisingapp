@@ -66,8 +66,6 @@ class MatchedToTermNamed
                 ->whereIn(
                     'enrollments.sis_term_id',
                     Term::query()
-                        // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-                        ->whereNull('deleted_at')
                         ->whereIn('name', $this->names)
                         ->select('sis_term_id'),
                 )

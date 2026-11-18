@@ -65,20 +65,18 @@ use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
-use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -206,49 +204,34 @@ test('2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload uses the
     );
 });
 
-test('2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms copies the enrollment semesters into terms when there are no SIS terms', function () {
+test('2026_11_18_161629_drop_enrollment_semesters_table moves the audits of copied semesters to terms, deletes the rest and drops the table', function () {
     isolatedMigration(
-        '2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms',
+        '2026_11_18_161629_drop_enrollment_semesters_table',
         function () {
-            $semester = EnrollmentSemester::factory()->create(['name' => 'Fall 2024', 'order' => 3]);
-            $deletedSemester = EnrollmentSemester::factory()->create(['deleted_at' => now()]);
+            $term = Term::factory()->create();
+            $orphanedSemesterId = (string) Str::uuid();
 
-            assertDatabaseCount(Term::class, 0);
+            foreach ([$term->getKey(), $orphanedSemesterId] as $auditableId) {
+                DB::table('audits')->insert([
+                    'id' => (string) Str::uuid(),
+                    'event' => 'created',
+                    'auditable_type' => 'enrollment_semester',
+                    'auditable_id' => $auditableId,
+                ]);
+            }
+
+            expect(Schema::hasTable('enrollment_semesters'))->toBeTrue();
 
             $migrate = Artisan::call('migrate', [
-                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms.php',
+                '--path' => 'app-modules/student-data-model/database/migrations/2026_11_18_161629_drop_enrollment_semesters_table.php',
             ]);
 
             expect($migrate)->toBe(Command::SUCCESS)
-                ->and(TermsConsolidationFeature::active())->toBeTrue();
+                ->and(Schema::hasTable('enrollment_semesters'))->toBeFalse();
 
-            assertDatabaseCount(Term::class, 1);
-            assertDatabaseHas(Term::class, [
-                'id' => $semester->getKey(),
-                'sis_term_id' => null,
-                'name' => 'Fall 2024',
-                'order' => 3,
-                'is_active' => true,
-            ]);
-            assertDatabaseMissing(Term::class, ['id' => $deletedSemester->getKey()]);
-        }
-    );
-});
-
-test('2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms does not copy the enrollment semesters when there are SIS terms', function () {
-    isolatedMigration(
-        '2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms',
-        function () {
-            $sisTerm = Term::factory()->create();
-            EnrollmentSemester::factory()->create();
-
-            $migrate = Artisan::call('migrate', [
-                '--path' => 'app-modules/student-data-model/database/migrations/2026_10_23_195919_tmp_copy_enrollment_semesters_to_terms.php',
-            ]);
-
-            expect($migrate)->toBe(Command::SUCCESS)
-                ->and(Term::query()->pluck('id')->all())->toBe([$sisTerm->getKey()])
-                ->and(TermsConsolidationFeature::active())->toBeTrue();
+            assertDatabaseHas('audits', ['auditable_type' => 'term', 'auditable_id' => $term->getKey()]);
+            assertDatabaseMissing('audits', ['auditable_id' => $orphanedSemesterId]);
+            assertDatabaseMissing('audits', ['auditable_type' => 'enrollment_semester']);
         }
     );
 });

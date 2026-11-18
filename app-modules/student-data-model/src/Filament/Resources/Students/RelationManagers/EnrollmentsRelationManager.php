@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Filament\Tables\Grouping\EnrollmentTermGroup;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Features\TermsConsolidationFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -57,13 +56,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class EnrollmentsRelationManager extends RelationManager
@@ -101,9 +96,7 @@ class EnrollmentsRelationManager extends RelationManager
                         ->label('Semester Code'),
                     TextEntry::make('semester_name')
                         ->label('Semester Name')
-                        ->state(fn (Enrollment $record): ?string => TermsConsolidationFeature::active()
-                            ? ($record->term?->getDisplayName() ?? $record->semester_name)
-                            : $record->semester_name),
+                        ->state(fn (Enrollment $record): ?string => $record->term?->getDisplayName() ?? $record->semester_name),
                     TextEntry::make('sis_term_id')
                         ->label('SIS Term ID'),
                     TextEntry::make('start_date')
@@ -118,30 +111,11 @@ class EnrollmentsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        $isTermsConsolidationActive = TermsConsolidationFeature::active();
-
         return $table
-            ->modifyQueryUsing(function (Builder $query) use ($isTermsConsolidationActive): void {
-                if ($isTermsConsolidationActive) {
-                    return;
-                }
-
-                $query
-                    ->leftJoin('enrollment_semesters', function (JoinClause $join): void {
-                        $join
-                            ->on(DB::raw('LOWER(enrollments.semester_name)'), '=', DB::raw('LOWER(enrollment_semesters.name)'))
-                            ->whereNull('enrollment_semesters.deleted_at');
-                    })
-                    ->orderByRaw('enrollment_semesters."order" DESC NULLS FIRST')
-                    ->select('enrollments.*');
-            })
             ->recordTitleAttribute('division')
-            ->defaultGroup($isTermsConsolidationActive ? 'term.id' : 'semester_name')
+            ->defaultGroup('term.id')
             ->groups([
-                $isTermsConsolidationActive
-                    ? EnrollmentTermGroup::make()
-                    : Group::make('semester_name')
-                        ->label('Semester'),
+                EnrollmentTermGroup::make(),
             ])
             ->groupingSettingsHidden()
             ->columns([
@@ -170,19 +144,7 @@ class EnrollmentsRelationManager extends RelationManager
                     ->label('Earned'),
             ])
             ->filters([
-                $isTermsConsolidationActive
-                    ? EnrollmentTermFilter::make()
-                    : SelectFilter::make('semester_name')
-                        ->label('Semester')
-                        ->options(
-                            fn (): array => $this->getRelationship()->getQuery()
-                                ->whereNotNull('semester_name')
-                                ->distinct()
-                                ->pluck('semester_name', 'semester_name')
-                                ->all()
-                        )
-                        ->multiple()
-                        ->searchable(),
+                EnrollmentTermFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make()

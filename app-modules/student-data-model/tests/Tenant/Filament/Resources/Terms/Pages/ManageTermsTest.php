@@ -38,7 +38,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Terms\Pages\ManageTerms;
 use AdvisingApp\StudentDataModel\Filament\Resources\Terms\TermResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\TermsConsolidationFeature;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -48,7 +47,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertModelMissing;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 describe('manually maintained terms', function (): void {
@@ -113,7 +112,16 @@ describe('manually maintained terms', function (): void {
         Livewire::test(ManageTerms::class)
             ->callTableAction(DeleteAction::class, $term);
 
-        assertModelMissing($term);
+        assertSoftDeleted($term);
+    });
+
+    it('does not list deleted semesters', function (): void {
+        $term = Term::factory()->withoutSisTermId()->create();
+        $deletedTerm = Term::factory()->withoutSisTermId()->create(['deleted_at' => now()]);
+
+        Livewire::test(ManageTerms::class)
+            ->assertCanSeeTableRecords([$term])
+            ->assertCanNotSeeTableRecords([$deletedTerm]);
     });
 
     it('shows a semester as mapped when an enrollment has its name, ignoring case', function (): void {
@@ -174,14 +182,6 @@ describe('authorization', function (): void {
         actingAs($user)
             ->get(TermResource::getUrl('index'))
             ->assertSuccessful();
-    });
-
-    it('denies access to the page while the `TermsConsolidationFeature` is inactive', function (): void {
-        TermsConsolidationFeature::deactivate();
-
-        asSuperAdmin()
-            ->get(TermResource::getUrl('index'))
-            ->assertForbidden();
     });
 
     it('hides the `New` action without the `settings.create` permission', function (): void {

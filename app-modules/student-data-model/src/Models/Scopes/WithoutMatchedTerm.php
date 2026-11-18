@@ -62,8 +62,6 @@ class WithoutMatchedTerm
                 ->orWhereNotIn(
                     'enrollments.sis_term_id',
                     Term::query()
-                        // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-                        ->whereNull('deleted_at')
                         ->whereNotNull('sis_term_id')
                         ->select('sis_term_id'),
                 ))
@@ -72,8 +70,6 @@ class WithoutMatchedTerm
                 ->orWhereNotIn(
                     DB::raw('enrollments.semester_name::citext'),
                     Term::query()
-                        // TODO: Cleanup Task (terms-consolidation) Remove once `Term` uses `SoftDeletes`.
-                        ->whereNull('deleted_at')
                         ->whereNotNull('name')
                         ->select('name'),
                 ));
