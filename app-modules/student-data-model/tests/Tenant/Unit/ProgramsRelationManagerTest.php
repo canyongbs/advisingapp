@@ -243,7 +243,7 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class, $student->programs->first());
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
     $studentSettings->is_enabled = true;
@@ -256,7 +256,7 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class, $student->programs->first());
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('program.*.delete');
 
@@ -265,5 +265,5 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionVisible(DeleteBulkAction::class, $student->programs->first());
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

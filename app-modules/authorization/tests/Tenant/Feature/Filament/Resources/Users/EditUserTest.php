@@ -36,13 +36,13 @@
 
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
@@ -75,8 +75,8 @@ it('does not render super admin profile for regular user', function (): void {
 
     // Attempt to load the EditUser component with the super admin's route key
     Livewire::test(EditUser::class, ['record' => $superAdmin->getRouteKey()])
-        ->assertStatus(404);
-})->throws(ModelNotFoundException::class);
+        ->assertNotFound();
+});
 
 it('does not render impersonate button for super admin users at all', function (): void {
     $superAdmin = User::factory()->create();
@@ -108,7 +108,7 @@ it('allows super admin user to impersonate', function (): void {
         ->assertSuccessful()
         ->callAction(Impersonate::class);
 
-    expect($user->isImpersonated())->toBeTrue();
+    expect(Impersonation::isImpersonating())->toBeTrue();
     expect(auth()->id())->toBe($user->id);
 });
 
@@ -127,7 +127,7 @@ it('allows user with permission to impersonate', function (): void {
         ->assertSuccessful()
         ->callAction(Impersonate::class);
 
-    expect($second->isImpersonated())->toBeTrue();
+    expect(Impersonation::isImpersonating())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
 });
 

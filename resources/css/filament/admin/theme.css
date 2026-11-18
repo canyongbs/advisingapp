@@ -32,7 +32,10 @@
 </COPYRIGHT>
 */
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/saade/filament-fullcalendar/resources/css/filament-fullcalendar.css';
 @import 'tippy.js/dist/tippy.css';
+
+@source '../../../../vendor/saade/filament-fullcalendar/resources/views/**/*.blade.php';
 
 @config '../../../../tailwind.config.js';
 

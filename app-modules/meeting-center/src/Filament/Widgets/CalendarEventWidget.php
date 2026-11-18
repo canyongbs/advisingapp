@@ -41,11 +41,12 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarEventWidget extends FullCalendarWidget
 {
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         /** @var User $user */
         $user = auth()->user();

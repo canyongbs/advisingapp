@@ -244,7 +244,7 @@ it('renders the Delete Bulk Enrollments Table Action based on proper access', fu
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class, $student->enrollments->first());
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
     $studentSettings->is_enabled = true;
@@ -257,7 +257,7 @@ it('renders the Delete Bulk Enrollments Table Action based on proper access', fu
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class, $student->enrollments->first());
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('enrollment.*.delete');
 
@@ -266,7 +266,7 @@ it('renders the Delete Bulk Enrollments Table Action based on proper access', fu
         'pageClass' => ViewStudent::class,
     ])
         ->assertOk()
-        ->assertTableBulkActionVisible(DeleteBulkAction::class, $student->enrollments->first());
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 it('Can filter enrollments by semester', function (): void {

@@ -46,7 +46,10 @@ it('checks users with tracked_event_type unique-login count in line chart', func
     User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin, 'occurred_at' => now()->subMonths(6)])->create();
 
     $widgetInstance = Livewire::test(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
-    $invadedWidget = invade($widgetInstance);
 
-    expect($invadedWidget->getData()['datasets'][0]['data'])->toMatchSnapshot();
+    assert($widgetInstance instanceof UserUniqueLoginCountLineChart);
+
+    $data = (fn (): array => $this->getData())->call($widgetInstance);
+
+    expect($data['datasets'][0]['data'])->toMatchSnapshot();
 });

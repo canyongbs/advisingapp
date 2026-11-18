@@ -617,6 +617,8 @@ describe('email auto reply tab', function () use ($getTabLabels, $richText): voi
             ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
             ->instance();
 
+        assert($page instanceof ManageEvent);
+
         $fieldNames = array_map(
             fn (Field $field): string => $field->getName(),
             array_values($page->emailAutoReplyForm->getFlatFields()),

@@ -442,9 +442,11 @@ test('tabs render one per non-archived submission state plus All', function () u
         ->pluck('id')
         ->all();
 
-    $tabs = $testWorkflows($application)
-        ->instance()
-        ->getTabs();
+    $component = $testWorkflows($application)->instance();
+
+    assert($component instanceof WorkflowsRelationManager);
+
+    $tabs = $component->getTabs();
 
     foreach ($expectedStateIds as $stateId) {
         expect($tabs)->toHaveKey($stateId);

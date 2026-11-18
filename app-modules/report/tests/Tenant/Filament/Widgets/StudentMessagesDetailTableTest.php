@@ -623,6 +623,10 @@ it('does not list or export messages of archived students, including those from 
         ->assertCanNotSeeTableRecords(collect([$archivedOutbound, $archivedInbound]));
 
     // The export reads the table's own query, so it leaves out the same messages.
-    expect($component->instance()->getTableQueryForExport()->pluck('record_id')->sort()->values()->all())
+    $table = $component->instance();
+
+    assert($table instanceof StudentMessagesDetailTable);
+
+    expect($table->getTableQueryForExport()->pluck('record_id')->sort()->values()->all())
         ->toEqual(collect([$activeEngagement->id, $activeEngagementResponse->id])->sort()->values()->all());
 });

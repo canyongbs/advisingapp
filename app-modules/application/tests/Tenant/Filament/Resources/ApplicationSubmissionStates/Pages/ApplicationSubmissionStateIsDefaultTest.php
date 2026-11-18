@@ -134,6 +134,8 @@ test('getDefaultActiveTab returns the default state id when one exists', functio
     $component = Livewire::test(SubmissionsRelationManager::class, ['ownerRecord' => $application, 'pageClass' => ManageApplication::class])
         ->instance();
 
+    assert($component instanceof SubmissionsRelationManager);
+
     expect($component->getDefaultActiveTab())->toBe($defaultState->id);
 });
 
@@ -146,6 +148,8 @@ test('getDefaultActiveTab returns all when no default state is set', function ()
 
     $component = Livewire::test(SubmissionsRelationManager::class, ['ownerRecord' => $application, 'pageClass' => ManageApplication::class])
         ->instance();
+
+    assert($component instanceof SubmissionsRelationManager);
 
     expect($component->getDefaultActiveTab())->toBe('all');
 });
