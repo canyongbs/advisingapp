@@ -47,9 +47,6 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\GroupType;
-use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -71,7 +68,6 @@ use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
-use App\Features\StudentGroupFilterConsolidationFeature;
 use App\Features\TermsConsolidationFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\QueryException;
@@ -82,8 +78,6 @@ use Illuminate\Support\Str;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Laravel\assertNotSoftDeleted;
-use function Pest\Laravel\assertSoftDeleted;
 
 // Add tests for migration files here
 
@@ -205,98 +199,6 @@ test('2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload uses the
                 ->and($eventsWithoutTimestamps->map(fn (EmailMessageEvent $event): string => $event->refresh()->occurred_at->toDateTimeString())->unique()->all())
                 ->toBe(['2026-01-02 03:04:05'])
                 ->and($delivery->refresh()->occurred_at->toDateTimeString())->toBe('2026-05-06 07:08:09');
-        }
-    );
-});
-
-test('2026_10_12_154211_tmp_consolidate_student_group_filters deletes groups using removed filters and merges name filters', function () {
-    isolatedMigration(
-        '2026_10_12_154211_tmp_consolidate_student_group_filters',
-        function () {
-            $rule = fn (string $type, string $operator, string $text): array => [
-                'type' => $type,
-                'data' => ['operator' => $operator, 'settings' => ['text' => $text]],
-            ];
-            $orBlock = fn (array ...$groups): array => [
-                'type' => 'or',
-                'data' => ['groups' => array_map(fn (array $rules): array => ['rules' => $rules], $groups)],
-            ];
-            $createGroup = fn (GroupModel $model, ?array $rules, GroupType $type = GroupType::Dynamic): Group => Group::factory()->create([
-                'model' => $model,
-                'type' => $type,
-                'filters' => $rules === null ? null : ['queryBuilder' => ['rules' => $rules]],
-            ]);
-
-            $topLevelRemoved = $createGroup(GroupModel::Student, [
-                'a' => $rule('last', 'contains', 'Smith'),
-                'b' => $rule('sisid', 'equals', '123'),
-            ]);
-            $campaign = Campaign::factory()->for($topLevelRemoved, 'group')->create();
-
-            $nestedRemoved = $createGroup(GroupModel::Student, [
-                'a' => $orBlock(
-                    ['b' => $rule('holds', 'contains', 'X')],
-                    ['c' => $orBlock(['d' => $rule('enrollmentSisid', 'equals', '123')])],
-                ),
-            ]);
-
-            $tagsRule = [
-                'type' => 'tags',
-                'data' => ['operator' => 'isRelatedTo', 'settings' => ['values' => [(string) Str::uuid()]]],
-            ];
-            $legacyRules = [
-                'a' => $rule('last', 'contains', 'Smith'),
-                'b' => $orBlock(
-                    ['c' => $rule('first', 'startsWith.inverse', 'A'), 'd' => $tagsRule],
-                    ['e' => $orBlock(['f' => $rule('full_name', 'equals', 'Jo Bloggs')], ['g' => $rule('preferred', 'endsWith', 'y')])],
-                ),
-            ];
-            $merged = $createGroup(GroupModel::Student, $legacyRules);
-
-            $prospectFilters = [
-                'a' => $rule('phone', 'contains', '555'),
-                'b' => $rule('full_name', 'contains', 'Smith'),
-            ];
-            $prospect = $createGroup(GroupModel::Prospect, $prospectFilters);
-            $staticFilters = ['a' => $rule('sisid', 'equals', '123')];
-            $static = $createGroup(GroupModel::Student, $staticFilters, GroupType::Static);
-            $withoutFilters = $createGroup(GroupModel::Student, null);
-
-            expect(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_10_12_154211_tmp_consolidate_student_group_filters.php']);
-
-            $nameRule = fn (string $attribute, string $operator, string $text): array => [
-                'type' => 'name',
-                'data' => ['operator' => $attribute, 'settings' => ['operator' => $operator, 'text' => $text]],
-            ];
-
-            expect($migrate)->toBe(Command::SUCCESS)
-                ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe([
-                    'a' => $nameRule('lastName', 'contains', 'Smith'),
-                    'b' => $orBlock(
-                        ['c' => $nameRule('firstName', 'startsWith.inverse', 'A'), 'd' => $tagsRule],
-                        ['e' => $orBlock(['f' => $nameRule('fullName', 'equals', 'Jo Bloggs')], ['g' => $nameRule('preferredName', 'endsWith', 'y')])],
-                    ),
-                ])
-                ->and($prospect->refresh()->filters['queryBuilder']['rules'])->toBe($prospectFilters)
-                ->and($static->refresh()->filters['queryBuilder']['rules'])->toBe($staticFilters)
-                ->and($withoutFilters->refresh()->filters)->toBeNull()
-                ->and(StudentGroupFilterConsolidationFeature::active())->toBeTrue();
-
-            assertSoftDeleted($topLevelRemoved);
-            assertSoftDeleted($campaign);
-            assertSoftDeleted($nestedRemoved);
-            assertNotSoftDeleted($merged);
-            assertNotSoftDeleted($prospect);
-            assertNotSoftDeleted($static);
-            assertNotSoftDeleted($withoutFilters);
-
-            $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/group/database/migrations/2026_10_12_154211_tmp_consolidate_student_group_filters.php']);
-
-            expect($rollback)->toBe(Command::SUCCESS)
-                ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe($legacyRules)
-                ->and(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
         }
     );
 });
