@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Features;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use App\Support\AbstractFeatureFlag;
 
-class InstitutionDetails extends Cluster
+class LlamaParseFileParsingFeature extends AbstractFeatureFlag
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
-
-    protected static ?string $navigationLabel = 'Institution Details';
-
-    protected static ?int $navigationSort = 70;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

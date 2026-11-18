@@ -56,4 +56,14 @@ class AiAssistantFileFactory extends Factory
             'parsing_results' => $this->faker->text(),
         ];
     }
+
+    public function parsingInProgress(): self
+    {
+        return $this->state([
+            'file_id' => 'pjb-' . $this->faker->uuid(),
+            'parsing_results' => null,
+            'parsing_started_at' => now()->subMinutes(10),
+            'parsing_last_checked_at' => now()->subMinutes(10),
+        ]);
+    }
 }

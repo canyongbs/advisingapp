@@ -76,8 +76,8 @@ class EmployeeAdvisorTable extends BaseWidget
                             }
                         },
                     ])
-                    ->orderBy('created_at', 'desc')
             )
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')

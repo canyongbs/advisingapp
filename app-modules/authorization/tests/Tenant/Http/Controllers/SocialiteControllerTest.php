@@ -150,7 +150,7 @@ it('still logs the user in and reports the error when the Azure photo request fa
 
     $fakeAzureSocialiteDriver($user->email);
 
-    Http::fake(fn () => throw new ConnectionException('Connection timed out'));
+    Http::fake(fn (): never => throw new ConnectionException('Connection timed out'));
 
     get(route('socialite.callback', ['provider' => 'azure']))
         ->assertRedirect();

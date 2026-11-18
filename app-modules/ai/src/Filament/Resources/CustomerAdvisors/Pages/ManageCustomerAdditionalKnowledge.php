@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use App\Features\LlamaParseFileParsingFeature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -202,6 +203,11 @@ class ManageCustomerAdditionalKnowledge extends EditRecord
 
                 $file->file_id = $result->fileId;
                 $file->parsing_results = $result->parsingResults;
+
+                if (LlamaParseFileParsingFeature::active() && filled($result->fileId)) {
+                    $file->parsing_started_at = now();
+                }
+
                 $file->save();
 
                 $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('file');
