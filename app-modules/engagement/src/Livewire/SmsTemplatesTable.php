@@ -34,43 +34,65 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
+namespace AdvisingApp\Engagement\Livewire;
 
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use AdvisingApp\Engagement\Models\SmsTemplate;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
-class ListEmailTemplates extends ListRecords
+class SmsTemplatesTable extends Component implements HasActions, HasForms, HasTable
 {
-    protected static string $resource = EmailTemplateResource::class;
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    public function boot(): void
+    {
+        abort_unless(SmsTemplateResource::canViewAny(), 403);
+    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->query(SmsTemplate::query())
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('description'),
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', SmsTemplate::class)
+                    ->url(fn (): string => SmsTemplateResource::getUrl('create')),
+            ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (SmsTemplate $record): string => SmsTemplateResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize('deleteAny', SmsTemplate::class)
                         ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function render(): View
     {
-        return [
-            CreateAction::make(),
-        ];
+        return view('engagement::livewire.unified-inbox-table');
     }
 }

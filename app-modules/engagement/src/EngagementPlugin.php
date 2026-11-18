@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Engagement;
 
+use AdvisingApp\Engagement\Livewire\EmailTemplatesTable;
 use AdvisingApp\Engagement\Livewire\InboxTable;
 use AdvisingApp\Engagement\Livewire\SentItemsTable;
+use AdvisingApp\Engagement\Livewire\SmsTemplatesTable;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -62,6 +64,8 @@ class EngagementPlugin implements Plugin
             ->livewireComponents([
                 InboxTable::class,
                 SentItemsTable::class,
+                EmailTemplatesTable::class,
+                SmsTemplatesTable::class,
             ]);
     }
 

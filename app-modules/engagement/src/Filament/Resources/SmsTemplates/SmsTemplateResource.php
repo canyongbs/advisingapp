@@ -38,33 +38,36 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates;
 
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\CreateSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\EditSmsTemplate;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\ListSmsTemplates;
 use AdvisingApp\Engagement\Models\SmsTemplate;
-use App\Filament\Clusters\Communication;
-use App\Filament\Clusters\CommunicationNavigationGroup;
+use App\Enums\CommunicationSettingsTab;
+use App\Filament\Pages\ManageCommunicationSettings;
 use Filament\Resources\Resource;
-use UnitEnum;
+use Illuminate\Database\Eloquent\Model;
 
 class SmsTemplateResource extends Resource
 {
     protected static ?string $model = SmsTemplate::class;
 
-    protected static ?string $navigationLabel = 'Text';
-
     protected static ?string $modelLabel = 'text message template';
 
-    protected static ?int $navigationSort = 130;
-
-    protected static ?string $cluster = Communication::class;
-
-    protected static string | UnitEnum | null $navigationGroup = CommunicationNavigationGroup::Templates;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListSmsTemplates::route('/'),
             'create' => CreateSmsTemplate::route('/create'),
             'edit' => EditSmsTemplate::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return ManageCommunicationSettings::getUrl(
+            ['tab' => CommunicationSettingsTab::Text->value],
+            $isAbsolute,
+            $panel,
+            $tenant,
+            $shouldGuessMissingParameters,
+        );
     }
 }

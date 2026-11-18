@@ -38,31 +38,34 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates;
 
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\CreateEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\EditEmailTemplate;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemplates;
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Filament\Clusters\Communication;
-use App\Filament\Clusters\CommunicationNavigationGroup;
+use App\Enums\CommunicationSettingsTab;
+use App\Filament\Pages\ManageCommunicationSettings;
 use Filament\Resources\Resource;
-use UnitEnum;
+use Illuminate\Database\Eloquent\Model;
 
 class EmailTemplateResource extends Resource
 {
     protected static ?string $model = EmailTemplate::class;
 
-    protected static ?int $navigationSort = 120;
-
-    protected static ?string $cluster = Communication::class;
-
-    protected static string | UnitEnum | null $navigationGroup = CommunicationNavigationGroup::Templates;
-
-    protected static string | null $navigationLabel = 'Email';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListEmailTemplates::route('/'),
             'create' => CreateEmailTemplate::route('/create'),
             'edit' => EditEmailTemplate::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return ManageCommunicationSettings::getUrl(
+            ['tab' => CommunicationSettingsTab::Email->value],
+            $isAbsolute,
+            $panel,
+            $tenant,
+            $shouldGuessMissingParameters,
+        );
     }
 }
