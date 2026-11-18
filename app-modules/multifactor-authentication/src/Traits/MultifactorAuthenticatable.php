@@ -99,15 +99,6 @@ trait MultifactorAuthenticatable
         })->all()));
     }
 
-    public function destroyRecoveryCode(string $recoveryCode): void
-    {
-        $unusedCodes = array_filter($this->multifactor_recovery_codes ?? [], fn ($code): bool => $code !== $recoveryCode);
-
-        $this->forceFill([
-            'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
-        ])->save();
-    }
-
     public function consumeRecoveryCode(string $recoveryCode): bool
     {
         $wasConsumed = DB::transaction(function () use ($recoveryCode): bool {
