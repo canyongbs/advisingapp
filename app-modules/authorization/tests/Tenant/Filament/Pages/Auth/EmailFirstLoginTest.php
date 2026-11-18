@@ -41,6 +41,8 @@ use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
+use Dom\Element;
+use Dom\HTMLDocument;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Foundation\Application;
@@ -800,11 +802,11 @@ it('does not show the switch tenant control or a google unavailable message for 
 
     assert(is_string($html));
 
-    $document = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
+    $document = HTMLDocument::createFromString($html, LIBXML_NOERROR);
 
     expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
-        ->and(collect($document->querySelectorAll('a'))->contains(fn (Dom\Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse()
-        ->and(collect($document->querySelectorAll('p'))->contains(fn (Dom\Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse()
+        ->and(collect($document->querySelectorAll('p'))->contains(fn (Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
 });
 
 it('shows the switch tenant control for the mobile app', function (): void {
@@ -814,7 +816,7 @@ it('shows the switch tenant control for the mobile app', function (): void {
 
     assert(is_string($html));
 
-    $switchTenantLink = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)
+    $switchTenantLink = HTMLDocument::createFromString($html, LIBXML_NOERROR)
         ->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]');
 
     expect($switchTenantLink)->not->toBeNull()
@@ -828,10 +830,10 @@ it('does not show the switch tenant control when google sso is not enabled and t
 
     assert(is_string($html));
 
-    $document = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR);
+    $document = HTMLDocument::createFromString($html, LIBXML_NOERROR);
 
     expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
-        ->and(collect($document->querySelectorAll('a'))->contains(fn (Dom\Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse();
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse();
 });
 
 it('does not offer google sign-in on the login page for the mobile app when google sso is enabled', function (): void {
@@ -847,7 +849,7 @@ it('does not offer google sign-in on the login page for the mobile app when goog
 
     assert(is_string($html));
 
-    $googleRedirectLink = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)
+    $googleRedirectLink = HTMLDocument::createFromString($html, LIBXML_NOERROR)
         ->querySelector('a[href^="' . route('socialite.redirect', ['provider' => 'google']) . '"]');
 
     expect($googleRedirectLink)->toBeNull();
@@ -860,7 +862,7 @@ it('does not show a google unavailable message for the mobile app when google ss
 
     assert(is_string($html));
 
-    $paragraphs = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR)->querySelectorAll('p');
+    $paragraphs = HTMLDocument::createFromString($html, LIBXML_NOERROR)->querySelectorAll('p');
 
-    expect(collect($paragraphs)->contains(fn (Dom\Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
+    expect(collect($paragraphs)->contains(fn (Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
 });
