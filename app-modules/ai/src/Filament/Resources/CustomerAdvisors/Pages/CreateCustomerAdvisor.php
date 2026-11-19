@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
-use App\Features\AdvisorNameCitextFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -66,13 +65,7 @@ class CreateCustomerAdvisor extends CreateRecord
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    // TODO: Cleanup Task (advisor-name-citext) - replace ->when() with a plain ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
-                    ->when(
-                        AdvisorNameCitextFeature::active(),
-                        fn (TextInput $field): TextInput => $field->unique(
-                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                        ),
-                    )
+                    ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed())
                     ->columnSpanFull(),
                 Select::make('model')
                     ->live()

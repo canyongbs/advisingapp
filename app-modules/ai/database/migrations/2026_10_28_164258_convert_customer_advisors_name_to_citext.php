@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AdvisorNameCitextFeature;
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -43,46 +41,27 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task (advisor-name-citext) - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
     protected string $table = 'customer_advisors';
 
     protected string $column = 'name';
-
-    // TODO: Cleanup Task (advisor-name-citext) - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
 
     private string $uniqueConstraint = 'customer_advisors_name_unique';
 
     public function up(): void
     {
         DB::transaction(function (): void {
-            // Prevents a concurrent insert between the duplicate scan and the unique index creation
-            DB::statement("LOCK TABLE {$this->table} IN ACCESS EXCLUSIVE MODE");
-
-            // TODO: Cleanup Task (advisor-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
-
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            // Shared by the employee and customer advisor migrations; activated here as the later one so it only turns on once both tables are converted
-            AdvisorNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            AdvisorNameCitextFeature::deactivate();
-
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
