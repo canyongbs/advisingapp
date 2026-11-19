@@ -50,7 +50,6 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Team\Models\Department;
-use App\Features\CampaignNameCitextFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
@@ -321,16 +320,4 @@ it('allows creating a campaign whose name is freed up by a soft-deleted campaign
         ->fillForm(['name' => 'fall outreach'])
         ->call('create')
         ->assertHasNoFormErrors(['name']);
-});
-
-it('rejects creating a campaign with a soft-deleted name before the citext migration activates', function (): void {
-    CampaignNameCitextFeature::deactivate();
-
-    $deletedCampaign = Campaign::factory()->create(['name' => 'Fall Outreach']);
-    $deletedCampaign->delete();
-
-    Livewire::test(CreateCampaign::class)
-        ->fillForm(['name' => 'fall outreach'])
-        ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
 });
