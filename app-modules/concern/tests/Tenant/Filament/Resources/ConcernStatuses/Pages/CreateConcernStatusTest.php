@@ -38,7 +38,6 @@ use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\ConcernStatusResource;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
 use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Features\AlertStatusNameCitextFeature;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -96,16 +95,4 @@ it('allows creating a concern status whose name is freed up by a soft-deleted co
         'name' => 'under review',
         'deleted_at' => null,
     ]);
-});
-
-it('rejects creating a concern status with a soft-deleted name before the citext migration activates', function (): void {
-    AlertStatusNameCitextFeature::deactivate();
-
-    $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
-    $deletedConcernStatus->delete();
-
-    Livewire::test(CreateConcernStatus::class)
-        ->fillForm(['name' => 'under review'])
-        ->call('create')
-        ->assertHasFormErrors(['name' => 'unique']);
 });
