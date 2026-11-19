@@ -37,7 +37,6 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
-use App\Features\BasicNeedsProgramNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -65,9 +64,7 @@ class EditBasicNeedsProgram extends EditRecord
                     ->maxLength(255)
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule): Unique => BasicNeedsProgramNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
                     ),
                 Textarea::make('description')
                     ->label('Description')

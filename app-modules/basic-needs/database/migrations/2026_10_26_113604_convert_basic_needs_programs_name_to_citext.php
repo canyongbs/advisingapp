@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\BasicNeedsProgramNameCitextFeature;
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -43,17 +41,9 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task (basic-needs-citext) - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
     protected string $table = 'basic_needs_programs';
 
     protected string $column = 'name';
-
-    // TODO: Cleanup Task (basic-needs-citext) - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
 
     private string $uniqueConstraint = 'basic_needs_programs_name_unique';
 
@@ -64,25 +54,18 @@ return new class () extends Migration {
                 $table->dropUnique($this->uniqueConstraint);
             });
 
-            // TODO: Cleanup Task (basic-needs-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
-
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex([$this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            BasicNeedsProgramNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            BasicNeedsProgramNameCitextFeature::deactivate();
-
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
