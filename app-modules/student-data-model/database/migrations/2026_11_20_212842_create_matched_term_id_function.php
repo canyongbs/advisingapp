@@ -44,11 +44,13 @@ return new class () extends Migration {
             // Matches an enrollment to one term: by SIS term ID, otherwise by name ignoring case, preferring SIS terms, then the latest start date.
             // A `LANGUAGE sql` function is expanded into the query calling it, so Postgres can cache its lookup per distinct SIS term ID and semester name.
             // Its body is `BEGIN ATOMIC`, so Postgres tracks the `terms` columns it uses, and blocks dropping or changing them while it exists.
+            // It only reads `terms`, so it is `PARALLEL SAFE`, as otherwise no query calling it, or reading the `enrollment_terms` view, could scan in parallel.
             DB::statement(<<<'SQL'
                 CREATE FUNCTION matched_term_id(enrollment_sis_term_id varchar, enrollment_semester_name varchar)
                 RETURNS TABLE (term_id uuid)
                 LANGUAGE sql
                 STABLE
+                PARALLEL SAFE
                 BEGIN ATOMIC
                     SELECT terms.id
                     FROM terms
