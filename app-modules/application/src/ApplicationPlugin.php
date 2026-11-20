@@ -36,8 +36,13 @@
 
 namespace AdvisingApp\Application;
 
+use AdvisingApp\Application\Enums\OnlineAdmissionsTab;
+use AdvisingApp\Application\Filament\Pages\OnlineAdmissions;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Route;
 
 class ApplicationPlugin implements Plugin
 {
@@ -48,10 +53,47 @@ class ApplicationPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\Application\\Filament\\Resources'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\Application\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'AdvisingApp\\Application\\Filament\\Pages'
+            )
+            ->authenticatedTenantRoutes(function (): void {
+                // The submission states resource used to live in the `OnlineAdmissions` cluster at
+                // `online-admissions/application-submission-states/...`. These redirects keep bookmarks and
+                // links to the old cluster URLs (list, create, view, edit) working after the cluster was removed.
+                Route::prefix('online-admissions/application-submission-states')
+                    ->group(function (): void {
+                        Route::get('/', fn (): RedirectResponse => redirect()->to(
+                            OnlineAdmissions::getUrl([
+                                ...request()->query(),
+                                'tab' => OnlineAdmissionsTab::SubmissionStates->value,
+                            ]),
+                        ));
+
+                        Route::get('/create', fn (): RedirectResponse => redirect()->to(
+                            ApplicationSubmissionStateResource::getUrl('create', request()->query()),
+                        ));
+
+                        Route::get('/{record}', fn (string $record): RedirectResponse => redirect()->to(
+                            ApplicationSubmissionStateResource::getUrl('view', [
+                                ...request()->query(),
+                                'record' => $record,
+                            ]),
+                        ));
+
+                        Route::get('/{record}/edit', fn (string $record): RedirectResponse => redirect()->to(
+                            ApplicationSubmissionStateResource::getUrl('edit', [
+                                ...request()->query(),
+                                'record' => $record,
+                            ]),
+                        ));
+                    });
+            });
     }
 
     public function boot(Panel $panel): void {}

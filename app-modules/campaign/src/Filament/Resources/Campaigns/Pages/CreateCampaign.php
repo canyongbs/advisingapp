@@ -41,7 +41,6 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use App\Features\CampaignNameCitextFeature;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
@@ -105,11 +104,7 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required()
-                        ->unique(
-                            modifyRuleUsing: fn (Unique $rule): Unique => CampaignNameCitextFeature::active()
-                                ? $rule->withoutTrashed()
-                                : $rule,
-                        ),
+                        ->unique(modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed()),
                     ...PopulationGroupSelector::make(function (Set $set): void {
                         $set('actions', []);
                     }),

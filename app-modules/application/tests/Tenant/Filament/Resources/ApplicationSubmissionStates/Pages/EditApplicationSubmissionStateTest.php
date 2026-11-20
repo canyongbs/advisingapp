@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
@@ -91,7 +92,7 @@ test('archive action is hidden on edit page when state is already archived', fun
         ->assertActionHidden('archive');
 });
 
-test('archive action archives the state and redirects to index', function (): void {
+test('archive action archives the state and redirects to the submission states tab', function (): void {
     asSuperAdmin();
 
     $state = ApplicationSubmissionState::factory()->create([
@@ -99,7 +100,8 @@ test('archive action archives the state and redirects to index', function (): vo
     ]);
 
     Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
-        ->callAction('archive');
+        ->callAction('archive')
+        ->assertRedirect(ApplicationSubmissionStateResource::getIndexUrl());
 
     expect($state->fresh()->isArchived())->toBeTrue();
 });

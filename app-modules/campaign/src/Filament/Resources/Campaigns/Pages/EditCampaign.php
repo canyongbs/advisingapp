@@ -39,7 +39,6 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
 use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use App\Features\CampaignNameCitextFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -60,9 +59,7 @@ class EditCampaign extends EditRecord
                     ->required()
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule): Unique => CampaignNameCitextFeature::active()
-                            ? $rule->withoutTrashed()
-                            : $rule,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
                     ),
                 ...PopulationGroupSelector::make(),
                 Toggle::make('enabled')

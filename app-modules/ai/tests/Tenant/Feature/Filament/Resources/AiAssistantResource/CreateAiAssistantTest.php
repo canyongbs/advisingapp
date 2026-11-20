@@ -39,13 +39,11 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories\CreateAiAssistantRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\AdvisorNameCitextFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -328,31 +326,4 @@ it('allows creating an assistant whose name was freed up by a soft-deleted one',
         ->assertHasNoFormErrors(['name']);
 
     assertDatabaseHas(AiAssistant::class, ['name' => 'admissions helper', 'deleted_at' => null]);
-});
-
-// TODO: Cleanup Task (advisor-name-citext) - Delete this test (the unique index always applies once the feature flag is removed)
-it('does not apply name uniqueness validation before the citext migration activates', function () use ($licenses, $permissions): void {
-    Storage::fake('s3');
-
-    AdvisorNameCitextFeature::deactivate();
-
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->employeeAdvisors = true;
-    $settings->save();
-
-    DB::statement('DROP INDEX IF EXISTS ai_assistants_name_unique');
-
-    AiAssistant::factory()->create(['name' => 'Admissions Helper']);
-
-    $request = collect(CreateAiAssistantRequestFactory::new()->create(['name' => 'Admissions Helper']));
-
-    Livewire::test(CreateAiAssistant::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors(['name']);
 });

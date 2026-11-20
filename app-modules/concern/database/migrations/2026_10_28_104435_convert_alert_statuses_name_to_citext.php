@@ -41,19 +41,13 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    protected string $table = 'alert_statuses';
-
-    protected string $column = 'name';
-
-    private string $uniqueConstraint = 'alert_statuses_name_unique';
-
     public function up(): void
     {
         DB::transaction(function (): void {
-            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
+            DB::statement('ALTER TABLE alert_statuses ALTER COLUMN name TYPE citext');
 
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+            Schema::table('alert_statuses', function (Blueprint $table): void {
+                $table->uniqueIndex(['name'], 'alert_statuses_name_unique')
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
         });
@@ -62,11 +56,11 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function (): void {
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->dropUniqueIndex($this->uniqueConstraint);
+            Schema::table('alert_statuses', function (Blueprint $table): void {
+                $table->dropUniqueIndex('alert_statuses_name_unique');
             });
 
-            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+            DB::statement('ALTER TABLE alert_statuses ALTER COLUMN name TYPE varchar(255)');
         });
     }
 };

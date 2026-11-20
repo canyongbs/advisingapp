@@ -34,14 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Application\Enums;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use Filament\Support\Contracts\HasLabel;
 
-class BasicNeedsCategoryNameCitextFeature extends AbstractFeatureFlag
+enum OnlineAdmissionsTab: string implements HasLabel
 {
-    public function resolve(mixed $scope): mixed
+    case SubmissionStates = 'submission-states';
+
+    public function canView(): bool
     {
-        return false;
+        return match ($this) {
+            self::SubmissionStates => ApplicationSubmissionStateResource::canViewAny(),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::SubmissionStates => 'Submission States',
+        };
     }
 }
