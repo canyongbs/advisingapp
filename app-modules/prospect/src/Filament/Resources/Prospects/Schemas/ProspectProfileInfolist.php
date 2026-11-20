@@ -36,13 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas;
 
-use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use App\Infolists\Components\Subsection;
-use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -115,8 +114,10 @@ class ProspectProfileInfolist
                     ])
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
-                        Action::make('edit')
-                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $schema->getRecord()]))
+                        EditAction::make()
+                            ->modal()
+                            ->slideOver()
+                            ->schema(fn (Schema $schema): Schema => EditProspectForm::configure($schema))
                             ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);

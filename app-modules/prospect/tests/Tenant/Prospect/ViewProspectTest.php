@@ -115,10 +115,22 @@ it('updates primary associations when saving the profile edit slide-over', funct
         ->primary_phone_id->toBe($originalPhoneNumber->getKey())
         ->primary_address_id->toBe($originalAddress->getKey());
 
-    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
-        ->assertActionExists(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'), fn (Action $action): bool => $action->isModalSlideOver() && blank($action->getUrl()))
-        ->mountAction(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'))
-        ->fillForm(fn (array $state): array => [
+    $action = TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile');
+
+    $livewire = Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertActionExists($action, fn (Action $action): bool => $action->isModalSlideOver() && blank($action->getUrl()))
+        ->mountAction($action);
+
+    $state = $livewire->get('mountedActions.0.data');
+
+    // Livewire keeps existing key order when setting an array, so the repeaters are cleared before reordering.
+    $livewire
+        ->fillForm([
+            'emailAddresses' => [],
+            'phoneNumbers' => [],
+            'addresses' => [],
+        ])
+        ->fillForm([
             'emailAddresses' => array_reverse($state['emailAddresses'], preserve_keys: true),
             'phoneNumbers' => array_reverse($state['phoneNumbers'], preserve_keys: true),
             'addresses' => array_reverse($state['addresses'], preserve_keys: true),
