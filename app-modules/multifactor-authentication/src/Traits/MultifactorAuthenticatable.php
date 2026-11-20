@@ -40,6 +40,7 @@ use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 trait MultifactorAuthenticatable
@@ -105,6 +106,38 @@ trait MultifactorAuthenticatable
         $this->forceFill([
             'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
         ])->save();
+    }
+
+    public function consumeRecoveryCode(string $recoveryCode): bool
+    {
+        $wasConsumed = DB::transaction(function () use ($recoveryCode): bool {
+            $lockedUser = static::query()->lockForUpdate()->findOrFail($this->getKey());
+
+            $recoveryCodes = $lockedUser->multifactor_recovery_codes ?? [];
+
+            assert(is_array($recoveryCodes));
+
+            $unusedCodes = array_values(array_filter(
+                $recoveryCodes,
+                fn (string $code): bool => ! hash_equals($code, $recoveryCode),
+            ));
+
+            if (count($unusedCodes) === count($recoveryCodes)) {
+                return false;
+            }
+
+            $lockedUser->forceFill([
+                'multifactor_recovery_codes' => $unusedCodes ? encrypt(json_encode($unusedCodes)) : null,
+            ])->save();
+
+            return true;
+        });
+
+        if ($wasConsumed) {
+            $this->refresh();
+        }
+
+        return $wasConsumed;
     }
 
     public function getMultifactorQrCodeUrl(): string
