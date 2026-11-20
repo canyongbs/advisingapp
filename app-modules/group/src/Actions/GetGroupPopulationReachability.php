@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNu
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use UnexpectedValueException;
 
 class GetGroupPopulationReachability
 {
@@ -67,7 +68,9 @@ class GetGroupPopulationReachability
             ->selectRaw("count(*) filter (where {$unableToTextCondition}) as unable_to_text_count", $unableToTextBindings)
             ->first();
 
-        assert(is_object($counts));
+        if (! is_object($counts)) {
+            throw new UnexpectedValueException('Counting the members of a group did not return a row.');
+        }
 
         return new GroupPopulationReachability(
             totalCount: (int) $counts->total_count,
