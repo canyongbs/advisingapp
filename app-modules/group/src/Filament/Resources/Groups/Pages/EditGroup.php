@@ -58,6 +58,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
+use UnexpectedValueException;
 
 /**
  * @extends EditRecord<Group>
@@ -193,7 +194,9 @@ class EditGroup extends EditRecord implements HasTable
     {
         $query = $this->getFilteredTableQuery();
 
-        assert($query instanceof Builder);
+        if (! $query instanceof Builder) {
+            throw new UnexpectedValueException('The group\'s table does not have a query.');
+        }
 
         return $this->populationReachability[$query->toRawSql()] ??= app(GetGroupPopulationReachability::class)($query);
     }
