@@ -50,14 +50,19 @@ $createEnrollment = fn (array $attributes): Enrollment => Enrollment::factory()-
 it('filters enrollments to those matched to a term with one of the names, ignoring case', function () use ($createEnrollment): void {
     $fallTerm = Term::factory()->create(['name' => 'FA-20']);
     $springTerm = Term::factory()->create(['name' => 'SP-21']);
-    Term::factory()->create(['name' => 'SU-21', 'deleted_at' => now()]);
+    Term::factory()->withoutSisTermId()->create(['name' => 'fa-20']);
+    $deletedTerm = Term::factory()->create(['name' => 'SU-21', 'deleted_at' => now()]);
 
     $matchedById = $createEnrollment(['sis_term_id' => $fallTerm->sis_term_id]);
     $matchedByName = $createEnrollment(['semester_name' => 'fa-20']);
+    $matchedByNameWithUnknownId = $createEnrollment(['sis_term_id' => 'unknown', 'semester_name' => 'Fa-20']);
+    $matchedByNameWithDeletedTermId = $createEnrollment(['sis_term_id' => $deletedTerm->sis_term_id, 'semester_name' => 'FA-20']);
     $createEnrollment(['sis_term_id' => $springTerm->sis_term_id, 'semester_name' => 'FA-20']);
     $createEnrollment(['semester_name' => 'SP-21']);
     $createEnrollment(['semester_name' => 'SU-21']);
+    $createEnrollment(['sis_term_id' => $deletedTerm->sis_term_id]);
     $createEnrollment(['semester_name' => 'Unmatched']);
+    $createEnrollment([]);
 
     $expected = Enrollment::query()
         ->whereHas('term', fn (Builder $query) => $query->whereIn('terms.name', ['FA-20', 'SU-21']))
@@ -68,5 +73,10 @@ it('filters enrollments to those matched to a term with one of the names, ignori
 
     expect(Enrollment::query()->tap(new MatchedToTermNamed(['FA-20', 'SU-21']))->pluck('id')->sort()->values()->all())
         ->toBe($expected)
-        ->toEqualCanonicalizing([$matchedById->getKey(), $matchedByName->getKey()]);
+        ->toEqualCanonicalizing([
+            $matchedById->getKey(),
+            $matchedByName->getKey(),
+            $matchedByNameWithUnknownId->getKey(),
+            $matchedByNameWithDeletedTermId->getKey(),
+        ]);
 });
