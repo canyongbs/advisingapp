@@ -35,13 +35,18 @@
 */
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\EmailFirstLogin;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Livewire\Exceptions\MethodNotFoundException;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertAuthenticated;
@@ -165,10 +170,10 @@ it('checks remember me by default', function (): void {
 
 it('only shows remember me on the password step', function (): void {
     Livewire::test(EmailFirstLogin::class)
-        ->assertFormFieldHidden('remember')
+        ->assertSchemaComponentHidden('remember')
         ->set('data.email', 'user@example.com')
         ->call('continue')
-        ->assertFormFieldVisible('remember');
+        ->assertSchemaComponentVisible('remember');
 });
 
 it('remembers the user when remember me is left checked', function (): void {
@@ -383,12 +388,12 @@ it('only shows the code field on the multifactor step', function (): void {
     Livewire::test(EmailFirstLogin::class)
         ->set('data.email', $user->email)
         ->call('continue')
-        ->assertFormFieldHidden('code')
+        ->assertSchemaComponentHidden('code')
         ->set('data.password', 'password')
         ->call('authenticate')
-        ->assertFormFieldVisible('code')
-        ->assertFormFieldHidden('password')
-        ->assertFormFieldHidden('remember');
+        ->assertSchemaComponentVisible('code')
+        ->assertSchemaComponentHidden('password')
+        ->assertSchemaComponentHidden('remember');
 });
 
 it('remembers the user after the multifactor challenge when remember me is left checked', function (): void {
@@ -524,4 +529,175 @@ it('does not allow switching to another account during a pending multifactor ste
     expect($component->get('user')->is($unenrolledUser))->toBeTrue();
 
     assertGuest();
+});
+
+it('routes an external user based on the available single sign-on providers', function (bool $isAzureEnabled, bool $isGoogleEnabled, Closure $assertRouting): void {
+    $azureSettings = app(AzureSsoSettings::class);
+    $azureSettings->is_enabled = $isAzureEnabled;
+    $azureSettings->client_id = 'azure-client-id';
+    $azureSettings->save();
+
+    $googleSettings = app(GoogleSsoSettings::class);
+    $googleSettings->is_enabled = $isGoogleEnabled;
+    $googleSettings->client_id = 'google-client-id';
+    $googleSettings->save();
+
+    $user = User::factory()->external()->create();
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue');
+
+    $assertRouting($component, $user);
+
+    assertGuest();
+})->with([
+    'azure only redirects to azure' => [
+        true,
+        false,
+        fn (Testable $component, User $user) => $component
+            ->assertRedirect(route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $user->email])),
+    ],
+    'google only redirects to google' => [
+        false,
+        true,
+        fn (Testable $component, User $user) => $component
+            ->assertRedirect(route('socialite.redirect', ['provider' => 'google', 'login_hint' => $user->email])),
+    ],
+    'azure and google offers a choice' => [
+        true,
+        true,
+        fn (Testable $component, User $user) => $component
+            ->assertNoRedirect()
+            ->assertSet('step', 'sso')
+            ->assertSchemaComponentHidden('remember')
+            ->assertActionVisible('azureSso')
+            ->assertActionHasUrl('azureSso', route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $user->email]))
+            ->assertActionVisible('googleSso')
+            ->assertActionHasUrl('googleSso', route('socialite.redirect', ['provider' => 'google', 'login_hint' => $user->email])),
+    ],
+    'no provider says single sign-on is unavailable' => [
+        false,
+        false,
+        fn (Testable $component) => $component
+            ->assertNoRedirect()
+            ->assertSet('step', 'email')
+            ->assertNotified('Single sign-on is unavailable'),
+    ],
+]);
+
+it('redirects an external user in the mobile app to azure when google is also available', function (): void {
+    $azureSettings = app(AzureSsoSettings::class);
+    $azureSettings->is_enabled = true;
+    $azureSettings->client_id = 'azure-client-id';
+    $azureSettings->save();
+
+    $googleSettings = app(GoogleSsoSettings::class);
+    $googleSettings->is_enabled = true;
+    $googleSettings->client_id = 'google-client-id';
+    $googleSettings->save();
+
+    $user = User::factory()->external()->create();
+
+    app()->rebinding('request', function (Application $app, Request $request): void {
+        $request->headers->set('User-Agent', EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN);
+    });
+
+    Livewire::withHeaders(['User-Agent' => EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN])
+        ->test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertRedirect(route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $user->email]));
+});
+
+it('tells an external user in the mobile app that google sign-on is unavailable when it is the only provider', function (): void {
+    $googleSettings = app(GoogleSsoSettings::class);
+    $googleSettings->is_enabled = true;
+    $googleSettings->client_id = 'google-client-id';
+    $googleSettings->save();
+
+    $user = User::factory()->external()->create();
+
+    app()->rebinding('request', function (Application $app, Request $request): void {
+        $request->headers->set('User-Agent', EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN);
+    });
+
+    Livewire::withHeaders(['User-Agent' => EmailFirstLogin::MOBILE_APP_USER_AGENT_TOKEN])
+        ->test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertNoRedirect()
+        ->assertSet('step', 'email')
+        ->assertSet('googleSsoUnavailableInMobileApp', true);
+});
+
+it('matches an external user by email regardless of case and hints the stored email', function (): void {
+    $azureSettings = app(AzureSsoSettings::class);
+    $azureSettings->is_enabled = true;
+    $azureSettings->client_id = 'azure-client-id';
+    $azureSettings->save();
+
+    $user = User::factory()->external()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', str($user->email)->upper()->toString())
+        ->call('continue')
+        ->assertRedirect(route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $user->email]));
+});
+
+it('does not let an external user sign in with a password', function (): void {
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', 'external@example.com')
+        ->call('continue')
+        ->assertSet('step', 'password');
+
+    User::factory()->external()->create(['email' => 'external@example.com']);
+
+    $component
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertHasErrors('data.password');
+
+    assertGuest();
+});
+
+it('returns to the email step from the single sign-on choice when choosing to use a different email', function (): void {
+    $azureSettings = app(AzureSsoSettings::class);
+    $azureSettings->is_enabled = true;
+    $azureSettings->client_id = 'azure-client-id';
+    $azureSettings->save();
+
+    $googleSettings = app(GoogleSsoSettings::class);
+    $googleSettings->is_enabled = true;
+    $googleSettings->client_id = 'google-client-id';
+    $googleSettings->save();
+
+    $user = User::factory()->external()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertSet('step', 'sso')
+        ->call('backToEmailStep')
+        ->assertSet('step', 'email');
+});
+
+it('still sends a local user to the password step when single sign-on is available', function (): void {
+    $azureSettings = app(AzureSsoSettings::class);
+    $azureSettings->is_enabled = true;
+    $azureSettings->client_id = 'azure-client-id';
+    $azureSettings->save();
+
+    $googleSettings = app(GoogleSsoSettings::class);
+    $googleSettings->is_enabled = true;
+    $googleSettings->client_id = 'google-client-id';
+    $googleSettings->save();
+
+    $user = User::factory()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertNoRedirect()
+        ->assertSet('step', 'password');
 });
