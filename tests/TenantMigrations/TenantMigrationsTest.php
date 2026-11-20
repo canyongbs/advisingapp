@@ -1605,7 +1605,9 @@ describe('2026_11_20_212842_create_matched_term_id_function', function () {
 
                 expect($migrate)->toBe(Command::SUCCESS)
                     ->and($matchedTerms())->toBe($matchedTermsBefore)
-                    ->and(DB::scalar("select pg_get_viewdef('enrollment_terms')"))->toContain('matched_term_id');
+                    ->and(DB::scalar("select pg_get_viewdef('enrollment_terms')"))->toContain('matched_term_id')
+                    // Queries using the function could not scan in parallel otherwise.
+                    ->and(DB::scalar("select proparallel from pg_proc where oid = to_regprocedure('matched_term_id(varchar, varchar)')"))->toBe('s');
 
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_212842_create_matched_term_id_function.php']);
 
