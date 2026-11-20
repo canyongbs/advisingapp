@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
+use AdvisingApp\Group\Actions\GetGroupPopulationReachability;
+use AdvisingApp\Group\DataTransferObjects\GroupPopulationReachability;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -69,6 +69,11 @@ class EditGroup extends EditRecord implements HasTable
     }
 
     protected static string $resource = GroupResource::class;
+
+    /**
+     * @var array<string, GroupPopulationReachability>
+     */
+    private array $populationReachability = [];
 
     public function form(Schema $schema): Schema
     {
@@ -137,41 +142,17 @@ class EditGroup extends EditRecord implements HasTable
                 $this->getRelationManagersContentComponent(),
                 Callout::make('Warning')
                     ->description(function (): string {
-                        $count = $this->getFilteredTableQuery()->count();
-
-                        $unhealthyEmailCount = $this->getFilteredTableQuery()
-                            ->tap(new UnhealthyEducatablePrimaryEmailAddress())
-                            ->count();
-                        $unhealthyEmailPercent = bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyEmailCount, (string) $count, 4), '100', 2) : '0', 2);
-
-                        $unhealthyPhoneCount = $this->getFilteredTableQuery()
-                            ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
-                            ->count();
-                        $unhealthyPhonePercent = bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyPhoneCount, (string) $count, 4), '100', 2) : '0', 2);
+                        $reachability = $this->getPopulationReachability();
 
                         $emailLabel = match ($this->getRecord()->model->class()) {
                             Student::class => 'institutional',
                             default => 'primary',
                         };
 
-                        return "Of the {$count} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$unhealthyEmailPercent}% are unable to receive emails to their {$emailLabel} email address and {$unhealthyPhonePercent}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
+                        return "Of the {$reachability->totalCount} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$reachability->getUnableToEmailPercentage()}% are unable to receive emails to their {$emailLabel} email address and {$reachability->getUnableToTextPercentage()}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
                     })
                     ->warning()
-                    ->visible(function (): bool {
-                        if ($this->getFilteredTableQuery()
-                            ->tap(new UnhealthyEducatablePrimaryEmailAddress())
-                            ->exists()) {
-                            return true;
-                        }
-
-                        if ($this->getFilteredTableQuery()
-                            ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
-                            ->exists()) {
-                            return true;
-                        }
-
-                        return false;
-                    }),
+                    ->visible(fn (): bool => $this->getPopulationReachability()->hasUnreachableMembers()),
                 EmbeddedTable::make(),
             ]);
     }
@@ -203,5 +184,17 @@ class EditGroup extends EditRecord implements HasTable
         }
 
         return $data;
+    }
+
+    /**
+     * Remembered per filtered query, as the warning's visibility and description both need it, and the filters can change during a request.
+     */
+    private function getPopulationReachability(): GroupPopulationReachability
+    {
+        $query = $this->getFilteredTableQuery();
+
+        assert($query instanceof Builder);
+
+        return $this->populationReachability[$query->toRawSql()] ??= app(GetGroupPopulationReachability::class)($query);
     }
 }
