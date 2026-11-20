@@ -45,6 +45,7 @@ use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\PasswordFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormFieldSubmission;
@@ -55,7 +56,9 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\PasswordFormFieldFeature;
 use App\Settings\ImportSettings;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -113,6 +116,19 @@ class ProcessSubmissionField
                     Storage::disk('s3')->delete($key);
                 }
             }
+        }
+
+        if (
+            PasswordFormFieldFeature::active()
+            && $field
+            && $field->type === PasswordFormFieldBlock::type()
+            && is_string($response)
+            && filled($response)
+        ) {
+            $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
+            assert($fieldSubmission instanceof Model);
+
+            app(AttachSubmissionSecret::class)($submission, $fieldSubmission, $response);
         }
 
         if ($field && $field->type === EducatableUploadFormFieldBlock::type() && is_array($response)) {
