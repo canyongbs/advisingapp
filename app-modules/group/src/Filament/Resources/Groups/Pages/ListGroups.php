@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
+use AdvisingApp\Group\Actions\GetGroupPopulationReachability;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\DataTransferObjects\GroupPopulationReachability;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
@@ -59,6 +59,11 @@ class ListGroups extends ListRecords
 
     protected static string $resource = GroupResource::class;
 
+    /**
+     * @var array<string, GroupPopulationReachability>
+     */
+    private array $populationReachabilityByGroup = [];
+
     public function table(Table $table): Table
     {
         return $table
@@ -68,44 +73,14 @@ class ListGroups extends ListRecords
                     ->sortable(),
                 TextColumn::make('email_issues')
                     ->label('Email Issues')
-                    ->state(function (Group $record): string {
-                        if ($record->getAttributeValue('population_count') === null) {
-                            $record->setAttribute('population_count', app(TranslateGroupFilters::class)->execute($record)->count());
-                        }
-
-                        $count = $record->getAttributeValue('population_count');
-
-                        $unhealthyEmailCount = app(TranslateGroupFilters::class)->execute($record)
-                            ->tap(new UnhealthyEducatablePrimaryEmailAddress())
-                            ->count();
-
-                        return bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyEmailCount, (string) $count, 4), '100', 2) : '0', 2) . '%';
-                    }),
+                    ->state(fn (Group $record): string => $this->getPopulationReachability($record)->getUnableToEmailPercentage() . '%'),
                 TextColumn::make('sms_issues')
                     ->label('SMS Issues')
-                    ->state(function (Group $record): string {
-                        if ($record->getAttributeValue('population_count') === null) {
-                            $record->setAttribute('population_count', app(TranslateGroupFilters::class)->execute($record)->count());
-                        }
-
-                        $count = $record->getAttributeValue('population_count');
-
-                        $unhealthyPhoneCount = app(TranslateGroupFilters::class)->execute($record)
-                            ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
-                            ->count();
-
-                        return bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyPhoneCount, (string) $count, 4), '100', 2) : '0', 2) . '%';
-                    }),
+                    ->state(fn (Group $record): string => $this->getPopulationReachability($record)->getUnableToTextPercentage() . '%'),
                 TextColumn::make('population_count')
                     ->label('Population Count')
                     ->numeric()
-                    ->state(function (Group $record): string {
-                        if ($record->getAttributeValue('population_count') === null) {
-                            $record->setAttribute('population_count', app(TranslateGroupFilters::class)->execute($record)->count());
-                        }
-
-                        return $record->getAttributeValue('population_count');
-                    }),
+                    ->state(fn (Group $record): int => $this->getPopulationReachability($record)->totalCount),
                 TextColumn::make('model')
                     ->label('Population')
                     ->sortable()
@@ -150,5 +125,15 @@ class ListGroups extends ListRecords
         return [
             CreateAction::make(),
         ];
+    }
+
+    /**
+     * Remembered per group, as its columns all need it.
+     */
+    private function getPopulationReachability(Group $group): GroupPopulationReachability
+    {
+        return $this->populationReachabilityByGroup[$group->getKey()] ??= app(GetGroupPopulationReachability::class)(
+            app(TranslateGroupFilters::class)->execute($group),
+        );
     }
 }

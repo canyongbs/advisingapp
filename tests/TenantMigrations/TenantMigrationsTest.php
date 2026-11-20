@@ -1902,3 +1902,36 @@ describe('application submission states name citext change', function () {
         );
     });
 });
+
+describe('2026_11_20_202309_add_active_sisid_index_to_enrollments_table', function () {
+    it('indexes the active enrollments, including those of imports in progress', function () {
+        isolatedMigration(
+            '2026_11_20_202309_add_active_sisid_index_to_enrollments_table',
+            function () {
+                $importTable = 'import_' . Str::uuid() . '_enrollments';
+
+                DB::statement("create table \"{$importTable}\" (like \"enrollments\" including all)");
+
+                $hasIndex = fn (string $table): bool => DB::table('pg_indexes')
+                    ->where('tablename', $table)
+                    ->where('indexdef', 'like', '%USING btree (sisid) WHERE (deleted_at IS NULL)')
+                    ->exists();
+
+                expect($hasIndex('enrollments'))->toBeFalse()
+                    ->and($hasIndex($importTable))->toBeFalse();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS)
+                    ->and($hasIndex('enrollments'))->toBeTrue()
+                    ->and($hasIndex($importTable))->toBeTrue();
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS)
+                    ->and($hasIndex('enrollments'))->toBeFalse()
+                    ->and($hasIndex($importTable))->toBeFalse();
+            }
+        );
+    });
+});

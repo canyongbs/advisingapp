@@ -40,7 +40,9 @@ use AdvisingApp\StudentDataModel\Models\Scopes\MatchedToTermNamed;
 use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutMatchedTerm;
 use AdvisingApp\StudentDataModel\Models\Term;
+use Closure;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -54,9 +56,19 @@ trait SemesterSelectForOperator
 
     public function getFormSchema(): array
     {
+        $schema = parent::getFormSchema();
+
+        // A count of 0 selects students with no matching enrollments, or inverted, with any, so it is allowed unlike in Filament's operators.
+        // Tables skip rules that fail validation, while saved groups apply them regardless, so this also keeps group previews and members the same.
+        foreach ($schema as $component) {
+            if (($component instanceof TextInput) && ($component->getName() === 'count')) {
+                $component->minValue(0);
+            }
+        }
+
         return [
-            ...parent::getFormSchema(),
-            $this->semesterSelect(),
+            ...$schema,
+            static::semesterSelect(),
         ];
     }
 
@@ -70,30 +82,55 @@ trait SemesterSelectForOperator
     }
 
     /**
+     * Conditions that only depend on whether a student has any matching enrollments are checked for existence rather than by counting,
+     * as counting runs a subquery for every student, which is far slower across a whole tenant.
+     *
      * @param  Builder<Model>  $query
      *
      * @return Builder<Model>
      */
     public function applyToBaseQuery(Builder $query): Builder
     {
-        $relationshipName = $this->constraint->getRelationshipName();
-        $count = $this->settings['count'] ?? 1;
-        $semesters = $this->settings['semesters'] ?? null;
+        $count = $this->getCountSetting();
 
-        if (blank($semesters)) {
-            return parent::applyToBaseQuery($query);
+        // Security: skip applying the constraint when the tampered setting is not numeric.
+        if ($count === null) {
+            return $query;
         }
 
-        $semesters = Arr::wrap($semesters);
+        $relationshipName = $this->constraint->getRelationshipName();
+        $operator = $this->getQueryOperator();
+        $scopeEnrollments = $this->getEnrollmentsQueryScope();
 
-        $semesters = array_values(array_filter($semesters, filled(...)));
+        $matchesStudentsWithNone = match ($operator) {
+            '>=' => 0 >= $count,
+            '>' => 0 > $count,
+            '<' => 0 < $count,
+            '<=' => 0 <= $count,
+            '=' => $count === 0,
+            '!=' => $count !== 0,
+            default => false,
+        };
 
-        return $query->whereHas(
-            $relationshipName,
-            fn (Builder $query) => static::applyTermSemestersToEnrollmentsQuery($query, $semesters),
-            $this->getQueryOperator(),
-            $count,
-        );
+        $matchesAllStudentsWithSome = match ($operator) {
+            '>=' => $count <= 1,
+            '>', '!=' => $count < 1,
+            default => false,
+        };
+
+        $matchesNoStudentsWithSome = match ($operator) {
+            '<' => $count <= 1,
+            '<=', '=' => $count < 1,
+            default => false,
+        };
+
+        return match (true) {
+            $matchesStudentsWithNone && $matchesAllStudentsWithSome => $query,
+            $matchesAllStudentsWithSome => $query->whereHas($relationshipName, $scopeEnrollments),
+            $matchesStudentsWithNone && $matchesNoStudentsWithSome => $query->whereDoesntHave($relationshipName, $scopeEnrollments),
+            $matchesNoStudentsWithSome => $query->whereRaw('false'),
+            default => $query->whereHas($relationshipName, $scopeEnrollments, $operator, $count),
+        };
     }
 
     public function getSummary(): string
@@ -127,6 +164,45 @@ trait SemesterSelectForOperator
             ->unique(fn (string $name): string => mb_strtolower($name), strict: true)
             ->mapWithKeys(fn (string $name): array => [$name => $name])
             ->all() + [static::UNASSIGNED_SEMESTER => 'Unassigned'];
+    }
+
+    /**
+     * The number of matching enrollments compared with, or null when the setting is not numeric.
+     */
+    protected function getCountSetting(): ?int
+    {
+        $count = $this->getNumericSetting('count');
+
+        return ($count === null) ? null : (int) $count;
+    }
+
+    /**
+     * Narrows the enrollments to the selected semesters, if any.
+     *
+     * @return Closure(Builder<Model>): Builder<Model>
+     */
+    protected function getEnrollmentsQueryScope(): Closure
+    {
+        $semesters = array_values(array_filter(
+            Arr::wrap($this->getSettings()['semesters'] ?? []),
+            fn (mixed $semester): bool => is_string($semester) && filled($semester),
+        ));
+
+        $modifyRelationshipQueryUsing = $this->constraint->getModifyRelationshipQueryUsing();
+
+        return function (Builder $query) use ($semesters, $modifyRelationshipQueryUsing): Builder {
+            if ($modifyRelationshipQueryUsing) {
+                $query = $this->evaluate($modifyRelationshipQueryUsing, [
+                    'query' => $query,
+                ]) ?? $query;
+            }
+
+            if (filled($semesters)) {
+                static::applyTermSemestersToEnrollmentsQuery($query, $semesters);
+            }
+
+            return $query;
+        };
     }
 
     /**
