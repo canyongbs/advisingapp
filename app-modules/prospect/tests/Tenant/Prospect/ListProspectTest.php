@@ -47,9 +47,12 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -60,7 +63,43 @@ use function Tests\asSuperAdmin;
 
 // TODO: Sorting and Searching tests
 
+it('can update a prospect from the list edit slide-over', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create(['preferred' => 'Original']);
+    $request = EditProspectRequestFactory::new()->state(['preferred' => 'Updated'])->create();
+
+    Livewire::test(ListProspects::class)
+        ->assertActionExists(TestAction::make('edit')->table($prospect), fn (EditAction $action): bool => $action->isModalSlideOver() && blank($action->getUrl()))
+        ->mountAction(TestAction::make('edit')->table($prospect))
+        ->assertSchemaStateSet(['preferred' => 'Original'])
+        ->fillForm($request)
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    expect($prospect->refresh())->preferred->toBe('Updated');
+});
+
 // Permission Tests
+
+it('does not allow editing a prospect from the list without update permission', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo('prospect.view-any');
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create();
+
+    Livewire::test(ListProspects::class)
+        ->assertActionHidden(TestAction::make('edit')->table($prospect))
+        ->call('mountAction', 'edit', [], ['table' => true, 'recordKey' => $prospect->getKey()])
+        ->assertActionNotMounted();
+});
 
 test('ListProspects is gated with proper access control', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();

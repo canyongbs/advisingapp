@@ -44,7 +44,11 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
@@ -54,6 +58,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\In
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -62,6 +68,69 @@ use function Tests\asSuperAdmin;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
+
+it('can update a prospect from the profile edit slide-over', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.*.view', 'prospect.*.update']);
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create(['preferred' => 'Original']);
+    $request = EditProspectRequestFactory::new()->state(['preferred' => 'Updated'])->create();
+    $action = TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile');
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertActionExists($action, fn (Action $action): bool => $action->isModalSlideOver() && blank($action->getUrl()))
+        ->mountAction($action)
+        ->assertSchemaStateSet(['preferred' => 'Original'])
+        ->fillForm($request)
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    expect($prospect->refresh())->preferred->toBe('Updated');
+});
+
+it('updates primary associations when saving the profile edit slide-over', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.*.view', 'prospect.*.update']);
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create();
+    $originalEmailAddress = $prospect->emailAddresses()->sole();
+    $originalPhoneNumber = $prospect->phoneNumbers()->sole();
+    $originalAddress = $prospect->addresses()->sole();
+
+    $emailAddress = ProspectEmailAddress::factory()->for($prospect)->create(['order' => 2]);
+    $phoneNumber = ProspectPhoneNumber::factory()->for($prospect)->createQuietly([
+        'number' => '+12025550123',
+        'order' => 2,
+    ]);
+    $address = ProspectAddress::factory()->for($prospect)->create(['order' => 2]);
+
+    expect($prospect)
+        ->primary_email_id->toBe($originalEmailAddress->getKey())
+        ->primary_phone_id->toBe($originalPhoneNumber->getKey())
+        ->primary_address_id->toBe($originalAddress->getKey());
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertActionExists(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'), fn (Action $action): bool => $action->isModalSlideOver() && blank($action->getUrl()))
+        ->mountAction(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'))
+        ->fillForm(fn (array $state): array => [
+            'emailAddresses' => array_reverse($state['emailAddresses'], preserve_keys: true),
+            'phoneNumbers' => array_reverse($state['phoneNumbers'], preserve_keys: true),
+            'addresses' => array_reverse($state['addresses'], preserve_keys: true),
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    expect($prospect->refresh())
+        ->primary_email_id->toBe($emailAddress->getKey())
+        ->primary_phone_id->toBe($phoneNumber->getKey())
+        ->primary_address_id->toBe($address->getKey());
+});
 
 // Permission Tests
 
