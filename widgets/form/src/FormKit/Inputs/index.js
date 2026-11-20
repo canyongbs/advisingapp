@@ -35,6 +35,7 @@ import { upload } from '@formkit/icons';
 import { createInput } from '@formkit/vue';
 import CheckboxWithOther from './CheckboxWithOther.vue';
 import OneTimePassword from './OneTimePassword.vue';
+import Password from './Password.vue';
 import RadioWithOther from './RadioWithOther.vue';
 import Signature from './Signature.vue';
 import Upload from './Upload.vue';
@@ -45,6 +46,9 @@ export default {
     }),
     otp: createInput(OneTimePassword, {
         props: ['digits'],
+    }),
+    password: createInput(Password, {
+        props: ['storeUrl'],
     }),
     radioWithOther: createInput(RadioWithOther, {
         props: ['options', 'fieldLabel', 'description'],

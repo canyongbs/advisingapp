@@ -33,7 +33,8 @@
 -->
 <script setup>
     import { UserIcon } from '@heroicons/vue/24/outline';
-    import { computed, defineProps, onMounted, reactive, ref } from 'vue';
+    import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue';
+    import { createPasswordStorageCoordinator, passwordStorageKey } from '../../form/src/FormKit/passwordStorage.js';
     import wizard from '../../form/src/FormKit/wizard';
 
     import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
@@ -49,6 +50,10 @@
 
     let { activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
 
+    const passwordStorage = createPasswordStorageCoordinator();
+
+    provide(passwordStorageKey, passwordStorage);
+
     const percentComplete = computed(() =>
         totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
     );
@@ -62,7 +67,12 @@
         percentComplete,
         isAttendanceQuestionRequired: true,
         plugins: [wizardPlugin, asteriskPlugin],
-        setStep: (target) => () => {
+        preparePasswordSubmit: passwordStorage.prepareSubmit,
+        setStep: (target) => async () => {
+            if (!(await passwordStorage.flushAll())) {
+                return;
+            }
+
             setStep(target);
         },
         stringify: (value) => JSON.stringify(value, null, 2),
