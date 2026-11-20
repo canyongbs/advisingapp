@@ -145,18 +145,27 @@ class EnrolledTermConstraint
 
     /**
      * Numbers the terms in the order of enrolled terms, starting from 1.
+     *
+     * Numbered with a window function rather than from an array, so Postgres knows how many terms there are. It assumes
+     * a handful of rows from an array, and would then join the ranks to every enrollment before resolving its term.
      */
     private static function getTermRanksQuery(OrderByFirstTerm|OrderByMostRecentTerm $orderTerms): QueryBuilder
     {
-        $orderedTermIds = Term::query()
+        $orderedTerms = Term::query()
             ->tap($orderTerms)
-            ->select('terms.id')
             ->toBase();
 
-        // An array built from an ordered subquery keeps its order, so `WITH ORDINALITY` numbers the terms in that order.
-        return DB::query()->fromRaw(
-            "unnest(array({$orderedTermIds->toSql()})) with ordinality as term_ranks (term_id, rank)",
-            $orderedTermIds->getBindings(),
-        );
+        $grammar = $orderedTerms->getGrammar();
+
+        $order = collect($orderedTerms->orders)
+            ->map(fn (array $order): string => (($order['type'] ?? null) === 'Raw')
+                ? $order['sql']
+                : "{$grammar->wrap($order['column'])} {$order['direction']}")
+            ->implode(', ');
+
+        return Term::query()
+            ->select('terms.id as term_id')
+            ->selectRaw("row_number() over (order by {$order}) as rank", $orderedTerms->getRawBindings()['order'])
+            ->toBase();
     }
 }
