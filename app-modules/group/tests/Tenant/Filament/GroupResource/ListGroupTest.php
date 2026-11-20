@@ -36,9 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\ListGroups;
+use AdvisingApp\Group\Models\Group;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Tests\asSuperAdmin;
 
 test('ListGroups is gated with proper access control', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -54,4 +59,25 @@ test('ListGroups is gated with proper access control', function (): void {
         ->get(
             GroupResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('ListGroups shows how many members each group has, and how many cannot be emailed or texted', function (): void {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    asSuperAdmin($user);
+
+    $group = Group::factory()->student()->dynamic()->for($user)->create();
+
+    Student::factory()->create();
+
+    $studentWithoutEmail = Student::factory()->create();
+    $studentWithoutEmail->primaryEmailAddress()->dissociate()->save();
+
+    $studentWithoutPhone = Student::factory()->create();
+    $studentWithoutPhone->primaryPhoneNumber()->dissociate()->save();
+
+    Livewire::test(ListGroups::class)
+        ->assertTableColumnStateSet('population_count', 3, record: $group)
+        ->assertTableColumnStateSet('email_issues', '33.33%', record: $group)
+        ->assertTableColumnStateSet('sms_issues', '33.33%', record: $group);
 });
