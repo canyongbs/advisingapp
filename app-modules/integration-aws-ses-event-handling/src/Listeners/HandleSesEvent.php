@@ -41,7 +41,6 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
-use App\Features\SesEventDeduplicationFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
@@ -73,7 +72,7 @@ abstract class HandleSesEvent implements ShouldQueue
             'occurred_at' => $occurredAt,
         ];
 
-        if (is_null($event->snsMessageId) || ! SesEventDeduplicationFeature::active()) {
+        if (is_null($event->snsMessageId)) {
             $emailMessage->events()->create($attributes);
 
             return;
