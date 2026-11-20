@@ -125,7 +125,8 @@ trait SemesterSelectForOperator
         };
 
         return match (true) {
-            $matchesStudentsWithNone && $matchesAllStudentsWithSome => $query,
+            // A condition is still added, as an OR group with no conditions is dropped rather than matching everyone.
+            $matchesStudentsWithNone && $matchesAllStudentsWithSome => $query->whereRaw('true'),
             $matchesAllStudentsWithSome => $query->whereHas($relationshipName, $scopeEnrollments),
             $matchesStudentsWithNone && $matchesNoStudentsWithSome => $query->whereDoesntHave($relationshipName, $scopeEnrollments),
             $matchesNoStudentsWithSome => $query->whereRaw('false'),
