@@ -43,6 +43,7 @@ use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Filament\Resources\Users\RelationManagers\PermissionsRelationManager;
 use App\Filament\Resources\Users\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\Users\RelationManagers\UserGroupsRelationManager;
 use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\User;
 use Filament\Resources\Resource;
@@ -81,6 +82,7 @@ class UserResource extends Resource
         return [
             RolesRelationManager::class,
             PermissionsRelationManager::class,
+            UserGroupsRelationManager::class,
         ];
     }
 
