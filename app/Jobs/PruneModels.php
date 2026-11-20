@@ -42,6 +42,8 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Models\Secret;
+use App\Features\PasswordFormFieldFeature;
 use App\Models\HealthCheckResultHistoryItem;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -81,6 +83,7 @@ class PruneModels implements ShouldQueue, ShouldBeUnique
             fn (): int => (new FailedImportRow())->pruneAll(),
             fn (): int => (new FormAuthentication())->pruneAll(),
             fn (): int => (new HealthCheckResultHistoryItem())->pruneAll(),
+            fn (): int => PasswordFormFieldFeature::active() ? (new Secret())->pruneAll() : 0,
         ];
     }
 }

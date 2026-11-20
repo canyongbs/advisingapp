@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Models;
 
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -64,6 +65,14 @@ class ApplicationFieldSubmission extends Pivot implements HasMedia
     protected $casts = [
         'response' => 'array',
     ];
+
+    /**
+     * @return BelongsTo<ApplicationSubmission, $this>
+     */
+    public function submission(): BelongsTo
+    {
+        return $this->belongsTo(ApplicationSubmission::class, 'submission_id');
+    }
 
     public function registerMediaCollections(): void
     {
