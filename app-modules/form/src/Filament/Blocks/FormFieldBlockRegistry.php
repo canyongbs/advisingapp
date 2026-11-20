@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use App\Features\PasswordFormFieldFeature;
+
 class FormFieldBlockRegistry
 {
     /**
@@ -88,6 +90,7 @@ class FormFieldBlockRegistry
             PhoneFormFieldBlock::class,
             UrlFormFieldBlock::class,
             UploadFormFieldBlock::class,
+            ...(PasswordFormFieldFeature::active() ? [PasswordFormFieldBlock::class] : []),
         ];
     }
 
@@ -112,6 +115,7 @@ class FormFieldBlockRegistry
             SelectFormFieldBlock::class,
             RadioFormFieldBlock::class,
             UploadFormFieldBlock::class,
+            ...(PasswordFormFieldFeature::active() ? [PasswordFormFieldBlock::class] : []),
             EventSignatureFormFieldBlock::class,
         ];
     }
