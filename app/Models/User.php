@@ -43,6 +43,8 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Authorization\Models\UserGroupUser;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -410,6 +412,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'team_id');
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this, UserGroupUser>
+     */
+    public function userGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'user_group_user')
+            ->using(UserGroupUser::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     /**

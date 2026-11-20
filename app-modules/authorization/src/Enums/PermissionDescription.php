@@ -80,6 +80,7 @@ enum PermissionDescription: string implements HasLabel
     case SystemUser = 'This permission group enables the display and management of the Programmatic Users feature in the primary navigation group User Management. Permission options include create, view, update, and delete programmatic users.';
     case Task = 'This permission group enables the display and management of the Task feature in the tertiary navigation group View Student or View Prospect. Permission options include create, view, update, delete, and import tasks.';
     case User = 'This permission group enables the display and management of the User feature in the primary navigation group User Management. Permission options include create, view, update, delete, and import users.';
+    case UserGroup = 'This permission group enables the display and management of the Groups feature in the primary navigation group User Management. Permission options include create, view, update, and delete groups.';
 
     public function getLabel(): string
     {
