@@ -35,12 +35,15 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\EditResourceHubStatus;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubStatus\RequestFactories\EditResourceHubStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -162,4 +165,28 @@ test('EditResourceHubStatus does not allow for duplicate names of non-deleted st
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('EditResourceHubStatus sends the user back to the Statuses tab after deleting the record', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubStatus::factory()->create();
+
+    Livewire::test(EditResourceHubStatus::class, ['record' => $record->getRouteKey()])
+        ->callAction(DeleteAction::class)
+        ->assertRedirect(ResourceHub::getUrl(['tab' => ResourceHubTab::Statuses->value]));
+
+    expect(ResourceHubStatus::find($record->getKey()))->toBeNull();
+});
+
+test('EditResourceHubStatus breadcrumbs link back to the Statuses tab', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubStatus::factory()->create();
+
+    $page = Livewire::test(EditResourceHubStatus::class, ['record' => $record->getRouteKey()])->instance();
+    assert($page instanceof EditResourceHubStatus);
+
+    expect($page->getBreadcrumbs())
+        ->toHaveKey(ResourceHub::getUrl(['tab' => ResourceHubTab::Statuses->value]));
 });

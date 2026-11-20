@@ -35,12 +35,15 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\EditResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubCategory\RequestFactories\EditResourceHubCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -162,4 +165,28 @@ test('EditResourceHubCategory does not allow for duplicate names of non-deleted 
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('EditResourceHubCategory sends the user back to the Categories tab after deleting the record', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubCategory::factory()->create();
+
+    Livewire::test(EditResourceHubCategory::class, ['record' => $record->getRouteKey()])
+        ->callAction(DeleteAction::class)
+        ->assertRedirect(ResourceHub::getUrl(['tab' => ResourceHubTab::Categories->value]));
+
+    expect(ResourceHubCategory::find($record->getKey()))->toBeNull();
+});
+
+test('EditResourceHubCategory breadcrumbs link back to the Categories tab', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubCategory::factory()->create();
+
+    $page = Livewire::test(EditResourceHubCategory::class, ['record' => $record->getRouteKey()])->instance();
+    assert($page instanceof EditResourceHubCategory);
+
+    expect($page->getBreadcrumbs())
+        ->toHaveKey(ResourceHub::getUrl(['tab' => ResourceHubTab::Categories->value]));
 });
