@@ -49,6 +49,7 @@ class GenerateEventRegistrationFormKitSchema extends GenerateFormKitSchema
                 'type' => 'form',
                 'id' => 'form',
                 'onSubmit' => '$submitForm',
+                'onSubmitRaw' => '$preparePasswordSubmit',
                 'plugins' => '$plugins',
                 'actions' => false,
             ],

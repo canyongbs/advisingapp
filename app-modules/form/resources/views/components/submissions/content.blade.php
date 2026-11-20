@@ -51,13 +51,72 @@
     $sanitizeSubmissionHtml = function (string $html): string {
         $config = app(HtmlSanitizerConfig::class)
             ->allowElement('svg', ['xmlns', 'fill', 'viewBox', 'stroke-width', 'stroke', 'aria-hidden', 'class', 'data-slot'])
-            ->allowElement('path', ['fill-rule', 'clip-rule', 'd', 'stroke-linecap', 'stroke-linejoin']);
+            ->allowElement('path', ['fill-rule', 'clip-rule', 'd', 'stroke-linecap', 'stroke-linejoin'])
+            ->allowAttribute('data-secret-row', 'div')
+            ->allowAttribute('data-secret-mask', 'span')
+            ->allowAttribute('data-secret-value', 'code')
+            ->allowAttribute('data-secret-error', 'span')
+            ->allowAttribute('data-secret-reveal', 'button')
+            ->allowAttribute('data-secret-id', 'button');
 
         return (new HtmlSanitizer($config))->sanitize($html);
     };
 @endphp
 
-<div class="fi-prose">
+<div
+    class="fi-prose"
+    x-data="{
+        async revealSecret(event) {
+            const button = event.target.closest('[data-secret-reveal]')
+
+            if (! button || button.disabled) {
+                return
+            }
+
+            const row = button.closest('[data-secret-row]')
+            const mask = row?.querySelector('[data-secret-mask]')
+            const value = row?.querySelector('[data-secret-value]')
+            const error = row?.querySelector('[data-secret-error]')
+            const originalLabel = button.textContent
+
+            button.disabled = true
+            button.textContent = 'Revealing...'
+            error?.classList.add('hidden')
+
+            try {
+                const response = await fetch(@js(route('submission-secrets.reveal')), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': @js(csrf_token()),
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ secret_id: button.dataset.secretId }),
+                })
+
+                if (! response.ok) {
+                    throw new Error('Unable to reveal password.')
+                }
+
+                const data = await response.json()
+
+                value.textContent = data.value
+                mask.classList.add('hidden')
+                value.classList.remove('hidden')
+                button.classList.add('hidden')
+            } catch {
+                error.textContent = 'The password could not be revealed.'
+                error.classList.remove('hidden')
+            } finally {
+                button.disabled = false
+                button.textContent = originalLabel
+            }
+        },
+    }"
+    x-on:click="revealSecret($event)"
+>
     @if (! empty($content['content']))
         {!! $sanitizeSubmissionHtml( RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml(),) !!}
     @else
