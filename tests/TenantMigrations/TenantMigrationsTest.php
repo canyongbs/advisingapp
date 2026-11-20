@@ -43,7 +43,6 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -828,60 +827,6 @@ describe('workflows name citext change', function (): void {
                 expect($duplicate->refresh()->name)->toBe('fall\\outreach-3');
                 // The pre-existing suffixed row is in its own group and is left untouched.
                 expect($existingSuffixed->refresh()->name)->toBe('fall\\outreach-2');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task (alert-status-name-citext) - Delete this describe and everything contained within
-describe('alert statuses name citext change', function () {
-    it('renames case-insensitive duplicate alert status names', function () {
-        isolatedMigration(
-            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
-            function () {
-                // Setup data before migration
-                $concernStatus1 = ConcernStatus::factory()->create(['name' => 'Under Review', 'created_at' => now()->subMinutes(3)]);
-                $concernStatus2 = ConcernStatus::factory()->create(['name' => 'under review', 'created_at' => now()->subMinutes(2)]);
-                $concernStatus3 = ConcernStatus::factory()->create(['name' => 'UNDER REVIEW', 'created_at' => now()->subMinutes(1)]);
-
-                // A soft-deleted alert status sharing a name with the live duplicate group must be
-                // ignored by de-duplication: it should neither affect the live renumbering
-                // nor get renamed itself.
-                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under review', 'created_at' => now()->subMinutes(4)]);
-                $deletedConcernStatus->delete();
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // The oldest live record keeps its name, the rest are renumbered by their own original value
-                expect($concernStatus1->refresh()->name)->toBe('Under Review');
-                expect($concernStatus2->refresh()->name)->toBe('under review-2');
-                expect($concernStatus3->refresh()->name)->toBe('UNDER REVIEW-3');
-                expect($deletedConcernStatus->refresh()->name)->toBe('Under review');
-            }
-        );
-    });
-
-    it('can be rolled back when a live alert status reuses a soft-deleted alert status name', function () {
-        isolatedMigration(
-            '2026_10_28_104435_convert_alert_statuses_name_to_citext',
-            function () {
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // Valid post-migration data: the partial unique index ignores soft-deleted rows,
-                // so a live record may reuse the exact name of a soft-deleted one.
-                $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
-                $deletedConcernStatus->delete();
-                ConcernStatus::factory()->create(['name' => 'Under Review']);
-
-                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/concern/database/migrations/2026_10_28_104435_convert_alert_statuses_name_to_citext.php']);
-
-                expect($rollback)->toBe(Command::SUCCESS);
             }
         );
     });
