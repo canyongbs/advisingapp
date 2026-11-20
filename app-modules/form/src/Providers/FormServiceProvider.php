@@ -48,6 +48,7 @@ use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\Secret;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -74,6 +75,7 @@ class FormServiceProvider extends ServiceProvider
             'form_submission' => FormSubmission::class,
             'form_email_auto_reply' => FormEmailAutoReply::class,
             'form_field_submission' => FormFieldSubmission::class,
+            'secret' => Secret::class,
         ]);
 
         $this->registerEvents();

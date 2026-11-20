@@ -52,6 +52,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  * @property-read Submissible $submissible
  * @property-read Collection<int, SubmissibleField> $fields
  * @property-read Student|Prospect|null $author
+ * @property string|null $secret_key
  */
 abstract class Submission extends Model
 {
@@ -61,6 +62,10 @@ abstract class Submission extends Model
     use HasVersion4Uuids;
     use UsesTenantConnection;
     use BelongsToEducatable;
+
+    protected $hidden = [
+        'secret_key',
+    ];
 
     abstract public function submissible(): BelongsTo;
 
