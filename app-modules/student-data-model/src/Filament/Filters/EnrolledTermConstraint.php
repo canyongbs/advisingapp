@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\JoinMatchedTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\OrderByFirstTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Term;
+use App\Features\MatchedTermFunctionFeature;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,23 +100,63 @@ class EnrolledTermConstraint
     }
 
     /**
-     * Picks each student's enrolled term for the whole tenant in one pass with `DISTINCT ON`, which is much faster than resolving it per student.
+     * Picks each student's enrolled term for the whole tenant in one pass, which is much faster than resolving it per student.
      *
      * @param array<string> $termNames
      */
     private static function getStudentsWithEnrolledTermQuery(OrderByFirstTerm|OrderByMostRecentTerm $orderTerms, array $termNames, bool $isInverse): QueryBuilder
     {
-        $enrolledTerms = Enrollment::query()
-            ->tap(new JoinMatchedTerm())
-            ->distinct('enrollments.sisid')
-            ->select(['enrollments.sisid', 'terms.name'])
-            ->orderBy('enrollments.sisid')
-            ->tap($orderTerms);
+        if (! MatchedTermFunctionFeature::active()) {
+            $enrolledTerms = Enrollment::query()
+                ->tap(new JoinMatchedTerm())
+                ->distinct('enrollments.sisid')
+                ->select(['enrollments.sisid', 'terms.name'])
+                ->orderBy('enrollments.sisid')
+                ->tap($orderTerms);
+
+            // `terms.name` is `citext`, so the names are compared ignoring case.
+            return DB::query()
+                ->fromSub($enrolledTerms, 'enrolled_terms')
+                ->select('enrolled_terms.sisid')
+                ->{$isInverse ? 'whereNotIn' : 'whereIn'}('enrolled_terms.name', $termNames);
+        }
+
+        // Each student's enrolled term is the one with the lowest rank, so it is found by grouping rather than by sorting every enrollment.
+        $termRanks = self::getTermRanksQuery($orderTerms);
 
         // `terms.name` is `citext`, so the names are compared ignoring case.
-        return DB::query()
-            ->fromSub($enrolledTerms, 'enrolled_terms')
-            ->select('enrolled_terms.sisid')
-            ->{$isInverse ? 'whereNotIn' : 'whereIn'}('enrolled_terms.name', $termNames);
+        $namedTermRanks = DB::query()
+            ->fromSub($termRanks, 'named_term_ranks')
+            ->join('terms as named_terms', 'named_terms.id', '=', 'named_term_ranks.term_id')
+            ->whereIn('named_terms.name', $termNames)
+            ->select('named_term_ranks.rank');
+
+        return Enrollment::query()
+            ->tap(new JoinMatchedTerm())
+            ->joinSub($termRanks, 'term_ranks', 'term_ranks.term_id', '=', 'terms.id')
+            ->select('enrollments.sisid')
+            ->groupBy('enrollments.sisid')
+            ->havingRaw(
+                'min(term_ranks.rank) ' . ($isInverse ? 'not in' : 'in') . " ({$namedTermRanks->toSql()})",
+                $namedTermRanks->getBindings(),
+            )
+            ->toBase();
+    }
+
+    /**
+     * Numbers the terms in the order of enrolled terms, starting from 1.
+     */
+    private static function getTermRanksQuery(OrderByFirstTerm|OrderByMostRecentTerm $orderTerms): QueryBuilder
+    {
+        $orderedTermIds = Term::query()
+            ->tap($orderTerms)
+            ->select('terms.id')
+            ->toBase();
+
+        // An array built from an ordered subquery keeps its order, so `WITH ORDINALITY` numbers the terms in that order.
+        return DB::query()->fromRaw(
+            "unnest(array({$orderedTermIds->toSql()})) with ordinality as term_ranks (term_id, rank)",
+            $orderedTermIds->getBindings(),
+        );
     }
 }

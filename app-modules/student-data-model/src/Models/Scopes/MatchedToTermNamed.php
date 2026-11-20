@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use AdvisingApp\StudentDataModel\Models\Term;
+use App\Features\MatchedTermFunctionFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,8 @@ use Illuminate\Support\Facades\DB;
 /**
  * Filters enrollments to those matched to a term with one of the given names, ignoring case.
  *
- * Resolving an enrollment's term through the `enrollment_terms` view is slow across many enrollments,
- * so the enrollments that could match are narrowed down first with the view's own candidate conditions.
+ * Resolving an enrollment's term per enrollment is slow across many enrollments, so the matching rule is applied as set conditions:
+ * a term's SIS term ID is unique, so an enrollment with a live term's SIS term ID is matched to it, and otherwise to a live term with its semester name.
  */
 class MatchedToTermNamed
 {
@@ -61,15 +62,43 @@ class MatchedToTermNamed
      */
     public function __invoke(Builder $query): void
     {
-        $query
-            ->where(fn (Builder $query) => $query
+        if (! MatchedTermFunctionFeature::active()) {
+            $query
+                ->where(fn (Builder $query) => $query
+                    ->whereIn(
+                        'enrollments.sis_term_id',
+                        Term::query()
+                            ->whereIn('name', $this->names)
+                            ->select('sis_term_id'),
+                    )
+                    ->orWhereIn(DB::raw('enrollments.semester_name::citext'), $this->names))
+                ->whereHas('term', fn (Builder $query) => $query->whereIn('terms.name', $this->names));
+
+            return;
+        }
+
+        $query->where(fn (Builder $query) => $query
+            ->whereIn(
+                'enrollments.sis_term_id',
+                Term::query()
+                    ->whereNotNull('sis_term_id')
+                    ->whereIn('name', $this->names)
+                    ->select('sis_term_id'),
+            )
+            ->orWhere(fn (Builder $query) => $query
+                ->where(fn (Builder $query) => $query
+                    ->whereNull('enrollments.sis_term_id')
+                    ->orWhereNotIn(
+                        'enrollments.sis_term_id',
+                        Term::query()
+                            ->whereNotNull('sis_term_id')
+                            ->select('sis_term_id'),
+                    ))
                 ->whereIn(
-                    'enrollments.sis_term_id',
+                    DB::raw('enrollments.semester_name::citext'),
                     Term::query()
                         ->whereIn('name', $this->names)
-                        ->select('sis_term_id'),
-                )
-                ->orWhereIn(DB::raw('enrollments.semester_name::citext'), $this->names))
-            ->whereHas('term', fn (Builder $query) => $query->whereIn('terms.name', $this->names));
+                        ->select('name'),
+                )));
     }
 }
