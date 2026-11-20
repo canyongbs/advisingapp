@@ -34,15 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\ResourceHub\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use Filament\Support\Contracts\HasLabel;
 
-class ResourceHub extends Cluster
+enum ResourceHubTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case Categories = 'categories';
 
-    protected static ?int $navigationSort = 110;
+    case Qualities = 'qualities';
+
+    case Statuses = 'statuses';
+
+    public function canView(): bool
+    {
+        return match ($this) {
+            self::Categories => ResourceHubCategoryResource::canViewAny(),
+            self::Qualities => ResourceHubQualityResource::canViewAny(),
+            self::Statuses => ResourceHubStatusResource::canViewAny(),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Categories => 'Categories',
+            self::Qualities => 'Qualities',
+            self::Statuses => 'Statuses',
+        };
+    }
 }

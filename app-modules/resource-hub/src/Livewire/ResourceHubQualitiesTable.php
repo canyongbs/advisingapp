@@ -34,26 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
+namespace AdvisingApp\ResourceHub\Livewire;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-class ListResourceHubQualities extends ListRecords
+class ResourceHubQualitiesTable extends Component implements HasActions, HasForms, HasTable
 {
-    protected static string $resource = ResourceHubQualityResource::class;
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    public function boot(): void
+    {
+        abort_unless(ResourceHubQualityResource::canViewAny(), 403);
+    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->query(fn (): Builder => ResourceHubQualityResource::getEloquentQuery())
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -65,22 +82,35 @@ class ListResourceHubQualities extends ListRecords
                     ->counts('resourceHubArticles')
                     ->sortable(),
             ])
+            ->recordUrl(fn (ResourceHubQuality $record): ?string => match (true) {
+                ResourceHubQualityResource::canView($record) => ResourceHubQualityResource::getUrl('view', ['record' => $record]),
+                ResourceHubQualityResource::canEdit($record) => ResourceHubQualityResource::getUrl('edit', ['record' => $record]),
+                default => null,
+            })
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', ResourceHubQuality::class)
+                    ->url(fn (): string => ResourceHubQualityResource::getUrl('create')),
+            ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (ResourceHubQuality $record): string => ResourceHubQualityResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (ResourceHubQuality $record): string => ResourceHubQualityResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize('deleteAny', ResourceHubQuality::class)
                         ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function render(): View
     {
-        return [
-            CreateAction::make(),
-        ];
+        return view('resource-hub::livewire.resource-hub-table');
     }
 }

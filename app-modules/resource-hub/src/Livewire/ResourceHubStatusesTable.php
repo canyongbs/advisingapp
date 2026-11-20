@@ -34,27 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
+namespace AdvisingApp\ResourceHub\Livewire;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-class ListResourceHubCategories extends ListRecords
+class ResourceHubStatusesTable extends Component implements HasActions, HasForms, HasTable
 {
-    protected static string $resource = ResourceHubCategoryResource::class;
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    public function boot(): void
+    {
+        abort_unless(ResourceHubStatusResource::canViewAny(), 403);
+    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->query(fn (): Builder => ResourceHubStatusResource::getEloquentQuery())
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -65,26 +81,36 @@ class ListResourceHubCategories extends ListRecords
                     ->label('# of Resource Hub Articles')
                     ->counts('resourceHubArticles')
                     ->sortable(),
-                IconColumn::make('icon')
-                    ->icon(fn (string $state): string => $state)
-                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
+            ])
+            ->recordUrl(fn (ResourceHubStatus $record): ?string => match (true) {
+                ResourceHubStatusResource::canView($record) => ResourceHubStatusResource::getUrl('view', ['record' => $record]),
+                ResourceHubStatusResource::canEdit($record) => ResourceHubStatusResource::getUrl('edit', ['record' => $record]),
+                default => null,
+            })
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', ResourceHubStatus::class)
+                    ->url(fn (): string => ResourceHubStatusResource::getUrl('create')),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (ResourceHubStatus $record): string => ResourceHubStatusResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (ResourceHubStatus $record): string => ResourceHubStatusResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize('deleteAny', ResourceHubStatus::class)
                         ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function render(): View
     {
-        return [
-            CreateAction::make(),
-        ];
+        return view('resource-hub::livewire.resource-hub-table');
     }
 }

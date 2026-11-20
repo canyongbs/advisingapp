@@ -34,26 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
+namespace AdvisingApp\ResourceHub\Livewire;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-class ListResourceHubStatuses extends ListRecords
+class ResourceHubCategoriesTable extends Component implements HasActions, HasForms, HasTable
 {
-    protected static string $resource = ResourceHubStatusResource::class;
+    use InteractsWithActions;
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    public function boot(): void
+    {
+        abort_unless(ResourceHubCategoryResource::canViewAny(), 403);
+    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->query(fn (): Builder => ResourceHubCategoryResource::getEloquentQuery())
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -64,23 +82,39 @@ class ListResourceHubStatuses extends ListRecords
                     ->label('# of Resource Hub Articles')
                     ->counts('resourceHubArticles')
                     ->sortable(),
+                IconColumn::make('icon')
+                    ->icon(fn (string $state): string => $state)
+                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
+            ])
+            ->recordUrl(fn (ResourceHubCategory $record): ?string => match (true) {
+                ResourceHubCategoryResource::canView($record) => ResourceHubCategoryResource::getUrl('view', ['record' => $record]),
+                ResourceHubCategoryResource::canEdit($record) => ResourceHubCategoryResource::getUrl('edit', ['record' => $record]),
+                default => null,
+            })
+            ->headerActions([
+                CreateAction::make()
+                    ->authorize('create', ResourceHubCategory::class)
+                    ->url(fn (): string => ResourceHubCategoryResource::getUrl('create')),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (ResourceHubCategory $record): string => ResourceHubCategoryResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->authorize('update')
+                    ->url(fn (ResourceHubCategory $record): string => ResourceHubCategoryResource::getUrl('edit', ['record' => $record])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize('deleteAny', ResourceHubCategory::class)
                         ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function render(): View
     {
-        return [
-            CreateAction::make(),
-        ];
+        return view('resource-hub::livewire.resource-hub-table');
     }
 }
