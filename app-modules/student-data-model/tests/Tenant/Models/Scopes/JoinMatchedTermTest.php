@@ -94,3 +94,10 @@ it('keeps enrollments without a matched term when including unmatched ones', fun
         ->toEqualCanonicalizing($matchedTermsFromView())
         ->toHaveCount(7);
 });
+
+it('joins terms through `matched_term_id()` rather than the `enrollment_terms` view, which reads the enrollments a second time', function (): void {
+    $sql = Enrollment::query()->tap(new JoinMatchedTerm())->toSql();
+
+    expect($sql)->toContain('matched_term_id(')
+        ->and($sql)->not->toContain('enrollment_terms');
+});
