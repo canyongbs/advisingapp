@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Form\Http\Controllers\FormWidgetController;
+use AdvisingApp\Form\Http\Controllers\StoreSecretController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Http\Middleware\FormsWidgetCors;
@@ -53,6 +54,13 @@ Route::middleware([
     ->group(function (): void {
         Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
             ->name('form-upload-url');
+
+        Route::post('store-secret', StoreSecretController::class)
+            ->middleware(['throttle:widget-store-secret'])
+            ->name('store-secret');
+
+        Route::options('store-secret', fn () => response()->noContent())
+            ->name('store-secret.preflight');
 
         Route::prefix('api/{form}')
             ->name('api.')
