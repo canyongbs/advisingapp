@@ -41,6 +41,8 @@ use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
+use Dom\Element;
+use Dom\HTMLDocument;
 use Filament\Facades\Filament;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Foundation\Application;
@@ -53,6 +55,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
+use function Pest\Laravel\get;
 use function Pest\Laravel\mock;
 
 it('starts on the email step', function (): void {
@@ -784,4 +787,82 @@ it('still sends a local user to the password step when single sign-on is availab
         ->call('continue')
         ->assertNoRedirect()
         ->assertSet('step', 'password');
+});
+
+it('does not show the switch tenant control or a google unavailable message for a normal browser', function (): void {
+    $googleSsoSettings = app(GoogleSsoSettings::class);
+    $googleSsoSettings->is_enabled = true;
+    $googleSsoSettings->client_id = 'test-client-id';
+    $googleSsoSettings->client_secret = 'test-client-secret';
+    $googleSsoSettings->save();
+
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+        ->assertOk()
+        ->getContent();
+
+    assert(is_string($html));
+
+    $document = HTMLDocument::createFromString($html, LIBXML_NOERROR);
+
+    expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse()
+        ->and(collect($document->querySelectorAll('p'))->contains(fn (Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
+});
+
+it('shows the switch tenant control for the mobile app', function (): void {
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->getContent();
+
+    assert(is_string($html));
+
+    $switchTenantLink = HTMLDocument::createFromString($html, LIBXML_NOERROR)
+        ->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]');
+
+    expect($switchTenantLink)->not->toBeNull()
+        ->and(trim((string) $switchTenantLink?->textContent))->toBe('Switch tenant');
+});
+
+it('does not show the switch tenant control when google sso is not enabled and the user agent is not the mobile app', function (): void {
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
+        ->assertOk()
+        ->getContent();
+
+    assert(is_string($html));
+
+    $document = HTMLDocument::createFromString($html, LIBXML_NOERROR);
+
+    expect($document->querySelector('a[href="' . EmailFirstLogin::SWITCH_TENANT_URL . '"]'))->toBeNull()
+        ->and(collect($document->querySelectorAll('a'))->contains(fn (Element $link): bool => trim((string) $link->textContent) === 'Switch tenant'))->toBeFalse();
+});
+
+it('does not offer google sign-in on the login page for the mobile app when google sso is enabled', function (): void {
+    $googleSsoSettings = app(GoogleSsoSettings::class);
+    $googleSsoSettings->is_enabled = true;
+    $googleSsoSettings->client_id = 'test-client-id';
+    $googleSsoSettings->client_secret = 'test-client-secret';
+    $googleSsoSettings->save();
+
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->getContent();
+
+    assert(is_string($html));
+
+    $googleRedirectLink = HTMLDocument::createFromString($html, LIBXML_NOERROR)
+        ->querySelector('a[href^="' . route('socialite.redirect', ['provider' => 'google']) . '"]');
+
+    expect($googleRedirectLink)->toBeNull();
+});
+
+it('does not show a google unavailable message for the mobile app when google sso is not enabled', function (): void {
+    $html = get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
+        ->assertOk()
+        ->getContent();
+
+    assert(is_string($html));
+
+    $paragraphs = HTMLDocument::createFromString($html, LIBXML_NOERROR)->querySelectorAll('p');
+
+    expect(collect($paragraphs)->contains(fn (Element $paragraph): bool => trim((string) $paragraph->textContent) === EmailFirstLogin::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE))->toBeFalse();
 });
