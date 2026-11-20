@@ -74,6 +74,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
 use App\Features\MatchedEnrolledTermsFeature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -1526,6 +1527,39 @@ describe('2026_11_20_202309_add_active_sisid_index_to_enrollments_table', functi
                 expect($rollback)->toBe(Command::SUCCESS)
                     ->and($hasIndex('enrollments'))->toBeFalse()
                     ->and($hasIndex($importTable))->toBeFalse();
+            }
+        );
+    });
+
+    it('skips the table of an import that completes while it runs', function () {
+        isolatedMigration(
+            '2026_11_20_202309_add_active_sisid_index_to_enrollments_table',
+            function () {
+                $importTable = 'import_' . Str::uuid() . '_enrollments';
+
+                DB::statement("create table \"{$importTable}\" (like \"enrollments\" including all)");
+
+                // The import completes just before the index is built on its table, so the table is no longer there.
+                $hasCompletedImport = false;
+
+                DB::connection()->beforeExecuting(function (string $query, array $bindings, Connection $connection) use ($importTable, &$hasCompletedImport): void {
+                    if ($hasCompletedImport || ! str_contains($query, "CREATE INDEX CONCURRENTLY  ON \"{$importTable}\"")) {
+                        return;
+                    }
+
+                    $hasCompletedImport = true;
+
+                    $connection->statement("alter table \"{$importTable}\" rename to \"completed_import_enrollments\"");
+                });
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($hasCompletedImport)->toBeTrue()
+                    ->and($migrate)->toBe(Command::SUCCESS)
+                    ->and(DB::table('pg_indexes')
+                        ->where('tablename', 'enrollments')
+                        ->where('indexdef', 'like', '%USING btree (sisid) WHERE (deleted_at IS NULL)')
+                        ->exists())->toBeTrue();
             }
         );
     });

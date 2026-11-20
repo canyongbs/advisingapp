@@ -36,8 +36,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * Indexes the `sisid` of enrollments that are not soft deleted, so a student's enrollments can be found, counted and checked for from the index alone.
@@ -47,6 +47,8 @@ use Illuminate\Support\Facades\Schema;
  */
 return new class () extends Migration {
     private const string INDEX_DEFINITION = 'USING btree (sisid) WHERE (deleted_at IS NULL)';
+
+    private const string UNDEFINED_TABLE_SQLSTATE = '42P01';
 
     // CREATE INDEX CONCURRENTLY cannot run inside a transaction block.
     public $withinTransaction = false;
@@ -77,11 +79,6 @@ return new class () extends Migration {
 
     private function createIndex(string $table): void
     {
-        // An import that completed meanwhile renamed its table to `enrollments`.
-        if (! Schema::hasTable($table)) {
-            return;
-        }
-
         // A failed concurrent build leaves an invalid index behind, so a retry must drop it before building again.
         foreach ($this->getIndexes($table, isValid: false) as $index) {
             DB::statement("DROP INDEX CONCURRENTLY IF EXISTS \"{$index}\"");
@@ -95,7 +92,14 @@ return new class () extends Migration {
         // A name is only given on `enrollments`, as the generated names of the import tables' indexes could exceed Postgres' limit.
         $name = ($table === 'enrollments') ? 'enrollments_active_sisid_index' : '';
 
-        DB::statement("CREATE INDEX CONCURRENTLY {$name} ON \"{$table}\" (sisid) WHERE deleted_at IS NULL");
+        try {
+            DB::statement("CREATE INDEX CONCURRENTLY {$name} ON \"{$table}\" (sisid) WHERE deleted_at IS NULL");
+        } catch (QueryException $exception) {
+            // An import that completed meanwhile renamed its table to `enrollments`, which is indexed again afterwards.
+            if (($table === 'enrollments') || ($exception->getCode() !== self::UNDEFINED_TABLE_SQLSTATE)) {
+                throw $exception;
+            }
+        }
     }
 
     /**

@@ -140,6 +140,47 @@ test('the group builder applies enrollment rules with a count of 0, like the gro
         ->assertCanNotSeeTableRecords([$enrolledStudent]);
 });
 
+test('the group builder applies an enrollment rule that matches every student when it is alone in an OR group, like the group does', function (): void {
+    asSuperAdmin();
+
+    $smith = Student::factory()->create(['last' => 'Smith']);
+    $jones = Student::factory()->create(['last' => 'Jones']);
+
+    $group = Group::factory()->student()->dynamic()->create([
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'or' => [
+                        'type' => 'or',
+                        'data' => [
+                            'groups' => [
+                                ['rules' => [
+                                    'enrollments' => [
+                                        'type' => 'enrollments',
+                                        'data' => ['operator' => 'hasMin', 'settings' => ['count' => '0']],
+                                    ],
+                                ]],
+                                ['rules' => [
+                                    'name' => [
+                                        'type' => 'name',
+                                        'data' => ['operator' => 'lastName', 'settings' => ['operator' => 'contains', 'text' => 'Smith']],
+                                    ],
+                                ]],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    expect(app(TranslateGroupFilters::class)->execute($group)->pluck('sisid')->all())
+        ->toEqualCanonicalizing([$smith->sisid, $jones->sisid]);
+
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertCanSeeTableRecords([$smith, $jones]);
+});
+
 test('EditGroup warns how many members cannot be emailed or texted', function (): void {
     asSuperAdmin();
 
