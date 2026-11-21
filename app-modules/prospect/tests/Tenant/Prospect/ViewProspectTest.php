@@ -169,6 +169,32 @@ test('ViewProspect is gated with proper access control', function (): void {
         )->assertSuccessful();
 });
 
+it('does not allow editing a prospect from the profile without update permission', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.*.view']);
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create();
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertActionDoesNotExist(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'));
+});
+
+it('does not allow editing a converted prospect from the profile', function (): void {
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.*.view', 'prospect.*.update']);
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()
+        ->for(Student::factory(), 'student')
+        ->create();
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertActionDoesNotExist(TestAction::make('edit')->schemaComponent('profile-information::section', schema: 'profile'));
+});
+
 test('convert action visible when prospect is not converted to student', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 

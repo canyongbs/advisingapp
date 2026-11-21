@@ -118,6 +118,7 @@ class ProspectProfileInfolist
                             ->modal()
                             ->slideOver()
                             ->schema(fn (Schema $schema): Schema => EditProspectForm::configure($schema))
+                            ->after(fn (Prospect $record): Prospect => $record->refresh())
                             ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);
