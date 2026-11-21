@@ -49,6 +49,7 @@ use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\Prospect\Filament\Actions\ProspectTagsBulkAction;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas\EditProspectForm;
 use AdvisingApp\Prospect\Imports\ProspectImporter;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
@@ -71,6 +72,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -185,7 +187,10 @@ class ListProspects extends ListRecords
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->modal()
+                    ->slideOver()
+                    ->schema(fn (Schema $schema): Schema => EditProspectForm::configure($schema)),
                 SubscribeTableAction::make(),
             ])
             ->toolbarActions([
