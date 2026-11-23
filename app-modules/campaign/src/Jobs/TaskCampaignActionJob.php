@@ -87,9 +87,9 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
                 $this->syncConfidentialAccess($task, 'confidentialAccessDepartments', $action->data['department_confidential_task'] ?? []);
 
-              if (UserGroupsFeature::active()) {
-                $this->syncConfidentialAccess($task, 'confidentialAccessUserGroups', $action->data['user_group_confidential_task'] ?? []);
-              }
+                if (UserGroupsFeature::active()) {
+                    $this->syncConfidentialAccess($task, 'confidentialAccessUserGroups', $action->data['user_group_confidential_task'] ?? []);
+                }
             }
 
             $this->actionEducatable->succeeded_at = now();
