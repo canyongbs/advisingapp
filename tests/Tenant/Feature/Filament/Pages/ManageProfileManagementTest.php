@@ -68,6 +68,16 @@ it('keeps the navigation group, label, title, sort and URL of the old cluster', 
         ->and(ManageProfileManagement::getUrl())->toContain('/profile-management');
 });
 
+it('redirects bookmarks to the former pronouns resource to the Personal Pronouns tab', function (): void {
+    $user = User::factory()->create();
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    get('/profile-management/pronouns')
+        ->assertRedirect(ManageProfileManagement::getUrl(['tab' => 'personal-pronouns']));
+});
+
 describe('authorization', function (): void {
     it('denies access to a user without `settings.view-any`', function (): void {
         actingAs(User::factory()->create());

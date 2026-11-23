@@ -39,8 +39,10 @@ namespace App\Providers\Filament;
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Enums\NavigationGroup;
+use App\Enums\ProfileManagementTab;
 use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\ManageProfileManagement;
 use App\Filament\Pages\ProductHealth;
 use App\Health\Checks\AzureCredentialsExpiringCheck;
 use App\Models\HealthCheckResultHistoryItem;
@@ -70,11 +72,13 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\ViteManifestNotFoundException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -127,6 +131,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
+            ->authenticatedTenantRoutes(function (): void {
+                // The pronouns resource used to live in the `ProfileManagement` cluster at
+                // `profile-management/pronouns`. This redirect keeps bookmarks and links to that old
+                // cluster URL working after the cluster was removed.
+                Route::get('profile-management/pronouns', fn (): RedirectResponse => redirect()->to(
+                    ManageProfileManagement::getUrl([
+                        ...request()->query(),
+                        'tab' => ProfileManagementTab::PersonalPronouns->value,
+                    ]),
+                ));
+            })
             ->navigationGroups(NavigationGroup::class)
             ->middleware([
                 NeedsTenant::class,
