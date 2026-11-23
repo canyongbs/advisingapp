@@ -57,6 +57,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TaskBlock extends CampaignActionBlock
 {
@@ -163,7 +164,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->getSearchResultsUsing(fn (string $search): array => UserGroup::query()
                                     ->withoutArchived()
                                     ->orderBy('name')
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
