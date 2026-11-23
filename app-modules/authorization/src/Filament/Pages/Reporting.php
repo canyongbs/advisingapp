@@ -37,9 +37,12 @@
 namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Authorization\Filament\Actions\ManageReportAssignmentsBulkAction;
+use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Report\Actions\AssignReportUserGroups;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\NavigationGroup;
 use App\Models\Scopes\WithoutAnyAdmin;
@@ -171,13 +174,17 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
         $departmentsQuery = Department::query()
             ->orderBy('name');
 
+        $groupsQuery = UserGroup::query()
+            ->withoutArchived()
+            ->orderBy('name');
+
         return Action::make('manage')
             ->label('Manage')
             ->icon('heroicon-m-user-group')
             ->slideOver()
             ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
             ->modalHeading(fn (array $record): string => "Manage Access: {$record['name']}")
-            ->modalDescription('Grant access to this report by assigning individual users and/or departments.')
+            ->modalDescription('Grant access to this report by assigning individual users, departments, and/or groups.')
             ->fillForm(fn (array $record): array => [
                 'users' => ReportUserAccess::query()
                     ->where('report_key', $record['report_key'])
@@ -186,6 +193,10 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 'departments' => ReportDepartmentAccess::query()
                     ->where('report_key', $record['report_key'])
                     ->pluck('team_id')
+                    ->all(),
+                'groups' => ReportUserGroupAccess::query()
+                    ->where('report_key', $record['report_key'])
+                    ->pluck('user_group_id')
                     ->all(),
             ])
             ->schema([
@@ -235,12 +246,36 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                             ->pluck('name', 'id')
                             ->all(),
                     ),
+                Select::make('groups')
+                    ->label('Groups')
+                    ->multiple()
+                    ->searchable()
+                    ->options(
+                        fn (): array => $groupsQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $groupsQuery
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $groupsQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    ),
             ])
-            ->action(function (array $record, array $data): void {
+            ->action(function (array $record, array $data, AssignReportUserGroups $assignReportUserGroups): void {
                 try {
                     DB::beginTransaction();
                     $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
                     $this->syncDepartmentAccess($record['report_key'], $data['departments'] ?? []);
+                    $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
 
                     $this->resetTable();
                     DB::commit();

@@ -117,7 +117,13 @@ class CreatePrompt extends CreateRecord
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
                             Select::make('confidential_prompt_user_groups')
-                                ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query->withoutArchived())
+                                ->relationship(
+                                    'confidentialAccessUserGroups',
+                                    'name',
+                                    fn (Builder $query) => $query
+                                    // @phpstan-ignore method.notFound
+                                        ->withoutArchived()
+                                )
                                 ->preload()
                                 ->label('Groups')
                                 ->multiple()

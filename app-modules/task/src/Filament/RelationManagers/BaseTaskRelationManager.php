@@ -96,9 +96,12 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get): mixed => $get('is_confidential')),
                         Select::make('confidential_task_user_groups')
-                            ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query
+                            ->relationship(
+                                'confidentialAccessUserGroups',
+                                'name',
+                                fn (Builder $query) => $query
                                 // @phpstan-ignore method.notFound
-                                ->withoutArchived()
+                                    ->withoutArchived()
                             )
                             ->preload()
                             ->label('Groups')

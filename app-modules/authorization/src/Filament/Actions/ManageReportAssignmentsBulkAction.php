@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Authorization\Filament\Actions;
 
+use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Report\Actions\AssignReportUserGroups;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
@@ -48,6 +50,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ManageReportAssignmentsBulkAction
@@ -61,12 +64,16 @@ class ManageReportAssignmentsBulkAction
         $departmentsQuery = Department::query()
             ->orderBy('name');
 
+        $groupsQuery = UserGroup::query()
+            ->withoutArchived()
+            ->orderBy('name');
+
         return BulkAction::make('manageReportAssignments')
             ->icon('heroicon-s-user-group')
             ->label('Manage Assignments')
             ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
             ->modalHeading(fn (Collection $records): string => 'Manage Assignments for ' . $records->count() . ' ' . str('Report')->plural($records->count()))
-            ->modalDescription('Grant access to the selected reports by assigning individual users and/or departments.')
+            ->modalDescription('Grant access to the selected reports by assigning individual users, departments, and/or groups.')
             ->form([
                 Select::make('users')
                     ->label('Users')
@@ -114,19 +121,43 @@ class ManageReportAssignmentsBulkAction
                             ->pluck('name', 'id')
                             ->all(),
                     ),
+                Select::make('groups')
+                    ->label('Groups')
+                    ->multiple()
+                    ->searchable()
+                    ->options(
+                        fn (): array => $groupsQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $groupsQuery
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $groupsQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    ),
                 Toggle::make('sync')
                     ->label('Replace existing assignments?')
                     ->default(false)
-                    ->hintIconTooltip('If checked, all existing user and department assignments will be removed and replaced with the selections above.'),
+                    ->hintIconTooltip('If checked, all existing user, department, and group assignments will be removed and replaced with the selections above.'),
             ])
-            ->action(function (array $data, Collection $records): void {
+            ->action(function (array $data, Collection $records, AssignReportUserGroups $assignReportUserGroups): void {
                 $userIds = $data['users'] ?? [];
                 $departmentIds = $data['departments'] ?? [];
+                $groupIds = $data['groups'] ?? [];
                 $sync = $data['sync'];
 
                 try {
-                    DB::transaction(function () use ($records, $userIds, $departmentIds, $sync): void {
-                        $records->each(function (array $record) use ($userIds, $departmentIds, $sync): void {
+                    DB::transaction(function () use ($records, $userIds, $departmentIds, $groupIds, $sync, $assignReportUserGroups): void {
+                        $records->each(function (array $record) use ($userIds, $departmentIds, $groupIds, $sync, $assignReportUserGroups): void {
                             $reportKey = $record['report_key'];
 
                             if ($sync) {
@@ -164,6 +195,8 @@ class ManageReportAssignmentsBulkAction
                                     'team_id' => $departmentId,
                                 ]);
                             }
+
+                            $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
                         });
                     });
 
