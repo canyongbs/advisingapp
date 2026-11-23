@@ -37,80 +37,18 @@
 namespace AdvisingApp\ResourceHub\Livewire;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Tables\ResourceHubStatusesTable as ResourceHubStatusesTableConfiguration;
 use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
 
-class ResourceHubStatusesTable extends Component implements HasActions, HasForms, HasTable
+class ResourceHubStatusesTable extends BaseResourceHubTable
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
-    use InteractsWithTable;
-
-    public function boot(): void
-    {
-        abort_unless(ResourceHubStatusResource::canViewAny(), 403);
-    }
-
     public function table(Table $table): Table
     {
-        return $table
-            ->query(fn (): Builder => ResourceHubStatusResource::getEloquentQuery())
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-            ])
-            ->recordUrl(fn (ResourceHubStatus $record): ?string => match (true) {
-                ResourceHubStatusResource::canView($record) => ResourceHubStatusResource::getUrl('view', ['record' => $record]),
-                ResourceHubStatusResource::canEdit($record) => ResourceHubStatusResource::getUrl('edit', ['record' => $record]),
-                default => null,
-            })
-            ->headerActions([
-                CreateAction::make()
-                    ->authorize('create', ResourceHubStatus::class)
-                    ->url(fn (): string => ResourceHubStatusResource::getUrl('create')),
-            ])
-            ->recordActions([
-                ViewAction::make()
-                    ->authorize('view')
-                    ->url(fn (ResourceHubStatus $record): string => ResourceHubStatusResource::getUrl('view', ['record' => $record])),
-                EditAction::make()
-                    ->authorize('update')
-                    ->url(fn (ResourceHubStatus $record): string => ResourceHubStatusResource::getUrl('edit', ['record' => $record])),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize('deleteAny', ResourceHubStatus::class)
-                        ->authorizeIndividualRecords('delete'),
-                ]),
-            ]);
+        return ResourceHubStatusesTableConfiguration::configure($table);
     }
 
-    public function render(): View
+    protected function getResourceClass(): string
     {
-        return view('resource-hub::livewire.resource-hub-table');
+        return ResourceHubStatusResource::class;
     }
 }
