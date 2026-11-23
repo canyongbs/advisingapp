@@ -47,4 +47,12 @@ class IsEmptyOperatorWithEnrollmentSemester extends IsEmptyOperator
     {
         return $this->isInverse() ? '>=' : '<';
     }
+
+    /**
+     * This operator has no count, so a count left over from a previously selected operator is ignored.
+     */
+    protected function getCountSetting(): int
+    {
+        return 1;
+    }
 }
