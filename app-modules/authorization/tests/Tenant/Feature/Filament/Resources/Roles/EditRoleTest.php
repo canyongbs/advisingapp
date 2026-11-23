@@ -67,8 +67,8 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-    describe('deletion', function (): void {
-        it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
+describe('deletion', function (): void {
+    it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
         asSuperAdmin();
 
         $role = Role::factory()->create(['guard_name' => 'web']);

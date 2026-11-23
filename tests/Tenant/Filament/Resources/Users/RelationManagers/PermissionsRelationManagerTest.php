@@ -99,40 +99,40 @@ describe('enterprise ai', function () {
     });
 });
 
-  describe('group roles', function (): void {
+describe('group roles', function (): void {
     it('shows permissions inherited through non-admin group roles', function (): void {
-      asSuperAdmin();
+        asSuperAdmin();
 
-      $role = Role::factory()->create(['guard_name' => 'web']);
-      $role->givePermissionTo('user.view-any');
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $role->givePermissionTo('user.view-any');
 
-      $user = User::factory()->create();
+        $user = User::factory()->create();
 
-      $userGroup = UserGroup::factory()->create();
-      $userGroup->assignRole($role);
-      $userGroup->users()->attach($user);
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
 
-      $permission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
+        $permission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
 
-      Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->assertCanSeeTableRecords([$permission]);
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->assertCanSeeTableRecords([$permission]);
     });
 
     it('does not show permissions inherited through admin roles attached to groups', function (): void {
-      asSuperAdmin();
+        asSuperAdmin();
 
-      $user = User::factory()->create();
+        $user = User::factory()->create();
 
-      $adminRole = Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail();
-      $adminRole->givePermissionTo('user.view-any');
+        $adminRole = Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail();
+        $adminRole->givePermissionTo('user.view-any');
 
-      $userGroup = UserGroup::factory()->create();
-      $userGroup->roles()->attach($adminRole);
-      $userGroup->users()->attach($user);
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach($adminRole);
+        $userGroup->users()->attach($user);
 
-      $adminRolePermission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
+        $adminRolePermission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
 
-      Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->assertCanNotSeeTableRecords([$adminRolePermission]);
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->assertCanNotSeeTableRecords([$adminRolePermission]);
     });
-  });
+});

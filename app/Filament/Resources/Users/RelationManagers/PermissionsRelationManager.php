@@ -39,8 +39,8 @@ namespace App\Filament\Resources\Users\RelationManagers;
 use AdvisingApp\Authorization\Models\Permission;
 use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\User;
 use App\Models\Scopes\WithoutDisabledFeaturePermissions;
+use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -71,12 +71,12 @@ class PermissionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-        ->query(function (): Builder {
-          $ownerRecord = $this->getOwnerRecord();
-          assert($ownerRecord instanceof User);
+            ->query(function (): Builder {
+                $ownerRecord = $this->getOwnerRecord();
+                assert($ownerRecord instanceof User);
 
-          return Permission::query()->whereKey($ownerRecord->getPermissionsViaRoles()->pluck('id')->all());
-        })
+                return Permission::query()->whereKey($ownerRecord->getPermissionsViaRoles()->pluck('id')->all());
+            })
             ->modifyQueryUsing(fn (Builder $query) => $query->tap(new WithoutDisabledFeaturePermissions()))
             ->columns([
                 IdColumn::make(),
