@@ -58,7 +58,7 @@ $viewer = function (): User {
 it('lists records', function () use ($viewer): void {
     $viewer();
 
-    $records = ResourceHubCategory::factory()->count(3)->create();
+    $records = ResourceHubCategory::factory()->count(3)->sequence(['name' => 'Alpha'], ['name' => 'Beta'], ['name' => 'Gamma'])->create();
 
     Livewire::test(ResourceHubCategoriesTable::class)
         ->assertCanSeeTableRecords($records);
@@ -175,7 +175,7 @@ describe('authorization', function () use ($viewer): void {
         $user = $viewer();
         $user->givePermissionTo('settings.*.delete');
 
-        $records = ResourceHubCategory::factory()->count(2)->create();
+        $records = ResourceHubCategory::factory()->count(2)->sequence(['name' => 'Alpha'], ['name' => 'Beta'])->create();
 
         Livewire::test(ResourceHubCategoriesTable::class)
             ->callTableBulkAction(DeleteBulkAction::class, $records);
