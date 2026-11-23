@@ -38,7 +38,7 @@ namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Authorization\Models\UserGroup;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,7 +50,7 @@ class ReportUserGroupAccess extends Model implements Auditable
     /** @use HasFactory<\AdvisingApp\Report\Database\Factories\ReportUserGroupAccessFactory> */
     use HasFactory;
 
-    use HasVersion4Uuids;
+    use HasUuids;
     use UsesTenantConnection;
     use AuditableTrait;
 
