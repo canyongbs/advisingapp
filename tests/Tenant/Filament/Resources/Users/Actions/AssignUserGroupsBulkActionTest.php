@@ -61,7 +61,7 @@ it('assigns groups to the selected users without removing their existing groups'
             'replace' => false,
             'userGroups' => [$newUserGroup->getKey()],
         ])
-        ->assertHasNoFormErrors()
+        ->assertHasNoActionErrors()
         ->assertNotified('Assigned groups');
 
     $users->each(function (User $user) use ($existingUserGroup, $newUserGroup): void {
@@ -85,7 +85,7 @@ it('replaces the existing groups of the selected users', function (): void {
             'replace' => true,
             'userGroups' => [$newUserGroup->getKey()],
         ])
-        ->assertHasNoFormErrors();
+        ->assertHasNoActionErrors();
 
     $users->each(function (User $user) use ($newUserGroup): void {
         expect($user->userGroups()->pluck('user_groups.id')->all())

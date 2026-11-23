@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Database\Factories\UserGroupFactory;
+use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Observers\UserGroupObserver;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
@@ -63,6 +64,7 @@ class UserGroup extends Model implements Auditable
     /** @use HasFactory<UserGroupFactory> */
     use HasFactory;
 
+    use HasRolesWithPivot;
     use HasUuids;
     use SoftDeletes;
     use UsesTenantConnection;
@@ -72,6 +74,15 @@ class UserGroup extends Model implements Auditable
         'name',
         'description',
     ];
+
+    /**
+     * Spatie cannot infer a guard for a model that is not an auth provider.
+     * Groups grant roles to users, who authenticate on the `web` guard.
+     */
+    public function guardName(): string
+    {
+      return 'web';
+    }
 
     /**
      * @return BelongsTo<User, $this>

@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Authorization\Models\UserGroupUser;
@@ -70,15 +71,19 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Enums\RetentionCrmRestriction;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
+use BackedEnum;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -91,10 +96,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
+use Spatie\Permission\PermissionRegistrar;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
@@ -426,6 +433,105 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
+     * Direct roles plus roles inherited through the user's groups.
+     * Admin roles are never inherited, even if one is attached to a group.
+     *
+     * The direct `roles()` relation is intentionally left untouched, as it is the
+     * write relation used by `assignRole()`, `syncRoles()`, and the Roles relation manager.
+     *
+     * @return EloquentCollection<int, Role>
+     */
+    public function getEffectiveRoles(): EloquentCollection
+    {
+        $this->loadMissing('roles.permissions');
+
+        if (! UserGroupsFeature::active()) {
+            return $this->roles;
+        }
+
+        $this->loadMissing('userGroups.roles.permissions');
+
+        return $this->roles
+            ->merge(
+                $this->userGroups
+                    ->flatMap(fn (UserGroup $userGroup) => $userGroup->roles)
+                    ->reject(fn (Role $role): bool => in_array($role->name, self::ADMIN_ROLES, true))
+            )
+            ->unique(fn (Role $role) => $role->getKey())
+            ->values();
+    }
+
+    /**
+     * @param string|int|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasRole($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasRole($roles, $guard);
+    }
+
+    /**
+     * @param string|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasAllRoles($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasAllRoles($roles, $guard);
+    }
+
+    /**
+     * @param string|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasExactRoles($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasExactRoles($roles, $guard);
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function getRoleNames(): Collection
+    {
+        return $this->getEffectiveRoles()->pluck('name');
+    }
+
+    /**
+     * @return Collection<int, Permission>
+     */
+    public function getPermissionsViaRoles(): Collection
+    {
+        return $this->getEffectiveRoles()
+            ->flatMap(fn (Role $role) => $role->permissions)
+            ->unique(fn (Permission $permission) => $permission->getKey())
+            ->sort()
+            ->values();
+    }
+
+    /**
+     * Matches users who have the role directly, or through one of their groups.
+     * Admin roles are never matched through a group.
+     *
+     * @param Builder<User> $query
+     * @param string|int|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     * @param string|null $guard
+     * @param bool $without
+     *
+     * @return Builder<User>
+     */
+    public function scopeRole(Builder $query, $roles, $guard = null, $without = false): Builder // @phpstan-ignore Common.noLocalModelScope
+    {
+        if (! UserGroupsFeature::active()) {
+            return parent::scopeRole($query, $roles, $guard, $without);
+        }
+
+        $roleIds = $this->resolveRoleIds($roles, $guard);
+
+        return $query->{$without ? 'whereNot' : 'where'}(fn (Builder $query) => $query
+            ->whereHas('roles', fn (Builder $query) => $query->whereKey($roleIds))
+            ->orWhereHas('userGroups.roles', fn (Builder $query) => $query
+                ->whereKey($roleIds)
+                ->whereNotIn('roles.name', self::ADMIN_ROLES)));
+    }
+
+    /**
      * @return HasOne<Calendar, $this>
      */
     public function calendar(): HasOne
@@ -624,5 +730,43 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
             ->using(ManagerResourceHubArticle::class)
             ->withTimestamps();
+    }
+
+    /**
+     * Evaluates Spatie's role checks against the effective roles, so that its input
+     * parsing (names, IDs, models, enums, arrays, collections, and "a|b") is reused.
+     */
+    private function effectiveRoleHolder(): UserGroup
+    {
+        return (new UserGroup())->setRelation('roles', $this->getEffectiveRoles());
+    }
+
+    /**
+     * Mirrors the role resolution at the top of Spatie's `HasRoles::scopeRole()`,
+     * which is inline in the trait and cannot be called on its own.
+     *
+     * @param string|int|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     *
+     * @return array<int, int|string>
+     */
+    private function resolveRoleIds(mixed $roles, ?string $guard): array
+    {
+        if ($roles instanceof Collection) {
+            $roles = $roles->all();
+        }
+
+        return array_map(function (mixed $role) use ($guard): int | string {
+            if ($role instanceof Role) {
+                return $role->getKey();
+            }
+
+            if ($role instanceof BackedEnum) {
+                $role = $role->value;
+            }
+
+            $method = is_int($role) || PermissionRegistrar::isUid($role) ? 'findById' : 'findByName';
+
+            return $this->getRoleClass()::{$method}($role, $guard ?: $this->getDefaultGuardName())->getKey();
+        }, Arr::wrap($roles));
     }
 }

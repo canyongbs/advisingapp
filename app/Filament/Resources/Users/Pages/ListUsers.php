@@ -244,12 +244,34 @@ class ListUsers extends ListRecords
                                 return;
                             }
 
-                            $query->when(in_array('none', $data['values']), function (Builder $query): void {
-                                $query->whereDoesntHave('roles');
-                            })
-                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function (Builder $query) use ($data): void {
-                                    $query->whereIn('id', array_filter($data['values'], fn ($value): bool => $value !== 'none'));
-                                });
+                            $isFilteringForNoRoles = in_array('none', $data['values'], true);
+                            $roleIds = array_values(array_filter($data['values'], fn ($value): bool => $value !== 'none'));
+
+                            $query->where(function (Builder $query) use ($isFilteringForNoRoles, $roleIds): void {
+                                if ($isFilteringForNoRoles) {
+                                    $query->orWhere(fn (Builder $query) => $query
+                                        ->whereDoesntHave('roles')
+                                        ->when(
+                                            UserGroupsFeature::active(),
+                                            fn (Builder $query) => $query->whereDoesntHave(
+                                                'userGroups.roles',
+                                                fn (Builder $query) => $query->whereNotIn('roles.name', User::ADMIN_ROLES),
+                                            ),
+                                        ));
+                                }
+
+                                if ($roleIds !== []) {
+                                    $query->orWhere(function (Builder $userQuery) use ($roleIds): void {
+                                        $userQuery->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->whereKey($roleIds));
+
+                                        if (UserGroupsFeature::active()) {
+                                            $userQuery->orWhereHas('userGroups.roles', fn (Builder $roleQuery) => $roleQuery
+                                                ->whereKey($roleIds)
+                                                ->whereNotIn('roles.name', User::ADMIN_ROLES));
+                                        }
+                                    });
+                                }
+                            });
                         }
                     )
                     ->multiple()

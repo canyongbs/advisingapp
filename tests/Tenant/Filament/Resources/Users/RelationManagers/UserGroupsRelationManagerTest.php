@@ -73,7 +73,7 @@ it('can attach groups to a user', function (): void {
         ->callAction(TestAction::make(AttachAction::class)->table(), data: [
             'recordId' => $userGroups->modelKeys(),
         ])
-        ->assertHasNoFormErrors();
+        ->assertHasNoActionErrors();
 
     expect($user->userGroups()->pluck('user_groups.id')->all())
         ->toEqualCanonicalizing($userGroups->modelKeys());

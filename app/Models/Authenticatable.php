@@ -54,6 +54,17 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public const AI_ADMIN_ROLE = 'AI Admin';
 
+    /**
+     * Roles that may only be granted directly to a user, never inherited through a group.
+     *
+     * @var list<string>
+     */
+    public const ADMIN_ROLES = [
+        self::SUPER_ADMIN_ROLE,
+        self::PARTNER_ADMIN_ROLE,
+        self::AI_ADMIN_ROLE,
+    ];
+
     protected bool $isAdmin;
 
     protected bool $isSuperAdmin;
@@ -74,7 +85,7 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public function isAdmin(): bool
     {
-        return $this->isAdmin ??= $this->hasAnyRole([static::SUPER_ADMIN_ROLE, static::PARTNER_ADMIN_ROLE, static::AI_ADMIN_ROLE]);
+        return $this->isAdmin ??= $this->hasAnyRole(static::ADMIN_ROLES);
     }
 
     public function isSuperAdmin(): bool

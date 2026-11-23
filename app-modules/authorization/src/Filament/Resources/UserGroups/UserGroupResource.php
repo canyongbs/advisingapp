@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\CreateUserGrou
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\EditUserGroup;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\ListUserGroups;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\ViewUserGroup;
+use AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers\RolesRelationManager;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers\UsersRelationManager;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Schemas\UserGroupForm;
 use AdvisingApp\Authorization\Models\UserGroup;
@@ -77,6 +78,7 @@ class UserGroupResource extends Resource
     {
         return [
             UsersRelationManager::class,
+            RolesRelationManager::class,
         ];
     }
 
