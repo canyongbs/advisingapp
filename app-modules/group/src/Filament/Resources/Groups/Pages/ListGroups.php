@@ -36,17 +36,14 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Actions\GetGroupPopulationReachability;
-use AdvisingApp\Group\Actions\TranslateGroupFilters;
-use AdvisingApp\Group\DataTransferObjects\GroupPopulationReachability;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\Tables\GroupPopulationMetricsStateGroup;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -59,13 +56,10 @@ class ListGroups extends ListRecords
 
     protected static string $resource = GroupResource::class;
 
-    /**
-     * @var array<string, GroupPopulationReachability>
-     */
-    private array $populationReachabilityByGroup = [];
-
     public function table(Table $table): Table
     {
+        $populationMetrics = GroupPopulationMetricsStateGroup::make();
+
         return $table
             ->columns([
                 IdColumn::make(),
@@ -73,14 +67,14 @@ class ListGroups extends ListRecords
                     ->sortable(),
                 TextColumn::make('email_issues')
                     ->label('Email Issues')
-                    ->state(fn (Group $record): string => $this->getPopulationReachability($record)->getUnableToEmailPercentage() . '%'),
+                    ->lazyLoadedState(group: $populationMetrics),
                 TextColumn::make('sms_issues')
                     ->label('SMS Issues')
-                    ->state(fn (Group $record): string => $this->getPopulationReachability($record)->getUnableToTextPercentage() . '%'),
+                    ->lazyLoadedState(group: $populationMetrics),
                 TextColumn::make('population_count')
                     ->label('Population Count')
                     ->numeric()
-                    ->state(fn (Group $record): int => $this->getPopulationReachability($record)->totalCount),
+                    ->lazyLoadedState(group: $populationMetrics),
                 TextColumn::make('model')
                     ->label('Population')
                     ->sortable()
@@ -90,12 +84,16 @@ class ListGroups extends ListRecords
                 TextColumn::make('user.name')
                     ->label('Owner')
                     ->sortable()
-                    ->hidden(function (Table $table) {
-                        return $table->getFilter('my_groups')->getState()['isActive'] ?? false;
+                    ->hidden(function (Table $table): bool {
+                        $filter = $table->getFilter('my_groups');
+
+                        // The column manager is initialized before the filter defaults are filled and query string values
+                        // are normalized on the first request. Resolving the same visibility from the raw state avoids the
+                        // column state changing on the next request, which would discard in-flight lazy-loaded state as stale.
+                        return filter_var($filter->getState()['isActive'] ?? $filter->getDefaultState(), FILTER_VALIDATE_BOOLEAN);
                     }),
             ])
             ->recordActions([
-                EditAction::make(),
                 DeleteAction::make()
                     ->authorize(function () {
                         return auth()->user()->can('delete');
@@ -125,15 +123,5 @@ class ListGroups extends ListRecords
         return [
             CreateAction::make(),
         ];
-    }
-
-    /**
-     * Remembered per group, as its columns all need it.
-     */
-    private function getPopulationReachability(Group $group): GroupPopulationReachability
-    {
-        return $this->populationReachabilityByGroup[$group->getKey()] ??= app(GetGroupPopulationReachability::class)(
-            app(TranslateGroupFilters::class)->execute($group),
-        );
     }
 }

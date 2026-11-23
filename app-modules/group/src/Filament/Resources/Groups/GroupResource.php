@@ -52,7 +52,7 @@ class GroupResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $navigationLabel = 'Student/Prospect Groups';
+    protected static ?string $navigationLabel = 'Groups';
 
     protected static ?string $breadcrumb = 'Student/Prospect Groups';
 
