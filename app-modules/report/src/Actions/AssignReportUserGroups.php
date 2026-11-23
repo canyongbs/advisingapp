@@ -59,7 +59,7 @@ class AssignReportUserGroups
 
         foreach (array_diff($userGroupIds, $existingUserGroupIds) as $userGroupId) {
             $access = new ReportUserGroupAccess();
-          $access->setAttribute('report_key', $reportKey);
+            $access->setAttribute('report_key', $reportKey);
             $access->userGroup()->associate($userGroupId);
             $access->save();
         }
