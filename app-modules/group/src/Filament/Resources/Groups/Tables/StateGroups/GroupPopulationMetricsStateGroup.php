@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Groups\Tables;
+namespace AdvisingApp\Group\Filament\Resources\Groups\Tables\StateGroups;
 
 use AdvisingApp\Group\Actions\GetGroupPopulationReachability;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;

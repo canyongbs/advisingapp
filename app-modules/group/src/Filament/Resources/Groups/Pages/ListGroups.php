@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
-use AdvisingApp\Group\Filament\Resources\Groups\Tables\GroupPopulationMetricsStateGroup;
+use AdvisingApp\Group\Filament\Resources\Groups\Tables\StateGroups\GroupPopulationMetricsStateGroup;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
