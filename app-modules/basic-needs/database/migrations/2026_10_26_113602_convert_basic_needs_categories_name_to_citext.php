@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\BasicNeedsCategoryNameCitextFeature;
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -43,54 +41,33 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task (basic-needs-citext) - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
-    protected string $table = 'basic_needs_categories';
-
-    protected string $column = 'name';
-
-    // TODO: Cleanup Task (basic-needs-citext) - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
-
-    private string $uniqueConstraint = 'basic_needs_categories_name_unique';
-
     public function up(): void
     {
         DB::transaction(function (): void {
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->dropUnique($this->uniqueConstraint);
+            Schema::table('basic_needs_categories', function (Blueprint $table): void {
+                $table->dropUnique('basic_needs_categories_name_unique');
             });
 
-            // TODO: Cleanup Task (basic-needs-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
+            DB::statement('ALTER TABLE basic_needs_categories ALTER COLUMN name TYPE citext');
 
-            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
-
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+            Schema::table('basic_needs_categories', function (Blueprint $table): void {
+                $table->uniqueIndex(['name'], 'basic_needs_categories_name_unique')
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            BasicNeedsCategoryNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            BasicNeedsCategoryNameCitextFeature::deactivate();
-
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->dropUniqueIndex($this->uniqueConstraint);
+            Schema::table('basic_needs_categories', function (Blueprint $table): void {
+                $table->dropUniqueIndex('basic_needs_categories_name_unique');
             });
 
-            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+            DB::statement('ALTER TABLE basic_needs_categories ALTER COLUMN name TYPE varchar(255)');
 
-            Schema::table($this->table, function (Blueprint $table): void {
-                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+            Schema::table('basic_needs_categories', function (Blueprint $table): void {
+                $table->uniqueIndex(['name'], 'basic_needs_categories_name_unique')
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
         });

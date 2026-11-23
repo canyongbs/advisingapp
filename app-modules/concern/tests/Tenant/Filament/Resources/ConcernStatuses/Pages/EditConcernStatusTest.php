@@ -37,7 +37,6 @@
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\ConcernStatusResource;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
 use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Features\AlertStatusNameCitextFeature;
 use Livewire\Livewire;
 
 use function Pest\Laravel\get;
@@ -100,20 +99,4 @@ it('allows updating a concern status to a name freed up by a soft-deleted concer
         ->assertHasNoFormErrors();
 
     expect($concernStatus->refresh()->name)->toBe('under review');
-});
-
-it('rejects updating a concern status to a soft-deleted name before the citext migration activates', function (): void {
-    AlertStatusNameCitextFeature::deactivate();
-
-    $deletedConcernStatus = ConcernStatus::factory()->create(['name' => 'Under Review']);
-    $deletedConcernStatus->delete();
-
-    $concernStatus = ConcernStatus::factory()->create(['name' => 'In Progress']);
-
-    Livewire::test(EditConcernStatus::class, ['record' => $concernStatus->getRouteKey()])
-        ->fillForm(['name' => 'Under Review'])
-        ->call('save')
-        ->assertHasFormErrors(['name' => 'unique']);
-
-    expect($concernStatus->refresh()->name)->toBe('In Progress');
 });
