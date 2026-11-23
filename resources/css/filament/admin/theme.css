@@ -281,6 +281,15 @@
     @apply text-gray-500 dark:text-gray-400;
 }
 
+/* Mirrors a gray `.fi-badge.fi-size-sm`. `leading-4` restores the badge's `text-xs` line height, which the table cell's `leading-6` would otherwise override. */
+.fi-lazy-loaded-state-loading {
+    @apply gap-x-1 rounded-md bg-gray-50 px-1.5 py-0.5 align-middle text-xs leading-4 font-medium tracking-tight text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+
 .dark .fi-btn.fi-color-warning:not(.fi-outlined)[wire\:click*="mountAction('archive'"] {
     --dark-text: white;
     --dark-hover-text: white;

@@ -36,14 +36,16 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
+use App\Features\MatchedTermFunctionFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Joins enrollments to the term matched to each by the `enrollment_terms` view, so `terms` columns can be selected, grouped and ordered by.
+ * Joins enrollments to the term matched to each by `matched_term_id()`, the rule the `enrollment_terms` view is built on, so `terms` columns can be selected, grouped and ordered by.
  *
- * Joining is fast across a whole tenant, as Postgres caches the view's lookup per distinct SIS term ID and semester name.
- * Resolving terms one enrollment at a time in a correlated subquery (e.g. `whereHas('term')`) is not, so prefer this.
+ * Joining is fast across a whole tenant, as Postgres caches the function's lookup per distinct SIS term ID and semester name.
+ * Joining through the view instead reads the enrollments a second time, and resolving terms one enrollment at a time
+ * in a correlated subquery (e.g. `whereHas('term')`) is slower still, so prefer this.
  * Select `enrollments.*` when loading enrollments, so the joined columns do not overwrite theirs.
  */
 class JoinMatchedTerm
@@ -65,6 +67,20 @@ class JoinMatchedTerm
     public function __invoke(Builder $query): void
     {
         $type = $this->includeUnmatched ? 'left' : 'inner';
+
+        if (MatchedTermFunctionFeature::active()) {
+            $grammar = $query->getQuery()->getGrammar();
+
+            $query
+                ->joinLateral(
+                    "select matched_terms.term_id from matched_term_id({$grammar->wrap("{$this->enrollmentsTable}.sis_term_id")}, {$grammar->wrap("{$this->enrollmentsTable}.semester_name")}) as matched_terms",
+                    'matched_terms',
+                    $type,
+                )
+                ->join('terms', 'terms.id', '=', 'matched_terms.term_id', $type);
+
+            return;
+        }
 
         $query
             ->join('enrollment_terms', 'enrollment_terms.enrollment_id', '=', "{$this->enrollmentsTable}.id", $type)

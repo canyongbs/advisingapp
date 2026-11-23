@@ -73,7 +73,9 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
 use App\Features\MatchedEnrolledTermsFeature;
+use App\Features\MatchedTermFunctionFeature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -1493,6 +1495,161 @@ describe('application submission states name citext change', function () {
                 $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/application/database/migrations/2026_10_29_100002_convert_application_submission_states_name_to_citext.php']);
 
                 expect($rollback)->toBe(Command::SUCCESS);
+            }
+        );
+    });
+});
+
+describe('2026_11_20_202309_add_active_sisid_index_to_enrollments_table', function () {
+    it('indexes the active enrollments, including those of imports in progress', function () {
+        isolatedMigration(
+            '2026_11_20_202309_add_active_sisid_index_to_enrollments_table',
+            function () {
+                $importTable = 'import_' . Str::uuid() . '_enrollments';
+
+                DB::statement("create table \"{$importTable}\" (like \"enrollments\" including all)");
+
+                $hasIndex = fn (string $table): bool => DB::table('pg_indexes')
+                    ->where('tablename', $table)
+                    ->where('indexdef', 'like', '%USING btree (sisid) WHERE (deleted_at IS NULL)')
+                    ->exists();
+
+                expect($hasIndex('enrollments'))->toBeFalse()
+                    ->and($hasIndex($importTable))->toBeFalse();
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS)
+                    ->and($hasIndex('enrollments'))->toBeTrue()
+                    ->and($hasIndex($importTable))->toBeTrue();
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS)
+                    ->and($hasIndex('enrollments'))->toBeFalse()
+                    ->and($hasIndex($importTable))->toBeFalse();
+            }
+        );
+    });
+
+    it('skips the table of an import that completes while it runs', function () {
+        isolatedMigration(
+            '2026_11_20_202309_add_active_sisid_index_to_enrollments_table',
+            function () {
+                $importTable = 'import_' . Str::uuid() . '_enrollments';
+
+                DB::statement("create table \"{$importTable}\" (like \"enrollments\" including all)");
+
+                // The import completes just before the index is built on its table, so the table is no longer there.
+                $hasCompletedImport = false;
+
+                DB::connection()->beforeExecuting(function (string $query, array $bindings, Connection $connection) use ($importTable, &$hasCompletedImport): void {
+                    if ($hasCompletedImport || ! str_contains($query, "CREATE INDEX CONCURRENTLY  ON \"{$importTable}\"")) {
+                        return;
+                    }
+
+                    $hasCompletedImport = true;
+
+                    $connection->statement("alter table \"{$importTable}\" rename to \"completed_import_enrollments\"");
+                });
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_202309_add_active_sisid_index_to_enrollments_table.php']);
+
+                expect($hasCompletedImport)->toBeTrue()
+                    ->and($migrate)->toBe(Command::SUCCESS)
+                    ->and(DB::table('pg_indexes')
+                        ->where('tablename', 'enrollments')
+                        ->where('indexdef', 'like', '%USING btree (sisid) WHERE (deleted_at IS NULL)')
+                        ->exists())->toBeTrue();
+            }
+        );
+    });
+});
+
+describe('2026_11_20_212842_create_matched_term_id_function', function () {
+    it('rebuilds the `enrollment_terms` view on `matched_term_id()` without changing the terms it matches', function () {
+        isolatedMigration(
+            '2026_11_20_212842_create_matched_term_id_function',
+            function () {
+                $createEnrollment = fn (array $attributes): Enrollment => Enrollment::factory()->create([
+                    'id' => (string) Str::uuid(),
+                    'sis_term_id' => null,
+                    'semester_name' => null,
+                    ...$attributes,
+                ]);
+
+                $sisTerm = Term::factory()->create(['name' => 'FA-20', 'start_date' => '2020-09-01']);
+                Term::factory()->withoutSisTermId()->create(['name' => 'fa-20']);
+                Term::factory()->withoutSisTermId()->create(['name' => 'Manual Term', 'start_date' => '2020-01-01']);
+                Term::factory()->withoutSisTermId()->create(['name' => 'MANUAL TERM', 'start_date' => '2021-01-01']);
+                $deletedTerm = Term::factory()->create(['name' => 'SP-21', 'deleted_at' => now()]);
+
+                $createEnrollment(['sis_term_id' => $sisTerm->sis_term_id, 'semester_name' => 'Manual Term']);
+                $createEnrollment(['semester_name' => 'FA-20']);
+                $createEnrollment(['semester_name' => 'manual term']);
+                $createEnrollment(['sis_term_id' => 'unknown', 'semester_name' => 'MANUAL TERM']);
+                $createEnrollment(['sis_term_id' => $deletedTerm->sis_term_id, 'semester_name' => 'SP-21']);
+                $createEnrollment(['semester_name' => 'Unmatched']);
+                $createEnrollment([]);
+
+                $matchedTerms = fn (): array => DB::table('enrollments')
+                    ->leftJoin('enrollment_terms', 'enrollment_terms.enrollment_id', '=', 'enrollments.id')
+                    ->pluck('enrollment_terms.term_id', 'enrollments.id')
+                    ->all();
+
+                $matchedTermsBefore = $matchedTerms();
+
+                expect(array_filter($matchedTermsBefore))->toHaveCount(4);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_212842_create_matched_term_id_function.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS)
+                    ->and($matchedTerms())->toBe($matchedTermsBefore)
+                    ->and(DB::scalar("select pg_get_viewdef('enrollment_terms')"))->toContain('matched_term_id')
+                    // Queries using the function could not scan in parallel otherwise.
+                    ->and(DB::scalar("select proparallel from pg_proc where oid = to_regprocedure('matched_term_id(varchar, varchar)')"))->toBe('s');
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_212842_create_matched_term_id_function.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS)
+                    ->and($matchedTerms())->toBe($matchedTermsBefore)
+                    ->and(DB::scalar("select to_regprocedure('matched_term_id(varchar, varchar)')"))->toBeNull();
+            }
+        );
+    });
+});
+
+describe('2026_11_20_212844_tmp_activate_matched_term_function_feature', function () {
+    it('activates the feature and regenerates the `student_alerts` view of an enabled New Student alert', function () {
+        isolatedMigration(
+            '2026_11_20_212844_tmp_activate_matched_term_function_feature',
+            function () {
+                $newStudentAlertConfiguration = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
+                AlertConfiguration::factory()
+                    ->state([
+                        'preset' => AlertPreset::NewStudent,
+                        'configuration_id' => $newStudentAlertConfiguration->getKey(),
+                        'configuration_type' => $newStudentAlertConfiguration->getMorphClass(),
+                    ])
+                    ->enabled()
+                    ->create();
+
+                app(GenerateStudentAlertsView::class)->execute();
+
+                expect(MatchedTermFunctionFeature::active())->toBeFalse()
+                    ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->not->toContain('matched_term_id');
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_212844_tmp_activate_matched_term_function_feature.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS)
+                    ->and(MatchedTermFunctionFeature::active())->toBeTrue()
+                    ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->toContain('matched_term_id');
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/student-data-model/database/migrations/2026_11_20_212844_tmp_activate_matched_term_function_feature.php']);
+
+                expect($rollback)->toBe(Command::SUCCESS)
+                    ->and(MatchedTermFunctionFeature::active())->toBeFalse()
+                    ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->not->toContain('matched_term_id');
             }
         );
     });
