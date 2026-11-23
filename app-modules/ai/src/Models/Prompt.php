@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use AdvisingApp\Ai\Database\Factories\PromptFactory;
 use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use AdvisingApp\Ai\Observers\PromptObserver;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -133,6 +134,16 @@ class Prompt extends Model
             'confidential_prompt_users',
         )
             ->using(ConfidentialPromptUser::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this, covariant UserGroupConfidentialPrompt>
+     */
+    public function confidentialAccessUserGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'confidential_prompt_user_groups')
+            ->using(UserGroupConfidentialPrompt::class)
             ->withTimestamps();
     }
 

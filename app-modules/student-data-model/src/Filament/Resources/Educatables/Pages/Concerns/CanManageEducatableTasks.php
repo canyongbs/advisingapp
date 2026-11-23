@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns;
 
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -43,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\Tasks\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
@@ -101,6 +103,16 @@ trait CanManageEducatableTasks
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                        Select::make('confidential_task_user_groups')
+                            ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query
+                                // @phpstan-ignore method.notFound
+                                ->withoutArchived()
+                            )
+                            ->preload()
+                            ->label('Groups')
+                            ->multiple()
+                            ->exists((new UserGroup())->getTable(), 'id')
+                            ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                     ]),
                 TextInput::make('title')
                     ->required()

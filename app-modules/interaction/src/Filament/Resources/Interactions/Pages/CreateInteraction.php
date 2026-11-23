@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -48,6 +49,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
@@ -118,6 +120,13 @@ class CreateInteraction extends CreateRecord
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                            Select::make('interaction_confidential_user_groups')
+                                ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query->withoutArchived())
+                                ->preload()
+                                ->label('Groups')
+                                ->multiple()
+                                ->exists((new UserGroup())->getTable(), 'id')
+                                ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                         ]),
                 ]),
             Step::make('Details')

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Task\Models\Scopes;
 
+use App\Features\UserGroupsFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -59,6 +60,10 @@ class ConfidentialTaskScope implements Scope
                         $query->where('users.id', auth()->id());
                     });
                 })
+                ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->orWhereHas(
+                    'confidentialAccessUserGroups',
+                    fn (Builder $query) => $query->whereHas('users', fn (Builder $query) => $query->where('users.id', auth()->id()))
+                ))
                 ->orWhereHas('confidentialAccessUsers', function (Builder $query): void {
                     $query->where('user_id', auth()->id());
                 });

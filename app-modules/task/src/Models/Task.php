@@ -37,6 +37,7 @@
 namespace AdvisingApp\Task\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -185,6 +186,16 @@ class Task extends Model implements Auditable, CanTriggerAutoSubscription, HasHi
     {
         return $this->belongsToMany(Department::class, 'confidential_task_teams', 'task_id', 'team_id')
             ->using(DepartmentsConfidentialTasks::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this, covariant UserGroupsConfidentialTasks>
+     */
+    public function confidentialAccessUserGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'confidential_task_user_groups')
+            ->using(UserGroupsConfidentialTasks::class)
             ->withTimestamps();
     }
 

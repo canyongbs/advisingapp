@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Team\Models\Department;
@@ -147,6 +148,39 @@ test('Interactions model with fetch data for assigned user', function (): void {
 
     expect($interactions->where('is_confidential', true)->pluck('user_id'))
         ->not->toContain(...$privateInteractions->pluck('user_id'));
+});
+
+test('Interactions model with fetch data for users in a confidential access group', function (): void {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->users()->attach($user);
+
+    actingAs($user);
+
+    $userGroupConfidentialInteractions = Interaction::factory()
+        ->hasAttached($userGroup, [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
+
+    $privateInteractions = Interaction::factory()->count(10)->create([
+        'is_confidential' => true,
+    ]);
+
+    $publicInteractions = Interaction::factory()->count(10)->create([
+        'is_confidential' => false,
+    ]);
+
+    $interactions = Interaction::query()->get();
+
+    expect($interactions)->toHaveCount(20);
+
+    expect($interactions->pluck('id'))
+        ->toContain(...$publicInteractions->pluck('id'))
+        ->toContain(...$userGroupConfidentialInteractions->pluck('id'));
+
+    expect($interactions->pluck('id'))->not->toContain(...$privateInteractions->pluck('id'));
 });
 
 test('Interactions model with fetch data for superadmin user', function (): void {

@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -48,6 +49,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
@@ -182,6 +184,7 @@ it('creates a non-confidential task when is_confidential is not set', function (
     ]);
 
 it('creates a confidential task and syncs confidential access relationships', function (Educatable $educatable): void {
+    UserGroupsFeature::activate();
     asSuperAdmin();
     Bus::fake();
 
@@ -203,6 +206,7 @@ it('creates a confidential task and syncs confidential access relationships', fu
 
     $users = User::factory()->count(2)->create();
     $departments = Department::factory()->count(2)->create();
+    $userGroups = UserGroup::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -217,6 +221,7 @@ it('creates a confidential task and syncs confidential access relationships', fu
                 'is_confidential' => true,
                 'confidential_task_users' => $users->pluck('id')->toArray(),
                 'department_confidential_task' => $departments->pluck('id')->toArray(),
+                'user_group_confidential_task' => $userGroups->pluck('id')->toArray(),
             ],
         ]);
 
@@ -239,6 +244,78 @@ it('creates a confidential task and syncs confidential access relationships', fu
 
     expect($tasks->first()->confidentialAccessDepartments->pluck('id')->sort()->values())
         ->toEqual($departments->pluck('id')->sort()->values());
+
+    expect($tasks->first()->confidentialAccessUserGroups->pluck('id')->sort()->values())
+        ->toEqual($userGroups->pluck('id')->sort()->values());
+})
+    ->with([
+        'student' => [fn () => Student::factory()->create()],
+        'prospect' => [fn () => Prospect::factory()->create()],
+    ]);
+
+it('does not sync confidential user groups when the UserGroupsFeature is inactive', function (Educatable $educatable): void {
+    UserGroupsFeature::deactivate();
+    asSuperAdmin();
+    Bus::fake();
+
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => match ($educatable::class) {
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
+            default => throw new Exception('Invalid model type'),
+        },
+    ]);
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for($user, 'createdBy')
+        ->create();
+
+    $users = User::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
+    $userGroups = UserGroup::factory()->count(2)->create();
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::Task,
+            'data' => [
+                'title' => fake()->words(3, true),
+                'description' => fake()->sentence(),
+                'due' => now()->addDay(),
+                'assigned_to' => User::factory()->create()->getKey(),
+                'is_confidential' => true,
+                'confidential_task_users' => $users->pluck('id')->toArray(),
+                'department_confidential_task' => $departments->pluck('id')->toArray(),
+                'user_group_confidential_task' => $userGroups->pluck('id')->toArray(),
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        // @phpstan-ignore argument.type
+        ->for($educatable, 'educatable')
+        ->create();
+
+    [$job] = (new TaskCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    $tasks = $educatable->tasks()->get();
+
+    expect($tasks->first()->is_confidential)->toBeTrue();
+
+    expect($tasks->first()->confidentialAccessUsers->pluck('id')->sort()->values())
+        ->toEqual($users->pluck('id')->sort()->values());
+
+    expect($tasks->first()->confidentialAccessDepartments->pluck('id')->sort()->values())
+        ->toEqual($departments->pluck('id')->sort()->values());
+
+    expect($tasks->first()->confidentialAccessUserGroups)->toHaveCount(0);
 })
     ->with([
         'student' => [fn () => Student::factory()->create()],

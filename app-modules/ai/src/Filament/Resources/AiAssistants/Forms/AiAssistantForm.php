@@ -41,6 +41,8 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
+use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
@@ -54,6 +56,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 
@@ -164,6 +167,13 @@ class AiAssistantForm
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                        Select::make('ai_assistant_confidential_user_groups')
+                            ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query->withoutArchived())
+                            ->preload()
+                            ->label('Groups')
+                            ->multiple()
+                            ->exists((new UserGroup())->getTable(), 'id')
+                            ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                     ]),
             ]);
     }

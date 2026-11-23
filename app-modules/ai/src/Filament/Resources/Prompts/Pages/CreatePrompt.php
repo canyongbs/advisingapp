@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
@@ -50,6 +52,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class CreatePrompt extends CreateRecord
@@ -113,6 +116,13 @@ class CreatePrompt extends CreateRecord
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                            Select::make('confidential_prompt_user_groups')
+                                ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query->withoutArchived())
+                                ->preload()
+                                ->label('Groups')
+                                ->multiple()
+                                ->exists((new UserGroup())->getTable(), 'id')
+                                ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                         ])
                             ->columns(2)
                             ->columnSpanFull()
