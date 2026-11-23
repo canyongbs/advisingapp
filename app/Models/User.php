@@ -443,13 +443,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function getEffectiveRoles(): EloquentCollection
     {
-        $this->loadMissing('roles.permissions');
+        $this->loadMissing('roles');
 
         if (! UserGroupsFeature::active()) {
             return $this->roles;
         }
 
-        $this->loadMissing('userGroups.roles.permissions');
+        $this->loadMissing('userGroups.roles');
 
         return $this->roles
             ->merge(
@@ -466,6 +466,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function hasRole($roles, ?string $guard = null): bool
     {
+        if ($this->usesDirectRoleChecks($roles)) {
+            return parent::hasRole($roles, $guard);
+        }
+
         return $this->effectiveRoleHolder()->hasRole($roles, $guard);
     }
 
@@ -474,6 +478,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function hasAllRoles($roles, ?string $guard = null): bool
     {
+        if ($this->usesDirectRoleChecks($roles)) {
+            return parent::hasAllRoles($roles, $guard);
+        }
+
         return $this->effectiveRoleHolder()->hasAllRoles($roles, $guard);
     }
 
@@ -482,6 +490,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function hasExactRoles($roles, ?string $guard = null): bool
     {
+        if ($this->usesDirectRoleChecks($roles)) {
+            return parent::hasExactRoles($roles, $guard);
+        }
+
         return $this->effectiveRoleHolder()->hasExactRoles($roles, $guard);
     }
 
@@ -498,7 +510,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function getPermissionsViaRoles(): Collection
     {
-        return $this->getEffectiveRoles()
+        $effectiveRoles = $this->getEffectiveRoles();
+        $effectiveRoles->loadMissing('permissions');
+
+        return $effectiveRoles
             ->flatMap(fn (Role $role) => $role->permissions)
             ->unique(fn (Permission $permission) => $permission->getKey())
             ->sort()
@@ -739,6 +754,58 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     private function effectiveRoleHolder(): UserGroup
     {
         return (new UserGroup())->setRelation('roles', $this->getEffectiveRoles());
+    }
+
+    /**
+     * Admin-only role checks should always use direct user roles.
+     *
+     * @param mixed $roles
+     */
+    private function usesDirectRoleChecks(mixed $roles): bool
+    {
+        $roleNames = $this->extractRoleNames($roles);
+
+        if ($roleNames === []) {
+            return false;
+        }
+
+        foreach ($roleNames as $roleName) {
+            if (! in_array($roleName, self::ADMIN_ROLES, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param mixed $roles
+     *
+     * @return list<string>
+     */
+    private function extractRoleNames(mixed $roles): array
+    {
+        if ($roles instanceof Collection) {
+            return $this->extractRoleNames($roles->all());
+        }
+
+        if ($roles instanceof Role) {
+            return [$roles->name];
+        }
+
+        if ($roles instanceof BackedEnum) {
+            return is_string($roles->value) ? $this->extractRoleNames($roles->value) : [];
+        }
+
+        if (is_array($roles)) {
+            return array_values(array_unique(Arr::flatten(array_map(fn (mixed $role): array => $this->extractRoleNames($role), $roles))));
+        }
+
+        if (! is_string($roles)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', explode('|', $roles)), fn (string $role): bool => $role !== ''));
     }
 
     /**

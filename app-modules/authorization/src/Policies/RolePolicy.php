@@ -37,6 +37,8 @@
 namespace AdvisingApp\Authorization\Policies;
 
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -77,6 +79,13 @@ class RolePolicy
     public function delete(Authenticatable $authenticatable, Role $role): Response
     {
         if ($role->users()->exists()) {
+            return Response::deny('You cannot delete a role that has users assigned to it.');
+        }
+
+        if (UserGroupsFeature::active() && UserGroup::query()
+            ->whereHas('roles', fn ($query) => $query->whereKey($role->getKey()))
+            ->whereHas('users')
+            ->exists()) {
             return Response::deny('You cannot delete a role that has users assigned to it.');
         }
 
