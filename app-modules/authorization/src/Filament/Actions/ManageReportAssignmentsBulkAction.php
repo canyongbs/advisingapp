@@ -41,6 +41,7 @@ use AdvisingApp\Report\Actions\AssignReportUserGroups;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\BulkAction;
@@ -143,7 +144,8 @@ class ManageReportAssignmentsBulkAction
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    ),
+                    )
+                    ->visible(fn (): bool => UserGroupsFeature::active()),
                 Toggle::make('sync')
                     ->label('Replace existing assignments?')
                     ->default(false)
@@ -152,7 +154,9 @@ class ManageReportAssignmentsBulkAction
             ->action(function (array $data, Collection $records, AssignReportUserGroups $assignReportUserGroups): void {
                 $userIds = $data['users'] ?? [];
                 $departmentIds = $data['departments'] ?? [];
-                $groupIds = $data['groups'] ?? [];
+                $groupIds = UserGroupsFeature::active()
+                    ? ($data['groups'] ?? [])
+                    : [];
                 $sync = $data['sync'];
 
                 try {
@@ -196,7 +200,9 @@ class ManageReportAssignmentsBulkAction
                                 ]);
                             }
 
-                            $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
+                            if (UserGroupsFeature::active()) {
+                                $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
+                            }
                         });
                     });
 

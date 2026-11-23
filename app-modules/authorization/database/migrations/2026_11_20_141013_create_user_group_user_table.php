@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\UserGroupsFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -52,16 +51,12 @@ return new class () extends Migration {
 
                 $table->uniqueIndex(['user_group_id', 'user_id']);
             });
-
-            UserGroupsFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            UserGroupsFeature::deactivate();
-
             Schema::dropIfExists('user_group_user');
         });
     }

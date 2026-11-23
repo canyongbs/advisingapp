@@ -39,6 +39,7 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -181,6 +182,48 @@ describe('effective roles', function (): void {
             ->and(User::query()->role($role)->whereKey($user->getKey())->exists())->toBeFalse();
     });
 
+    it('stops granting roles when the user is removed from the group', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        $userGroup->users()->detach($user);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($role))->toBeFalse()
+            ->and($user->can('user_group.view-any'))->toBeFalse();
+    });
+
+    it('stops granting roles when the role is detached from the group', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        $userGroup->roles()->detach($role);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($role))->toBeFalse()
+            ->and($user->can('user_group.view-any'))->toBeFalse();
+    });
+
     it('never inherits an admin role attached to a group outside of the UI', function (string $adminRole): void {
         $user = User::factory()->create();
 
@@ -208,6 +251,26 @@ describe('effective roles', function (): void {
 
         expect($user->fresh()->isSuperAdmin())->toBeTrue()
             ->and(User::query()->role(Authenticatable::SUPER_ADMIN_ROLE)->whereKey($user->getKey())->exists())->toBeTrue();
+    });
+
+    it('does not exclude users from `WithoutAnyAdmin` when admin role is attached only through a group', function (): void {
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail());
+        $userGroup->users()->attach($user);
+
+        expect(User::query()->tap(new WithoutAnyAdmin())->whereKey($user->getKey())->exists())->toBeTrue();
+    });
+
+    it('keeps counting license seats when admin role is attached only through a group', function (): void {
+        $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail());
+        $userGroup->users()->attach($user);
+
+        expect(LicenseType::RetentionCrm->getSeatsInUse())->toBe(1);
     });
 
     it('matches users with a role directly or through their groups in the `role` and `withoutRole` scopes', function (): void {

@@ -34,25 +34,35 @@
 </COPYRIGHT>
 */
 
+use App\Features\UserGroupsFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('report_user_group_accesses', function (Blueprint $table): void {
-            $table->uuid('id')->primary();
-            $table->string('report_key');
-            $table->foreignUuid('user_group_id')->index()->constrained('user_groups')->cascadeOnDelete();
-            $table->timestamps();
+        DB::transaction(function (): void {
+            Schema::create('report_user_group_accesses', function (Blueprint $table): void {
+                $table->uuid('id')->primary();
+                $table->string('report_key');
+                $table->foreignUuid('user_group_id')->index()->constrained('user_groups')->cascadeOnDelete();
+                $table->timestamps();
 
-            $table->uniqueIndex(['report_key', 'user_group_id']);
+                $table->uniqueIndex(['report_key', 'user_group_id']);
+            });
+
+            UserGroupsFeature::activate();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('report_user_group_accesses');
+        DB::transaction(function (): void {
+            UserGroupsFeature::deactivate();
+
+            Schema::dropIfExists('report_user_group_accesses');
+        });
     }
 };

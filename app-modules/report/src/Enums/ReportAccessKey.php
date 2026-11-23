@@ -58,6 +58,7 @@ use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Builder;
@@ -221,15 +222,18 @@ enum ReportAccessKey: string
                     ->where('team_id', $user->team_id)
                     ->selectRaw('1')
             )
-            ->union(
-                ReportUserGroupAccess::query()
-                    ->where('report_key', $this->value)
-                    ->whereIn(
-                        'user_group_id',
-                        $user->userGroups()
-                            ->select('user_groups.id')
-                    )
-                    ->selectRaw('1')
+            ->when(
+                UserGroupsFeature::active(),
+                fn (Builder $query): Builder => $query->union(
+                    ReportUserGroupAccess::query()
+                        ->where('report_key', $this->value)
+                        ->whereIn(
+                            'user_group_id',
+                            $user->userGroups()
+                                ->select('user_groups.id')
+                        )
+                        ->selectRaw('1')
+                )
             )
             ->exists();
     }
@@ -253,13 +257,16 @@ enum ReportAccessKey: string
                         ReportDepartmentAccess::query()
                             ->where('report_key', $this->value)
                             ->select('team_id')
-                    )
-                    ->orWhereHas('userGroups', fn (Builder $query): Builder => $query->whereIn(
+                    );
+
+                if (UserGroupsFeature::active()) {
+                    $query->orWhereHas('userGroups', fn (Builder $query): Builder => $query->whereIn(
                         'user_groups.id',
                         ReportUserGroupAccess::query()
                             ->where('report_key', $this->value)
                             ->select('user_group_id')
                     ));
+                }
             })
             ->count();
     }

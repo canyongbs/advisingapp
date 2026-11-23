@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Actions;
 
 use AdvisingApp\Report\Models\ReportUserGroupAccess;
+use App\Features\UserGroupsFeature;
 
 class AssignReportUserGroups
 {
@@ -45,6 +46,10 @@ class AssignReportUserGroups
      */
     public function __invoke(string $reportKey, array $userGroupIds, bool $removeUnlisted): void
     {
+        if (! UserGroupsFeature::active()) {
+            return;
+        }
+
         if ($removeUnlisted) {
             ReportUserGroupAccess::query()
                 ->where('report_key', $reportKey)

@@ -41,6 +41,7 @@ use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -304,6 +305,33 @@ it('assigns groups to a report through the manage action', function (): void {
             ->where('user_group_id', $group->getKey())
             ->exists()
     )->toBeTrue();
+});
+
+it('does not assign groups through the manage action when the feature is inactive', function (): void {
+    UserGroupsFeature::deactivate();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $group = UserGroup::factory()->create();
+
+    actingAs($user);
+
+    Livewire::test(Reporting::class)
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
+            'users' => [],
+            'departments' => [],
+            'groups' => [$group->getKey()],
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserGroupAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_group_id', $group->getKey())
+            ->exists()
+    )->toBeFalse();
 });
 
 it('removes access that is no longer selected when managing a report', function (): void {

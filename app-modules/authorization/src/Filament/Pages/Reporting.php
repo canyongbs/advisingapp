@@ -45,6 +45,7 @@ use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\NavigationGroup;
+use App\Features\UserGroupsFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -194,10 +195,12 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ->where('report_key', $record['report_key'])
                     ->pluck('team_id')
                     ->all(),
-                'groups' => ReportUserGroupAccess::query()
-                    ->where('report_key', $record['report_key'])
-                    ->pluck('user_group_id')
-                    ->all(),
+                'groups' => UserGroupsFeature::active()
+                    ? ReportUserGroupAccess::query()
+                        ->where('report_key', $record['report_key'])
+                        ->pluck('user_group_id')
+                        ->all()
+                    : [],
             ])
             ->schema([
                 Select::make('users')
@@ -268,14 +271,18 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    ),
+                    )
+                    ->visible(fn (): bool => UserGroupsFeature::active()),
             ])
             ->action(function (array $record, array $data, AssignReportUserGroups $assignReportUserGroups): void {
                 try {
                     DB::beginTransaction();
                     $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
                     $this->syncDepartmentAccess($record['report_key'], $data['departments'] ?? []);
-                    $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
+
+                    if (UserGroupsFeature::active()) {
+                        $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
+                    }
 
                     $this->resetTable();
                     DB::commit();
