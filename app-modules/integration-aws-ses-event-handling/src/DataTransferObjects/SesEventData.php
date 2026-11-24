@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects;
 
-use Illuminate\Http\Request;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
@@ -56,15 +55,6 @@ class SesEventData extends Data
         public SesDeliveryDelayData|Optional $deliveryDelay,
         public SesSubscriptionData|Optional $subscription,
     ) {}
-
-    public static function fromRequest(Request $request): SesEventData
-    {
-        $envelope = json_decode($request->getContent(), true);
-
-        assert(is_array($envelope));
-
-        return static::createFromSnsEnvelope($envelope);
-    }
 
     /**
      * @param array<array-key, mixed> $envelope The SNS envelope, carrying the SES event JSON in its "Message" key.
