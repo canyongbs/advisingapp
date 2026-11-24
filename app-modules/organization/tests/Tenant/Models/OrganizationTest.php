@@ -47,8 +47,8 @@ it('allows reusing the name of a soft-deleted organization', function (): void {
     $deletedOrganization = Organization::factory()->create(['name' => 'ACME Inc']);
     $deletedOrganization->delete();
 
-    $prospectSource = Organization::factory()->create(['name' => 'ACME Inc']);
+    $organization = Organization::factory()->create(['name' => 'ACME Inc']);
 
-    expect($prospectSource->name)->toBe('ACME Inc')
+    expect($organization->name)->toBe('ACME Inc')
         ->and(Organization::query()->where('name', 'ACME Inc')->count())->toBe(1);
 });
