@@ -38,9 +38,12 @@ namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Database\Factories\RoleFactory;
+use AdvisingApp\Authorization\Models\IdeHelperRole;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Models\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -60,6 +63,14 @@ class Role extends SpatieRole implements Auditable
     use AuditableTrait;
     use UsesTenantConnection;
 
+    /**
+     * @return Factory<Role>
+     */
+    protected static function newFactory(): Factory
+    {
+        return RoleFactory::new();
+    }
+
     public function users(): BelongsToMany
     {
         return $this->morphedByMany(
@@ -69,6 +80,20 @@ class Role extends SpatieRole implements Auditable
             app(PermissionRegistrar::class)->pivotRole,
             config('permission.column_names.model_morph_key')
         );
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this>
+     */
+    public function userGroups(): BelongsToMany
+    {
+      return $this->belongsToMany(
+            UserGroup::class,
+            config('permission.table_names.model_has_roles'),
+            app(PermissionRegistrar::class)->pivotRole,
+            config('permission.column_names.model_morph_key')
+      )
+        ->wherePivot('model_type', app(UserGroup::class)->getMorphClass());
     }
 
     public function scopeApi(Builder $query): void
