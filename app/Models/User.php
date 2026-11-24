@@ -102,6 +102,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
+use RuntimeException;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
@@ -715,10 +716,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     private function lockLicenseCapacityRows(): void
     {
-        SettingsProperty::query()
+        $licenseDataSetting = SettingsProperty::query()
             ->where('group', LicenseSettings::group())
+            ->where('name', 'data')
             ->lockForUpdate()
-            ->get();
+            ->first();
+
+        if (! $licenseDataSetting instanceof SettingsProperty) {
+            throw new RuntimeException('Missing `license.data` settings row required for license capacity locking.');
+        }
     }
 
     public function revokeLicense(LicenseType $type): bool

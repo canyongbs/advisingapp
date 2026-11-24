@@ -38,8 +38,11 @@ namespace App\Filament\Resources\Users\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\Authenticatable;
@@ -130,7 +133,7 @@ class EditUser extends EditRecord
                             ->searchable()
                             ->preload(),
                         // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
-                        ...(\App\Features\UserGroupsFeature::active() ? [
+                        ...(UserGroupsFeature::active() && (Auth::user()?->can('viewAny', UserGroup::class) ?? false) ? [
                             Select::make('userGroups')
                                 ->label('Groups')
                                 ->relationship(
@@ -147,24 +150,26 @@ class EditUser extends EditRecord
                         ] : []),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                Section::make('Access Control')
-                    ->schema([
-                        Select::make('roles')
-                            ->label('Role(s)')
-                            ->relationship(
-                                name: 'roles',
-                                titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query): Builder => $query
-                                    ->when(
-                                        ! Auth::user()?->isSuperAdmin(),
-                                        fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
-                                    )
-                                    ->orderBy('name'),
-                            )
-                            ->searchable()
-                            ->multiple()
-                            ->preload(),
-                    ]),
+                 ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
+                    Section::make('Access Control')
+                        ->schema([
+                            Select::make('roles')
+                                ->label('Role(s)')
+                                ->relationship(
+                                    name: 'roles',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: fn (Builder $query): Builder => $query
+                                        ->when(
+                                            ! Auth::user()?->isSuperAdmin(),
+                                            fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
+                                        )
+                                        ->orderBy('name'),
+                                )
+                                ->searchable()
+                                ->multiple()
+                                ->preload(),
+                        ]),
+                ] : []),
                 Licenses::make(),
             ]);
     }
