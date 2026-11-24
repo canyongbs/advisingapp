@@ -33,10 +33,15 @@
 -->
 <script setup>
     import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, UserIcon } from '@heroicons/vue/24/outline';
-    import { computed, defineProps, reactive, ref } from 'vue';
+    import { computed, defineProps, provide, reactive, ref } from 'vue';
     import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
+    import { createPasswordStorageCoordinator, passwordStorageKey } from '../../form/src/FormKit/passwordStorage.js';
     import wizard from '../../form/src/FormKit/wizard';
     let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
+
+    const passwordStorage = createPasswordStorageCoordinator();
+
+    provide(passwordStorageKey, passwordStorage);
 
     const percentComplete = computed(() =>
         totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
@@ -59,7 +64,12 @@
         totalSteps,
         percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
-        setStep: (target) => () => {
+        preparePasswordSubmit: passwordStorage.prepareSubmit,
+        setStep: (target) => async () => {
+            if (!(await passwordStorage.flushAll())) {
+                return;
+            }
+
             setStep(target);
         },
         stringify: (value) => JSON.stringify(value, null, 2),

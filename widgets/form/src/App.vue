@@ -35,10 +35,11 @@
     import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, UserIcon } from '@heroicons/vue/24/outline';
     import DOMPurify from 'dompurify';
     import { marked } from 'marked';
-    import { computed, defineProps, onMounted, reactive, ref } from 'vue';
+    import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue';
     import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
     import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
     import asteriskPlugin from './FormKit/asterisk.js';
+    import { createPasswordStorageCoordinator, passwordStorageKey } from './FormKit/passwordStorage.js';
     import wizard from './FormKit/wizard';
 
     onMounted(async () => {
@@ -50,6 +51,10 @@
     });
 
     let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
+
+    const passwordStorage = createPasswordStorageCoordinator();
+
+    provide(passwordStorageKey, passwordStorage);
 
     const percentComplete = computed(() =>
         totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
@@ -72,7 +77,12 @@
         totalSteps,
         percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
-        setStep: (target) => () => {
+        preparePasswordSubmit: passwordStorage.prepareSubmit,
+        setStep: (target) => async () => {
+            if (!(await passwordStorage.flushAll())) {
+                return;
+            }
+
             setStep(target);
         },
         stringify: (value) => JSON.stringify(value, null, 2),
