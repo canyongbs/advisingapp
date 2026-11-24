@@ -36,8 +36,6 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
-use AdvisingApp\Authorization\Models\License;
-use App\Enums\RetentionCrmRestriction;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
@@ -54,6 +52,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -89,29 +89,48 @@ class ViewUser extends ViewRecord
                             ->disabled(),
                     ])
                     ->disabled(),
-                Section::make('Department')
+                Section::make('Affiliation')
+                    ->columns(2)
                     ->schema([
                         Select::make('team_id')
-                            ->label('Department')
-                            ->hiddenLabel()
+                            ->label('Departments')
                             ->relationship('department', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->disabled(),
+                        Select::make('userGroups')
+                            ->label('Groups')
+                            ->relationship(
+                                name: 'userGroups',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function (Builder $query): Builder {
+                                    // @phpstan-ignore method.notFound
+                                    return $query->withoutArchived();
+                                },
+                            )
+                            ->searchable()
+                            ->multiple()
+                            ->preload()
                             ->disabled(),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                Section::make('Access Control')
+                    ->schema([
+                        Select::make('roles')
+                            ->label('Role(s)')
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn (Builder $query): Builder => $query->orderBy('name'),
+                            )
+                            ->searchable()
+                            ->multiple()
+                            ->preload()
+                            ->disabled(),
+                    ]),
                 Licenses::make()
                     ->hidden(fn (?User $record): bool => is_null($record))
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
-                Select::make('retention_crm_restriction')
-                    ->label('Retention CRM Restriction')
-                    ->options(RetentionCrmRestriction::class)
-                    ->placeholder('No Restrictions')
-                    ->disabled()
-                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                    ->disabled(),
             ]);
     }
 
@@ -134,7 +153,7 @@ class ViewUser extends ViewRecord
                 ->visible(
                     fn (User $record): bool => ! $record->is_external
                         && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
-                        && auth()->user()->can('resetMultifactorAuthentication', $record),
+                                && Auth::user()?->can('resetMultifactorAuthentication', $record),
                 )
                 ->label('Reset MFA')
                 ->icon('heroicon-s-lock-open')

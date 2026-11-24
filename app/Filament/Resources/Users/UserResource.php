@@ -41,20 +41,16 @@ use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
-use App\Filament\Resources\Users\RelationManagers\PermissionsRelationManager;
-use App\Filament\Resources\Users\RelationManagers\RolesRelationManager;
-use App\Filament\Resources\Users\RelationManagers\UserGroupsRelationManager;
 use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
+    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 10;
 
@@ -79,11 +75,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            RolesRelationManager::class,
-            PermissionsRelationManager::class,
-            UserGroupsRelationManager::class,
-        ];
+      return [];
     }
 
     public static function getPages(): array
