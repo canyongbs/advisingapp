@@ -87,6 +87,7 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
                 $this->syncConfidentialAccess($task, 'confidentialAccessDepartments', $action->data['department_confidential_task'] ?? []);
 
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync confidential access for user groups.
                 if (UserGroupsFeature::active()) {
                     $this->syncConfidentialAccess($task, 'confidentialAccessUserGroups', $action->data['user_group_confidential_task'] ?? []);
                 }

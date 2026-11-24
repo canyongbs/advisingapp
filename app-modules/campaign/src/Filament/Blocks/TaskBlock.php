@@ -168,7 +168,7 @@ class TaskBlock extends CampaignActionBlock
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
-                                ->getOptionLabelUsing(
+                                ->getOptionLabelsUsing(
                                     fn (array $values): array => UserGroup::query()
                                         ->whereKey($values)
                                         ->pluck('name', 'id')
@@ -178,6 +178,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show group confidentiality selection when confidential.
                                 ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                         ]),
                     TextInput::make('title')

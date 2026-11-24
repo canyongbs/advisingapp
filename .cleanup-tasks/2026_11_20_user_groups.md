@@ -11,6 +11,9 @@ created: 2026-11-20
 
 ## Additional Cleanup
 
+- Search for `TODO: Cleanup Task (user-groups-feature)` and follow the instructions at each site.
+- Search for `UserGroupsFeature::active(` and `UserGroupsFeature::deactivate(` to remove any remaining temporary flag branches.
+
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag
 removals (keep the active path, drop the inactive path), and do NOT include file

@@ -148,6 +148,7 @@ class ListUsers extends ListRecords
                     AssignDepartmentBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                     AssignUserGroupsBulkAction::make()
+                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
                         ->visible(fn (): bool => UserGroupsFeature::active())
                         ->authorize(fn (): bool => auth()->user()->can('user.*.update')),
                 ]),
@@ -247,6 +248,7 @@ class ListUsers extends ListRecords
                             $isFilteringForNoRoles = in_array('none', $data['values'], true);
                             $roleIds = array_values(array_filter($data['values'], fn ($value): bool => $value !== 'none'));
 
+                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include group-role matching in this filter.
                             $query->where(function (Builder $query) use ($isFilteringForNoRoles, $roleIds): void {
                                 if ($isFilteringForNoRoles) {
                                     $query->orWhere(fn (Builder $query) => $query

@@ -184,7 +184,6 @@ it('creates a non-confidential task when is_confidential is not set', function (
     ]);
 
 it('creates a confidential task and syncs confidential access relationships', function (Educatable $educatable): void {
-    UserGroupsFeature::activate();
     asSuperAdmin();
     Bus::fake();
 

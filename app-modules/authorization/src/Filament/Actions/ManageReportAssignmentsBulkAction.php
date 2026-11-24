@@ -145,6 +145,7 @@ class ManageReportAssignmentsBulkAction
                             ->pluck('name', 'id')
                             ->all(),
                     )
+                    // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once group report assignment is permanent.
                     ->visible(fn (): bool => UserGroupsFeature::active()),
                 Toggle::make('sync')
                     ->label('Replace existing assignments?')
@@ -154,6 +155,7 @@ class ManageReportAssignmentsBulkAction
             ->action(function (array $data, Collection $records, AssignReportUserGroups $assignReportUserGroups): void {
                 $userIds = $data['users'] ?? [];
                 $departmentIds = $data['departments'] ?? [];
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always read group IDs from action data.
                 $groupIds = UserGroupsFeature::active()
                     ? ($data['groups'] ?? [])
                     : [];
@@ -200,6 +202,7 @@ class ManageReportAssignmentsBulkAction
                                 ]);
                             }
 
+                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync group report assignments.
                             if (UserGroupsFeature::active()) {
                                 $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
                             }

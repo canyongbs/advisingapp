@@ -175,8 +175,11 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
         $departmentsQuery = Department::query()
             ->orderBy('name');
 
-        $groupsQuery = UserGroup::query()
+        $groupsOptionsQuery = UserGroup::query()
             ->withoutArchived()
+            ->orderBy('name');
+
+        $groupsLabelsQuery = UserGroup::query()
             ->orderBy('name');
 
         return Action::make('manage')
@@ -195,6 +198,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ->where('report_key', $record['report_key'])
                     ->pluck('team_id')
                     ->all(),
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always load group report access.
                 'groups' => UserGroupsFeature::active()
                     ? ReportUserGroupAccess::query()
                         ->where('report_key', $record['report_key'])
@@ -254,24 +258,25 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ->multiple()
                     ->searchable()
                     ->options(
-                        fn (): array => $groupsQuery
+                        fn (): array => $groupsOptionsQuery
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getSearchResultsUsing(
-                        fn (string $search): array => $groupsQuery
+                        fn (string $search): array => $groupsOptionsQuery
                             ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getOptionLabelsUsing(
-                        fn (array $values): array => $groupsQuery
+                        fn (array $values): array => $groupsLabelsQuery
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
                     )
+                    // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once group report assignment is permanent.
                     ->visible(fn (): bool => UserGroupsFeature::active()),
             ])
             ->action(function (array $record, array $data, AssignReportUserGroups $assignReportUserGroups): void {
@@ -280,6 +285,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
                     $this->syncDepartmentAccess($record['report_key'], $data['departments'] ?? []);
 
+                    // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync group report access.
                     if (UserGroupsFeature::active()) {
                         $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
                     }

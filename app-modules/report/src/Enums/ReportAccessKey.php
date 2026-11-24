@@ -222,6 +222,7 @@ enum ReportAccessKey: string
                     ->where('team_id', $user->team_id)
                     ->selectRaw('1')
             )
+            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include the group-access union.
             ->when(
                 UserGroupsFeature::active(),
                 fn (Builder $query): Builder => $query->union(
@@ -259,6 +260,7 @@ enum ReportAccessKey: string
                             ->select('team_id')
                     );
 
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include the group access-count branch.
                 if (UserGroupsFeature::active()) {
                     $query->orWhereHas('userGroups', fn (Builder $query): Builder => $query->whereIn(
                         'user_groups.id',

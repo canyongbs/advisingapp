@@ -41,6 +41,7 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
+  // TODO: Cleanup Task (user-groups-feature): remove UserGroupsFeature toggling in this migration once the feature flag is retired.
     public function up(): void
     {
         DB::transaction(function (): void {

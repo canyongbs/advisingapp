@@ -82,10 +82,14 @@ class RolePolicy
             return Response::deny('You cannot delete a role that has users assigned to it.');
         }
 
-        if (UserGroupsFeature::active() && UserGroup::query()
+        $hasUsersViaNonDeletedUserGroup = UserGroup::query()
+            ->whereNull((new UserGroup())->qualifyColumn('deleted_at'))
             ->whereHas('roles', fn ($query) => $query->whereKey($role->getKey()))
             ->whereHas('users')
-            ->exists()) {
+            ->exists();
+
+        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always enforce the user-group role assignment guard.
+        if (UserGroupsFeature::active() && $hasUsersViaNonDeletedUserGroup) {
             return Response::deny('You cannot delete a role that has users assigned to it.');
         }
 

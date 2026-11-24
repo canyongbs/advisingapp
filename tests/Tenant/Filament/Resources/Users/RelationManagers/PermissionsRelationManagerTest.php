@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\RelationManagers\PermissionsRelationManager;
 use App\Models\Authenticatable;
@@ -115,7 +116,27 @@ describe('group roles', function (): void {
         $permission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
 
         Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-            ->assertCanSeeTableRecords([$permission]);
+          ->assertCanSeeTableRecords([$permission]);
+      });
+
+      it('does not show permissions inherited through non-admin group roles when the `UserGroupsFeature` is inactive', function (): void {
+        UserGroupsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $role->givePermissionTo('user.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        $permission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
+
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+          ->assertCanNotSeeTableRecords([$permission]);
     });
 
     it('does not show permissions inherited through admin roles attached to groups', function (): void {

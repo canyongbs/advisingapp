@@ -107,7 +107,13 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             ->label('Groups')
                             ->multiple()
                             ->exists((new UserGroup())->getTable(), 'id')
-                            ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
+                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show and hydrate group confidentiality selection when confidential.
+                            ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential'))
+                            ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                                if (UserGroupsFeature::active()) {
+                                    $component->fillStateFromRelationship();
+                                }
+                            }),
                     ]),
                 TextInput::make('title')
                     ->required()

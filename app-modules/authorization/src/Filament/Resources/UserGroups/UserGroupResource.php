@@ -66,6 +66,7 @@ class UserGroupResource extends Resource
 
     public static function canAccess(): bool
     {
+      // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
         return UserGroupsFeature::active() && parent::canAccess();
     }
 

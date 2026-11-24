@@ -75,7 +75,11 @@ class PermissionsRelationManager extends RelationManager
                 $ownerRecord = $this->getOwnerRecord();
                 assert($ownerRecord instanceof User);
 
-                return Permission::query()->whereKey($ownerRecord->getPermissionsViaRoles()->pluck('id')->all());
+            $permissionIds = $ownerRecord->getPermissionsViaRoles()
+              ->pluck('id')
+              ->all();
+
+            return Permission::query()->whereKey($permissionIds);
             })
             ->modifyQueryUsing(fn (Builder $query) => $query->tap(new WithoutDisabledFeaturePermissions()))
             ->columns([

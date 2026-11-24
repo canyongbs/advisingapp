@@ -61,6 +61,7 @@ class ConfidentialPromptScope implements Scope
                                 $query->where('users.id', auth()->id());
                             });
                         })
+                      // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include user-group confidentiality access.
                         ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->orWhereHas(
                             'confidentialAccessUserGroups',
                             fn (Builder $query) => $query->whereHas('users', fn (Builder $query) => $query->where('users.id', auth()->id()))

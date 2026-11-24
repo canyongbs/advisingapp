@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
@@ -91,6 +92,41 @@ describe('deletion', function (): void {
         $userGroup = UserGroup::factory()->create();
 
         $userGroup->assignRole($role);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->callAction(DeleteAction::class);
+
+        assertModelMissing($role);
+    });
+
+    it('can delete a role assigned only through deleted user groups', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+        $userGroup->delete();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->callAction(DeleteAction::class);
+
+        assertModelMissing($role);
+    });
+
+    it('can delete a role assigned through a populated user group when the `UserGroupsFeature` is inactive', function (): void {
+        UserGroupsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
 
         Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
             ->callAction(DeleteAction::class);

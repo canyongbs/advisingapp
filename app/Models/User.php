@@ -359,7 +359,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function permissionsFromRoles(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions())
+            ->whereKey($this->getPermissionsViaRoles()->pluck('id')->all());
     }
 
     /**
@@ -445,6 +446,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         $this->loadMissing('roles');
 
+        // TODO: Cleanup Task (user-groups-feature): remove the feature-flag fallback and keep the effective role merge path.
         if (! UserGroupsFeature::active()) {
             return $this->roles;
         }
@@ -490,10 +492,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function hasExactRoles($roles, ?string $guard = null): bool
     {
-        if ($this->usesDirectRoleChecks($roles)) {
-            return parent::hasExactRoles($roles, $guard);
-        }
-
         return $this->effectiveRoleHolder()->hasExactRoles($roles, $guard);
     }
 
@@ -533,6 +531,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function scopeRole(Builder $query, $roles, $guard = null, $without = false): Builder // @phpstan-ignore Common.noLocalModelScope
     {
+        // TODO: Cleanup Task (user-groups-feature): remove the parent scope fallback and keep role matching through non-admin group roles.
         if (! UserGroupsFeature::active()) {
             return parent::scopeRole($query, $roles, $guard, $without);
         }

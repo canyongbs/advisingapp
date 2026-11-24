@@ -132,6 +132,7 @@ class CreateInteraction extends CreateRecord
                                 ->label('Groups')
                                 ->multiple()
                                 ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show group confidentiality selection when confidential.
                                 ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                         ]),
                 ]),
