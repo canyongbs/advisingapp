@@ -37,28 +37,25 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelations;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Enums\InteractionManagementTab;
+use AdvisingApp\Interaction\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\CreateInteractionRelation;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\EditInteractionRelation;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\ListInteractionRelations;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 
 class InteractionRelationResource extends Resource
 {
     protected static ?string $model = InteractionRelation::class;
 
-    protected static ?string $navigationLabel = 'Relations';
-
-    protected static ?int $navigationSort = 4;
-
-    protected static ?string $cluster = InteractionManagement::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
@@ -111,9 +108,13 @@ class InteractionRelationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInteractionRelations::route('/'),
             'create' => CreateInteractionRelation::route('/create'),
             'edit' => EditInteractionRelation::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return InteractionManagement::getUrl(['tab' => InteractionManagementTab::Relations->value], $isAbsolute, $panel, $tenant);
     }
 }

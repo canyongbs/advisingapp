@@ -37,28 +37,25 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypes;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Enums\InteractionManagementTab;
+use AdvisingApp\Interaction\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\CreateInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\EditInteractionType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\ListInteractionTypes;
 use AdvisingApp\Interaction\Models\InteractionType;
-use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 
 class InteractionTypeResource extends Resource
 {
     protected static ?string $model = InteractionType::class;
 
-    protected static ?string $navigationLabel = 'Types';
-
-    protected static ?int $navigationSort = 6;
-
-    protected static ?string $cluster = InteractionManagement::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
@@ -111,9 +108,13 @@ class InteractionTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInteractionTypes::route('/'),
             'create' => CreateInteractionType::route('/create'),
             'edit' => EditInteractionType::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return InteractionManagement::getUrl(['tab' => InteractionManagementTab::Types->value], $isAbsolute, $panel, $tenant);
     }
 }

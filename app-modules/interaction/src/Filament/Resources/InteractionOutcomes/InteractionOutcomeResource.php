@@ -37,28 +37,25 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Enums\InteractionManagementTab;
+use AdvisingApp\Interaction\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\CreateInteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\EditInteractionOutcome;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\ListInteractionOutcomes;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 
 class InteractionOutcomeResource extends Resource
 {
     protected static ?string $model = InteractionOutcome::class;
 
-    protected static ?string $navigationLabel = 'Outcomes';
-
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $cluster = InteractionManagement::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
@@ -111,9 +108,13 @@ class InteractionOutcomeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInteractionOutcomes::route('/'),
             'create' => CreateInteractionOutcome::route('/create'),
             'edit' => EditInteractionOutcome::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return InteractionManagement::getUrl(['tab' => InteractionManagementTab::Outcomes->value], $isAbsolute, $panel, $tenant);
     }
 }

@@ -37,28 +37,25 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDrivers;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Enums\InteractionManagementTab;
+use AdvisingApp\Interaction\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\CreateInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInteractionDrivers;
 use AdvisingApp\Interaction\Models\InteractionDriver;
-use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 
 class InteractionDriverResource extends Resource
 {
     protected static ?string $model = InteractionDriver::class;
 
-    protected static ?string $navigationLabel = 'Drivers';
-
-    protected static ?int $navigationSort = 2;
-
-    protected static ?string $cluster = InteractionManagement::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
@@ -111,9 +108,13 @@ class InteractionDriverResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInteractionDrivers::route('/'),
             'create' => CreateInteractionDriver::route('/create'),
             'edit' => EditInteractionDriver::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return InteractionManagement::getUrl(['tab' => InteractionManagementTab::Drivers->value], $isAbsolute, $panel, $tenant);
     }
 }
