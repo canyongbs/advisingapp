@@ -76,6 +76,7 @@ use App\Enums\RetentionCrmRestriction;
 use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
+use App\Settings\LicenseSettings;
 use App\Support\HasAdvancedFilter;
 use BackedEnum;
 use Database\Factories\UserFactory;
@@ -96,6 +97,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -695,15 +697,28 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             return false;
         }
 
-        return cache()
-            ->lock('licenses', 5)
-            ->get(function () use ($type): bool {
+        return DB::connection($this->getConnectionName())
+            ->transaction(function () use ($type): bool {
+                $this->lockLicenseCapacityRows();
+
+                if ($this->licenses()->where('type', $type)->exists()) {
+                    return false;
+                }
+
                 if (! $type->hasAvailableLicenses()) {
                     return false;
                 }
 
                 return (bool) $this->licenses()->create(['type' => $type]);
             });
+    }
+
+    private function lockLicenseCapacityRows(): void
+    {
+        SettingsProperty::query()
+            ->where('group', LicenseSettings::group())
+            ->lockForUpdate()
+            ->get();
     }
 
     public function revokeLicense(LicenseType $type): bool

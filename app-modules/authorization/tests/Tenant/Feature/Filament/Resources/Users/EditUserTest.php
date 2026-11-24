@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
@@ -189,4 +190,26 @@ it('saves affiliation access control and deferred license changes when saving th
         ->and($user->roles->modelKeys())->toEqualCanonicalizing([$role->getKey()])
         ->and($user->retention_crm_restriction)->toBe(RetentionCrmRestriction::FacultyMember)
         ->and($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+});
+
+it('shows a validation error when assigning a license with no seats available', function (): void {
+    asSuperAdmin();
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->limits->retentionCrmSeats = 1;
+    $licenseSettings->save();
+
+    User::factory()->licensed([LicenseType::RetentionCrm])->create();
+    $user = User::factory()->create();
+
+    Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+        ->fillForm([
+            'retention_crm_enabled' => true,
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['retention_crm_enabled']);
+
+    $user->refresh();
+
+    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
 });

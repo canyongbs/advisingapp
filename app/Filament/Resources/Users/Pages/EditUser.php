@@ -129,19 +129,22 @@ class EditUser extends EditRecord
                             ->relationship('department', 'name')
                             ->searchable()
                             ->preload(),
-                        Select::make('userGroups')
-                            ->label('Groups')
-                            ->relationship(
-                                name: 'userGroups',
-                                titleAttribute: 'name',
-                                modifyQueryUsing: function (Builder $query): Builder {
-                                    // @phpstan-ignore method.notFound
-                                    return $query->withoutArchived();
-                                },
-                            )
-                            ->searchable()
-                            ->multiple()
-                            ->preload(),
+                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
+                        ...(\App\Features\UserGroupsFeature::active() ? [
+                            Select::make('userGroups')
+                                ->label('Groups')
+                                ->relationship(
+                                    name: 'userGroups',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: function (Builder $query): Builder {
+                                        // @phpstan-ignore method.notFound
+                                        return $query->withoutArchived();
+                                    },
+                                )
+                                ->searchable()
+                                ->multiple()
+                                ->preload(),
+                        ] : []),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
                 Section::make('Access Control')
@@ -187,7 +190,11 @@ class EditUser extends EditRecord
             $isEnabled = (bool) data_get($this->data, $field, false);
 
             if ($isEnabled) {
-                $record->grantLicense($licenseType);
+                if (! $record->hasLicense($licenseType) && ! $record->grantLicense($licenseType)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
+                    ]);
+                }
 
                 continue;
             }
