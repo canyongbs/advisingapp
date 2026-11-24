@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionRelation is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionRelation->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the relations tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionRelation = InteractionRelation::factory()->create();
+
+    Livewire::test(EditInteractionRelation::class, ['record' => $interactionRelation->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionRelationResource::getIndexUrl());
+
+    assertSoftDeleted($interactionRelation);
 });

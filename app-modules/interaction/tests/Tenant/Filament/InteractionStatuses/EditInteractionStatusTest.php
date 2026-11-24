@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionStatus is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionStatus->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the statuses tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionStatus = InteractionStatus::factory()->create();
+
+    Livewire::test(EditInteractionStatus::class, ['record' => $interactionStatus->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionStatusResource::getIndexUrl());
+
+    assertSoftDeleted($interactionStatus);
 });

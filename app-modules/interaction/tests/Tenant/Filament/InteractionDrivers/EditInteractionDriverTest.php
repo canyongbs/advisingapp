@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionDriver is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionDriver->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the drivers tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionDriver = InteractionDriver::factory()->create();
+
+    Livewire::test(EditInteractionDriver::class, ['record' => $interactionDriver->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionDriverResource::getIndexUrl());
+
+    assertSoftDeleted($interactionDriver);
 });

@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionOutcome is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionOutcome->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the outcomes tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionOutcome = InteractionOutcome::factory()->create();
+
+    Livewire::test(EditInteractionOutcome::class, ['record' => $interactionOutcome->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionOutcomeResource::getIndexUrl());
+
+    assertSoftDeleted($interactionOutcome);
 });

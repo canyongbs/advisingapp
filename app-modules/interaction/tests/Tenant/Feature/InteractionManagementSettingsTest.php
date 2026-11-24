@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInteractionDrivers;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\ListInteractionInitiatives;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\ListInteractionRelations;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\ListInteractionStatuses;
+use AdvisingApp\Interaction\Livewire\InteractionDriversTable;
+use AdvisingApp\Interaction\Livewire\InteractionInitiativesTable;
+use AdvisingApp\Interaction\Livewire\InteractionRelationsTable;
+use AdvisingApp\Interaction\Livewire\InteractionStatusesTable;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -64,7 +64,7 @@ beforeEach(function (): void {
     $settings->save();
 });
 
-it('disables initiative setting from the initiatives list page', function (): void {
+it('disables initiative setting from the initiatives tab', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -73,7 +73,7 @@ it('disables initiative setting from the initiatives list page', function (): vo
 
     actingAs($user);
 
-    Livewire::test(ListInteractionInitiatives::class)
+    Livewire::test(InteractionInitiativesTable::class)
         ->assertFormSet([
             'is_initiative_enabled' => true,
             'is_initiative_required' => true,
@@ -86,7 +86,7 @@ it('disables initiative setting from the initiatives list page', function (): vo
     expect(app(InteractionManagementSettings::class)->is_initiative_enabled)->toBeFalse();
 });
 
-it('makes driver optional from the drivers list page', function (): void {
+it('makes driver optional from the drivers tab', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -95,7 +95,7 @@ it('makes driver optional from the drivers list page', function (): void {
 
     actingAs($user);
 
-    Livewire::test(ListInteractionDrivers::class)
+    Livewire::test(InteractionDriversTable::class)
         ->fillForm([
             'is_driver_required' => false,
         ])
@@ -104,7 +104,7 @@ it('makes driver optional from the drivers list page', function (): void {
     expect(app(InteractionManagementSettings::class)->is_driver_required)->toBeFalse();
 });
 
-it('persists settings across different list pages', function (): void {
+it('persists settings across different tabs', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
@@ -113,13 +113,13 @@ it('persists settings across different list pages', function (): void {
 
     actingAs($user);
 
-    Livewire::test(ListInteractionRelations::class)
+    Livewire::test(InteractionRelationsTable::class)
         ->fillForm([
             'is_relation_enabled' => false,
             'is_relation_required' => false,
         ]);
 
-    Livewire::test(ListInteractionStatuses::class)
+    Livewire::test(InteractionStatusesTable::class)
         ->assertFormSet([
             'is_relation_enabled' => false,
             'is_relation_required' => false,

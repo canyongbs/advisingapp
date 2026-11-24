@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionInitative is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionInitiative->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the initiatives tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionInitiative = InteractionInitiative::factory()->create();
+
+    Livewire::test(EditInteractionInitiative::class, ['record' => $interactionInitiative->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionInitiativeResource::getIndexUrl());
+
+    assertSoftDeleted($interactionInitiative);
 });

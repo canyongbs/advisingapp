@@ -44,6 +44,7 @@ use App\Models\User;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionType is gated with proper access control', function (): void {
@@ -116,4 +117,16 @@ test('it can change only the casing of its own name', function (): void {
         ->assertHasNoFormErrors();
 
     expect($interactionType->refresh()->name)->toBe('PHONE');
+});
+
+test('it redirects back to the types tab after deleting', function (): void {
+    asSuperAdmin();
+
+    $interactionType = InteractionType::factory()->create();
+
+    Livewire::test(EditInteractionType::class, ['record' => $interactionType->getKey()])
+        ->callAction('delete')
+        ->assertRedirect(InteractionTypeResource::getIndexUrl());
+
+    assertSoftDeleted($interactionType);
 });
