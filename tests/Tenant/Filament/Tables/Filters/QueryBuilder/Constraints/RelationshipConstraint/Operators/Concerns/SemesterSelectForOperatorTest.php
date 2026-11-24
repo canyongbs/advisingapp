@@ -38,6 +38,8 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Illuminate\Support\Str;
@@ -50,9 +52,10 @@ $createEnrollment = fn (Student $student, array $attributes): Enrollment => Enro
     ...$attributes,
 ]);
 
-$filterStudents = fn (string $operatorClass, array $settings): array => $operatorClass::make()
+$filterStudents = fn (string $operatorClass, array $settings, bool $isInverse = false): array => $operatorClass::make()
     ->constraint(RelationshipConstraint::make('enrollments'))
     ->settings($settings)
+    ->inverse($isInverse)
     ->applyToBaseQuery(Student::query())
     ->pluck('sisid')
     ->all();
@@ -110,6 +113,59 @@ it('finds students without enrollments in the selected semesters', function () u
 
     expect($filterStudents(IsEmptyOperatorWithEnrollmentSemester::class, ['semesters' => ['FA-20']]))
         ->toBe([$unenrolledStudent->sisid]);
+});
+
+it('compares a count of 0 enrollments in the selected semesters', function (string $operatorClass, bool $isInverse, array $expectedStudents) use ($createEnrollment, $filterStudents) {
+    $term = Term::factory()->create(['name' => 'FA-20']);
+
+    $students = [
+        'enrolled' => Student::factory()->create(),
+        'unenrolled' => Student::factory()->create(),
+    ];
+
+    $createEnrollment($students['enrolled'], ['sis_term_id' => $term->sis_term_id]);
+    $createEnrollment($students['unenrolled'], ['semester_name' => 'Unmatched']);
+
+    expect($filterStudents($operatorClass, ['count' => '0', 'semesters' => ['FA-20']], $isInverse))
+        ->toEqualCanonicalizing(array_map(fn (string $student): string => $students[$student]->sisid, $expectedStudents));
+})->with([
+    'has 0' => [EqualsOperatorWithEnrollmentSemester::class, false, ['unenrolled']],
+    'does not have 0' => [EqualsOperatorWithEnrollmentSemester::class, true, ['enrolled']],
+    'has maximum 0' => [HasMaxOperatorWithEnrollmentSemester::class, false, ['unenrolled']],
+    'has more than 0' => [HasMaxOperatorWithEnrollmentSemester::class, true, ['enrolled']],
+    'has minimum 0' => [HasMinOperatorWithEnrollmentSemester::class, false, ['enrolled', 'unenrolled']],
+    'has less than 0' => [HasMinOperatorWithEnrollmentSemester::class, true, []],
+]);
+
+it('checks whether students have matching enrollments rather than counting them when only that matters', function (string $operatorClass, bool $isInverse, int $count) {
+    $sql = $operatorClass::make()
+        ->constraint(RelationshipConstraint::make('enrollments'))
+        ->settings(['count' => $count])
+        ->inverse($isInverse)
+        ->applyToBaseQuery(Student::query())
+        ->toSql();
+
+    expect($sql)->toContain('exists (')
+        ->and($sql)->not->toContain('count(*)');
+})->with([
+    'has 0' => [EqualsOperatorWithEnrollmentSemester::class, false, 0],
+    'does not have 0' => [EqualsOperatorWithEnrollmentSemester::class, true, 0],
+    'has maximum 0' => [HasMaxOperatorWithEnrollmentSemester::class, false, 0],
+    'has more than 0' => [HasMaxOperatorWithEnrollmentSemester::class, true, 0],
+]);
+
+it('ignores a count left over from a previously selected operator when checking for enrollments in the selected semesters', function () use ($createEnrollment, $filterStudents) {
+    $term = Term::factory()->create(['name' => 'FA-20']);
+
+    $enrolledStudent = Student::factory()->create();
+    $createEnrollment($enrolledStudent, ['sis_term_id' => $term->sis_term_id]);
+
+    $unenrolledStudent = Student::factory()->create();
+
+    expect($filterStudents(IsEmptyOperatorWithEnrollmentSemester::class, ['count' => '0', 'semesters' => ['FA-20']]))
+        ->toBe([$unenrolledStudent->sisid])
+        ->and($filterStudents(IsEmptyOperatorWithEnrollmentSemester::class, ['count' => '0', 'semesters' => ['FA-20']], isInverse: true))
+        ->toBe([$enrolledStudent->sisid]);
 });
 
 it('offers the term names, most recent first, and `Unassigned` as semesters', function () {

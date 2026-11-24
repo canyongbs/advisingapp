@@ -35,10 +35,13 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Term;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -99,4 +102,109 @@ test('the group builder does not list archived students', function (): void {
         ->assertOk()
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords([$archived]);
+});
+
+test('the group builder applies enrollment rules with a count of 0, like the group does', function (): void {
+    asSuperAdmin();
+
+    $term = Term::factory()->create(['name' => 'FA-20']);
+
+    $enrolledStudent = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $enrolledStudent->sisid,
+        'sis_term_id' => $term->sis_term_id,
+    ]);
+
+    $unenrolledStudent = Student::factory()->create();
+
+    $group = Group::factory()->student()->dynamic()->create([
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'rule' => [
+                        'type' => 'enrollments',
+                        'data' => [
+                            'operator' => 'equals',
+                            'settings' => ['count' => '0', 'semesters' => ['FA-20']],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    expect(app(TranslateGroupFilters::class)->execute($group)->pluck('sisid')->all())->toBe([$unenrolledStudent->sisid]);
+
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertCanSeeTableRecords([$unenrolledStudent])
+        ->assertCanNotSeeTableRecords([$enrolledStudent]);
+});
+
+test('the group builder applies an enrollment rule that matches every student when it is alone in an OR group, like the group does', function (): void {
+    asSuperAdmin();
+
+    $smith = Student::factory()->create(['last' => 'Smith']);
+    $jones = Student::factory()->create(['last' => 'Jones']);
+
+    $group = Group::factory()->student()->dynamic()->create([
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'or' => [
+                        'type' => 'or',
+                        'data' => [
+                            'groups' => [
+                                ['rules' => [
+                                    'enrollments' => [
+                                        'type' => 'enrollments',
+                                        'data' => ['operator' => 'hasMin', 'settings' => ['count' => '0']],
+                                    ],
+                                ]],
+                                ['rules' => [
+                                    'name' => [
+                                        'type' => 'name',
+                                        'data' => ['operator' => 'lastName', 'settings' => ['operator' => 'contains', 'text' => 'Smith']],
+                                    ],
+                                ]],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    expect(app(TranslateGroupFilters::class)->execute($group)->pluck('sisid')->all())
+        ->toEqualCanonicalizing([$smith->sisid, $jones->sisid]);
+
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertCanSeeTableRecords([$smith, $jones]);
+});
+
+test('EditGroup warns how many members cannot be emailed or texted', function (): void {
+    asSuperAdmin();
+
+    $group = Group::factory()->student()->dynamic()->create();
+
+    Student::factory()->create();
+
+    $studentWithoutEmail = Student::factory()->create();
+    $studentWithoutEmail->primaryEmailAddress()->dissociate()->save();
+
+    $studentWithoutPhone = Student::factory()->create();
+    $studentWithoutPhone->primaryPhoneNumber()->dissociate()->save();
+
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertSee('Of the 3 students who will be a member of this group, 33.33% are unable to receive emails to their institutional email address and 33.33% are unable to receive SMS to their primary phone on file.');
+});
+
+test('EditGroup does not warn when every member can be emailed and texted', function (): void {
+    asSuperAdmin();
+
+    $group = Group::factory()->student()->dynamic()->create();
+
+    Student::factory()->count(2)->create();
+
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertDontSee('who will be a member of this group');
 });
