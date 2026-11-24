@@ -39,15 +39,21 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Filament\Forms\Components\UserSelect;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class CreateRole extends CreateRecord
@@ -58,29 +64,60 @@ class CreateRole extends CreateRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        modifyRuleUsing: function (Unique $rule, Get $get): void {
-                            $rule->where('guard_name', $get('guard_name'));
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
-                    ])
-                    ->default('web')
-                    ->live()
-                    ->afterStateUpdated(fn (Set $set): mixed => $set('permissions', [])),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                Section::make('Properties')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(125)
+                            ->unique(
+                                table: 'roles',
+                                column: 'name',
+                                modifyRuleUsing: function (Unique $rule, Get $get): void {
+                                    $rule->where('guard_name', $get('guard_name'));
+                                }
+                            ),
+                        ToggleButtons::make('guard_name')
+                            ->label('Access Control')
+                            ->required()
+                            ->options([
+                                'web' => 'Console',
+                                'api' => 'API',
+                            ])
+                            ->inline()
+                            ->default('web')
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set): mixed => $set('permissions', [])),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Membership')
+                    ->columns(2)
+                    ->schema([
+                        UserSelect::make('users')
+                            ->relationship('users', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id'),
+                        Select::make('userGroups')
+                            ->relationship(
+                                'userGroups',
+                                'name',
+                                fn (Builder $query) => $query
+                                // @phpstan-ignore method.notFound
+                                    ->withoutArchived()
+                            )
+                            ->preload()
+                            ->searchable()
+                            ->label('Groups')
+                            ->multiple()
+                            ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): remove this visibility branch when User Groups is made permanent.
+                            ->visible(fn (): bool => UserGroupsFeature::active()),
+                    ]),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))

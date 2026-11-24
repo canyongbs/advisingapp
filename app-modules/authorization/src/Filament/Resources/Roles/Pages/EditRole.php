@@ -40,16 +40,22 @@ use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Filament\Forms\Components\UserSelect;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
@@ -60,31 +66,67 @@ class EditRole extends EditRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule): void {
-                            /** @var Role $role */
-                            $role = $this->record;
+                Section::make('Properties')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(125)
+                            ->unique(
+                                table: 'roles',
+                                column: 'name',
+                                ignoreRecord: true,
+                                modifyRuleUsing: function (Unique $rule): void {
+                                    /** @var Role $role */
+                                    $role = $this->record;
 
-                            $rule->where('guard_name', $role->guard_name);
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
-                    ])
-                    ->disabled()
-                    ->dehydrated(),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                                    $rule->where('guard_name', $role->guard_name);
+                                }
+                            ),
+                        ToggleButtons::make('guard_name')
+                            ->label('Access Control')
+                            ->options([
+                                'web' => 'Console',
+                                'api' => 'API',
+                            ])
+                            ->inline()
+                            ->disabled()
+                            ->dehydrated(),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Membership')
+                    ->columns(2)
+                    ->schema([
+                        UserSelect::make('users')
+                            ->relationship('users', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id'),
+                        Select::make('userGroups')
+                            ->relationship(
+                                'userGroups',
+                                'name',
+                                fn (Builder $query) => $query
+                                // @phpstan-ignore method.notFound
+                                    ->withoutArchived()
+                            )
+                            ->preload()
+                            ->searchable()
+                            ->label('Groups')
+                            ->multiple()
+                            ->exists((new UserGroup())->getTable(), 'id')
+                            // TODO: Cleanup Task (user-groups-feature): remove this visibility and conditional state-loading branch when User Groups is made permanent.
+                            ->visible(fn (): bool => UserGroupsFeature::active())
+                            ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                                if (UserGroupsFeature::active()) {
+                                    $component->fillStateFromRelationship();
+                                }
+                            }),
+                    ]),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))

@@ -69,6 +69,38 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
+test('can search add and remove users and groups from role membership', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'web']);
+
+    $existingUser = User::factory()->create();
+    $removedUser = User::factory()->create();
+    $newUser = User::factory()->create();
+
+    $existingGroup = UserGroup::factory()->create();
+    $removedGroup = UserGroup::factory()->create();
+    $newGroup = UserGroup::factory()->create();
+
+    $role->users()->attach([$existingUser->getKey(), $removedUser->getKey()]);
+    $role->userGroups()->attach([$existingGroup->getKey(), $removedGroup->getKey()]);
+
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+        ->fillForm([
+            'users' => [$existingUser->getKey(), $newUser->getKey()],
+            'userGroups' => [$existingGroup->getKey(), $newGroup->getKey()],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($role->refresh()->users->pluck('id')->all())
+        ->toEqualCanonicalizing([$existingUser->getKey(), $newUser->getKey()])
+        ->and($role->refresh()->userGroups->pluck('id')->all())
+        ->toEqualCanonicalizing([$existingGroup->getKey(), $newGroup->getKey()]);
+});
+
 describe('deletion', function (): void {
     it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
         asSuperAdmin();

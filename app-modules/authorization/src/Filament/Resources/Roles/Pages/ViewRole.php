@@ -39,15 +39,21 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Filament\Forms\Components\UserSelect;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class ViewRole extends ViewRecord
 {
@@ -57,21 +63,59 @@ class ViewRole extends ViewRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique('roles', 'name'),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
+                Section::make('Properties')
+                    ->disabled()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(125)
+                            ->unique('roles', 'name'),
+                        ToggleButtons::make('guard_name')
+                            ->label('Access Control')
+                            ->required()
+                            ->options([
+                                'web' => 'Console',
+                                'api' => 'API',
+                            ])
+                            ->inline(),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
                     ]),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                Section::make('Membership')
+                    ->columns(2)
+                    ->schema([
+                        UserSelect::make('users')
+                            ->relationship('users', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id'),
+                        Select::make('userGroups')
+                            ->relationship(
+                                'userGroups',
+                                'name',
+                                fn (Builder $query) => $query
+                                // @phpstan-ignore method.notFound
+                                    ->withoutArchived()
+                            )
+                            ->preload()
+                            ->searchable()
+                            ->label('Groups')
+                            ->multiple()
+                            ->exists((new UserGroup())->getTable(), 'id')
+                            // TODO: Cleanup Task (user-groups-feature): remove this visibility and conditional state-loading branch when User Groups is made permanent.
+                            ->visible(fn (): bool => UserGroupsFeature::active())
+                            ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                                if (UserGroupsFeature::active()) {
+                                    $component->fillStateFromRelationship();
+                                }
+                            }),
+                    ]),
                 PermissionsMatrix::make('permissions')
+                    ->disabled()
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
                     ->descriptions(PermissionDescription::cases())

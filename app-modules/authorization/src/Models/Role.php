@@ -77,13 +77,16 @@ class Role extends SpatieRole implements Auditable
      */
     public function userGroups(): BelongsToMany
     {
+      $morphClass = app(UserGroup::class)->getMorphClass();
+
         return $this->belongsToMany(
             UserGroup::class,
             config('permission.table_names.model_has_roles'),
             app(PermissionRegistrar::class)->pivotRole,
             config('permission.column_names.model_morph_key')
         )
-            ->wherePivot('model_type', app(UserGroup::class)->getMorphClass());
+        ->wherePivot('model_type', $morphClass)
+        ->withPivotValue('model_type', $morphClass);
     }
 
     public function scopeApi(Builder $query): void
