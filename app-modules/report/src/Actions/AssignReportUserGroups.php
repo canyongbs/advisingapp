@@ -46,7 +46,7 @@ class AssignReportUserGroups
      */
     public function __invoke(string $reportKey, array $userGroupIds, bool $removeUnlisted): void
     {
-      // TODO: Cleanup Task (user-groups-feature): remove the early return once User Groups is permanent.
+        // TODO: Cleanup Task (user-groups-feature): remove the early return once User Groups is permanent.
         if (! UserGroupsFeature::active()) {
             return;
         }
