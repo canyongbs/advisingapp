@@ -150,7 +150,7 @@ class EditUser extends EditRecord
                         ] : []),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                 ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
+                ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
                     Section::make('Access Control')
                         ->schema([
                             Select::make('roles')
