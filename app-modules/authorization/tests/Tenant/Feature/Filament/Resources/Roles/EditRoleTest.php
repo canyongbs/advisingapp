@@ -42,6 +42,7 @@ use App\Features\UserGroupsFeature;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 use function Pest\Laravel\assertModelExists;
@@ -83,6 +84,19 @@ describe('deletion', function (): void {
             ->assertActionHidden(DeleteAction::class);
 
         assertModelExists($role);
+    });
+
+    it('denies deleting a role assigned through a populated user group', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect(Gate::forUser(auth()->user())->inspect('delete', $role)->denied())->toBeTrue();
     });
 
     it('can delete a role assigned only through empty user groups', function (): void {

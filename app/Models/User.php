@@ -359,8 +359,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function permissionsFromRoles(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions())
-            ->whereKey($this->getPermissionsViaRoles()->pluck('id')->all());
+         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
     /**
@@ -444,14 +443,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function getEffectiveRoles(): EloquentCollection
     {
-        $this->loadMissing('roles');
+        $this->load('roles.permissions');
 
         // TODO: Cleanup Task (user-groups-feature): remove the feature-flag fallback and keep the effective role merge path.
         if (! UserGroupsFeature::active()) {
             return $this->roles;
         }
 
-        $this->loadMissing('userGroups.roles');
+        $this->load('userGroups.roles.permissions');
 
         return $this->roles
             ->merge(

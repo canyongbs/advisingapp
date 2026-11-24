@@ -42,22 +42,18 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function (): void {
-            Schema::create('user_group_user', function (Blueprint $table): void {
-                $table->uuid('id')->primary();
-                $table->foreignUuid('user_group_id')->constrained('user_groups')->cascadeOnDelete();
-                $table->foreignUuid('user_id')->index()->constrained('users')->cascadeOnDelete();
-                $table->timestamps();
+        Schema::create('user_group_user', function (Blueprint $table): void {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_group_id')->constrained('user_groups')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->index()->constrained('users')->cascadeOnDelete();
+            $table->timestamps();
 
-                $table->uniqueIndex(['user_group_id', 'user_id']);
-            });
+            $table->uniqueIndex(['user_group_id', 'user_id']);
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function (): void {
-            Schema::dropIfExists('user_group_user');
-        });
+        Schema::dropIfExists('user_group_user');
     }
 };
