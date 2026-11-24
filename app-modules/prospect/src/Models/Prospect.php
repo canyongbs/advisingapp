@@ -153,7 +153,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     {
         return $this->belongsTo(User::class);
     }
-    
+
     /**
      * @return BelongsTo<Organization, $this>
      */

@@ -3,6 +3,7 @@
 namespace AdvisingApp\Organization\Database\Factories;
 
 use AdvisingApp\Organization\Models\Organization;
+use Faker\Provider\en_US\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +26,7 @@ class OrganizationFactory extends Factory
             'description' => $this->faker->text(),
             'address' => $this->faker->address(),
             'city' => $this->faker->city(),
-            'state' => $this->faker->state(),
+            'state' => Address::stateAbbr(),
             'postalcode' => $this->faker->postcode(),
             'country' => $this->faker->country(),
             'domains' => array_map(fn (): array => ['domain' => $this->faker->unique()->domainName()], range(1, 3)),

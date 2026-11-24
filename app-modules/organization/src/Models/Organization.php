@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
+/**
+ * @mixin IdeHelperOrganization
+ */
 class Organization extends Model
 {
     /** @use HasFactory<OrganizationFactory> */

@@ -17,7 +17,7 @@ class OrganizationPolicy
 
         return null;
     }
-    
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
