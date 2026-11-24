@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9a792e447ae9a6ff8e77fd35aac7df1",
+    "content-hash": "8968b6d44e18c3bd71a6806c5387cccb",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -18812,20 +18812,22 @@
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
-            "version": "3.9.0",
+            "version": "3.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tpetry/laravel-postgresql-enhanced.git",
-                "reference": "ae073b7cc6d1d543d53b5845fbedad7d273abe4a"
+                "reference": "64f8dbe2b8b19179b295f630a7aee90ec9cc327f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/ae073b7cc6d1d543d53b5845fbedad7d273abe4a",
-                "reference": "ae073b7cc6d1d543d53b5845fbedad7d273abe4a",
+                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/64f8dbe2b8b19179b295f630a7aee90ec9cc327f",
+                "reference": "64f8dbe2b8b19179b295f630a7aee90ec9cc327f",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^2.6|^3.5|^4.0",
+                "ext-pdo": "*",
+                "ext-pdo_pgsql": "*",
                 "laravel/framework": "^6.0|^7.0|^8.79|^9.0|^10.0|^11.0|^12.9.1|^13.0",
                 "php": "^8.0",
                 "spatie/regex": "^2.0|^3.0"
@@ -18878,9 +18880,10 @@
             ],
             "support": {
                 "issues": "https://github.com/tpetry/laravel-postgresql-enhanced/issues",
-                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/3.9.0"
+                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/3.11.0"
             },
-            "time": "2026-10-14T19:19:41+00:00"
+            "time": "2026-11-13T09:10:01+00:00",
+            "published-time": "2026-11-13T09:10:17+00:00"
         },
         {
             "name": "twilio/sdk",
@@ -24467,5 +24470,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

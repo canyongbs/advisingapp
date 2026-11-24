@@ -1980,6 +1980,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "releaseUsingBackoff"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "restoreModel"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
     'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
     'count' => 1,
@@ -2227,6 +2233,12 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "release"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "releaseUsingBackoff"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
     'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
