@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 

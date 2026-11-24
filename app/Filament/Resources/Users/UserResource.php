@@ -45,12 +45,13 @@ use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 10;
 
@@ -75,7 +76,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-      return [];
+        return [];
     }
 
     public static function getPages(): array

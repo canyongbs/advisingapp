@@ -169,9 +169,47 @@ class EditUser extends EditRecord
             ]);
     }
 
+    public function showSsoModal(): Action
+    {
+        return Action::make('Warning')
+            ->action(fn (): false => $this->data['is_external'] = false)
+            ->requiresConfirmation()
+            ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
+            ->modalSubmitActionLabel('Continue')
+            ->modalCancelAction();
+    }
+
     protected function afterSave(): void
     {
         $this->syncLicenses();
+    }
+
+    protected function getHeaderActions(): array
+    {
+        /** @var User $user */
+        $user = $this->getRecord();
+
+        return [
+            Impersonate::make()
+                ->record($user),
+            Action::make('resetPassword')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription('This will remove the user\'s current password and send them an email with a link to set a new password.')
+                ->hidden($user->is_external)
+                ->action(function () use ($user): void {
+                    $user->password = null;
+                    $user->save();
+
+                    $user->notify(new SetPasswordNotification());
+
+                    Notification::make()
+                        ->title('The password has been reset')
+                        ->success()
+                        ->send();
+                }),
+            DeleteAction::make(),
+        ];
     }
 
     private function syncLicenses(): void
@@ -201,43 +239,5 @@ class EditUser extends EditRecord
 
             $record->revokeLicense($licenseType);
         }
-    }
-
-    public function showSsoModal(): Action
-    {
-        return Action::make('Warning')
-            ->action(fn (): false => $this->data['is_external'] = false)
-            ->requiresConfirmation()
-            ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
-            ->modalSubmitActionLabel('Continue')
-            ->modalCancelAction();
-    }
-
-    protected function getHeaderActions(): array
-    {
-        /** @var User $user */
-        $user = $this->getRecord();
-
-        return [
-            Impersonate::make()
-                ->record($user),
-            Action::make('resetPassword')
-                ->color('gray')
-                ->requiresConfirmation()
-                ->modalDescription('This will remove the user\'s current password and send them an email with a link to set a new password.')
-                ->hidden($user->is_external)
-                ->action(function () use ($user): void {
-                    $user->password = null;
-                    $user->save();
-
-                    $user->notify(new SetPasswordNotification());
-
-                    Notification::make()
-                        ->title('The password has been reset')
-                        ->success()
-                        ->send();
-                }),
-            DeleteAction::make(),
-        ];
     }
 }

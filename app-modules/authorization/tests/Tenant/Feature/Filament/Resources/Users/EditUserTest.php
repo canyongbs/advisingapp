@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\Users\Pages\EditUser;
-use App\Enums\RetentionCrmRestriction;
-use App\Models\User;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Settings\LicenseSettings;
+use App\Enums\RetentionCrmRestriction;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
