@@ -50,6 +50,8 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroupUser;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
@@ -426,6 +428,20 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function personalBookingPage(): HasOne
     {
         return $this->hasOne(PersonalBookingPage::class);
+    }
+
+    /**
+     * @return BelongsToMany<BookingGroup, $this, covariant BookingGroupUser>
+     */
+    public function bookingGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            related: BookingGroup::class,
+            table: 'booking_group_users'
+        )
+            ->using(BookingGroupUser::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     /**
