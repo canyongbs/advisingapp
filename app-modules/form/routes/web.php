@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Form\Http\Controllers\FormPreviewController;
+use AdvisingApp\Form\Http\Controllers\RevealSecretController;
 use AdvisingApp\Form\Http\Controllers\SubmissionMediaDownloadController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use App\Livewire\RenderForm;
@@ -56,3 +57,7 @@ Route::prefix('forms')
 Route::middleware(['web', 'auth', 'signed'])
     ->get('submission-media/{media}/download', SubmissionMediaDownloadController::class)
     ->name('submission-media.download');
+
+Route::middleware(['web', 'auth', EnsureFormsFeatureIsActive::class])
+    ->post('submission-secrets/reveal', RevealSecretController::class)
+    ->name('submission-secrets.reveal');
