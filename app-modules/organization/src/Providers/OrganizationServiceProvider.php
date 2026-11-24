@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Organization\Providers;
 
+use AdvisingApp\Organization\Models\Organization;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -43,13 +44,15 @@ use AdvisingApp\Organization\OrganizationPlugin;
 
 class OrganizationServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new OrganizationPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+          'organization' => Organization::class,
+        ]);
     }
 }
