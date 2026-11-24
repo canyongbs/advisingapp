@@ -192,7 +192,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
 
         return new SisPipelineProgress(
             processed: $record['processed_students'] ?? 0,
-            total: $record['total_student'] ?? 0,
+            total: $record['total_student'],
             successful: $record['successful_students'] ?? 0,
         );
     }
@@ -208,7 +208,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
 
         return new SisPipelineProgress(
             processed: $record['processed_enrollments'] ?? 0,
-            total: $record['total_enrollment'] ?? 0,
+            total: $record['total_enrollment'],
             successful: $record['successful_enrollments'] ?? 0,
         );
     }
@@ -224,7 +224,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
 
         return new SisPipelineProgress(
             processed: $record['processed_programs'] ?? 0,
-            total: $record['total_program'] ?? 0,
+            total: $record['total_program'],
             successful: $record['successful_programs'] ?? 0,
         );
     }
