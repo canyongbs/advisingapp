@@ -2,12 +2,15 @@
 
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ListOrganizations;
 use AdvisingApp\Organization\Models\Organization;
+use App\DataTransferObjects\AutocompletedAddress;
 use App\Features\OrganizationFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Exceptions;
 use Livewire\Livewire;
+use Spatie\LaravelData\Exceptions\CannotCreateData;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -55,6 +58,66 @@ it('allows an organization to keep its own name when updated', function (): void
         ->assertHasNoFormErrors();
 
     expect($organization->refresh()->email)->toBe('hello@acme.test');
+});
+
+it('fills the address fields when an address suggestion is selected', function (): void {
+    Livewire::test(ListOrganizations::class)
+        ->mountAction(CreateAction::class)
+        ->assertSchemaStateSet([
+            'address' => null,
+            'city' => null,
+            'state' => null,
+            'postalcode' => null,
+            'country' => null,
+        ])
+        ->call('callSchemaComponentMethod', 'mountedActionSchema0.address', 'reactOnItemSelectedFromJs', [
+            'item' => [
+                'value' => '1800 Highland Ave, Troy, NY, 12180, US',
+                'label' => '1800 Highland Ave, Troy, NY, 12180, US',
+                'data' => [
+                    'data' => new AutocompletedAddress(
+                        line1: '1800 Highland Ave',
+                        city: 'Troy',
+                        state: 'NY',
+                        postalCode: '12180',
+                        country: 'US',
+                        label: '1800 Highland Ave, Troy, NY, 12180, US',
+                    ),
+                ],
+            ],
+        ])
+        ->assertSchemaStateSet([
+            'address' => '1800 Highland Ave',
+            'city' => 'Troy',
+            'state' => 'NY',
+            'postalcode' => '12180',
+            'country' => 'US',
+        ]);
+});
+
+it('notifies the user and reports the error when a selected address suggestion cannot be read', function (): void {
+    Exceptions::fake();
+
+    Livewire::test(ListOrganizations::class)
+        ->mountAction(CreateAction::class)
+        ->call('callSchemaComponentMethod', 'mountedActionSchema0.address', 'reactOnItemSelectedFromJs', [
+            'item' => [
+                'value' => '1800 Highland Ave',
+                'label' => '1800 Highland Ave',
+                'data' => [
+                    'data' => ['line1' => '1800 Highland Ave'],
+                ],
+            ],
+        ])
+        ->assertNotified('Failed to fetch address suggestions')
+        ->assertSchemaStateSet([
+            'city' => null,
+            'state' => null,
+            'postalcode' => null,
+            'country' => null,
+        ]);
+
+    Exceptions::assertReported(CannotCreateData::class);
 });
 
 it('validates the inputs', function (array $data, array $errors): void {

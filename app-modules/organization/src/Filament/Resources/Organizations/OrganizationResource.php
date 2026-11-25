@@ -7,13 +7,12 @@ use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ViewOrganiza
 use AdvisingApp\Organization\Filament\Resources\Organizations\Schemas\OrganizationForm;
 use AdvisingApp\Organization\Filament\Resources\Organizations\Schemas\OrganizationInfolist;
 use AdvisingApp\Organization\Filament\Resources\Organizations\Tables\OrganizationsTable;
-use AdvisingApp\Organization\Models\Organization as Organization;
+use AdvisingApp\Organization\Models\Organization;
 use App\Enums\NavigationGroup;
 use App\Features\OrganizationFeature;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Override;
 use UnitEnum;
 
 class OrganizationResource extends Resource
