@@ -50,6 +50,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listApplicationsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -57,12 +58,6 @@ $listApplicationsTestUser = function (): User {
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-};
-
-$referencedFieldIds = function (?array $content): array {
-    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
-
-    return $matches[1];
 };
 
 it('the duplicate action is gated by the create permission', function () use ($listApplicationsTestUser): void {
@@ -227,7 +222,7 @@ it('archive bulk action archives all selected applications', function (): void {
     expect($applicationWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () use ($referencedFieldIds): void {
+describe('duplication', function (): void {
     beforeEach(function (): void {
         seed(ApplicationSubmissionStateSeeder::class);
 
@@ -251,7 +246,7 @@ describe('duplication', function () use ($referencedFieldIds): void {
             ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
     });
 
-    it('points the duplicated application content at its own fields', function () use ($referencedFieldIds): void {
+    it('points the duplicated application content at its own fields', function (): void {
         $application = Application::factory()->create();
 
         Livewire::test(ListApplications::class)
@@ -260,7 +255,7 @@ describe('duplication', function () use ($referencedFieldIds): void {
 
         $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
 
-        expect($referencedFieldIds($duplicatedApplication->content))
+        expect(referencedFieldIds($duplicatedApplication->content))
             ->not->toBeEmpty()
             ->toEqualCanonicalizing($duplicatedApplication->fields()->pluck('id')->all());
     });

@@ -108,8 +108,8 @@ class RepairDuplicatedContentFieldIds
         }
 
         $record->content = $content;
-        $record->timestamps = false;
-        $record->saveQuietly();
+
+        Model::withoutTimestamps(fn (): bool => $record->saveQuietly());
 
         return $repairedCount;
     }

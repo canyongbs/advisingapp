@@ -42,6 +42,7 @@ use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\travel;
+use function Tests\referencedFieldIds;
 
 $customBlock = fn (SubmissibleField $field): array => [
     'type' => 'customBlock',
@@ -61,12 +62,6 @@ $grid = fn (array $blocks): array => [
     'attrs' => ['data-cols' => count($blocks)],
     'content' => array_map(fn (array $block): array => ['type' => 'gridColumn', 'content' => [$block]], $blocks),
 ];
-
-$referencedFieldIds = function (?array $content): array {
-    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
-
-    return $matches[1];
-};
 
 /**
  * Duplicates a form the way duplication did before it remapped content field IDs: fields are copied, content is not remapped.
@@ -101,7 +96,7 @@ $duplicateWithoutRemapping = function (Form $original): Form {
     return $replica->refresh();
 };
 
-it('repairs single-page content that references the original form fields', function () use ($customBlock, $grid, $referencedFieldIds, $duplicateWithoutRemapping): void {
+it('repairs single-page content that references the original form fields', function () use ($customBlock, $grid, $duplicateWithoutRemapping): void {
     $original = Form::factory()->create();
 
     [$firstField, $secondField, $thirdField] = $original->fields->all();
@@ -113,16 +108,16 @@ it('repairs single-page content that references the original form fields', funct
 
     $replica = $duplicateWithoutRemapping($original);
 
-    expect($referencedFieldIds($replica->content))->toEqualCanonicalizing($original->fields->modelKeys());
+    expect(referencedFieldIds($replica->content))->toEqualCanonicalizing($original->fields->modelKeys());
 
     $repairedCount = app(RepairDuplicatedContentFieldIds::class)($replica);
 
     expect($repairedCount)->toBe(3)
-        ->and($referencedFieldIds($replica->refresh()->content))->toEqualCanonicalizing($replica->fields->modelKeys())
-        ->and($referencedFieldIds($original->refresh()->content))->toEqualCanonicalizing($original->fields->modelKeys());
+        ->and(referencedFieldIds($replica->refresh()->content))->toEqualCanonicalizing($replica->fields->modelKeys())
+        ->and(referencedFieldIds($original->refresh()->content))->toEqualCanonicalizing($original->fields->modelKeys());
 });
 
-it('repairs step content that references the original form fields', function () use ($customBlock, $referencedFieldIds, $duplicateWithoutRemapping): void {
+it('repairs step content that references the original form fields', function () use ($customBlock, $duplicateWithoutRemapping): void {
     $original = Form::factory()->create(['is_wizard' => true]);
     $original->fields()->delete();
     $original->update(['content' => null]);
@@ -142,11 +137,11 @@ it('repairs step content that references the original form fields', function () 
     expect($repairedCount)->toBe(2);
 
     foreach ($replica->steps()->get() as $replicaStep) {
-        expect($referencedFieldIds($replicaStep->content))->toBe($replicaStep->fields()->pluck('id')->all());
+        expect(referencedFieldIds($replicaStep->content))->toEqualCanonicalizing($replicaStep->fields()->pluck('id')->all());
     }
 });
 
-it('repairs identical blocks to different fields', function () use ($customBlock, $referencedFieldIds, $duplicateWithoutRemapping): void {
+it('repairs identical blocks to different fields', function () use ($customBlock, $duplicateWithoutRemapping): void {
     $original = Form::factory()->create();
     $original->fields()->delete();
 
@@ -161,7 +156,7 @@ it('repairs identical blocks to different fields', function () use ($customBlock
     $repairedCount = app(RepairDuplicatedContentFieldIds::class)($replica);
 
     expect($repairedCount)->toBe(2)
-        ->and($referencedFieldIds($replica->refresh()->content))->toEqualCanonicalizing($replica->fields->modelKeys());
+        ->and(referencedFieldIds($replica->refresh()->content))->toEqualCanonicalizing($replica->fields->modelKeys());
 });
 
 it('does not change content that already references its own fields', function (): void {
@@ -178,11 +173,11 @@ it('does not change content that already references its own fields', function ()
         ->and($form->updated_at->equalTo($originalUpdatedAt))->toBeTrue();
 });
 
-it('does not repair a block that no unclaimed field matches', function () use ($referencedFieldIds, $duplicateWithoutRemapping): void {
+it('does not repair a block that no unclaimed field matches', function () use ($duplicateWithoutRemapping): void {
     $log = Log::spy();
 
     $original = Form::factory()->create();
-    $originalFieldIds = $referencedFieldIds($original->content);
+    $originalFieldIds = referencedFieldIds($original->content);
 
     $replica = $duplicateWithoutRemapping($original);
     $replica->fields()->update(['label' => 'A label no block has']);
@@ -190,7 +185,7 @@ it('does not repair a block that no unclaimed field matches', function () use ($
     $repairedCount = app(RepairDuplicatedContentFieldIds::class)($replica);
 
     expect($repairedCount)->toBe(0)
-        ->and($referencedFieldIds($replica->refresh()->content))->toBe($originalFieldIds);
+        ->and(referencedFieldIds($replica->refresh()->content))->toBe($originalFieldIds);
 
     $log->shouldHaveReceived('warning')->times(count($originalFieldIds));
 });

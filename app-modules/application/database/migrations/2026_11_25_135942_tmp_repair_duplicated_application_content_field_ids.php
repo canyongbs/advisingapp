@@ -45,7 +45,9 @@ return new class () extends Migration {
         DB::transaction(function (): void {
             $repairDuplicatedContentFieldIds = app(RepairDuplicatedContentFieldIds::class);
 
-            Application::query()->lazyById(100)->each(fn (Application $application): int => $repairDuplicatedContentFieldIds($application));
+            Application::query()->lazyById(100)->each(function (Application $application) use ($repairDuplicatedContentFieldIds): void {
+                $repairDuplicatedContentFieldIds($application);
+            });
         });
     }
 

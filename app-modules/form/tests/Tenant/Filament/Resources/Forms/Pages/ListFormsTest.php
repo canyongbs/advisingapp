@@ -51,6 +51,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listFormsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -58,12 +59,6 @@ $listFormsTestUser = function (): User {
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-};
-
-$referencedFieldIds = function (?array $content): array {
-    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
-
-    return $matches[1];
 };
 
 $customBlock = fn (SubmissibleField $field): array => [
@@ -295,7 +290,7 @@ it('archive bulk action archives all selected forms', function (): void {
     expect($formWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () use ($referencedFieldIds, $customBlock): void {
+describe('duplication', function () use ($customBlock): void {
     beforeEach(function (): void {
         asSuperAdmin();
     });
@@ -313,7 +308,7 @@ describe('duplication', function () use ($referencedFieldIds, $customBlock): voi
             ->and($duplicatedForm->root_id)->not->toBe($form->root_id);
     });
 
-    it('points the duplicated form content at its own fields', function () use ($referencedFieldIds, $customBlock): void {
+    it('points the duplicated form content at its own fields', function () use ($customBlock): void {
         $form = Form::factory()->create();
 
         [$firstField, $secondField, $thirdField] = $form->fields->all();
@@ -339,11 +334,11 @@ describe('duplication', function () use ($referencedFieldIds, $customBlock): voi
 
         $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
 
-        expect($referencedFieldIds($duplicatedForm->content))->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all())
-            ->and($referencedFieldIds($form->refresh()->content))->toEqualCanonicalizing($form->fields()->pluck('id')->all());
+        expect(referencedFieldIds($duplicatedForm->content))->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all())
+            ->and(referencedFieldIds($form->refresh()->content))->toEqualCanonicalizing($form->fields()->pluck('id')->all());
     });
 
-    it('points the duplicated form step content at its own fields', function () use ($referencedFieldIds, $customBlock): void {
+    it('points the duplicated form step content at its own fields', function () use ($customBlock): void {
         $form = Form::factory()->create(['is_wizard' => true]);
         $form->fields()->delete();
         $form->update(['content' => null]);
@@ -366,7 +361,7 @@ describe('duplication', function () use ($referencedFieldIds, $customBlock): voi
         expect($duplicatedSteps)->toHaveCount(2);
 
         foreach ($duplicatedSteps as $duplicatedStep) {
-            expect($referencedFieldIds($duplicatedStep->content))->toBe($duplicatedStep->fields()->pluck('id')->all());
+            expect(referencedFieldIds($duplicatedStep->content))->toEqualCanonicalizing($duplicatedStep->fields()->pluck('id')->all());
         }
     });
 

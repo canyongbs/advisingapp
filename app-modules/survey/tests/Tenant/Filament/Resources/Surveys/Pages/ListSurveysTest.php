@@ -46,12 +46,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
-
-$referencedFieldIds = function (?array $content): array {
-    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
-
-    return $matches[1];
-};
+use function Tests\referencedFieldIds;
 
 $listSurveysTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -116,7 +111,7 @@ it('can duplicate a survey its steps and its fields', function (): void {
     expect($duplicatedSurvey->steps->count())->toBe($survey->steps->count());
 });
 
-it('points the duplicated survey content at its own fields', function () use ($referencedFieldIds): void {
+it('points the duplicated survey content at its own fields', function (): void {
     asSuperAdmin();
 
     $survey = Survey::factory()->create();
@@ -127,7 +122,7 @@ it('points the duplicated survey content at its own fields', function () use ($r
 
     $duplicatedSurvey = Survey::query()->whereKeyNot($survey->getKey())->firstOrFail();
 
-    expect($referencedFieldIds($duplicatedSurvey->content))
+    expect(referencedFieldIds($duplicatedSurvey->content))
         ->not->toBeEmpty()
         ->toEqualCanonicalizing($duplicatedSurvey->fields()->pluck('id')->all());
 });

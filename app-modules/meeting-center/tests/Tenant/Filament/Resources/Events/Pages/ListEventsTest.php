@@ -50,6 +50,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -57,12 +58,6 @@ $listEventsTestUser = function (): User {
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-};
-
-$referencedFieldIds = function (?array $content): array {
-    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
-
-    return $matches[1];
 };
 
 it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser): void {
@@ -201,7 +196,7 @@ it('archive bulk action archives all selected events', function (): void {
     expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function () use ($referencedFieldIds): void {
+describe('duplication', function (): void {
     beforeEach(function (): void {
         asSuperAdmin();
     });
@@ -236,7 +231,7 @@ describe('duplication', function () use ($referencedFieldIds): void {
             ->and($duplicatedEvent->attendees()->count())->toBe(0);
     });
 
-    it('points the duplicated registration form content at its own fields', function () use ($referencedFieldIds): void {
+    it('points the duplicated registration form content at its own fields', function (): void {
         $event = Event::factory()->create();
 
         Livewire::test(ListEvents::class)
@@ -247,7 +242,7 @@ describe('duplication', function () use ($referencedFieldIds): void {
         $duplicatedForm = Event::query()->whereKeyNot($event->getKey())->firstOrFail()->eventRegistrationForm;
 
         $duplicatedFieldIds = collect([$duplicatedForm->content, ...$duplicatedForm->steps()->pluck('content')])
-            ->flatMap($referencedFieldIds)
+            ->flatMap(referencedFieldIds(...))
             ->all();
 
         expect($duplicatedFieldIds)
