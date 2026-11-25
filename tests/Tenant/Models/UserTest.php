@@ -107,6 +107,10 @@ describe('enterprise ai', function (): void {
 });
 
 describe('effective roles', function (): void {
+    beforeEach(function (): void {
+        UserGroupsFeature::activate();
+    });
+
     it('inherits roles from its groups', function (): void {
         $directRole = Role::factory()->create();
         $groupRole = Role::factory()->create();
