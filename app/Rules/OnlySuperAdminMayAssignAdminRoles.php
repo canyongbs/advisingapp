@@ -59,7 +59,7 @@ class OnlySuperAdminMayAssignAdminRoles implements ValidationRule
             return;
         }
 
-        if (! auth()->user()->isSuperAdmin() && in_array($role->name, [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])) {
+        if (! auth()->user()->isSuperAdmin() && in_array($role->name, Authenticatable::ADMIN_ROLES)) {
             $fail('You are not allowed to assign admin roles.');
         }
     }
