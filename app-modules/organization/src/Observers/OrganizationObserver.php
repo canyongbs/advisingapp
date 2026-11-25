@@ -44,7 +44,7 @@ class OrganizationObserver
 {
     public function deleted(Organization $organization): void
     {
-        $organization->prospects()->chunkById(100, function (Collection $prospects): void {
+        $organization->prospects()->withTrashed()->chunkById(100, function (Collection $prospects): void {
             $prospects->each(fn (Prospect $prospect) => $prospect->organization()->dissociate()->save());
         });
     }
