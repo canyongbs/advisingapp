@@ -36,6 +36,8 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageForm;
@@ -589,6 +591,102 @@ describe('notifications tab', function (): void {
 
         expect(Form::query()->where('root_id', $form->root_id)->count())->toBe(1)
             ->and($form->fresh()->isArchived())->toBeFalse();
+    });
+});
+
+describe('prospect generation validation', function (): void {
+    $emailBlock = fn (bool $isRequired = true): array => [
+        'type' => 'customBlock',
+        'attrs' => ['id' => EducatableEmailFormFieldBlock::type(), 'config' => ['label' => 'Email', 'isRequired' => $isRequired]],
+    ];
+
+    $nameBlock = fn (): array => [
+        'type' => 'customBlock',
+        'attrs' => ['id' => EducatableNameFormFieldBlock::type(), 'config' => ['label' => 'Name', 'isRequired' => true]],
+    ];
+
+    $document = fn (array ...$nodes): array => ['type' => 'doc', 'content' => $nodes];
+
+    $saveWizardSteps = function (Form $form, array $stepContents): Testable {
+        $component = Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()]);
+
+        $formData = $component->get('data');
+
+        foreach (array_keys($formData['steps']) as $index => $stepKey) {
+            $formData['steps'][$stepKey]['content'] = $stepContents[$index];
+        }
+
+        return $component
+            ->fillForm($formData)
+            ->call('save');
+    };
+
+    it('requires the mapped fields on a single page form that generates prospects', function (array $content, string $message): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm(['content' => $content])
+            ->call('save')
+            ->assertHasFormErrors(['content' => $message]);
+    })->with([
+        'both missing' => fn (): array => [
+            $document(['type' => 'paragraph']),
+            'Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.',
+        ],
+        'email missing' => fn (): array => [
+            $document($nameBlock()),
+            'Forms that generate prospects must include a required Mapped Primary Email Address field.',
+        ],
+        'name missing' => fn (): array => [
+            $document($emailBlock()),
+            'Forms that generate prospects must include a required Mapped Name field.',
+        ],
+    ]);
+
+    it('accepts a single page form with a required email and a name', function () use ($emailBlock, $nameBlock, $document): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm(['content' => $document($emailBlock(), $nameBlock())])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+
+    it('accepts wizard steps that split the mapped fields across steps', function () use ($emailBlock, $nameBlock, $document, $saveWizardSteps): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false, 'is_wizard' => true]);
+        $form->steps()->create(['label' => 'First', 'content' => $document(), 'sort' => 0]);
+        $form->steps()->create(['label' => 'Second', 'content' => $document(), 'sort' => 1]);
+
+        $saveWizardSteps($form, [$document($emailBlock()), $document($nameBlock())])
+            ->assertHasNoFormErrors();
+    });
+
+    it('requires the mapped name field across wizard steps', function () use ($emailBlock, $document, $saveWizardSteps): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false, 'is_wizard' => true]);
+        $form->steps()->create(['label' => 'First', 'content' => $document(), 'sort' => 0]);
+        $form->steps()->create(['label' => 'Second', 'content' => $document(), 'sort' => 1]);
+
+        $saveWizardSteps($form, [$document($emailBlock()), $document(['type' => 'paragraph'])])
+            ->assertHasFormErrors(['steps' => 'Forms that generate prospects must include a required Mapped Name field.']);
+    });
+
+    it('does not require the mapped fields on an authenticated form', function () use ($document): void {
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => true]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->fillForm(['content' => $document(['type' => 'paragraph'])])
+            ->call('save')
+            ->assertHasNoFormErrors();
     });
 });
 
