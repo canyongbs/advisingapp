@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -47,6 +48,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
@@ -125,6 +127,19 @@ class InteractionForm
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                            Select::make('interaction_confidential_user_groups')
+                                ->relationship('confidentialAccessUserGroups', 'name', fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                                ->preload()
+                                ->label('Groups')
+                                ->multiple()
+                                ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show and hydrate group confidentiality selection when confidential.
+                                ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential'))
+                                ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                                    if (UserGroupsFeature::active()) {
+                                        $component->fillStateFromRelationship();
+                                    }
+                                }),
                         ]),
                 ]),
             Step::make('Details')

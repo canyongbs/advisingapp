@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Database\Factories\InteractionFactory;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
@@ -208,6 +209,16 @@ class Interaction extends Model implements Auditable, CanTriggerAutoSubscription
     {
         return $this->belongsToMany(Department::class, 'interaction_confidential_teams', 'interaction_id', 'team_id')
             ->using(DepartmentConfidentialInteraction::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this, covariant UserGroupConfidentialInteraction>
+     */
+    public function confidentialAccessUserGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'interaction_confidential_user_groups')
+            ->using(UserGroupConfidentialInteraction::class)
             ->withTimestamps();
     }
 

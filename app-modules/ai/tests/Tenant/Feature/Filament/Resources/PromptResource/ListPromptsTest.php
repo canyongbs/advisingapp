@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
@@ -207,6 +208,15 @@ test('only shows confidential prompts to authorized users', function () use ($li
     $departmentConfidentialPromptUser->team_id = $department->id;
     $departmentConfidentialPromptUser->save();
 
+    $groupConfidentialPromptUser = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->users()->attach($groupConfidentialPromptUser);
+    $confidentialPrompt->confidentialAccessUserGroups()->attach($userGroup);
+
     assertDatabaseCount(Prompt::class, 2);
 
     actingAs($unauthorizedUser);
@@ -244,6 +254,14 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($departmentConfidentialPromptUser);
+    Livewire::test(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($groupConfidentialPromptUser);
     Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([

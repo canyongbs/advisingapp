@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
@@ -52,6 +54,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class EditPrompt extends EditRecord
@@ -115,6 +118,25 @@ class EditPrompt extends EditRecord
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                            Select::make('confidential_prompt_user_groups')
+                                ->relationship(
+                                    'confidentialAccessUserGroups',
+                                    'name',
+                                    fn (Builder $query) => $query
+                                    // @phpstan-ignore method.notFound
+                                        ->withoutArchived()
+                                )
+                                ->preload()
+                                ->label('Groups')
+                                ->multiple()
+                                ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show and hydrate group confidentiality selection when confidential.
+                                ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential'))
+                                ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                                    if (UserGroupsFeature::active()) {
+                                        $component->fillStateFromRelationship();
+                                    }
+                                }),
                         ])
                             ->columns(2)
                             ->columnSpanFull()

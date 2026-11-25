@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models\Scopes;
 
+use App\Features\UserGroupsFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -66,6 +67,11 @@ class AiAssistantConfidentialScope implements Scope
                                         $query->where('users.id', Auth::id());
                                     });
                                 })
+                    // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include user-group confidentiality access.
+                                ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->orWhereHas(
+                                    'confidentialAccessUserGroups',
+                                    fn (Builder $query) => $query->whereHas('users', fn (Builder $query) => $query->where('users.id', Auth::id()))
+                                ))
                                 ->orWhereHas('confidentialAccessUsers', function (Builder $query): void {
                                     $query->where('users.id', Auth::id());
                                 });
