@@ -78,19 +78,19 @@ test('shows access control and membership details on the view page', function ()
         ]);
 });
 
-    test('ViewRole displays API users for API roles', function (): void {
-      asSuperAdmin();
+test('ViewRole displays API users for API roles', function (): void {
+    asSuperAdmin();
 
-      $role = Role::factory()->create(['guard_name' => 'api']);
-      $apiUser = SystemUser::factory()->create();
+    $role = Role::factory()->create(['guard_name' => 'api']);
+    $apiUser = SystemUser::factory()->create();
 
-      $role->users()->attach($apiUser->getKey());
+    $role->users()->attach($apiUser->getKey());
 
-      Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+    Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
         ->assertSchemaStateSet([
-          'users' => [$apiUser->getKey()],
+            'users' => [$apiUser->getKey()],
         ]);
-    });
+});
 
 describe('enterprise ai', function (): void {
     it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {

@@ -64,44 +64,44 @@ test('CreateRole does not allow duplicate role names case insensitively within a
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-    test('CreateRole clears incompatible membership selections when access control guard changes', function (): void {
-      UserGroupsFeature::activate();
+test('CreateRole clears incompatible membership selections when access control guard changes', function (): void {
+    UserGroupsFeature::activate();
 
-      asSuperAdmin();
+    asSuperAdmin();
 
-      $user = User::factory()->create();
-      $group = UserGroup::factory()->create();
+    $user = User::factory()->create();
+    $group = UserGroup::factory()->create();
 
-      Livewire::test(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm([
-          'users' => [$user->getKey()],
-          'userGroups' => [$group->getKey()],
+            'users' => [$user->getKey()],
+            'userGroups' => [$group->getKey()],
         ])
         ->fillForm([
-          'guard_name' => 'api',
+            'guard_name' => 'api',
         ])
         ->assertSchemaStateSet([
-          'users' => [],
-          'userGroups' => [],
+            'users' => [],
+            'userGroups' => [],
         ]);
-    });
+});
 
-    test('CreateRole blocks assigning groups to API roles', function (): void {
-      UserGroupsFeature::activate();
+test('CreateRole blocks assigning groups to API roles', function (): void {
+    UserGroupsFeature::activate();
 
-      asSuperAdmin();
+    asSuperAdmin();
 
-      $group = UserGroup::factory()->create();
+    $group = UserGroup::factory()->create();
 
-      Livewire::test(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm([
-          'name' => 'API Scoped Role',
-          'guard_name' => 'api',
-          'userGroups' => [$group->getKey()],
+            'name' => 'API Scoped Role',
+            'guard_name' => 'api',
+            'userGroups' => [$group->getKey()],
         ])
         ->call('create')
         ->assertHasErrors(['userGroups']);
-    });
+});
 
 describe('enterprise ai', function (): void {
     it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {

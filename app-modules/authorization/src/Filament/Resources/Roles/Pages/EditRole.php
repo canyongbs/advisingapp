@@ -47,6 +47,7 @@ use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use App\Rules\OnlySuperAdminMayAssignAdminRoles;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Closure;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -60,8 +61,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Unique;
+use Illuminate\Validation\ValidationException;
 
 class EditRole extends EditRecord
 {
@@ -129,7 +130,7 @@ class EditRole extends EditRecord
                                 ->whereKey($values)
                                 ->pluck('name', 'id')
                                 ->all())
-                            ->rule(fn (Get $get) => $this->getRoleUsersValidationRule($get)),
+                            ->rule(fn (Get $get): Closure => $this->getRoleUsersValidationRule($get)),
                         Select::make('userGroups')
                             ->relationship(
                                 'userGroups',
@@ -210,6 +211,14 @@ class EditRole extends EditRecord
         }
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
+
     private function hasMembershipChanges(Role $role): bool
     {
         $submittedUserIds = $this->normalizeIds($this->data['users'] ?? []);
@@ -239,6 +248,7 @@ class EditRole extends EditRecord
 
     /**
      * @param  array<mixed>  $ids
+     *
      * @return array<string>
      */
     private function normalizeIds(array $ids): array
@@ -250,13 +260,5 @@ class EditRole extends EditRecord
             ->sort()
             ->values()
             ->all();
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
     }
 }

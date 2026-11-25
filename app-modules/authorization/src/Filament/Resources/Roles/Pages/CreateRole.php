@@ -45,6 +45,7 @@ use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -55,8 +56,8 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Unique;
+use Illuminate\Validation\ValidationException;
 
 class CreateRole extends CreateRecord
 {
@@ -126,7 +127,7 @@ class CreateRole extends CreateRecord
                                 ->whereKey($values)
                                 ->pluck('name', 'id')
                                 ->all())
-                            ->rule(fn (Get $get) => $this->getRoleUsersValidationRule($get)),
+                            ->rule(fn (Get $get): Closure => $this->getRoleUsersValidationRule($get)),
                         Select::make('userGroups')
                             ->relationship(
                                 'userGroups',

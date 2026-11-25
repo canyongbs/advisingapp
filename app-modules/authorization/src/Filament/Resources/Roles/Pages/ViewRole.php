@@ -44,6 +44,7 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Closure;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -110,7 +111,7 @@ class ViewRole extends ViewRecord
                                 ->whereKey($values)
                                 ->pluck('name', 'id')
                                 ->all())
-                            ->rule(fn (Get $get) => $this->getRoleUsersValidationRule($get)),
+                            ->rule(fn (Get $get): Closure => $this->getRoleUsersValidationRule($get)),
                         Select::make('userGroups')
                             ->relationship(
                                 'userGroups',
