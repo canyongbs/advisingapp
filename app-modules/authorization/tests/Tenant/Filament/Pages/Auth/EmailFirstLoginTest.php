@@ -586,6 +586,27 @@ it('routes an external user based on the available single sign-on providers', fu
     ],
 ]);
 
+it('treats an enabled single sign-on provider without a client id as unavailable', function (string $settingsClass): void {
+    $settings = app($settingsClass);
+    $settings->is_enabled = true;
+    $settings->client_id = null;
+    $settings->save();
+
+    $user = User::factory()->external()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->assertNoRedirect()
+        ->assertSet('step', 'email')
+        ->assertNotified('Single sign-on is unavailable');
+
+    assertGuest();
+})->with([
+    'azure' => [AzureSsoSettings::class],
+    'google' => [GoogleSsoSettings::class],
+]);
+
 it('redirects an external user in the mobile app to azure when google is also available', function (): void {
     $azureSettings = app(AzureSsoSettings::class);
     $azureSettings->is_enabled = true;
