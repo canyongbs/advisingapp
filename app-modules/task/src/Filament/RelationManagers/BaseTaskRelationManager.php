@@ -36,229 +36,32 @@
 
 namespace AdvisingApp\Task\Filament\RelationManagers;
 
-use AdvisingApp\Authorization\Models\UserGroup;
-use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Filament\Resources\Tasks\Components\TaskViewAction;
-use AdvisingApp\Task\Models\Task;
-use App\Features\UserGroupsFeature;
-use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Users\UserResource;
-use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Scopes\HasLicense;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use AdvisingApp\Task\Filament\Schemas\TaskForm;
+use AdvisingApp\Task\Filament\Tables\TaskTable;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseTaskRelationManager extends ManageRelatedRecords
 {
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Fieldset::make('Confidentiality')
-                    ->schema([
-                        Checkbox::make('is_confidential')
-                            ->label('Confidential')
-                            ->live(),
-                        UserSelect::make('confidential_task_users')
-                            ->relationship('confidentialAccessUsers', 'name')
-                            ->preload()
-                            ->label('Users')
-                            ->multiple()
-                            ->exists('users', 'id')
-                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
-                        Select::make('confidential_task_departments')
-                            ->relationship('confidentialAccessDepartments', 'name')
-                            ->preload()
-                            ->label('Departments')
-                            ->multiple()
-                            ->exists('teams', 'id')
-                            ->visible(fn (Get $get): mixed => $get('is_confidential')),
-                        Select::make('confidential_task_user_groups')
-                            ->relationship(
-                                'confidentialAccessUserGroups',
-                                'name',
-                                fn (Builder $query) => $query
-                                // @phpstan-ignore method.notFound
-                                    ->withoutArchived()
-                            )
-                            ->preload()
-                            ->label('Groups')
-                            ->multiple()
-                            ->exists((new UserGroup())->getTable(), 'id')
-                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show and hydrate group confidentiality selection when confidential.
-                            ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential'))
-                            ->loadStateFromRelationshipsUsing(function (Select $component): void {
-                                if (UserGroupsFeature::active()) {
-                                    $component->fillStateFromRelationship();
-                                }
-                            }),
-                    ]),
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(100)
-                    ->string(),
-                TextInput::make('description')
-                    ->label('Description')
-                    ->required()
-                    ->string(),
-                DateTimePicker::make('due')
-                    ->label('Due Date')
-                    ->native(false),
-                UserSelect::make('assigned_to')
-                    ->label('Assigned To')
-                    ->relationship(
-                        'assignedTo',
-                        'name',
-                        function (Builder $query) {
-                            $owner = $this->getOwnerRecord();
-
-                            assert($owner instanceof Student || $owner instanceof Prospect);
-
-                            return $query->tap(new HasLicense($owner->getLicenseType()));
-                        },
-                    )
-                    ->nullable()
-                    ->default(auth()->id()),
-            ]);
+        return TaskForm::configure($schema, $this->getTaskOwner());
     }
 
     public function table(Table $table): Table
     {
-        return $table
-            ->recordTitleAttribute('description')
-            ->defaultSort('created_at', 'desc')
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('description')
-                    ->searchable()
-                    ->wrap()
-                    ->limit(50)
-                    ->icon(fn (Task $record): ?string => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn (Task $record): ?string => $record->is_confidential ? 'Confidential' : null),
-                TextColumn::make('status')
-                    ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge()
-                    ->sortable(),
-                TextColumn::make('due')
-                    ->label('Due Date')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('assignedTo.name')
-                    ->label('Assigned To')
-                    ->url(fn (Task $record): ?string => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
-                    ->sortable(),
-                TextColumn::make('concern.full_name')
-                    ->label('Related To')
-                    ->url(fn (Task $record): ?string => match ($record->concern::class) {
-                        Student::class => StudentResource::getViewUrl($record->concern),
-                        Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
-                        default => null,
-                    }),
-            ])
-            ->filters([
-                Filter::make('my_tasks')
-                    ->label('My Tasks')
-                    ->query(
-                        fn ($query) => $query->where('assigned_to', auth()->id())
-                    ),
-                SelectFilter::make('assignedTo')
-                    ->label('Assigned To')
-                    ->relationship(
-                        'assignedTo',
-                        'name',
-                        function (Builder $query) {
-                            $owner = $this->getOwnerRecord();
+        return TaskTable::configure($table, $this->getTaskOwner());
+    }
 
-                            assert($owner instanceof Student || $owner instanceof Prospect);
+    protected function getTaskOwner(): Student | Prospect
+    {
+        $owner = $this->getOwnerRecord();
 
-                            return $query->tap(new HasLicense($owner->getLicenseType()));
-                        },
-                    )
-                    ->searchable()
-                    ->multiple(),
-                SelectFilter::make('status')
-                    ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction): array => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
-                    ->multiple()
-                    ->default(
-                        [
-                            TaskStatus::Pending->value,
-                            TaskStatus::InProgress->value,
-                        ]
-                    ),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->authorize(function () {
-                        $ownerRecord = $this->getOwnerRecord();
+        assert($owner instanceof Student || $owner instanceof Prospect);
 
-                        return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-                    })
-                    ->using(function (array $data, string $model): Model {
-                        $data = collect($data);
-
-                        /** @var Task $task */
-                        $task = new ($model)($data->except('assigned_to')->toArray());
-
-                        $task->assigned_to = $data->get('assigned_to');
-
-                        assert($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect);
-
-                        $task->concern()->associate($this->getOwnerRecord());
-
-                        $task->save();
-
-                        return $task;
-                    }),
-            ])
-            ->recordActions([
-                TaskViewAction::make(),
-                EditAction::make(),
-                DissociateAction::make()
-                    ->authorize(function (): bool {
-                        $ownerRecord = $this->getOwnerRecord();
-
-                        return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-                    })
-                    ->using(fn (Task $task) => $task->concern()->dissociate()->save()),
-            ])
-            ->recordUrl(null)
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make()
-                        ->authorize(function (): bool {
-                            $ownerRecord = $this->getOwnerRecord();
-
-                            return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
-                        })
-                        ->using(function (Collection $selectedRecords): void {
-                            $selectedRecords->each(
-                                fn (Task $selectedRecord) => $selectedRecord->concern()->dissociate()->save()
-                            );
-                        }),
-                ]),
-            ]);
+        return $owner;
     }
 }
