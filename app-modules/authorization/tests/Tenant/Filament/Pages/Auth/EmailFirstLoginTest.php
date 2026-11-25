@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\EmailFirstLogin;
+use AdvisingApp\Authorization\Listeners\RememberLastLoginEmail;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
@@ -57,6 +58,89 @@ use function Pest\Laravel\mock;
 it('starts on the email step', function (): void {
     Livewire::test(EmailFirstLogin::class)
         ->assertSet('step', 'email');
+});
+
+it('prefills the email from the remembered login email cookie', function (): void {
+    Livewire::withCookie(RememberLastLoginEmail::COOKIE_NAME, 'previous@example.com')
+        ->test(EmailFirstLogin::class)
+        ->assertSchemaStateSet(['email' => 'previous@example.com']);
+});
+
+it('remembers the email after a successful login', function (): void {
+    $user = User::factory()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME)?->getValue())->toBe($user->email);
+});
+
+it('does not remember the email when the password is wrong', function (): void {
+    $user = User::factory()->create();
+
+    Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'not-the-password')
+        ->call('authenticate')
+        ->assertHasErrors('data.password');
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME))->toBeNull();
+});
+
+it('only remembers the email once the multifactor challenge is completed', function (): void {
+    $user = User::factory()->create();
+    $user->enableMultifactorAuthentication();
+    $user->confirmMultifactorAuthentication();
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->multifactor_secret));
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate')
+        ->assertSet('needsMfa', true);
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME))->toBeNull();
+
+    $component
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertHasNoFormErrors();
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME)?->getValue())->toBe($user->email);
+});
+
+it('remembers the email after confirming multifactor setup and closing the recovery codes modal', function (): void {
+    $settings = app(MultifactorSettings::class);
+    $settings->required = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $component = Livewire::test(EmailFirstLogin::class)
+        ->set('data.email', $user->email)
+        ->call('continue')
+        ->set('data.password', 'password')
+        ->call('authenticate');
+
+    $code = app(MultifactorService::class)->getEngine()->getCurrentOtp(decrypt($user->refresh()->multifactor_secret));
+
+    $component
+        ->set('data.code', $code)
+        ->call('authenticate')
+        ->assertActionMounted('recoveryCodes');
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME))->toBeNull();
+
+    $component->callMountedAction();
+
+    expect(Cookie::queued(RememberLastLoginEmail::COOKIE_NAME)?->getValue())->toBe($user->email);
 });
 
 it('validates the email on the email step', function (string $email, string $rule): void {

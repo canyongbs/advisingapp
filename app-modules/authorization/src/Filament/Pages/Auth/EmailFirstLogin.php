@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Listeners\RememberLastLoginEmail;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
@@ -217,10 +218,6 @@ class EmailFirstLogin extends Login
 
                 return null;
             }
-
-            if ($this->usingRecoveryCode) {
-                $user->destroyRecoveryCode($data['code']);
-            }
         }
 
         Filament::auth()->login($user, $data['remember'] ?? false);
@@ -352,6 +349,12 @@ class EmailFirstLogin extends Login
 
         assert($component instanceof TextInput);
 
+        $rememberedEmail = request()->cookie(RememberLastLoginEmail::COOKIE_NAME);
+
+        if (is_string($rememberedEmail)) {
+            $component->default($rememberedEmail);
+        }
+
         return $component
             ->label('Email address')
             ->placeholder('you@yourorganization.com')
@@ -372,13 +375,7 @@ class EmailFirstLogin extends Login
     protected function isValidCode(User $user, string $code): bool
     {
         if ($this->usingRecoveryCode) {
-            $recoveryCodes = $user->multifactor_recovery_codes ?? [];
-
-            assert(is_array($recoveryCodes));
-
-            return collect($recoveryCodes)->contains(function (string $recoveryCode) use ($code): bool {
-                return hash_equals($recoveryCode, $code);
-            });
+            return $user->consumeRecoveryCode($code);
         }
 
         return app(MultifactorService::class)->verify(code: $code, user: $user);
