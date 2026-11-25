@@ -41,7 +41,9 @@ use App\Models\User;
 use Closure;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 trait HasGuardAwareRoleUsers
@@ -64,11 +66,13 @@ trait HasGuardAwareRoleUsers
             return $query;
         }
 
-        $query->where(function (Builder $query) use ($guardName, $search): void {
-            $query->where('name', 'like', "%{$search}%");
+        $normalizedSearch = Str::lower($search);
+
+        $query->where(function (Builder $query) use ($guardName, $normalizedSearch): void {
+            $query->where(new Expression('lower(name)'), 'like', "%{$normalizedSearch}%");
 
             if ($this->canSearchUsersByEmail($guardName)) {
-                $query->orWhere('email', 'like', "%{$search}%");
+                $query->orWhere(new Expression('lower(email)'), 'like', "%{$normalizedSearch}%");
             }
         });
 

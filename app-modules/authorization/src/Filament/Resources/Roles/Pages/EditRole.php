@@ -179,7 +179,15 @@ class EditRole extends EditRecord
             return;
         }
 
-        if (! in_array($role->name, Authenticatable::ADMIN_ROLES, true)) {
+        $submittedRoleName = isset($this->data['name']) ? (string) $this->data['name'] : $role->name;
+        $isCurrentAdminRole = in_array($role->name, Authenticatable::ADMIN_ROLES, true);
+        $isSubmittedAdminRole = in_array($submittedRoleName, Authenticatable::ADMIN_ROLES, true);
+        if ($submittedRoleName !== $role->name && ($isCurrentAdminRole || $isSubmittedAdminRole)) {
+            throw ValidationException::withMessages([
+                'data.name' => 'Only super admins may rename roles to or from an admin role name.',
+            ]);
+        }
+        if (! $isCurrentAdminRole) {
             return;
         }
 

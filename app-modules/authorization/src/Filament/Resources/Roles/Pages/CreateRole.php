@@ -43,6 +43,7 @@ use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
+use App\Models\Authenticatable;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -162,5 +163,17 @@ class CreateRole extends CreateRecord
             isset($this->data['name']) ? (string) $this->data['name'] : null,
             (array) ($this->data['userGroups'] ?? []),
         );
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        assert($user instanceof \App\Models\Authenticatable);
+        if (
+            ! $user->isSuperAdmin()
+            && filled($this->data['users'] ?? [])
+            && in_array($this->data['name'] ?? null, Authenticatable::ADMIN_ROLES, true)
+        ) {
+            throw ValidationException::withMessages([
+                'data.users' => 'You are not allowed to assign admin roles.',
+            ]);
+        }
     }
 }
