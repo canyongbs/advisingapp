@@ -452,6 +452,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             return $this->effectiveRoles;
         }
 
+        $this->unsetRelation('roles');
         $this->loadMissing('roles');
 
         // TODO: Cleanup Task (user-groups-feature): remove the feature-flag fallback and keep the effective role merge path.
@@ -459,6 +460,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             return $this->effectiveRoles = $this->roles;
         }
 
+        $this->unsetRelation('userGroups');
         $this->loadMissing('userGroups.roles');
 
         return $this->effectiveRoles = $this->roles
