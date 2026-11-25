@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\CreateResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -145,4 +147,14 @@ test('CreateResourceHubCategory does not allow for duplicate names of non-delete
         ->fillForm($request2->toArray())
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateResourceHubCategory breadcrumbs link back to the Categories tab', function (): void {
+    asSuperAdmin();
+
+    $page = Livewire::test(CreateResourceHubCategory::class)->instance();
+    assert($page instanceof CreateResourceHubCategory);
+
+    expect($page->getBreadcrumbs())
+        ->toHaveKey(ResourceHub::getUrl(['tab' => ResourceHubTab::Categories->value]));
 });
