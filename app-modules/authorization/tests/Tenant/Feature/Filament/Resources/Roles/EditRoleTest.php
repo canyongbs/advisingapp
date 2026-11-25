@@ -36,10 +36,17 @@
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Filament\Actions\DeleteAction;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
+use function Pest\Laravel\assertModelExists;
+use function Pest\Laravel\assertModelMissing;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -60,6 +67,86 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->fillForm(['name' => 'SECOND role'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+describe('deletion', function (): void {
+    it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertActionHidden(DeleteAction::class);
+
+        assertModelExists($role);
+    });
+
+    it('denies deleting a role assigned through a populated user group', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect(Gate::forUser(auth()->user())->inspect('delete', $role)->denied())->toBeTrue();
+    });
+
+    it('can delete a role assigned only through empty user groups', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+
+        $userGroup->assignRole($role);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->callAction(DeleteAction::class);
+
+        assertModelMissing($role);
+    });
+
+    it('can delete a role assigned only through deleted user groups', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+        $userGroup->delete();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->callAction(DeleteAction::class);
+
+        assertModelMissing($role);
+    });
+
+    it('can delete a role assigned through a populated user group when the `UserGroupsFeature` is inactive', function (): void {
+        UserGroupsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $userGroup = UserGroup::factory()->create();
+        $user = User::factory()->create();
+
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->callAction(DeleteAction::class);
+
+        assertModelMissing($role);
+    });
 });
 
 describe('enterprise ai', function (): void {

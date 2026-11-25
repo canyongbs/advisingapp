@@ -48,11 +48,7 @@ class WithoutAnyAdmin
     public function __invoke(Builder $query): void
     {
         $query->whereDoesntHaveRelation('roles', function (Builder $query): void {
-            $query->whereIn('name', [
-                Authenticatable::SUPER_ADMIN_ROLE,
-                Authenticatable::PARTNER_ADMIN_ROLE,
-                Authenticatable::AI_ADMIN_ROLE,
-            ]);
+            $query->whereIn('name', Authenticatable::ADMIN_ROLES);
         });
     }
 }
