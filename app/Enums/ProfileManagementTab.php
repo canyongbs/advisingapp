@@ -34,15 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Enums;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use App\Models\Pronouns;
+use Filament\Support\Contracts\HasLabel;
 
-class ProfileManagement extends Cluster
+enum ProfileManagementTab: string implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    case PersonalPronouns = 'personal-pronouns';
 
-    protected static ?int $navigationSort = 90;
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::PersonalPronouns => 'Personal Pronouns',
+        };
+    }
+
+    public function canView(): bool
+    {
+        return match ($this) {
+            self::PersonalPronouns => auth()->user()?->can('viewAny', Pronouns::class) ?? false,
+        };
+    }
 }

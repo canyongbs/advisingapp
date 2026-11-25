@@ -34,34 +34,21 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\Pronouns\Pages\ManagePronouns;
-use App\Models\Pronouns;
-use App\Models\User;
-use Filament\Actions\DeleteBulkAction;
-use Livewire\Livewire;
+namespace App\Filament\Pages\Schemas;
 
-use function Pest\Laravel\actingAs;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 
-it('hides the bulk delete action from a user without the delete permission', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('settings.view-any');
-    actingAs($user);
-
-    Pronouns::factory(2)->create();
-
-    Livewire::test(ManagePronouns::class)
-        ->assertSuccessful()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-});
-
-it('shows the bulk delete action to a user with the delete permission', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('settings.view-any', 'settings.*.delete');
-    actingAs($user);
-
-    Pronouns::factory(2)->create();
-
-    Livewire::test(ManagePronouns::class)
-        ->assertSuccessful()
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
+class PronounForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('label')
+                    ->placeholder('She/Her')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+}
