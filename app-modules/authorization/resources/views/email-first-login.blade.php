@@ -33,13 +33,22 @@
 --}}
 @php
     use AdvisingApp\Authorization\Filament\Pages\Auth\EmailFirstLogin;
+    use AdvisingApp\Theme\Settings\ThemeSettings;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Icons\Heroicon;
+    use Illuminate\Support\Str;
 
     $onEmailStep = $this->step === 'email';
     $onSsoStep = $this->step === 'sso';
 
     $onMultifactorStep = $this->needsMfa;
+
+    $themeSettings = app(ThemeSettings::class);
+
+    $themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : ThemeSettings::DEFAULT_CHANGELOG_URL;
+    $productResourceHubUrl = ! empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : ThemeSettings::DEFAULT_PRODUCT_RESOURCE_HUB_URL;
+
+    $currentVersion = app('current-version');
 @endphp
 
 <div
@@ -122,6 +131,49 @@
             @endunless
         </form>
 
+        @if ($onEmailStep)
+            <div class="mt-8 hidden sm:block">
+                <div class="flex items-center gap-4">
+                    <div class="h-px flex-1 bg-gray-200 dark:bg-white/10"></div>
+                    <span class="shrink-0 text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Here's what happens next
+                    </span>
+                    <div class="h-px flex-1 bg-gray-200 dark:bg-white/10"></div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-3 divide-x divide-gray-200 text-center dark:divide-white/10">
+                    <div class="flex flex-col items-center gap-2 px-4">
+                        <span
+                            class="flex size-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                        >
+                            <x-filament::icon :icon="Heroicon::OutlinedEnvelope" :size="IconSize::Large" />
+                        </span>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Enter your email address</p>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-2 px-4">
+                        <span
+                            class="flex size-10 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400"
+                        >
+                            <x-filament::icon :icon="Heroicon::OutlinedUser" :size="IconSize::Large" />
+                        </span>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">We identify your account</p>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-2 px-4">
+                        <span
+                            class="flex size-10 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400"
+                        >
+                            <x-filament::icon :icon="Heroicon::OutlinedArrowRight" :size="IconSize::Large" />
+                        </span>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">We guide you through the next step</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 h-px bg-gray-200 dark:bg-white/10"></div>
+            </div>
+        @endif
+
         <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <x-filament::icon
                 :icon="Heroicon::ShieldCheck"
@@ -129,6 +181,56 @@
                 class="shrink-0 text-gray-400 dark:text-gray-500"
             />
             <span>Your information is secure. We use industry-standard security practices to protect your data.</span>
+        </div>
+    </section>
+
+    <section
+        class="flex flex-col gap-3 rounded-xl bg-white px-6 py-3 shadow-sm ring-1 ring-gray-950/5 sm:px-8 md:flex-row md:items-center md:justify-between dark:bg-gray-900 dark:ring-white/10"
+    >
+        @if (filled($currentVersion))
+            <div class="flex items-center gap-3">
+                <span
+                    class="flex size-8 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400"
+                >
+                    <x-filament::icon :icon="Heroicon::Check" />
+                </span>
+
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <p class="text-sm font-medium text-gray-950 dark:text-white">
+                        Recently updated to {{ Str::start($currentVersion, 'v') }}
+                    </p>
+
+                    <x-filament::link
+                        :href="$themeChangelogUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        :icon="Heroicon::ArrowRight"
+                        icon-position="after"
+                        size="sm"
+                    >
+                        What's new
+                    </x-filament::link>
+                </div>
+            </div>
+        @endif
+
+        <div
+            class="flex shrink-0 items-center gap-6 border-t border-gray-200 pt-3 md:border-t-0 md:pt-0 dark:border-white/10"
+        >
+            <div class="hidden h-6 w-px bg-gray-200 md:block dark:bg-white/10"></div>
+
+            <x-filament::link
+                :href="$productResourceHubUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="gray"
+                :icon="Heroicon::ArrowTopRightOnSquare"
+                icon-position="after"
+                size="sm"
+                class="whitespace-nowrap"
+            >
+                Knowledge Base &amp; Support
+            </x-filament::link>
         </div>
     </section>
 

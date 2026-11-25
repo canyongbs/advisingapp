@@ -36,7 +36,7 @@
 
 namespace App\Providers\Filament;
 
-use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
+use AdvisingApp\Authorization\Filament\Pages\Auth\EmailFirstLogin;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ProfileSettings;
@@ -102,7 +102,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('/')
-            ->login(Login::class)
+            ->login(EmailFirstLogin::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(function () {
                 if (! Tenant::checkCurrent()) {
