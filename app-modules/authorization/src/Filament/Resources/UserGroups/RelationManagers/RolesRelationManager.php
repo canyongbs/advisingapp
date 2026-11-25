@@ -64,7 +64,9 @@ class RolesRelationManager extends RelationManager
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
-        return UserGroupsFeature::active() && parent::canViewForRecord($ownerRecord, $pageClass);
+        return UserGroupsFeature::active()
+            && parent::canViewForRecord($ownerRecord, $pageClass)
+            && (auth()->user()?->can('view', $ownerRecord) ?? false);
     }
 
     public function table(Table $table): Table
@@ -78,6 +80,7 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->authorize(fn (): bool => $this->canUpdateOwnerGroup())
                     ->label('Associate roles')
                     ->schema([
                         Select::make('recordId')
@@ -112,13 +115,20 @@ class RolesRelationManager extends RelationManager
                     ->preloadRecordSelect(),
             ])
             ->recordActions([
-                DetachAction::make(),
+                DetachAction::make()
+                    ->authorize(fn (): bool => $this->canUpdateOwnerGroup()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->authorize(fn (): bool => $this->canUpdateOwnerGroup()),
                 ]),
             ]);
+    }
+
+    protected function canUpdateOwnerGroup(): bool
+    {
+        return auth()->user()?->can('update', $this->getOwnerRecord()) ?? false;
     }
 
     /**

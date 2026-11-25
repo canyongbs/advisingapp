@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Models\Role;
 use App\Models\Authenticatable;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class RoleIsAssignableToUserGroup implements ValidationRule
@@ -49,7 +50,9 @@ class RoleIsAssignableToUserGroup implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $role = is_string($value) ? Role::query()->find($value) : null;
+        $role = is_string($value) && Str::isUuid($value)
+            ? Role::query()->find($value)
+            : null;
 
         if (! $role) {
             $fail('The selected role does not exist.');

@@ -48,6 +48,55 @@ trait HasRolesWithPivot
 {
     use HasRoles {
         HasRoles::assignRole as protected originalAssignRole;
+        HasRoles::removeRole as protected originalRemoveRole;
+        HasRoles::syncRoles as protected originalSyncRoles;
+    }
+
+    /**
+     * @param  mixed  ...$roles
+     *
+     * @return $this
+     */
+    public function assignRole(...$roles)
+    {
+        $result = $this->originalAssignRole(...$roles);
+
+        $this->forgetAuthorizableRelations();
+
+        return $result;
+    }
+
+    /**
+     * @param  mixed  ...$role
+     *
+     * @return $this
+     */
+    public function removeRole(...$role)
+    {
+        $result = $this->originalRemoveRole(...$role);
+
+        $this->forgetAuthorizableRelations();
+
+        return $result;
+    }
+
+    /**
+     * @param  mixed  ...$roles
+     *
+     * @return $this
+     */
+    public function syncRoles(...$roles)
+    {
+        $result = $this->originalSyncRoles(...$roles);
+
+        $this->forgetAuthorizableRelations();
+
+        return $result;
+    }
+
+    public function forgetAuthorizableRelations(): void
+    {
+        $this->unsetRelation('roles');
     }
 
     /**
