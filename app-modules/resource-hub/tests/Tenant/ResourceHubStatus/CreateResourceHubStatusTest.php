@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\CreateResourceHubStatus;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
@@ -145,4 +147,14 @@ test('CreateResourceHubStatus does not allow for duplicate names of non-deleted 
         ->fillForm($request2->toArray())
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateResourceHubStatus breadcrumbs link back to the Statuses tab', function (): void {
+    asSuperAdmin();
+
+    $page = Livewire::test(CreateResourceHubStatus::class)->instance();
+    assert($page instanceof CreateResourceHubStatus);
+
+    expect($page->getBreadcrumbs())
+        ->toHaveKey(ResourceHub::getUrl(['tab' => ResourceHubTab::Statuses->value]));
 });

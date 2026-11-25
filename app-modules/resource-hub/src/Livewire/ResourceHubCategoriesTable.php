@@ -34,57 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
+namespace AdvisingApp\ResourceHub\Livewire;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Tables\ResourceHubCategoriesTable as ResourceHubCategoriesTableConfiguration;
 use Filament\Tables\Table;
 
-class ListResourceHubCategories extends ListRecords
+class ResourceHubCategoriesTable extends BaseResourceHubTable
 {
-    protected static string $resource = ResourceHubCategoryResource::class;
-
     public function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-                IconColumn::make('icon')
-                    ->icon(fn (string $state): string => $state)
-                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
-            ]);
+        return ResourceHubCategoriesTableConfiguration::configure($table);
     }
 
-    protected function getHeaderActions(): array
+    protected function getResourceClass(): string
     {
-        return [
-            CreateAction::make(),
-        ];
+        return ResourceHubCategoryResource::class;
     }
 }

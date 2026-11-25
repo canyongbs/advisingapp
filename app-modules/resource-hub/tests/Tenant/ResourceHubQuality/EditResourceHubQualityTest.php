@@ -35,12 +35,15 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages\EditResourceHubQuality;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubQuality\RequestFactories\EditResourceHubQualityRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -162,4 +165,28 @@ test('EditResourceHubQuality does not allow for duplicate names of non-deleted q
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('EditResourceHubQuality sends the user back to the Qualities tab after deleting the record', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubQuality::factory()->create();
+
+    Livewire::test(EditResourceHubQuality::class, ['record' => $record->getRouteKey()])
+        ->callAction(DeleteAction::class)
+        ->assertRedirect(ResourceHub::getUrl(['tab' => ResourceHubTab::Qualities->value]));
+
+    expect(ResourceHubQuality::find($record->getKey()))->toBeNull();
+});
+
+test('EditResourceHubQuality breadcrumbs link back to the Qualities tab', function (): void {
+    asSuperAdmin();
+
+    $record = ResourceHubQuality::factory()->create();
+
+    $page = Livewire::test(EditResourceHubQuality::class, ['record' => $record->getRouteKey()])->instance();
+    assert($page instanceof EditResourceHubQuality);
+
+    expect($page->getBreadcrumbs())
+        ->toHaveKey(ResourceHub::getUrl(['tab' => ResourceHubTab::Qualities->value]));
 });

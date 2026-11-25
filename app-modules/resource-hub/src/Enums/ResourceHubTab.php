@@ -34,23 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\Pronouns\Pages;
+namespace AdvisingApp\ResourceHub\Enums;
 
-use App\Filament\Resources\Pronouns\PronounsResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use Filament\Support\Contracts\HasLabel;
 
-class ManagePronouns extends ManageRecords
+enum ResourceHubTab: string implements HasLabel
 {
-    protected static string $resource = PronounsResource::class;
+    case Categories = 'categories';
 
-    protected static ?string $title = 'User Profile Pronoun';
+    case Qualities = 'qualities';
 
-    protected function getHeaderActions(): array
+    case Statuses = 'statuses';
+
+    public function canView(): bool
     {
-        return [
-            CreateAction::make()
-                ->modalWidth('md'),
-        ];
+        return match ($this) {
+            self::Categories => ResourceHubCategoryResource::canViewAny(),
+            self::Qualities => ResourceHubQualityResource::canViewAny(),
+            self::Statuses => ResourceHubStatusResource::canViewAny(),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Categories => 'Categories',
+            self::Qualities => 'Qualities',
+            self::Statuses => 'Statuses',
+        };
     }
 }

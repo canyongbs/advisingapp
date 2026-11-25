@@ -34,68 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\Pronouns;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Tables;
 
-use App\Filament\Clusters\ProfileManagement;
-use App\Filament\Resources\Pronouns\Pages\ManagePronouns;
-use App\Models\Pronouns;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Tables\ResourceHubRecordsTable;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class PronounsResource extends Resource
+class ResourceHubStatusesTable
 {
-    protected static ?string $model = Pronouns::class;
-
-    protected static ?string $label = 'Profile Pronoun';
-
-    protected static ?string $navigationLabel = 'Personal Pronouns';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $cluster = ProfileManagement::class;
-
-    public static function form(Schema $schema): Schema
+    public static function configure(Table $table): Table
     {
-        return $schema
-            ->components([
-                TextInput::make('label')
-                    ->placeholder('She/Her')
-                    ->required()
-                    ->maxLength(255),
-            ])
-            ->columns(1);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
+        return ResourceHubRecordsTable::configure($table, ResourceHubStatusResource::class)
             ->columns([
-                TextColumn::make('label'),
-            ])
-            ->recordActions([
-                EditAction::make()
-                    ->modalWidth('md'),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('resource_hub_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('resourceHubArticles')
+                    ->sortable(),
             ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ManagePronouns::route('/'),
-        ];
     }
 }

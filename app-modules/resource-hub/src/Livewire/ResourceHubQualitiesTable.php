@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\ResourceHub\Livewire;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Tables\ResourceHubQualitiesTable as ResourceHubQualitiesTableConfiguration;
+use Filament\Tables\Table;
 
-class ResourceHub extends Cluster
+class ResourceHubQualitiesTable extends BaseResourceHubTable
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    public function table(Table $table): Table
+    {
+        return ResourceHubQualitiesTableConfiguration::configure($table);
+    }
 
-    protected static ?int $navigationSort = 110;
+    protected function getResourceClass(): string
+    {
+        return ResourceHubQualityResource::class;
+    }
 }
