@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\CreateProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -44,6 +45,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\CreateProspectRequestFactory;
 use App\DataTransferObjects\AutocompletedAddress;
+use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Arr;
@@ -52,6 +54,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateProspect page tests
 //test('A successful action on the CreateProspect page', function () {});
@@ -204,4 +207,45 @@ it('can create a prospect with an address', function (): void {
     expect($address->country)->toBe('US');
 
     $undoRepeaterFake();
+});
+
+it('can create a prospect with an organization', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    $organization = Organization::factory()->create();
+
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(CreateProspect::class)
+        ->fillForm([
+            ...CreateProspectRequestFactory::new()->create(),
+            'organization_id' => $organization->getKey(),
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+
+    expect(Prospect::query()->sole()->organization_id)->toBe($organization->getKey());
+});
+
+it('hides the organization field when the organization feature is inactive', function (): void {
+    asSuperAdmin();
+
+    Livewire::test(CreateProspect::class)
+        ->assertFormFieldHidden('organization_id');
+});
+
+it('hides the organization field without the `organization.view-any` permission', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user->givePermissionTo(['prospect.view-any', 'prospect.create']);
+
+    actingAs($user);
+
+    Livewire::test(CreateProspect::class)
+        ->assertFormFieldHidden('organization_id');
 });

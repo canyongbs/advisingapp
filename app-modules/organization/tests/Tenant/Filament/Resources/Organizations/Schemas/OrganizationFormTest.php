@@ -37,10 +37,12 @@
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ListOrganizations;
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ViewOrganization;
 use AdvisingApp\Organization\Models\Organization;
+use AdvisingApp\Organization\Rules\UniqueOrganizationDomain;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Features\OrganizationFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Exceptions;
 use Livewire\Livewire;
@@ -76,6 +78,34 @@ it('can create an organization', function (): void {
     ]);
 });
 
+it('can create an organization with domains', function (): void {
+    $repeaterFake = Repeater::fake();
+
+    $data = Organization::factory()->raw();
+
+    Livewire::test(ListOrganizations::class)
+        ->callAction(CreateAction::class, $data)
+        ->assertHasNoFormErrors();
+
+    expect(Organization::query()->where('name', $data['name'])->sole()->domains)->toBe($data['domains']);
+
+    $repeaterFake();
+});
+
+it('saves domains in lowercase', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $data = [...Organization::factory()->raw(), 'domains' => [['domain' => 'ACME.com']]];
+
+    Livewire::test(ListOrganizations::class)
+        ->callAction(CreateAction::class, $data)
+        ->assertHasNoFormErrors();
+
+    expect(Organization::query()->where('name', $data['name'])->sole()->domains)->toBe([['domain' => 'acme.com']]);
+
+    $undoRepeaterFake();
+});
+
 it('can update an organization', function (): void {
     $organization = Organization::factory()->create(['name' => 'Acme Industries']);
 
@@ -94,6 +124,22 @@ it('allows an organization to keep its own name when updated', function (): void
         ->assertHasNoFormErrors();
 
     expect($organization->refresh()->email)->toBe('hello@acme.test');
+});
+
+it('allows an organization to keep its own domains when updated', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.com']]]);
+
+    Livewire::test(ViewOrganization::class, ['record' => $organization->getRouteKey()])
+        ->callAction(EditAction::class, ['email' => 'hello@acme.test'])
+        ->assertHasNoFormErrors();
+
+    expect($organization->refresh())
+        ->email->toBe('hello@acme.test')
+        ->domains->toBe([['domain' => 'acme.com']]);
+
+    $undoRepeaterFake();
 });
 
 it('fills the address fields when an address suggestion is selected', function (): void {
@@ -170,4 +216,27 @@ it('validates the inputs', function (array $data, array $errors): void {
     },
     'email email' => [['email' => 'not-an-email'], ['email' => 'email']],
     'website url' => [['website' => 'not a url'], ['website' => 'url']],
+]);
+
+it('validates the domains', function (array $domains, array $errors): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(ListOrganizations::class)
+        ->callAction(CreateAction::class, [...Organization::factory()->raw(), 'domains' => $domains])
+        ->assertHasFormErrors($errors);
+
+    $undoRepeaterFake();
+})->with([
+    'domain required' => [[['domain' => null]], ['domains.0.domain' => 'required']],
+    'domain max' => [[['domain' => str_repeat('a', 252) . '.com']], ['domains.0.domain' => 'max']],
+    'domain format' => [[['domain' => 'not a domain']], ['domains.0.domain' => 'regex']],
+    'domain distinct' => [
+        [['domain' => 'acme.com'], ['domain' => 'ACME.com']],
+        ['domains.1.domain' => 'This domain is already in use and may not be used a second time.'],
+    ],
+    'domain unique' => function (): array {
+        Organization::factory()->create(['domains' => [['domain' => 'acme.com']]]);
+
+        return [[['domain' => 'acme.com']], ['domains.0.domain' => UniqueOrganizationDomain::class]];
+    },
 ]);
