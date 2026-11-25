@@ -36,15 +36,20 @@
 
 namespace AdvisingApp\Organization\Filament\Resources\Organizations\Schemas;
 
+use AdvisingApp\Organization\Models\Organization;
+use AdvisingApp\Organization\Rules\UniqueOrganizationDomain;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use Throwable;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -126,6 +131,32 @@ class OrganizationForm
                             ->maxLength(255),
                     ])
                     ->columns(2)
+                    ->columnSpanFull(),
+                Section::make('Domains')
+                    ->schema([
+                        Repeater::make('domains')
+                            ->hiddenLabel()
+                            ->table([
+                                TableColumn::make('Domain'),
+                            ])
+                            ->schema([
+                                TextInput::make('domain')
+                                    ->label('Domain')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->regex(Organization::DOMAIN_PATTERN)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(fn (?string $state, Set $set) => $set('domain', filled($state) ? Str::lower($state) : $state))
+                                    ->distinct()
+                                    ->validationMessages([
+                                        'distinct' => 'This :attribute is already in use and may not be used a second time.',
+                                    ])
+                                    ->rule(fn (?Organization $record): UniqueOrganizationDomain => new UniqueOrganizationDomain($record?->getKey())),
+                            ])
+                            ->defaultItems(0)
+                            ->reorderable(false)
+                            ->addActionLabel('Add domain'),
+                    ])
                     ->columnSpanFull(),
             ]);
     }

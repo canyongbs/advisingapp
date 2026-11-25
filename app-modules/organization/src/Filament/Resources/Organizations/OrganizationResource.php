@@ -61,7 +61,7 @@ class OrganizationResource extends Resource
 
     public static function canAccess(): bool
     {
-        return OrganizationFeature::active() && parent::canAccess();
+        return parent::canAccess();
     }
 
     public static function form(Schema $schema): Schema
