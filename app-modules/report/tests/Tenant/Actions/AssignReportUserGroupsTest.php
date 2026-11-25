@@ -50,7 +50,7 @@ it('assigns groups to a report without removing existing assignments', function 
 
     app(AssignReportUserGroups::class)(
         ReportAccessKey::UserLoginActivity->value,
-        [$existingGroup->getKey(), $newGroup->getKey()],
+        [$newGroup->getKey()],
         removeUnlisted: false,
     );
 

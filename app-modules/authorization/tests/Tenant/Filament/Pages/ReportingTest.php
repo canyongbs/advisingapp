@@ -411,7 +411,9 @@ it('counts a user with both direct and group access only once', function (): voi
         'user_group_id' => $group->getKey(),
     ]);
 
-    expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(1);
+    $groupOnlyUser = User::factory()->create();
+    $group->users()->attach($groupOnlyUser);
+    expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(2);
 });
 
 // Bulk Manage Assignments tests
