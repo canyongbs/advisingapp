@@ -36,7 +36,9 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\Authenticatable;
@@ -422,6 +424,52 @@ it('filters users based on roles', function (): void {
         ->assertCanNotSeeTableRecords(
             $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
+});
+
+it('filters users based on roles inherited through their groups', function (): void {
+    asSuperAdmin();
+
+    $role = Role::factory()->create();
+    $otherRole = Role::factory()->create();
+
+    $directUser = User::factory()->create();
+    $directUser->assignRole($role);
+
+    $groupUser = User::factory()->create();
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->assignRole($role);
+    $userGroup->users()->attach($groupUser);
+
+    $groupAdminRoleUser = User::factory()->create();
+
+    $adminUserGroup = UserGroup::factory()->create();
+    $adminUserGroup->roles()->attach(Role::query()->superAdmin()->firstOrFail());
+    $adminUserGroup->users()->attach($groupAdminRoleUser);
+
+    $otherRoleUser = User::factory()->create();
+    $otherRoleUser->assignRole($otherRole);
+
+    $component = Livewire::test(ListUsers::class)
+        ->set('tableRecordsPerPage', 10)
+        ->filterTable('roles', [$role->getKey()])
+        ->assertCanSeeTableRecords([$directUser, $groupUser])
+        ->assertCanNotSeeTableRecords([$groupAdminRoleUser, $otherRoleUser])
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords([$groupAdminRoleUser])
+        ->assertCanNotSeeTableRecords([$directUser, $groupUser, $otherRoleUser])
+        ->filterTable('roles', ['none', $otherRole->getKey()])
+        ->assertCanSeeTableRecords([$groupAdminRoleUser, $otherRoleUser])
+        ->assertCanNotSeeTableRecords([$directUser, $groupUser]);
+
+    UserGroupsFeature::deactivate();
+
+    $component
+        ->filterTable('roles', [$role->getKey()])
+        ->assertCanSeeTableRecords([$directUser])
+        ->assertCanNotSeeTableRecords([$groupUser])
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords([$groupUser, $groupAdminRoleUser]);
 });
 
 it('Filter users based on licenses', function (): void {
