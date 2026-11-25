@@ -38,19 +38,14 @@ namespace App\Filament\Pages;
 
 use App\Enums\NavigationGroup;
 use App\Enums\ProfileManagementTab;
+use App\Filament\Pages\Schemas\PronounForm;
 use App\Models\Pronouns;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -62,10 +57,8 @@ use Filament\Tables\Table;
 use Livewire\Attributes\Url;
 use UnitEnum;
 
-class ManageProfileManagement extends Page implements HasActions, HasForms, HasTable
+class ManageProfileManagement extends Page implements HasTable
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
     use InteractsWithTable;
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
@@ -101,12 +94,9 @@ class ManageProfileManagement extends Page implements HasActions, HasForms, HasT
         return $schema
             ->components([
                 Tabs::make()
-                    ->key('tabs')
                     ->livewireProperty('activeTab')
                     ->tabs([
-                        ProfileManagementTab::PersonalPronouns->value => Tab::make(ProfileManagementTab::PersonalPronouns->getLabel())
-                            ->key(ProfileManagementTab::PersonalPronouns->value)
-                            ->visible(fn (): bool => ProfileManagementTab::PersonalPronouns->canView())
+                        ProfileManagementTab::PersonalPronouns->value => $this->makeTab(ProfileManagementTab::PersonalPronouns)
                             ->schema([
                                 EmbeddedTable::make(),
                             ]),
@@ -118,6 +108,8 @@ class ManageProfileManagement extends Page implements HasActions, HasForms, HasT
     {
         return $table
             ->query(Pronouns::query())
+            ->modelLabel('profile pronoun')
+            ->pluralModelLabel('profile pronouns')
             ->columns([
                 TextColumn::make('label'),
             ])
@@ -125,13 +117,13 @@ class ManageProfileManagement extends Page implements HasActions, HasForms, HasT
                 CreateAction::make()
                     ->authorize('create', Pronouns::class)
                     ->modalWidth('md')
-                    ->schema($this->getPronounsFormComponents()),
+                    ->schema(fn (Schema $schema): Schema => PronounForm::configure($schema)),
             ])
             ->recordActions([
                 EditAction::make()
                     ->authorize('update')
                     ->modalWidth('md')
-                    ->schema($this->getPronounsFormComponents()),
+                    ->schema(fn (Schema $schema): Schema => PronounForm::configure($schema)),
                 DeleteAction::make()
                     ->authorize('delete'),
             ])
@@ -144,16 +136,9 @@ class ManageProfileManagement extends Page implements HasActions, HasForms, HasT
             ]);
     }
 
-    /**
-     * @return array<Component>
-     */
-    protected function getPronounsFormComponents(): array
+    protected function makeTab(ProfileManagementTab $tab): Tab
     {
-        return [
-            TextInput::make('label')
-                ->placeholder('She/Her')
-                ->required()
-                ->maxLength(255),
-        ];
+        return Tab::make($tab->getLabel())
+            ->visible(fn (): bool => $tab->canView());
     }
 }

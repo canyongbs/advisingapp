@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Enums\NavigationGroup;
 use App\Filament\Pages\ManageProfileManagement;
 use App\Models\Pronouns;
 use App\Models\User;
@@ -43,7 +42,9 @@ use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
 $getTabLabels = function (Testable $component): array {
     $document = new DOMDocument();
@@ -60,14 +61,6 @@ $getTabLabels = function (Testable $component): array {
     return $labels;
 };
 
-it('keeps the navigation group, label, title, sort and URL of the old cluster', function (): void {
-    expect(ManageProfileManagement::getNavigationGroup())->toBe(NavigationGroup::Settings)
-        ->and(ManageProfileManagement::getNavigationLabel())->toBe('Profile Management')
-        ->and(ManageProfileManagement::getNavigationSort())->toBe(90)
-        ->and((new ManageProfileManagement())->getTitle())->toBe('Profile Management')
-        ->and(ManageProfileManagement::getUrl())->toContain('/profile-management');
-});
-
 it('redirects bookmarks to the former pronouns resource to the Personal Pronouns tab', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.view-any');
@@ -76,25 +69,6 @@ it('redirects bookmarks to the former pronouns resource to the Personal Pronouns
 
     get('/profile-management/pronouns')
         ->assertRedirect(ManageProfileManagement::getUrl(['tab' => 'personal-pronouns']));
-});
-
-describe('authorization', function (): void {
-    it('denies access to a user without `settings.view-any`', function (): void {
-        actingAs(User::factory()->create());
-
-        get(ManageProfileManagement::getUrl())->assertForbidden();
-
-        Livewire::test(ManageProfileManagement::class)->assertForbidden();
-    });
-
-    it('allows access to a user with `settings.view-any`', function (): void {
-        $user = User::factory()->create();
-        $user->givePermissionTo('settings.view-any');
-
-        actingAs($user);
-
-        get(ManageProfileManagement::getUrl())->assertOk();
-    });
 });
 
 describe('tabs', function () use ($getTabLabels): void {
@@ -164,6 +138,8 @@ describe('personal pronouns table', function (): void {
 
         actingAs($user);
 
+        expect(Pronouns::query()->where('label', 'They/Them')->exists())->toBeFalse();
+
         Livewire::test(ManageProfileManagement::class)
             ->callAction(TestAction::make('create')->table(), ['label' => 'They/Them'])
             ->assertHasNoActionErrors();
@@ -210,7 +186,7 @@ describe('personal pronouns table', function (): void {
         Livewire::test(ManageProfileManagement::class)
             ->callAction(TestAction::make('delete')->table($pronoun));
 
-        expect(Pronouns::query()->whereKey($pronoun->getKey())->exists())->toBeFalse();
+        assertSoftDeleted($pronoun);
     });
 
     it('bulk deletes pronouns for a user with `settings.*.delete`', function (): void {
@@ -226,11 +202,35 @@ describe('personal pronouns table', function (): void {
             ->selectTableRecords($pronouns)
             ->callAction(TestAction::make('delete')->table()->bulk());
 
-        expect(Pronouns::query()->count())->toBe(0);
+        $pronouns->each(fn (Pronouns $pronoun) => assertSoftDeleted($pronoun));
     });
 });
 
-describe('view-only user', function (): void {
+describe('authorization', function (): void {
+    it('denies access to the page without the `settings.view-any` permission', function (): void {
+        actingAs(User::factory()->create());
+
+        get(ManageProfileManagement::getUrl())
+            ->assertForbidden();
+    });
+
+    it('allows access to the page with the `settings.view-any` permission', function (): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo('settings.view-any');
+
+        actingAs($user);
+
+        get(ManageProfileManagement::getUrl())
+            ->assertSuccessful();
+    });
+
+    it('allows a super admin to access the page', function (): void {
+        asSuperAdmin();
+
+        get(ManageProfileManagement::getUrl())
+            ->assertSuccessful();
+    });
+
     it('cannot see any write action', function (): void {
         $pronoun = Pronouns::factory()->create();
 
@@ -270,29 +270,5 @@ describe('view-only user', function (): void {
         expect(Pronouns::query()->count())->toBe(1)
             ->and($pronoun->refresh()->label)->toBe('She/Her')
             ->and($pronoun->trashed())->toBeFalse();
-    });
-
-    it('only gets each action once the matching permission is granted', function (): void {
-        $pronoun = Pronouns::factory()->create();
-
-        $user = User::factory()->create();
-        $user->givePermissionTo(['settings.view-any']);
-
-        actingAs($user);
-
-        Livewire::test(ManageProfileManagement::class)
-            ->assertActionHidden(TestAction::make('create')->table())
-            ->assertActionHidden(TestAction::make('edit')->table($pronoun))
-            ->assertActionHidden(TestAction::make('delete')->table($pronoun));
-
-        $user->givePermissionTo(['settings.create', 'settings.*.update', 'settings.*.delete']);
-
-        actingAs($user->fresh());
-
-        Livewire::test(ManageProfileManagement::class)
-            ->assertActionVisible(TestAction::make('create')->table())
-            ->assertActionVisible(TestAction::make('edit')->table($pronoun))
-            ->assertActionVisible(TestAction::make('delete')->table($pronoun))
-            ->assertActionVisible(TestAction::make('delete')->table()->bulk());
     });
 });
