@@ -83,6 +83,7 @@ class UserGroupResource extends Resource
 
     public static function getPages(): array
     {
+      
         return [
             'index' => ListUserGroups::route('/'),
             'create' => CreateUserGroup::route('/create'),
