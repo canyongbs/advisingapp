@@ -106,6 +106,33 @@ test('EditProspect is gated with proper access control', function (): void {
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
 });
 
+test('updates the full name when the first or last name is changed', function (): void {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create([
+        'first_name' => 'John',
+        'last_name' => 'Smith',
+        'full_name' => 'John Smith',
+    ]);
+
+    Livewire::test(EditProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+        ->fillForm([
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($prospect->fresh()->full_name)->toBe('Jane Doe');
+});
+
 test('convert action visible when prospect is not converted to student', function (): void {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
