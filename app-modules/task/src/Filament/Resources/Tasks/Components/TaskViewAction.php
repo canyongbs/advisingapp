@@ -36,10 +36,7 @@
 
 namespace AdvisingApp\Task\Filament\Resources\Tasks\Components;
 
-use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Concerns\TaskViewActionInfoList;
-use AdvisingApp\Task\Models\Task;
-use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 
 class TaskViewAction extends ViewAction
@@ -50,22 +47,7 @@ class TaskViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->extraModalFooterActions([
-            Action::make('mark_as_in_progress')
-                ->label('Mark as In Progress')
-                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::InProgress))
-                ->cancelParentActions()
-                ->hidden(fn (Task $record): bool => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::InProgress->value) || auth()->user()?->cannot('task.*.update')),
-            Action::make('mark_as_completed')
-                ->label('Mark as Completed')
-                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Completed))
-                ->cancelParentActions()
-                ->hidden(fn (Task $record): bool => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Completed->value) || auth()->user()?->cannot('task.*.update')),
-            Action::make('mark_as_canceled')
-                ->label('Mark as Canceled')
-                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Canceled))
-                ->cancelParentActions()
-                ->hidden(fn (Task $record): bool => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Canceled->value) || auth()->user()?->cannot('task.*.update')),
-        ])->infolist($this->taskInfoList());
+        $this->slideOver()
+            ->infolist($this->taskInfoList());
     }
 }
