@@ -57,7 +57,9 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class UserGroup extends Model
 {
     use CanBeArchived;
-    use HasRolesWithPivot;
+    use HasRolesWithPivot {
+        forgetAuthorizableRelations as protected forgetAuthorizableRelationsForRoles;
+    }
 
     /** @use HasFactory<UserGroupFactory> */
     use HasFactory;
@@ -98,5 +100,17 @@ class UserGroup extends Model
             ->using(UserGroupUser::class)
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    public function forgetAuthorizableRelations(): void
+    {
+        $this->forgetAuthorizableRelationsForRoles();
+
+        User::query()
+            ->whereIn('id', $this->users()->pluck('users.id'))
+            ->get()
+            ->each(function (User $user): void {
+                $user->forgetAuthorizableRelations();
+            });
     }
 }

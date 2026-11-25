@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Authorization\Models;
 
+use AdvisingApp\Authorization\Observers\UserGroupUserObserver;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -44,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 /**
  * @mixin IdeHelperUserGroupUser
  */
+#[ObservedBy([UserGroupUserObserver::class])]
 class UserGroupUser extends Pivot
 {
     use HasUuids;
