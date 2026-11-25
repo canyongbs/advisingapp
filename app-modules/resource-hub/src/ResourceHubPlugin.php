@@ -42,9 +42,6 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHub
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
-use AdvisingApp\ResourceHub\Livewire\ResourceHubCategoriesTable;
-use AdvisingApp\ResourceHub\Livewire\ResourceHubQualitiesTable;
-use AdvisingApp\ResourceHub\Livewire\ResourceHubStatusesTable;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Illuminate\Http\RedirectResponse;
@@ -68,11 +65,12 @@ class ResourceHubPlugin implements Plugin
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\ResourceHub\\Filament\\Pages'
             )
+            ->discoverLivewireComponents(
+                in: __DIR__ . '/Livewire',
+                for: 'AdvisingApp\\ResourceHub\\Livewire'
+            )
             ->livewireComponents([
                 ResourceHubArticleConcernsTable::class,
-                ResourceHubCategoriesTable::class,
-                ResourceHubQualitiesTable::class,
-                ResourceHubStatusesTable::class,
             ])
             ->authenticatedTenantRoutes(function (): void {
                 // These resources used to live in the `ResourceHub` cluster at `resource-hub/<resource>/...`.
