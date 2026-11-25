@@ -42,6 +42,7 @@ use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -57,6 +58,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+use function Tests\setOrganizationSupportEnabled;
 
 // TODO: Write ListProspects page test
 //test('The correct details are displayed on the ListProspects page', function () {});
@@ -64,10 +66,7 @@ use function Tests\asSuperAdmin;
 // TODO: Sorting and Searching tests
 
 it('can update a prospect from the list edit slide-over', function (): void {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
-    $user->givePermissionTo(['prospect.view-any', 'prospect.*.update']);
-
-    actingAs($user);
+    asSuperAdmin();
 
     $prospect = Prospect::factory()->create(['preferred' => 'Original']);
     $request = EditProspectRequestFactory::new()->state(['preferred' => 'Updated'])->create();
@@ -420,4 +419,82 @@ test('the delete bulk action is gated by the delete permission', function (): vo
     Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('can filter prospects by organization', function (): void {
+    asSuperAdmin();
+
+    $organization = Organization::factory()->create();
+    $prospectsInOrganization = Prospect::factory()->count(2)->for($organization)->create();
+    $prospectInOtherOrganization = Prospect::factory()->for(Organization::factory())->create();
+    $prospectWithoutOrganization = Prospect::factory()->create();
+
+    Livewire::test(ListProspects::class)
+        ->filterTable('organization_id', [$organization->getKey()])
+        ->assertCanSeeTableRecords($prospectsInOrganization)
+        ->assertCanNotSeeTableRecords([$prospectInOtherOrganization, $prospectWithoutOrganization]);
+});
+
+it('shows the organization under the name of a prospect', function (): void {
+    asSuperAdmin();
+
+    $prospectWithOrganization = Prospect::factory()->for(Organization::factory()->state(['name' => 'Acme Industries']))->create();
+    $prospectWithoutOrganization = Prospect::factory()->create();
+
+    Livewire::test(ListProspects::class)
+        ->assertTableColumnHasDescription(Prospect::displayNameKey(), 'Acme Industries', $prospectWithOrganization)
+        ->assertTableColumnHasDescription(Prospect::displayNameKey(), null, $prospectWithoutOrganization);
+});
+
+it('can search prospects by organization name', function (): void {
+    asSuperAdmin();
+
+    $matchingProspect = Prospect::factory()
+        ->for(Organization::factory()->state(['name' => 'Acme Industries']))
+        ->create(['first_name' => 'Jane', 'last_name' => 'Doe', 'full_name' => 'Jane Doe']);
+    $matchingProspect->primaryEmailAddress->update(['address' => 'jane@example.test']);
+    $matchingProspect->primaryPhoneNumber->updateQuietly(['number' => '+15555550100']);
+
+    $otherProspect = Prospect::factory()
+        ->for(Organization::factory()->state(['name' => 'Globex Corporation']))
+        ->create(['first_name' => 'John', 'last_name' => 'Smith', 'full_name' => 'John Smith']);
+    $otherProspect->primaryEmailAddress->update(['address' => 'john@example.test']);
+    $otherProspect->primaryPhoneNumber->updateQuietly(['number' => '+15555550101']);
+
+    Livewire::test(ListProspects::class)
+        ->searchTable('Acme')
+        ->assertCanSeeTableRecords([$matchingProspect])
+        ->assertCanNotSeeTableRecords([$otherProspect]);
+});
+
+describe('when organization support is disabled', function (): void {
+    beforeEach(function (): void {
+        setOrganizationSupportEnabled(false);
+
+        asSuperAdmin();
+    });
+
+    it('hides the organization filter', function (): void {
+        Livewire::test(ListProspects::class)
+            ->assertTableFilterHidden('organization_id');
+    });
+
+    it('does not show the organization under the name of a prospect', function (): void {
+        $prospect = Prospect::factory()->for(Organization::factory())->create();
+
+        Livewire::test(ListProspects::class)
+            ->assertTableColumnHasDescription(Prospect::displayNameKey(), null, $prospect);
+    });
+
+    it('does not search prospects by organization name', function (): void {
+        $prospect = Prospect::factory()
+            ->for(Organization::factory()->state(['name' => 'Acme Industries']))
+            ->create(['first_name' => 'Jane', 'last_name' => 'Doe', 'full_name' => 'Jane Doe']);
+        $prospect->primaryEmailAddress->update(['address' => 'jane@example.test']);
+        $prospect->primaryPhoneNumber->updateQuietly(['number' => '+15555550100']);
+
+        Livewire::test(ListProspects::class)
+            ->searchTable('Acme')
+            ->assertCanNotSeeTableRecords([$prospect]);
+    });
 });

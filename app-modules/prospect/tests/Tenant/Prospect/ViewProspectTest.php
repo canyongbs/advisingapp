@@ -57,7 +57,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\OrganizationFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Action;
@@ -67,6 +66,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
+use function Tests\setOrganizationSupportEnabled;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
@@ -147,14 +147,23 @@ it('updates primary associations when saving the profile edit slide-over', funct
 });
 
 it('shows the organization in the profile information', function (): void {
-    OrganizationFeature::activate(); // Feature is not yet activated by a migration
-
     asSuperAdmin();
 
     $prospect = Prospect::factory()->for(Organization::factory()->state(['name' => 'Acme Industries']))->create();
 
     Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
         ->assertSchemaComponentStateSet('organization.name', 'Acme Industries', 'profile');
+});
+
+it('hides the organization in the profile information when organization support is disabled', function (): void {
+    setOrganizationSupportEnabled(false);
+
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->for(Organization::factory())->create();
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertSchemaComponentHidden('organization.name', 'profile');
 });
 
 // Permission Tests

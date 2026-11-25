@@ -72,6 +72,13 @@ function setUnifiedInboxEnabled(bool $isEnabled): void
     $settings->save();
 }
 
+function setOrganizationSupportEnabled(bool $isEnabled): void
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->organizationSupport = $isEnabled;
+    $settings->save();
+}
+
 function loadFixtureFromModule(string $module, string $file): mixed
 {
     $modulePath = resolve(ModulePath::class);

@@ -196,6 +196,7 @@ abstract class TestCase extends BaseTestCase
                     scheduleAndAppointments: true,
                     enterpriseAi: true,
                     unifiedInbox: true,
+                    organizationSupport: true,
                 ),
             ),
             themeConfig: null,

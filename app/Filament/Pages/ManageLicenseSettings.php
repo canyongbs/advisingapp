@@ -185,6 +185,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Public Profiles'),
                             Toggle::make('data.addons.unifiedInbox')
                                 ->label('Unified Inbox'),
+                            Toggle::make('data.addons.organizationSupport')
+                                ->label('Organization Support'),
                         ]
                     ),
             ])

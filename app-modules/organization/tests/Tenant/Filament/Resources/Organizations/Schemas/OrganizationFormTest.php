@@ -39,7 +39,6 @@ use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ViewOrganiza
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Organization\Rules\UniqueOrganizationDomain;
 use App\DataTransferObjects\AutocompletedAddress;
-use App\Features\OrganizationFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
@@ -56,9 +55,6 @@ use function Tests\asSuperAdmin;
 
 beforeEach(function (): void {
     asSuperAdmin();
-
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
 });
 
 it('can create an organization', function (): void {

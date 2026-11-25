@@ -55,7 +55,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Enums\CareTeamRoleType;
+use App\Enums\Feature;
 use App\Enums\TagType;
+use App\Features\OrganizationFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Tag;
 use Filament\Actions\ActionGroup;
@@ -88,12 +90,18 @@ class ListProspects extends ListRecords
 
     public function table(Table $table): Table
     {
+        $isOrganizationSupportAvailable = OrganizationFeature::active() && Gate::check(Feature::OrganizationSupport->getGateName());
+
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->when($isOrganizationSupportAvailable, fn (Builder $query): Builder => $query->with('organization')))
             ->columns([
                 IdColumn::make(),
                 TextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
-                    ->searchable()
+                    ->description(fn (Prospect $record): ?string => $isOrganizationSupportAvailable ? $record->organization?->name : null)
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query
+                        ->where(Prospect::displayNameKey(), 'ilike', "%{$search}%")
+                        ->when($isOrganizationSupportAvailable, fn (Builder $query): Builder => $query->orWhereHas('organization', fn (Builder $query): Builder => $query->where('name', 'ilike', "%{$search}%"))))
                     ->sortable(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Primary Email')
@@ -165,6 +173,13 @@ class ListProspects extends ListRecords
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
+                SelectFilter::make('organization_id')
+                    ->label('Organization')
+                    ->relationship('organization', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->visible($isOrganizationSupportAvailable),
 
                 SelectFilter::make('tags')
                     ->label('Tags')

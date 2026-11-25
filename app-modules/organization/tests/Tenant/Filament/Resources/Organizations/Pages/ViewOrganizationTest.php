@@ -38,7 +38,6 @@ use AdvisingApp\Organization\Filament\Resources\Organizations\OrganizationResour
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ViewOrganization;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -51,9 +50,6 @@ use function Tests\asSuperAdmin;
 
 beforeEach(function (): void {
     asSuperAdmin();
-
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
 });
 
 it('can render the view organization page', function (): void {

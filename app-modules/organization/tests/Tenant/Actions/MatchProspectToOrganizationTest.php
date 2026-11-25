@@ -39,12 +39,8 @@ use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\OrganizationFeature;
 
-beforeEach(function (): void {
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
-});
+use function Tests\setOrganizationSupportEnabled;
 
 it('affiliates a prospect with the organization matching its primary email address', function (string $emailAddress): void {
     $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
@@ -146,4 +142,16 @@ it('affiliates a prospect that has been converted to a student', function (): vo
     app(MatchProspectToOrganization::class)($prospect);
 
     expect($prospect->refresh()->organization_id)->toBe($organization->getKey());
+});
+
+it('does not affiliate a prospect when organization support is disabled', function (): void {
+    setOrganizationSupportEnabled(false);
+
+    Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
+    $prospect = Prospect::factory()->create();
+    $prospect->primaryEmailAddress->update(['address' => 'person@acme.edu']);
+
+    app(MatchProspectToOrganization::class)($prospect);
+
+    expect($prospect->refresh()->organization_id)->toBeNull();
 });

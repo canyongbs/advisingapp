@@ -38,12 +38,6 @@ use AdvisingApp\Organization\Jobs\MatchUnaffiliatedProspects;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use App\Features\OrganizationFeature;
-
-beforeEach(function (): void {
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
-});
 
 it('affiliates unaffiliated prospects with matching organizations', function (): void {
     $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
