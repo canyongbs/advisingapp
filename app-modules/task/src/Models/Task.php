@@ -54,6 +54,7 @@ use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use App\Models\User;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,6 +89,7 @@ class Task extends Model implements Auditable, CanTriggerAutoSubscription, HasHi
     use SoftDeletes;
     use HasStateMachine;
     use InteractsWithHistory;
+    use CanBeArchived;
 
     protected $fillable = [
         'title',
