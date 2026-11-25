@@ -103,6 +103,28 @@ it('redirects to the create page with the chosen access settings', function (): 
         ]));
 });
 
+it('only lets users with the Recruitment CRM license enable prospect generation on a new form', function (array $licenses, bool $isEnabled): void {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->onlineForms = true;
+    $settings->save();
+
+    $user = User::factory()->licensed($licenses)->create();
+    $user->givePermissionTo('form.view-any', 'form.create');
+
+    actingAs($user);
+
+    $component = Livewire::test(ListForms::class)
+        ->mountAction(TestAction::make('create'))
+        ->assertFormFieldEnabled('is_authenticated');
+
+    $isEnabled
+        ? $component->assertFormFieldEnabled('generate_prospects')
+        : $component->assertFormFieldDisabled('generate_prospects');
+})->with([
+    'with the license' => [[LicenseType::RetentionCrm, LicenseType::RecruitmentCrm], true],
+    'without the license' => [[LicenseType::RetentionCrm], false],
+]);
+
 it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser): void {
     $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
