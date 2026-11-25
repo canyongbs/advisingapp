@@ -86,7 +86,8 @@ class UsersRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'email'])
                     ->recordSelectOptionsQuery(function (Builder $query): void {
-                        $query->tap(new \App\Models\Scopes\ConditionalAdminScope());
+                        $query->tap(new ConditionalAdminScope());
+
                         if (! config('app.filter_admins_from_selection')) {
                             return;
                         }
