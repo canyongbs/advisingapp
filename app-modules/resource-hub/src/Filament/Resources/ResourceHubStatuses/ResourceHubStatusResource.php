@@ -36,33 +36,34 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses;
 
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\CreateResourceHubStatus;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\EditResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\ListResourceHubStatuses;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\ViewResourceHubStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Filament\Clusters\ResourceHub;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ResourceHubStatusResource extends Resource
 {
     protected static ?string $model = ResourceHubStatus::class;
 
-    protected static ?string $navigationLabel = 'Statuses';
-
     protected static ?string $modelLabel = 'resource hub status';
 
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $cluster = ResourceHub::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListResourceHubStatuses::route('/'),
             'create' => CreateResourceHubStatus::route('/create'),
             'view' => ViewResourceHubStatus::route('/{record}'),
             'edit' => EditResourceHubStatus::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return ResourceHub::getUrl(['tab' => ResourceHubTab::Statuses->value], $isAbsolute, $panel, $tenant);
     }
 }

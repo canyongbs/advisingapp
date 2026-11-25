@@ -36,33 +36,34 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories;
 
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\CreateResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\EditResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\ListResourceHubCategories;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\ViewResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use App\Filament\Clusters\ResourceHub;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ResourceHubCategoryResource extends Resource
 {
     protected static ?string $model = ResourceHubCategory::class;
 
-    protected static ?string $navigationLabel = 'Categories';
-
     protected static ?string $modelLabel = 'resource hub category';
 
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $cluster = ResourceHub::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListResourceHubCategories::route('/'),
             'create' => CreateResourceHubCategory::route('/create'),
             'view' => ViewResourceHubCategory::route('/{record}'),
             'edit' => EditResourceHubCategory::route('/{record}/edit'),
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return ResourceHub::getUrl(['tab' => ResourceHubTab::Categories->value], $isAbsolute, $panel, $tenant);
     }
 }
