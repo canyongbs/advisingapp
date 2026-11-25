@@ -39,12 +39,16 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
+use App\Models\Authenticatable;
+use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
 use function Tests\asSuperAdmin;
@@ -101,6 +105,84 @@ test('can search add and remove users and groups from role membership', function
         ->toEqualCanonicalizing([$existingGroup->getKey(), $newGroup->getKey()]);
 });
 
+test('EditRole can save API roles with existing API users when changing unrelated properties', function (): void {
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'api']);
+    $apiUser = SystemUser::factory()->create();
+
+    $role->users()->attach($apiUser->getKey());
+
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+        ->fillForm(['description' => 'Updated description'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($role->refresh()->users->pluck('id'))->toContain($apiUser->getKey());
+});
+
+test('EditRole blocks assigning groups to API roles', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'api']);
+    $group = UserGroup::factory()->create();
+
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+        ->fillForm([
+            'userGroups' => [$group->getKey()],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['userGroups']);
+});
+
+test('non-super-admins cannot add users to admin roles from EditRole membership', function (): void {
+    $adminRole = Role::query()->firstOrCreate([
+        'name' => Authenticatable::SUPER_ADMIN_ROLE,
+        'guard_name' => 'web',
+    ]);
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('role.view-any', 'role.*.view', 'role.*.update');
+
+    actingAs($user);
+
+    Livewire::test(EditRole::class, ['record' => $adminRole->getRouteKey()])
+        ->fillForm([
+            'users' => [$user->getKey()],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['users']);
+
+    expect($adminRole->refresh()->users->pluck('id'))->not()->toContain($user->getKey());
+});
+
+test('non-super-admins cannot add groups to admin roles from EditRole membership', function (): void {
+    UserGroupsFeature::activate();
+
+    $adminRole = Role::query()->firstOrCreate([
+        'name' => Authenticatable::SUPER_ADMIN_ROLE,
+        'guard_name' => 'web',
+    ]);
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('role.view-any', 'role.*.view', 'role.*.update');
+
+    $group = UserGroup::factory()->create();
+
+    actingAs($user);
+
+    Livewire::test(EditRole::class, ['record' => $adminRole->getRouteKey()])
+        ->fillForm([
+            'userGroups' => [$group->getKey()],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['userGroups']);
+
+    expect($adminRole->refresh()->userGroups->pluck('id'))->not()->toContain($group->getKey());
+});
+
 describe('deletion', function (): void {
     it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
         asSuperAdmin();
@@ -128,7 +210,7 @@ describe('deletion', function (): void {
         $userGroup->assignRole($role);
         $userGroup->users()->attach($user);
 
-        expect(Gate::forUser(auth()->user())->inspect('delete', $role)->denied())->toBeTrue();
+        expect(Gate::forUser(Auth::user())->inspect('delete', $role)->denied())->toBeTrue();
     });
 
     it('can delete a role assigned only through empty user groups', function (): void {

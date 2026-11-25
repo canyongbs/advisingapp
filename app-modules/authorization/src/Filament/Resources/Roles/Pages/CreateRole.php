@@ -37,12 +37,12 @@
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Enums\PermissionDescription;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\Concerns\HasGuardAwareRoleUsers;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
-use App\Filament\Forms\Components\UserSelect;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -54,10 +54,13 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Unique;
 
 class CreateRole extends CreateRecord
 {
+    use HasGuardAwareRoleUsers;
+
     protected static string $resource = RoleResource::class;
 
     public function form(Schema $schema): Schema
@@ -70,6 +73,7 @@ class CreateRole extends CreateRecord
                         TextInput::make('name')
                             ->required()
                             ->maxLength(125)
+                            ->live(onBlur: true)
                             ->unique(
                                 table: 'roles',
                                 column: 'name',
@@ -87,7 +91,11 @@ class CreateRole extends CreateRecord
                             ->inline()
                             ->default('web')
                             ->live()
-                            ->afterStateUpdated(fn (Set $set): mixed => $set('permissions', [])),
+                            ->afterStateUpdated(function (Set $set): void {
+                                $set('permissions', []);
+                                $set('users', []);
+                                $set('userGroups', []);
+                            }),
                         Textarea::make('description')
                             ->nullable()
                             ->maxLength(65535)
@@ -96,12 +104,28 @@ class CreateRole extends CreateRecord
                 Section::make('Membership')
                     ->columns(2)
                     ->schema([
-                        UserSelect::make('users')
+                        Select::make('users')
                             ->relationship('users', 'name')
                             ->preload()
                             ->label('Users')
                             ->multiple()
-                            ->exists('users', 'id'),
+                            ->searchable()
+                            ->options(fn (Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'))
+                                ->limit(50)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->getSearchResultsUsing(fn (string $search, Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'), $search)
+                                ->limit(50)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->getOptionLabelsUsing(fn (array $values, Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'))
+                                ->whereKey($values)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->rule(fn (Get $get) => $this->getRoleUsersValidationRule($get)),
                         Select::make('userGroups')
                             ->relationship(
                                 'userGroups',
@@ -116,7 +140,7 @@ class CreateRole extends CreateRecord
                             ->multiple()
                             ->exists((new UserGroup())->getTable(), 'id')
                                 // TODO: Cleanup Task (user-groups-feature): remove this visibility branch when User Groups is made permanent.
-                            ->visible(fn (): bool => UserGroupsFeature::active()),
+                            ->visible(fn (Get $get): bool => UserGroupsFeature::active() && $this->canAssignUserGroupsToRole((string) $get('guard_name'), $get('name'))),
                     ]),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
@@ -126,5 +150,17 @@ class CreateRole extends CreateRecord
                     ->permissionGroupModel(PermissionGroup::class)
                     ->hiddenPermissionGroups(fn (): array => Feature::getDisabledPermissionGroupNames()),
             ]);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function beforeCreate(): void
+    {
+        $this->ensureUserGroupsCanBeAssigned(
+            (string) ($this->data['guard_name'] ?? 'web'),
+            isset($this->data['name']) ? (string) $this->data['name'] : null,
+            (array) ($this->data['userGroups'] ?? []),
+        );
     }
 }

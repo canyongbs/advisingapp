@@ -37,12 +37,12 @@
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Enums\PermissionDescription;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\Concerns\HasGuardAwareRoleUsers;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
-use App\Filament\Forms\Components\UserSelect;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -57,6 +57,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ViewRole extends ViewRecord
 {
+    use HasGuardAwareRoleUsers;
+
     protected static string $resource = RoleResource::class;
 
     public function form(Schema $schema): Schema
@@ -87,12 +89,28 @@ class ViewRole extends ViewRecord
                 Section::make('Membership')
                     ->columns(2)
                     ->schema([
-                        UserSelect::make('users')
+                        Select::make('users')
                             ->relationship('users', 'name')
                             ->preload()
                             ->label('Users')
                             ->multiple()
-                            ->exists('users', 'id'),
+                            ->searchable()
+                            ->options(fn (Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'))
+                                ->limit(50)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->getSearchResultsUsing(fn (string $search, Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'), $search)
+                                ->limit(50)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->getOptionLabelsUsing(fn (array $values, Get $get): array => $this
+                                ->getRoleUsersQuery((string) $get('guard_name'))
+                                ->whereKey($values)
+                                ->pluck('name', 'id')
+                                ->all())
+                            ->rule(fn (Get $get) => $this->getRoleUsersValidationRule($get)),
                         Select::make('userGroups')
                             ->relationship(
                                 'userGroups',
