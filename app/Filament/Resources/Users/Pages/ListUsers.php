@@ -45,7 +45,6 @@ use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\Users\Actions\AssignDepartmentBulkAction;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Actions\AssignRolesBulkAction;
-use App\Filament\Resources\Users\Actions\AssignUserGroupsBulkAction;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
@@ -147,10 +146,6 @@ class ListUsers extends ListRecords
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                     AssignDepartmentBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
-                    AssignUserGroupsBulkAction::make()
-                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
-                        ->visible(fn (): bool => UserGroupsFeature::active())
-                        ->authorize(fn (): bool => auth()->user()->can('user.*.update')),
                 ]),
             ])
             ->filters([

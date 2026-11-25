@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Authorization\Database\Factories\UserGroupFactory;
+use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Observers\UserGroupObserver;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
@@ -56,6 +57,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 class UserGroup extends Model
 {
     use CanBeArchived;
+    use HasRolesWithPivot;
 
     /** @use HasFactory<UserGroupFactory> */
     use HasFactory;
