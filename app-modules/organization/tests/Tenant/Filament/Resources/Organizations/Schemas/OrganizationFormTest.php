@@ -1,12 +1,12 @@
 <?php
 
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ListOrganizations;
+use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ViewOrganization;
 use AdvisingApp\Organization\Models\Organization;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Features\OrganizationFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Exceptions;
 use Livewire\Livewire;
@@ -43,8 +43,8 @@ it('can create an organization', function (): void {
 it('can update an organization', function (): void {
     $organization = Organization::factory()->create(['name' => 'Acme Industries']);
 
-    Livewire::test(ListOrganizations::class)
-        ->callAction(TestAction::make(EditAction::class)->table($organization), ['name' => 'Acme Holdings'])
+    Livewire::test(ViewOrganization::class, ['record' => $organization->getRouteKey()])
+        ->callAction(EditAction::class, ['name' => 'Acme Holdings'])
         ->assertHasNoFormErrors();
 
     expect($organization->refresh()->name)->toBe('Acme Holdings');
@@ -53,8 +53,8 @@ it('can update an organization', function (): void {
 it('allows an organization to keep its own name when updated', function (): void {
     $organization = Organization::factory()->create(['name' => 'Acme Industries']);
 
-    Livewire::test(ListOrganizations::class)
-        ->callAction(TestAction::make(EditAction::class)->table($organization), ['name' => 'Acme Industries', 'email' => 'hello@acme.test'])
+    Livewire::test(ViewOrganization::class, ['record' => $organization->getRouteKey()])
+        ->callAction(EditAction::class, ['name' => 'Acme Industries', 'email' => 'hello@acme.test'])
         ->assertHasNoFormErrors();
 
     expect($organization->refresh()->email)->toBe('hello@acme.test');

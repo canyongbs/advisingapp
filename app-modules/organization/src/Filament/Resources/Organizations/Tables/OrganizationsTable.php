@@ -5,8 +5,6 @@ namespace AdvisingApp\Organization\Filament\Resources\Organizations\Tables;
 use AdvisingApp\Organization\Models\Organization;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
@@ -38,12 +36,6 @@ class OrganizationsTable
 
                         return filled($lines) ? new HtmlString(implode('<br>', $lines)) : null;
                     }),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make()
-                    ->modal()
-                    ->slideOver(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

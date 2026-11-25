@@ -8,7 +8,6 @@ use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\HtmlString;
 use Livewire\Livewire;
@@ -75,14 +74,15 @@ it('opens the `New` action in a slide-over', function (): void {
         ->assertActionExists(CreateAction::class, fn (CreateAction $action): bool => $action->isModalSlideOver());
 });
 
-it('opens the `Edit` action in a slide-over', function (): void {
+it('links each row to the organization\'s view page', function (): void {
     $organization = Organization::factory()->create();
 
-    Livewire::test(ListOrganizations::class)
-        ->assertActionExists(
-            TestAction::make(EditAction::class)->table($organization),
-            fn (EditAction $action): bool => $action->isModalSlideOver()
-        );
+    $page = Livewire::test(ListOrganizations::class)->instance();
+
+    assert($page instanceof ListOrganizations);
+
+    expect($page->getTable()->getRecordUrl($organization))
+        ->toBe(OrganizationResource::getUrl('view', ['record' => $organization]));
 });
 
 it('clears the organization from its prospects when bulk deleted', function (): void {
@@ -135,17 +135,5 @@ describe('authorization', function (): void {
 
         Livewire::test(ListOrganizations::class)
             ->assertActionHidden(CreateAction::class);
-    });
-
-    it('hides the `Edit` action without the `organization.*.update` permission', function (): void {
-        $user = User::factory()->licensed(Prospect::getLicenseType())->create();
-        $user->givePermissionTo('organization.view-any');
-
-        actingAs($user);
-
-        $organization = Organization::factory()->create();
-
-        Livewire::test(ListOrganizations::class)
-            ->assertActionHidden(TestAction::make(EditAction::class)->table($organization));
     });
 });
