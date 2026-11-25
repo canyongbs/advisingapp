@@ -68,7 +68,7 @@ class OrganizationsTable
                             collect([$record->postalcode, $record->country])->filter()->implode(' '),
                         ]);
 
-                        return filled($lines) ? new HtmlString(implode('<br>', $lines)) : null;
+                        return filled($lines) ? new HtmlString(implode('<br>', array_map(fn (string $line): string => e($line), $lines))) : null;
                     }),
             ])
             ->toolbarActions([
