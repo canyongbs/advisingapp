@@ -39,6 +39,7 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -151,6 +152,8 @@ test('Interactions model with fetch data for assigned user', function (): void {
 });
 
 test('Interactions model with fetch data for users in a confidential access group', function (): void {
+    UserGroupsFeature::activate();
+
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $userGroup = UserGroup::factory()->create();
     $userGroup->users()->attach($user);
