@@ -101,6 +101,10 @@ describe('enterprise ai', function () {
 });
 
 describe('group roles', function (): void {
+    beforeEach(function (): void {
+        UserGroupsFeature::activate();
+    });
+
     it('shows permissions inherited through group roles when user-group relations were loaded before assignment', function (): void {
         asSuperAdmin();
 

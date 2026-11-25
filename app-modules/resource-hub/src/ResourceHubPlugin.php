@@ -36,9 +36,16 @@
 
 namespace AdvisingApp\ResourceHub;
 
+use AdvisingApp\ResourceHub\Enums\ResourceHubTab;
+use AdvisingApp\ResourceHub\Filament\Pages\ResourceHub;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Route;
 
 class ResourceHubPlugin implements Plugin
 {
@@ -49,11 +56,60 @@ class ResourceHubPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\ResourceHub\\Filament\\Resources'
-        )
-            ->livewireComponents([ResourceHubArticleConcernsTable::class]);
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\ResourceHub\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'AdvisingApp\\ResourceHub\\Filament\\Pages'
+            )
+            ->discoverLivewireComponents(
+                in: __DIR__ . '/Livewire',
+                for: 'AdvisingApp\\ResourceHub\\Livewire'
+            )
+            ->livewireComponents([
+                ResourceHubArticleConcernsTable::class,
+            ])
+            ->authenticatedTenantRoutes(function (): void {
+                // These resources used to live in the `ResourceHub` cluster at `resource-hub/<resource>/...`.
+                // These redirects keep bookmarks and links to the old cluster URLs (list, create, view, edit)
+                // working after the cluster was removed.
+                foreach ([
+                    'resource-hub-categories' => [ResourceHubTab::Categories, ResourceHubCategoryResource::class],
+                    'resource-hub-qualities' => [ResourceHubTab::Qualities, ResourceHubQualityResource::class],
+                    'resource-hub-statuses' => [ResourceHubTab::Statuses, ResourceHubStatusResource::class],
+                ] as $segment => [$tab, $resource]) {
+                    Route::prefix("resource-hub/{$segment}")
+                        ->group(function () use ($tab, $resource): void {
+                            Route::get('/', fn (): RedirectResponse => redirect()->to(
+                                ResourceHub::getUrl([
+                                    ...request()->query(),
+                                    'tab' => $tab->value,
+                                ]),
+                            ));
+
+                            Route::get('/create', fn (): RedirectResponse => redirect()->to(
+                                $resource::getUrl('create', request()->query()),
+                            ));
+
+                            Route::get('/{record}', fn (string $record): RedirectResponse => redirect()->to(
+                                $resource::getUrl('view', [
+                                    ...request()->query(),
+                                    'record' => $record,
+                                ]),
+                            ));
+
+                            Route::get('/{record}/edit', fn (string $record): RedirectResponse => redirect()->to(
+                                $resource::getUrl('edit', [
+                                    ...request()->query(),
+                                    'record' => $record,
+                                ]),
+                            ));
+                        });
+                }
+            });
     }
 
     public function boot(Panel $panel): void {}
