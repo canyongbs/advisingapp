@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Actions;
 
+use AdvisingApp\Form\Actions\RemapContentFieldIds;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -44,7 +45,8 @@ class DuplicateEvent
 {
     public function __construct(
         private Event $original,
-        private Event $replica
+        private Event $replica,
+        private RemapContentFieldIds $remapContentFieldIds,
     ) {}
 
     public function __invoke(): void
@@ -52,7 +54,7 @@ class DuplicateEvent
         $this->replicateEventRegistrationForm();
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
-        $this->updateStepContent($fieldMap);
+        $this->remapContentFieldIds($fieldMap);
         $this->replicateDescriptionMedia();
         $this->replicateHeroImage();
 
@@ -103,12 +105,19 @@ class DuplicateEvent
         return $fieldMap;
     }
 
-    private function updateStepContent(array $fieldMap): void
+    /**
+     * @param array<string, string> $fieldMap
+     */
+    private function remapContentFieldIds(array $fieldMap): void
     {
-        $this->replica->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap): void {
-            $content = $step->content;
+        $eventRegistrationForm = $this->replica->eventRegistrationForm;
+
+        $eventRegistrationForm->content = ($this->remapContentFieldIds)($eventRegistrationForm->content, $fieldMap);
+        $eventRegistrationForm->save();
+
+        $eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap): void {
             $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
+                'content' => ($this->remapContentFieldIds)($step->content, $fieldMap),
             ]);
         });
     }
@@ -179,26 +188,5 @@ class DuplicateEvent
         $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
 
         return json_decode($json, true);
-    }
-
-    /**
-     * @param mixed $content
-     * @param array<int|string, string> $fieldMap
-     */
-    private function replaceIdsInContent(&$content, array $fieldMap)
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
     }
 }

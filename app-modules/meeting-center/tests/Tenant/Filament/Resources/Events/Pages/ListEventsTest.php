@@ -59,6 +59,12 @@ $listEventsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
+$referencedFieldIds = function (?array $content): array {
+    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
+
+    return $matches[1];
+};
+
 it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser): void {
     $user = $listEventsTestUser();
     $user->givePermissionTo('event.view-any');
@@ -195,7 +201,7 @@ it('archive bulk action archives all selected events', function (): void {
     expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function (): void {
+describe('duplication', function () use ($referencedFieldIds): void {
     beforeEach(function (): void {
         asSuperAdmin();
     });
@@ -228,6 +234,25 @@ describe('duplication', function (): void {
             ->and($duplicatedForm->steps()->count())->toBe(count($originalStepIds))
             ->and($duplicatedForm->submissions()->count())->toBe(0)
             ->and($duplicatedEvent->attendees()->count())->toBe(0);
+    });
+
+    it('points the duplicated registration form content at its own fields', function () use ($referencedFieldIds): void {
+        $event = Event::factory()->create();
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Event::query()->whereKeyNot($event->getKey())->firstOrFail()->eventRegistrationForm;
+
+        $duplicatedFieldIds = collect([$duplicatedForm->content, ...$duplicatedForm->steps()->pluck('content')])
+            ->flatMap($referencedFieldIds)
+            ->all();
+
+        expect($duplicatedFieldIds)
+            ->not->toBeEmpty()
+            ->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all());
     });
 
     it('copies the description images and hero image to the duplicated event', function (): void {

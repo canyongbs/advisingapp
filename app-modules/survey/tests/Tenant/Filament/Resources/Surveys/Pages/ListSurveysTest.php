@@ -41,10 +41,17 @@ use AdvisingApp\Survey\Models\SurveySubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+
+$referencedFieldIds = function (?array $content): array {
+    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
+
+    return $matches[1];
+};
 
 $listSurveysTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -107,6 +114,22 @@ it('can duplicate a survey its steps and its fields', function (): void {
     expect($duplicatedSurvey->name)->toBe("Copy - {$survey->name}");
     expect($duplicatedSurvey->fields->count())->toBe($survey->fields->count());
     expect($duplicatedSurvey->steps->count())->toBe($survey->steps->count());
+});
+
+it('points the duplicated survey content at its own fields', function () use ($referencedFieldIds): void {
+    asSuperAdmin();
+
+    $survey = Survey::factory()->create();
+
+    Livewire::test(ListSurveys::class)
+        ->callAction(TestAction::make('Duplicate')->table($survey))
+        ->assertHasNoFormErrors();
+
+    $duplicatedSurvey = Survey::query()->whereKeyNot($survey->getKey())->firstOrFail();
+
+    expect($referencedFieldIds($duplicatedSurvey->content))
+        ->not->toBeEmpty()
+        ->toEqualCanonicalizing($duplicatedSurvey->fields()->pluck('id')->all());
 });
 
 it('will not duplicate survey submissions if they exist', function (): void {

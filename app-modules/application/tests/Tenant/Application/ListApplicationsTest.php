@@ -59,6 +59,12 @@ $listApplicationsTestUser = function (): User {
     return User::factory()->licensed(LicenseType::cases())->create();
 };
 
+$referencedFieldIds = function (?array $content): array {
+    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
+
+    return $matches[1];
+};
+
 it('the duplicate action is gated by the create permission', function () use ($listApplicationsTestUser): void {
     seed(ApplicationSubmissionStateSeeder::class);
 
@@ -221,7 +227,7 @@ it('archive bulk action archives all selected applications', function (): void {
     expect($applicationWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function (): void {
+describe('duplication', function () use ($referencedFieldIds): void {
     beforeEach(function (): void {
         seed(ApplicationSubmissionStateSeeder::class);
 
@@ -243,6 +249,20 @@ describe('duplication', function (): void {
             ->and($duplicatedApplication->name)->toBe("Copy - {$application->name}")
             ->and($duplicatedApplication->fields()->count())->toBe($application->fields()->count())
             ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
+    });
+
+    it('points the duplicated application content at its own fields', function () use ($referencedFieldIds): void {
+        $application = Application::factory()->create();
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect($referencedFieldIds($duplicatedApplication->content))
+            ->not->toBeEmpty()
+            ->toEqualCanonicalizing($duplicatedApplication->fields()->pluck('id')->all());
     });
 
     it('does not allow duplicating an application with a name that matches another application case-insensitively', function (): void {

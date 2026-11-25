@@ -44,14 +44,15 @@ class DuplicateForm
 {
     public function __construct(
         private Form $original,
-        private Form $replica
+        private Form $replica,
+        private RemapContentFieldIds $remapContentFieldIds,
     ) {}
 
     public function __invoke(): void
     {
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
-        $this->updateStepContent($fieldMap);
+        $this->remapContentFieldIds($fieldMap);
         $this->replicateEmailAutoReply();
     }
 
@@ -97,13 +98,14 @@ class DuplicateForm
     /**
      * @param  array<string, string>  $fieldMap
      */
-    private function updateStepContent(array $fieldMap): void
+    private function remapContentFieldIds(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (FormStep $step) use ($fieldMap): void {
-            $content = $step->content;
+        $this->replica->content = ($this->remapContentFieldIds)($this->replica->content, $fieldMap);
+        $this->replica->save();
 
+        $this->replica->steps()->each(function (FormStep $step) use ($fieldMap): void {
             $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
+                'content' => ($this->remapContentFieldIds)($step->content, $fieldMap),
             ]);
         });
     }
@@ -152,25 +154,5 @@ class DuplicateForm
         $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
 
         return json_decode($json, true);
-    }
-
-    /**
-     * @param  array<string, string>  $fieldMap
-     */
-    private function replaceIdsInContent(mixed &$content, array $fieldMap): mixed
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
     }
 }

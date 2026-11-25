@@ -39,19 +39,21 @@ namespace AdvisingApp\Application\Actions;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Form\Actions\RemapContentFieldIds;
 
 class DuplicateApplication
 {
     public function __construct(
         private Application $original,
-        private Application $replica
+        private Application $replica,
+        private RemapContentFieldIds $remapContentFieldIds,
     ) {}
 
     public function __invoke(): void
     {
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
-        $this->updateStepContent($fieldMap);
+        $this->remapContentFieldIds($fieldMap);
         $this->replicateContentMedia($this->original, $this->replica);
 
         $this->replicateEmailAutoReply();
@@ -98,13 +100,14 @@ class DuplicateApplication
     /**
      * @param  array<string, string>  $fieldMap
      */
-    private function updateStepContent(array $fieldMap): void
+    private function remapContentFieldIds(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap): void {
-            $content = $step->content;
+        $this->replica->content = ($this->remapContentFieldIds)($this->replica->content, $fieldMap);
+        $this->replica->save();
 
+        $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap): void {
             $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
+                'content' => ($this->remapContentFieldIds)($step->content, $fieldMap),
             ]);
         });
     }
@@ -169,25 +172,5 @@ class DuplicateApplication
         $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
 
         return json_decode($json, true);
-    }
-
-    /**
-     * @param array<string, string> $fieldMap
-     */
-    private function replaceIdsInContent(mixed &$content, array $fieldMap): mixed
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
     }
 }

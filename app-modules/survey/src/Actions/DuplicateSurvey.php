@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Survey\Actions;
 
+use AdvisingApp\Form\Actions\RemapContentFieldIds;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveyStep;
@@ -44,14 +45,15 @@ class DuplicateSurvey
 {
     public function __construct(
         private Survey $original,
-        private Survey $replica
+        private Survey $replica,
+        private RemapContentFieldIds $remapContentFieldIds,
     ) {}
 
     public function __invoke(): void
     {
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
-        $this->updateStepContent($fieldMap);
+        $this->remapContentFieldIds($fieldMap);
     }
 
     /**
@@ -96,35 +98,15 @@ class DuplicateSurvey
     /**
      * @param array<string, string> $fieldMap
      */
-    protected function updateStepContent(array $fieldMap): void
+    protected function remapContentFieldIds(array $fieldMap): void
     {
-        $this->replica->steps()->each(function (SurveyStep $step) use ($fieldMap): void {
-            $content = $step->content;
+        $this->replica->content = ($this->remapContentFieldIds)($this->replica->content, $fieldMap);
+        $this->replica->save();
 
+        $this->replica->steps()->each(function (SurveyStep $step) use ($fieldMap): void {
             $step->update([
-                'content' => $this->replaceIdsInContent($content, $fieldMap),
+                'content' => ($this->remapContentFieldIds)($step->content, $fieldMap),
             ]);
         });
-    }
-
-    /**
-     * @param mixed $content
-     * @param array<int|string, string> $fieldMap
-     */
-    protected function replaceIdsInContent(&$content, array $fieldMap)
-    {
-        if (is_array($content)) {
-            foreach ($content as $key => &$value) {
-                if (is_array($value)) {
-                    $this->replaceIdsInContent($value, $fieldMap);
-                } else {
-                    if ($key === 'id' && isset($fieldMap[$value])) {
-                        $value = $fieldMap[$value];
-                    }
-                }
-            }
-        }
-
-        return $content;
     }
 }
