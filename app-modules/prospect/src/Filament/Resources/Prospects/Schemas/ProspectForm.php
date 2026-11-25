@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas;
 
+use AdvisingApp\Organization\Actions\MatchProspectToOrganization;
 use AdvisingApp\Organization\Filament\Tables\SelectableOrganizationsTable;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -325,7 +326,8 @@ class ProspectForm
                             ->label('Description')
                             ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->saveRelationshipsUsing(fn (Prospect $record) => app(MatchProspectToOrganization::class)($record)),
             ]);
     }
 }

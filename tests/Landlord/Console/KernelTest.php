@@ -47,6 +47,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Jobs\ConsumeSesEventsFromSqs;
 use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
+use AdvisingApp\Organization\Jobs\DispatchMatchUnaffiliatedProspectsForEachTenant;
 use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
 use App\Jobs\DispatchHealthChecksForEachTenant;
 use App\Jobs\DispatchModelPruningForEachTenant;
@@ -91,6 +92,7 @@ describe('schedule', function () {
         Queue::assertPushed(DispatchDeleteUnsavedAiThreadsForEachTenant::class);
         Queue::assertPushed(DispatchModelPruningForEachTenant::class);
         Queue::assertPushed(DispatchRefreshCalendarRefreshTokensForEachTenant::class);
+        Queue::assertPushed(DispatchMatchUnaffiliatedProspectsForEachTenant::class);
 
         Queue::assertNotPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
@@ -123,6 +125,7 @@ describe('schedule', function () {
         Queue::assertNotPushed(DispatchDeleteUnsavedAiThreadsForEachTenant::class);
         Queue::assertNotPushed(DispatchModelPruningForEachTenant::class);
         Queue::assertNotPushed(DispatchRefreshCalendarRefreshTokensForEachTenant::class);
+        Queue::assertNotPushed(DispatchMatchUnaffiliatedProspectsForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
         Queue::assertNotPushed(PruneQueueMonitorJob::class);
