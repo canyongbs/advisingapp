@@ -34,6 +34,7 @@ it('displays the organization data', function (): void {
         'name' => 'Acme Industries',
         'description' => 'Makers of everything you could ever need.',
         'email' => 'hello@acme.test',
+        'phone_number' => '+15185551234',
         'website' => 'https://acme.test',
         'address' => '123 Main Street',
         'city' => 'Troy',
@@ -43,17 +44,18 @@ it('displays the organization data', function (): void {
     ]);
 
     Livewire::test(ViewOrganization::class, ['record' => $organization->getRouteKey()])
-        ->assertSeeText([
-            'Acme Industries',
-            'Makers of everything you could ever need.',
-            'hello@acme.test',
-            'https://acme.test',
-            '123 Main Street',
-            'Troy',
-            'NY',
-            '12180',
-            'United States',
-        ]);
+        ->assertSchemaStateSet([
+            'name' => 'Acme Industries',
+            'description' => 'Makers of everything you could ever need.',
+            'email' => 'hello@acme.test',
+            'phone_number' => '+15185551234',
+            'website' => 'https://acme.test',
+            'address' => '123 Main Street',
+            'city' => 'Troy',
+            'state' => 'NY',
+            'postalcode' => '12180',
+            'country' => 'United States',
+        ], 'infolist');
 });
 
 it('opens the `Edit` action in a slide-over', function (): void {
