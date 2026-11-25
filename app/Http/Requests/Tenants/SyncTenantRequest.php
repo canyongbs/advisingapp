@@ -72,6 +72,7 @@ class SyncTenantRequest extends FormRequest
             'addons.publicProfiles' => ['required', 'boolean'],
             'addons.enterpriseAi' => ['sometimes', 'boolean'], // TODO: Cleanup Task (enterprise-ai): make this required
             'addons.unifiedInbox' => ['required', 'boolean'],
+            'addons.organizationSupport' => ['sometimes', 'boolean'], // TODO: Cleanup Task (organization-support-addon): make this required
             'smartPrompts' => ['nullable', 'array'],
             'smartPrompts.*' => ['array'],
             'smartPrompts.*.title' => ['required', 'string', 'distinct:ignore_case'],

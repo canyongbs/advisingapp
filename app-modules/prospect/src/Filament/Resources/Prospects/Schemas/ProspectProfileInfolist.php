@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use App\Enums\Feature;
 use App\Features\OrganizationFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Actions\EditAction;
@@ -47,6 +48,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class ProspectProfileInfolist
@@ -61,7 +63,7 @@ class ProspectProfileInfolist
                             TextEntry::make('organization.name')
                                 ->label('Organization')
                                 ->placeholder('N/A')
-                                ->visible(fn (): bool => OrganizationFeature::active()),
+                                ->visible(fn (): bool => OrganizationFeature::active() && Gate::check(Feature::OrganizationSupport->getGateName())),
                             TextEntry::make('tags.name')
                                 ->label('Tags')
                                 ->badge()

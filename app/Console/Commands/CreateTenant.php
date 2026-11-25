@@ -143,6 +143,7 @@ class CreateTenant extends Command
                     scheduleAndAppointments: true,
                     enterpriseAi: true,
                     unifiedInbox: true,
+                    organizationSupport: true,
                 ),
             ),
         );

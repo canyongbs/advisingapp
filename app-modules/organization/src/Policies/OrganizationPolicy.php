@@ -38,13 +38,21 @@ namespace AdvisingApp\Organization\Policies;
 
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class OrganizationPolicy
 {
+    use PerformsFeatureChecks;
+
     public function before(Authenticatable $authenticatable): ?Response
     {
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
+        }
+
         if (! $authenticatable->hasLicense(Prospect::getLicenseType())) {
             return Response::deny('You are not licensed for the Recruitment CRM.');
         }
@@ -130,5 +138,13 @@ class OrganizationPolicy
             abilities: ['organization.*.force-delete'],
             denyResponse: 'You do not have permission to force delete any organization.'
         );
+    }
+
+    /**
+     * @return array<Feature>
+     */
+    protected function requiredFeatures(): array
+    {
+        return [Feature::OrganizationSupport];
     }
 }

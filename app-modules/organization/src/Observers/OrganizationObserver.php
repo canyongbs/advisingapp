@@ -39,14 +39,16 @@ namespace AdvisingApp\Organization\Observers;
 use AdvisingApp\Organization\Jobs\MatchUnaffiliatedProspects;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\Feature;
 use App\Features\OrganizationFeature;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class OrganizationObserver
 {
     public function created(Organization $organization): void
     {
-        if (! OrganizationFeature::active() || blank($organization->domains)) {
+        if (! OrganizationFeature::active() || ! Gate::check(Feature::OrganizationSupport->getGateName()) || blank($organization->domains)) {
             return;
         }
 
@@ -55,7 +57,7 @@ class OrganizationObserver
 
     public function updated(Organization $organization): void
     {
-        if (! OrganizationFeature::active() || ! $organization->wasChanged('domains') || blank($organization->domains)) {
+        if (! OrganizationFeature::active() || ! Gate::check(Feature::OrganizationSupport->getGateName()) || ! $organization->wasChanged('domains') || blank($organization->domains)) {
             return;
         }
 

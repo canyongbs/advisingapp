@@ -77,6 +77,8 @@ enum Feature: string
 
     case UnifiedInbox = 'unified-inbox';
 
+    case OrganizationSupport = 'organization-support';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this
@@ -104,6 +106,9 @@ enum Feature: string
                 'Customer Advisor',
                 'Customer Advisor Embed',
                 'Prompt',
+            ],
+            Feature::OrganizationSupport => [
+                'Organization',
             ],
             default => [],
         };

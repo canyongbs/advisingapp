@@ -39,12 +39,14 @@ namespace AdvisingApp\Organization\Jobs;
 use AdvisingApp\Organization\Actions\MatchProspectToOrganization;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\Feature;
 use App\Features\OrganizationFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class MatchUnaffiliatedProspects implements ShouldQueue
@@ -57,7 +59,7 @@ class MatchUnaffiliatedProspects implements ShouldQueue
 
     public function handle(MatchProspectToOrganization $matchProspectToOrganization): void
     {
-        if (! OrganizationFeature::active()) {
+        if (! OrganizationFeature::active() || ! Gate::check(Feature::OrganizationSupport->getGateName())) {
             return;
         }
 

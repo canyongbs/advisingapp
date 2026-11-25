@@ -39,15 +39,17 @@ namespace AdvisingApp\Organization\Actions;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use App\Enums\Feature;
 use App\Features\OrganizationFeature;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class MatchProspectToOrganization
 {
     public function __invoke(Prospect $prospect): void
     {
-        if (! OrganizationFeature::active() || filled($prospect->organization_id)) {
+        if (! OrganizationFeature::active() || ! Gate::check(Feature::OrganizationSupport->getGateName()) || filled($prospect->organization_id)) {
             return;
         }
 

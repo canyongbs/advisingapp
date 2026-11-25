@@ -1,7 +1,7 @@
 ---
 title: Organization Feature
 created: 2026-11-24
-ready: false
+ready: true
 ---
 
 ## Feature Flags
@@ -10,9 +10,11 @@ ready: false
 
 ## Temporary Migrations
 
+- app-modules/organization/database/migrations/2026_11_25_183317_tmp_activate_organization_feature.php
+
 ## Additional Cleanup
 
-NOTE: NOT YET READY FOR CLEANUP
+Search for `TODO: Cleanup Task (organization-support-addon)`
 
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag
