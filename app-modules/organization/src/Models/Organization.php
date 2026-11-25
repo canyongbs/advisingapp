@@ -37,7 +37,9 @@
 namespace AdvisingApp\Organization\Models;
 
 use AdvisingApp\Organization\Database\Factories\OrganizationFactory;
+use AdvisingApp\Organization\Observers\OrganizationObserver;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +50,7 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 /**
  * @mixin IdeHelperOrganization
  */
+#[ObservedBy([OrganizationObserver::class])]
 class Organization extends Model
 {
     /** @use HasFactory<OrganizationFactory> */
