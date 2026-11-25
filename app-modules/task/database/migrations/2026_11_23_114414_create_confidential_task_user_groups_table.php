@@ -44,8 +44,8 @@ return new class () extends Migration {
         Schema::create('confidential_task_user_groups', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('task_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_group_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('task_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_group_id')->index()->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });

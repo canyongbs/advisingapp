@@ -233,6 +233,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'locale',
     ];
 
+    /** @var EloquentCollection<int, Role>|null */
+    private ?EloquentCollection $effectiveRoles = null;
+
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
         return $this->default_assistant_chat_folders_created;
@@ -445,16 +448,22 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
      */
     public function getEffectiveRoles(): EloquentCollection
     {
-        $this->load('roles.permissions');
+        if ($this->effectiveRoles instanceof EloquentCollection) {
+            return $this->effectiveRoles;
+        }
+
+        $this->unsetRelation('roles');
+        $this->loadMissing('roles');
 
         // TODO: Cleanup Task (user-groups-feature): remove the feature-flag fallback and keep the effective role merge path.
         if (! UserGroupsFeature::active()) {
-            return $this->roles;
+            return $this->effectiveRoles = $this->roles;
         }
 
-        $this->load('userGroups.roles.permissions');
+        $this->unsetRelation('userGroups');
+        $this->loadMissing('userGroups.roles');
 
-        return $this->roles
+        return $this->effectiveRoles = $this->roles
             ->merge(
                 $this->userGroups
                     ->flatMap(fn (UserGroup $userGroup) => $userGroup->roles)
@@ -759,6 +768,22 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
             ->using(ManagerResourceHubArticle::class)
             ->withTimestamps();
+    }
+
+    public function forgetAuthorizableRelations(): void
+    {
+        parent::forgetAuthorizableRelations();
+
+        $this->effectiveRoles = null;
+
+        $this->unsetRelation('userGroups');
+
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($this);
+
+        $this->isSuperAdmin = $this->hasRole(self::SUPER_ADMIN_ROLE);
+        $this->isPartnerAdmin = $this->hasRole(self::PARTNER_ADMIN_ROLE);
+        $this->isAiAdmin = $this->hasRole(self::AI_ADMIN_ROLE);
+        $this->isAdmin = $this->isSuperAdmin || $this->isPartnerAdmin || $this->isAiAdmin;
     }
 
     /**

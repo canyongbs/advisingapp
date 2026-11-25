@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers;
 
 use App\Features\UserGroupsFeature;
+use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\Scopes\WithoutAnyAdmin;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
@@ -60,9 +61,15 @@ class UsersRelationManager extends RelationManager
         return UserGroupsFeature::active() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
+    public function isReadOnly(): bool
+    {
+        return parent::isReadOnly() || ! auth()->user()->can('user.*.update');
+    }
+
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->tap(new ConditionalAdminScope()))
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
@@ -79,12 +86,15 @@ class UsersRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectSearchColumns(['name', 'email'])
                     ->recordSelectOptionsQuery(function (Builder $query): void {
+                        $query->tap(new ConditionalAdminScope());
+
                         if (! config('app.filter_admins_from_selection')) {
                             return;
                         }
 
                         $query->tap(new WithoutAnyAdmin());
-                    }),
+                    })
+                    ->authorize(fn (): bool => ! $this->isReadOnly() && blank($this->getOwnerRecord()->getAttribute('archived_at'))),
             ])
             ->recordActions([
                 DetachAction::make(),
