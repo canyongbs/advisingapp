@@ -61,3 +61,16 @@ describe('unified inbox', function (): void {
         'enabled' => [true],
     ]);
 });
+
+describe('organization support', function (): void {
+    it('disables `organizationSupport` when the addon is missing', function (): void {
+        expect(LicenseAddonsData::from(['onlineForms' => true])->organizationSupport)->toBeFalse();
+    });
+
+    it('keeps `organizationSupport` as provided', function (bool $isOrganizationSupportEnabled): void {
+        expect(LicenseAddonsData::from(['organizationSupport' => $isOrganizationSupportEnabled])->organizationSupport)->toBe($isOrganizationSupportEnabled);
+    })->with([
+        'disabled' => [false],
+        'enabled' => [true],
+    ]);
+});

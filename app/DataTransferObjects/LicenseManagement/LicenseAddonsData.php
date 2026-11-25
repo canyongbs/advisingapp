@@ -58,5 +58,6 @@ class LicenseAddonsData extends Data
         // TODO: Cleanup Task (enterprise-ai): once Olympus always sends enterpriseAi, change this default to false.
         public bool $enterpriseAi = true,
         public bool $unifiedInbox = false,
+        public bool $organizationSupport = false,
     ) {}
 }

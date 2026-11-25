@@ -36,13 +36,11 @@
 
 use AdvisingApp\Organization\Jobs\MatchUnaffiliatedProspects;
 use AdvisingApp\Organization\Models\Organization;
-use App\Features\OrganizationFeature;
 use Illuminate\Support\Facades\Queue;
 
-beforeEach(function (): void {
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
+use function Tests\setOrganizationSupportEnabled;
 
+beforeEach(function (): void {
     Queue::fake();
 });
 
@@ -84,6 +82,15 @@ it('does not match unaffiliated prospects when the domains of an organization ar
     $organization = Organization::factory()->createQuietly(['domains' => [['domain' => 'acme.edu']]]);
 
     $organization->update(['domains' => null]);
+
+    Queue::assertNotPushed(MatchUnaffiliatedProspects::class);
+});
+
+it('does not match unaffiliated prospects when organization support is disabled', function (): void {
+    setOrganizationSupportEnabled(false);
+
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
+    $organization->update(['domains' => [['domain' => 'acme.edu'], ['domain' => 'acme.org']]]);
 
     Queue::assertNotPushed(MatchUnaffiliatedProspects::class);
 });

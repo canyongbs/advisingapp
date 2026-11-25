@@ -38,7 +38,6 @@ use AdvisingApp\Organization\Filament\Resources\Organizations\OrganizationResour
 use AdvisingApp\Organization\Filament\Resources\Organizations\Pages\ListOrganizations;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -48,13 +47,12 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
+use function Tests\setOrganizationSupportEnabled;
 
 beforeEach(function (): void {
     asSuperAdmin();
-
-    // The flag has no activation migration yet, so it is inactive in tests.
-    OrganizationFeature::activate();
 });
 
 it('can list non soft deleted organizations', function (): void {
@@ -165,6 +163,13 @@ describe('authorization', function (): void {
 
         actingAs($user)
             ->get(OrganizationResource::getUrl('index'))
+            ->assertForbidden();
+    });
+
+    it('denies access to the list page when organization support is disabled', function (): void {
+        setOrganizationSupportEnabled(false);
+
+        get(OrganizationResource::getUrl('index'))
             ->assertForbidden();
     });
 

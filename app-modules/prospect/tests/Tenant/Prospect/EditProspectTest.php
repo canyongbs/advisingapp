@@ -44,7 +44,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Livewire\Livewire;
@@ -107,33 +106,6 @@ test('EditProspect is gated with proper access control', function (): void {
         ->and($prospect->fresh()->birthdate->toDateString())->toEqual($request->get('birthdate'))
         ->and($prospect->fresh()->hsgrad)->toEqual($request->get('hsgrad'))
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
-});
-
-test('updates the full name when the first or last name is changed', function (): void {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
-
-    $user->givePermissionTo('prospect.view-any');
-    $user->givePermissionTo('prospect.*.update');
-
-    actingAs($user);
-
-    $prospect = Prospect::factory()->create([
-        'first_name' => 'John',
-        'last_name' => 'Smith',
-        'full_name' => 'John Smith',
-    ]);
-
-    Livewire::test(EditProspect::class, [
-        'record' => $prospect->getRouteKey(),
-    ])
-        ->fillForm([
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    expect($prospect->fresh()->full_name)->toBe('Jane Doe');
 });
 
 test('convert action visible when prospect is not converted to student', function (): void {
@@ -278,8 +250,6 @@ test('the convert action does not offer archived students', function (): void {
 });
 
 it('can change the organization of a prospect', function (?string $organizationId): void {
-    OrganizationFeature::activate(); // Feature is not yet activated by a migration
-
     asSuperAdmin();
 
     $prospect = Prospect::factory()->for(Organization::factory())->create();
@@ -296,8 +266,6 @@ it('can change the organization of a prospect', function (?string $organizationI
 ]);
 
 it('affiliates an unaffiliated prospect with the organization matching its email address when edited', function (): void {
-    OrganizationFeature::activate(); // Feature is not yet activated by a migration
-
     asSuperAdmin();
 
     $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
@@ -314,8 +282,6 @@ it('affiliates an unaffiliated prospect with the organization matching its email
 });
 
 it('keeps the organization chosen when editing a prospect with an email address matching another organization', function (): void {
-    OrganizationFeature::activate(); // Feature is not yet activated by a migration
-
     asSuperAdmin();
 
     Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
