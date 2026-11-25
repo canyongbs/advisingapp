@@ -77,6 +77,7 @@ class MatchUnaffiliatedProspects implements ShouldQueue
         Prospect::query()
             ->whereNull('organization_id')
             ->whereHas('emailAddresses', fn (Builder $query) => $query->whereIn(DB::raw("lower(regexp_replace(address, '^.*@', ''))"), $domains))
+            ->with('emailAddresses')
             ->chunkById(100, function (Collection $prospects) use ($matchProspectToOrganization): void {
                 $prospects->each(fn (Prospect $prospect) => $matchProspectToOrganization($prospect));
             });

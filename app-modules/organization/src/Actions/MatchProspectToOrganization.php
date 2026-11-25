@@ -37,7 +37,6 @@
 namespace AdvisingApp\Organization\Actions;
 
 use AdvisingApp\Organization\Models\Organization;
-use AdvisingApp\Organization\Models\Scopes\HasDomain;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use App\Features\OrganizationFeature;
@@ -52,7 +51,26 @@ class MatchProspectToOrganization
             return;
         }
 
-        DB::transaction(function () use ($prospect): void {
+        $organizationIdsByDomain = Organization::query()
+            ->get(['id', 'domains'])
+            ->flatMap(fn (Organization $organization): array => collect($organization->domains)
+                ->mapWithKeys(fn (array $domain): array => [Str::lower($domain['domain']) => $organization->getKey()])
+                ->all())
+            ->all();
+
+        [$primaryEmailAddresses, $additionalEmailAddresses] = $prospect->emailAddresses
+            ->partition(fn (ProspectEmailAddress $emailAddress): bool => $emailAddress->getKey() === $prospect->primary_email_id);
+
+        $organizationId = $primaryEmailAddresses
+            ->concat($additionalEmailAddresses)
+            ->map(fn (ProspectEmailAddress $emailAddress): ?string => $organizationIdsByDomain[Str::lower(Str::afterLast($emailAddress->address, '@'))] ?? null)
+            ->first(fn (?string $organizationId): bool => filled($organizationId));
+
+        if (blank($organizationId)) {
+            return;
+        }
+
+        DB::transaction(function () use ($prospect, $organizationId): void {
             $prospect = Prospect::query()
                 ->whereKey($prospect->getKey())
                 ->whereNull('organization_id')
@@ -63,23 +81,8 @@ class MatchProspectToOrganization
                 return;
             }
 
-            [$primaryEmailAddresses, $additionalEmailAddresses] = $prospect->emailAddresses
-                ->partition(fn (ProspectEmailAddress $emailAddress): bool => $emailAddress->getKey() === $prospect->primary_email_id);
-
-            foreach ($primaryEmailAddresses->concat($additionalEmailAddresses) as $emailAddress) {
-                $organization = Organization::query()
-                    ->tap(new HasDomain(Str::afterLast($emailAddress->address, '@')))
-                    ->first();
-
-                if (! $organization) {
-                    continue;
-                }
-
-                $prospect->organization()->associate($organization);
-                $prospect->save();
-
-                return;
-            }
+            $prospect->organization_id = $organizationId;
+            $prospect->save();
         });
     }
 }
