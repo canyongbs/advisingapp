@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Models\User;
@@ -45,13 +48,17 @@ use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use SensitiveParameter;
 
 class EmailFirstLogin extends Login
 {
@@ -59,11 +66,10 @@ class EmailFirstLogin extends Login
 
     public const SWITCH_TENANT_URL = 'advisingappmobile://switch-tenant';
 
+    public const GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE = "Google sign-in isn't available in the mobile app - please use another sign-in method.";
+
     protected string $view = 'authorization::email-first-login';
 
-    /**
-     * Which step of the email-first flow is shown: 'email' collects the address, 'password' the credential.
-     */
     #[Locked]
     public string $step = 'email';
 
@@ -82,6 +88,12 @@ class EmailFirstLogin extends Login
     #[Locked]
     public bool $hasVerifiedMfaSetup = false;
 
+    #[Locked]
+    public bool $googleSsoUnavailableInMobileApp = false;
+
+    #[Locked]
+    public ?string $ssoLoginHint = null;
+
     public function form(Schema $schema): Schema
     {
         // Two distinct email inputs (different keys) so that on the password step Livewire renders a
@@ -95,7 +107,7 @@ class EmailFirstLogin extends Login
                 ->disabled()
                 ->dehydrated()
                 ->dehydratedWhenHidden(fn (): bool => $this->needsMfa)
-                ->visible(fn (): bool => $this->step === 'password' && ! $this->needsMfa),
+                ->visible(fn (): bool => in_array($this->step, ['password', 'sso']) && ! $this->needsMfa),
             $this->getPasswordFormComponent()
                 ->dehydratedWhenHidden(fn (): bool => $this->needsMfa)
                 ->visible(fn (): bool => $this->step === 'password' && ! $this->needsMfa),
@@ -256,8 +268,8 @@ class EmailFirstLogin extends Login
     }
 
     /**
-     * Resolve the entered email and route the user on to the password step. Unknown emails also
-     * advance to the password step so we never reveal whether an account exists.
+     * Resolve the entered email to its sign-in method: external users to SSO,
+     * everyone else (including unknown emails) to the password step.
      */
     public function continue(): void
     {
@@ -269,7 +281,19 @@ class EmailFirstLogin extends Login
             return;
         }
 
-        $this->form->getState();
+        $data = $this->form->getState();
+
+        $this->googleSsoUnavailableInMobileApp = false;
+
+        $user = User::query()
+            ->where(new Expression('lower(email)'), Str::lower($data['email']))
+            ->first();
+
+        if ($user?->is_external) {
+            $this->routeExternalUser($user);
+
+            return;
+        }
 
         $this->step = 'password';
 
@@ -281,11 +305,32 @@ class EmailFirstLogin extends Login
     {
         $this->step = 'email';
         $this->data['password'] = null;
+        $this->ssoLoginHint = null;
     }
 
     public function isMobileApp(): bool
     {
         return str((string) request()->userAgent())->contains(self::MOBILE_APP_USER_AGENT_TOKEN);
+    }
+
+    public function azureSsoAction(): Action
+    {
+        return Action::make('azureSso')
+            ->label('Continue with Microsoft')
+            ->icon('icon-microsoft')
+            ->color('gray')
+            ->url(fn (): string => $this->getSsoUrl(SocialiteProvider::Azure))
+            ->visible(fn (): bool => $this->step === 'sso' && in_array(SocialiteProvider::Azure, $this->getAvailableSsoProviders()));
+    }
+
+    public function googleSsoAction(): Action
+    {
+        return Action::make('googleSso')
+            ->label('Continue with Google')
+            ->icon('icon-google')
+            ->color('gray')
+            ->url(fn (): string => $this->getSsoUrl(SocialiteProvider::Google))
+            ->visible(fn (): bool => $this->step === 'sso' && in_array(SocialiteProvider::Google, $this->getAvailableSsoProviders()));
     }
 
     protected function getMultifactorQrCode(): string
@@ -339,11 +384,97 @@ class EmailFirstLogin extends Login
         return app(MultifactorService::class)->verify(code: $code, user: $user);
     }
 
+    protected function routeExternalUser(User $user): void
+    {
+        $providers = $this->getAvailableSsoProviders();
+
+        if ($providers === []) {
+            if ($this->isMobileApp() && $this->isGoogleSsoEnabled()) {
+                $this->googleSsoUnavailableInMobileApp = true;
+
+                return;
+            }
+
+            Notification::make()
+                ->title('Single sign-on is unavailable')
+                ->body('Single sign-on is not currently configured. Please contact your administrator.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $this->ssoLoginHint = $user->email;
+
+        if (count($providers) === 1) {
+            $this->redirect($this->getSsoUrl($providers[0]));
+
+            return;
+        }
+
+        $this->step = 'sso';
+    }
+
+    /**
+     * @return array<int, SocialiteProvider>
+     */
+    protected function getAvailableSsoProviders(): array
+    {
+        $providers = [];
+
+        if ($this->isAzureSsoEnabled()) {
+            $providers[] = SocialiteProvider::Azure;
+        }
+
+        // Google OAuth can't complete inside the mobile app's embedded WebView.
+        if ($this->isGoogleSsoEnabled() && ! $this->isMobileApp()) {
+            $providers[] = SocialiteProvider::Google;
+        }
+
+        return $providers;
+    }
+
+    protected function getSsoUrl(SocialiteProvider $provider): string
+    {
+        return route('socialite.redirect', ['provider' => $provider, 'login_hint' => $this->ssoLoginHint]);
+    }
+
+    protected function isAzureSsoEnabled(): bool
+    {
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        return $azureSsoSettings->is_enabled && filled($azureSsoSettings->client_id);
+    }
+
+    protected function isGoogleSsoEnabled(): bool
+    {
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
+        return $googleSsoSettings->is_enabled && filled($googleSsoSettings->client_id);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     *
+     * @return array<string, mixed>
+     */
+    protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
+    {
+        return [
+            ...parent::getCredentialsFromFormData($data),
+            'is_external' => false,
+        ];
+    }
+
     /**
      * @return array<Action>
      */
     protected function getFormActions(): array
     {
+        if ($this->step === 'sso') {
+            return [];
+        }
+
         if ($this->step === 'email') {
             return [
                 $this->getContinueFormAction(),

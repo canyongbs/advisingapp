@@ -159,3 +159,17 @@ it('still logs the user in and reports the error when the Azure photo request fa
 
     Exceptions::assertReported(ConnectionException::class);
 });
+
+it('passes the login hint to the provider along with the prompt only when it is a valid email', function (string $loginHint, array $expectedParameters): void {
+    $driver = Mockery::mock();
+    $driver->shouldReceive('setConfig')->andReturnSelf();
+    $driver->shouldReceive('with')->once()->with($expectedParameters)->andReturnSelf();
+    $driver->shouldReceive('redirect')->andReturn(redirect('https://login.example.com'));
+    Socialite::shouldReceive('driver')->andReturn($driver);
+
+    get(route('socialite.redirect', ['provider' => 'azure', 'login_hint' => $loginHint]))
+        ->assertRedirect('https://login.example.com');
+})->with([
+    'valid email' => ['user@example.com', ['prompt' => 'select_account', 'login_hint' => 'user@example.com']],
+    'invalid email' => ['not-an-email', ['prompt' => 'select_account']],
+]);
