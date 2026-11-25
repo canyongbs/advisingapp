@@ -294,3 +294,40 @@ it('can change the organization of a prospect', function (?string $organizationI
     'to another organization' => fn (): string => Organization::factory()->create()->getKey(),
     'to no organization' => [null],
 ]);
+
+it('affiliates an unaffiliated prospect with the organization matching its email address when edited', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
+
+    $prospect = Prospect::factory()->create();
+    $prospect->primaryEmailAddress->update(['address' => 'person@acme.edu']);
+
+    Livewire::test(EditProspect::class, ['record' => $prospect->getRouteKey()])
+        ->fillForm(['preferred' => 'Updated'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($prospect->refresh()->organization_id)->toBe($organization->getKey());
+});
+
+it('keeps the organization chosen when editing a prospect with an email address matching another organization', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
+    $organization = Organization::factory()->create();
+
+    $prospect = Prospect::factory()->create();
+    $prospect->primaryEmailAddress->update(['address' => 'person@acme.edu']);
+
+    Livewire::test(EditProspect::class, ['record' => $prospect->getRouteKey()])
+        ->fillForm(['organization_id' => $organization->getKey()])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($prospect->refresh()->organization_id)->toBe($organization->getKey());
+});

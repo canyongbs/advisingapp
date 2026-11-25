@@ -49,6 +49,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Jobs\ConsumeSesEventsFromSqs;
 use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
+use AdvisingApp\Organization\Jobs\DispatchMatchUnaffiliatedProspectsForEachTenant;
 use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
 use App\Console\Commands\PublishQueueScaleSignalCommand;
 use App\Jobs\DispatchHealthChecksForEachTenant;
@@ -147,6 +148,11 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->onOneServer()
             ->monitorName('Dispatch Refresh Calendar Refresh Tokens For Each Tenant');
+
+        $schedule->job(new DispatchMatchUnaffiliatedProspectsForEachTenant())
+            ->daily()
+            ->onOneServer()
+            ->monitorName('Dispatch Match Unaffiliated Prospects For Each Tenant');
 
         $schedule->job(new DispatchUpdateCurrentAiAssistantLinksForEachTenant())
             ->monthlyOn(1, '0:0')
