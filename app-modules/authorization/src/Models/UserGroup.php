@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\Authorization\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Database\Factories\UserGroupFactory;
-use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Observers\UserGroupObserver;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
@@ -49,22 +47,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperUserGroup
  */
 #[ObservedBy([UserGroupObserver::class])]
-class UserGroup extends Model implements Auditable
+class UserGroup extends Model
 {
-    use AuditableTrait;
     use CanBeArchived;
 
     /** @use HasFactory<UserGroupFactory> */
     use HasFactory;
 
-    use HasRolesWithPivot;
     use HasUuids;
     use SoftDeletes;
     use UsesTenantConnection;
