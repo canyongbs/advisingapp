@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8968b6d44e18c3bd71a6806c5387cccb",
+    "content-hash": "504e6a001a6d6fabf246c59f9bc4b4e3",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1948,7 +1948,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/organization",
-                "reference": "87dbce1d85467955731127b5f770b73593160681"
+                "reference": "47dc186d0dc8e050f3977b4e1e826babedbdf8f2"
             },
             "require": {
                 "filament/filament": "^5.0"
@@ -11140,7 +11140,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-19T10:31:11+00:00"
+            "time": "2026-11-19T10:31:11+00:00",
+            "published-time": "2026-11-19T10:31:27+00:00"
         },
         {
             "name": "pragmarx/google2fa",
