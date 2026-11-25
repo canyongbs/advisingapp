@@ -55,6 +55,7 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
@@ -151,6 +152,14 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo<Organization, $this>
+     */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     /**

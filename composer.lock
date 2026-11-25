@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8968b6d44e18c3bd71a6806c5387cccb",
+    "content-hash": "504e6a001a6d6fabf246c59f9bc4b4e3",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1932,6 +1932,41 @@
                     "AdvisingApp\\MultifactorAuthentication\\Tests\\": "tests/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/organization",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/organization",
+                "reference": "47dc186d0dc8e050f3977b4e1e826babedbdf8f2"
+            },
+            "require": {
+                "filament/filament": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Organization\\Providers\\OrganizationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Organization\\": "src/",
+                    "AdvisingApp\\Organization\\Tests\\": "tests/",
+                    "AdvisingApp\\Organization\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Organization\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -11105,7 +11140,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-19T10:31:11+00:00"
+            "time": "2026-11-19T10:31:11+00:00",
+            "published-time": "2026-11-19T10:31:27+00:00"
         },
         {
             "name": "pragmarx/google2fa",
