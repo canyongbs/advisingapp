@@ -231,6 +231,28 @@ it('can create a prospect with an organization', function (): void {
     expect(Prospect::query()->sole()->organization_id)->toBe($organization->getKey());
 });
 
+it('affiliates a new prospect with the organization matching its email address', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.edu']]]);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    Livewire::test(CreateProspect::class)
+        ->fillForm([
+            ...CreateProspectRequestFactory::new()->create(),
+            'emailAddresses' => [['address' => 'person@acme.edu', 'type' => 'Work']],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+
+    expect(Prospect::query()->sole()->organization_id)->toBe($organization->getKey());
+});
+
 it('hides the organization field when the organization feature is inactive', function (): void {
     asSuperAdmin();
 
