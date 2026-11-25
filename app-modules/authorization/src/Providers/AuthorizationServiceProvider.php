@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Http\Controllers\Auth\LogoutController;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -74,6 +75,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             'role' => Role::class,
             'permission' => Permission::class,
             'license' => License::class,
+            'user_group' => UserGroup::class,
         ]);
 
         Event::listen(
