@@ -50,6 +50,10 @@ use function Pest\Laravel\assertModelMissing;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
+beforeEach(function (): void {
+    UserGroupsFeature::activate();
+});
+
 test('EditRole does not allow duplicate role names case insensitively within a guard', function (): void {
     asSuperAdmin();
 

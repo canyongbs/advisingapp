@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\ResourceHub\Livewire;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Tables\ResourceHubStatusesTable as ResourceHubStatusesTableConfiguration;
+use Filament\Tables\Table;
 
-class ProfileManagement extends Cluster
+class ResourceHubStatusesTable extends BaseResourceHubTable
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
+    public function table(Table $table): Table
+    {
+        return ResourceHubStatusesTableConfiguration::configure($table);
+    }
 
-    protected static ?int $navigationSort = 90;
+    protected function getResourceClass(): string
+    {
+        return ResourceHubStatusResource::class;
+    }
 }

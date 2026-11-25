@@ -48,6 +48,10 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
+beforeEach(function (): void {
+    UserGroupsFeature::activate();
+});
+
 it('can render the create user group page', function (): void {
     asSuperAdmin();
 
