@@ -36,6 +36,8 @@
 
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormAuthentication;
@@ -45,6 +47,7 @@ use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification
 use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
@@ -54,6 +57,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Testing\TestResponse;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\get;
@@ -298,4 +302,58 @@ it('does not send the email auto reply or notify followers when a requested subm
 
     Notification::assertNotSentTo($student, FormSubmissionAutoReplyNotification::class);
     Notification::assertNotSentTo($follower, AuthorLinkedFormSubmissionCreatedNotification::class);
+});
+
+describe('incomplete prospect-generating forms', function (): void {
+    $completeContent = fn (): array => ['type' => 'doc', 'content' => [
+        ['type' => 'customBlock', 'attrs' => ['id' => EducatableEmailFormFieldBlock::type(), 'config' => ['isRequired' => true]]],
+        ['type' => 'customBlock', 'attrs' => ['id' => EducatableNameFormFieldBlock::type(), 'config' => []]],
+    ]];
+
+    $endpoints = [
+        'view' => fn (Form $form): TestResponse => get(route('widgets.forms.api.entry', ['form' => $form])),
+        'preview' => fn (Form $form): TestResponse => get(route('forms.api.preview', ['form' => $form])),
+        'submit' => fn (Form $form): TestResponse => postJson(URL::signedRoute(name: 'widgets.forms.api.submit', parameters: ['form' => $form])),
+    ];
+
+    beforeEach(function (): void {
+        withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+        asSuperAdmin();
+    });
+
+    it('refuses an incomplete form', function (Closure $callEndpoint): void {
+        FormDuplicationAccessSettingsFeature::activate();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        expect($form->isMissingRequiredProspectGenerationFields())->toBeTrue();
+
+        $callEndpoint($form)->assertForbidden();
+
+        expect($form->submissions()->count())->toBe(0);
+    })->with($endpoints);
+
+    it('serves a complete form', function (Closure $callEndpoint) use ($completeContent): void {
+        FormDuplicationAccessSettingsFeature::activate();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+        $form->update(['content' => $completeContent()]);
+
+        $callEndpoint($form)->assertSuccessful();
+    })->with([
+        'view' => $endpoints['view'],
+        'preview' => $endpoints['preview'],
+    ]);
+
+    it('serves an incomplete form while the feature is inactive', function (Closure $callEndpoint): void {
+        FormDuplicationAccessSettingsFeature::deactivate();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        $callEndpoint($form)->assertSuccessful();
+    })->with([
+        'view' => $endpoints['view'],
+        'preview' => $endpoints['preview'],
+    ]);
 });

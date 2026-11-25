@@ -46,6 +46,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\RelationManagers\WorkflowsRelation
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -591,6 +592,45 @@ describe('notifications tab', function (): void {
 
         expect(Form::query()->where('root_id', $form->root_id)->count())->toBe(1)
             ->and($form->fresh()->isArchived())->toBeFalse();
+    });
+});
+
+describe('incomplete form callout', function (): void {
+    it('warns that an incomplete prospect-generating form is unavailable', function (): void {
+        FormDuplicationAccessSettingsFeature::activate();
+
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertSee('This form is incomplete')
+            ->assertSee('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field. This form cannot be viewed or submitted until the missing fields are added.');
+    });
+
+    it('does not warn about a form that is not missing any fields', function (array $attributes): void {
+        FormDuplicationAccessSettingsFeature::activate();
+
+        asSuperAdmin();
+
+        $form = Form::factory()->create($attributes);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertDontSee('This form is incomplete');
+    })->with([
+        'does not generate prospects' => [['generate_prospects' => false, 'is_authenticated' => false]],
+        'requires authentication' => [['generate_prospects' => true, 'is_authenticated' => true]],
+    ]);
+
+    it('does not warn about an incomplete form while the feature is inactive', function (): void {
+        FormDuplicationAccessSettingsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $form = Form::factory()->create(['generate_prospects' => true, 'is_authenticated' => false]);
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->assertDontSee('This form is incomplete');
     });
 });
 

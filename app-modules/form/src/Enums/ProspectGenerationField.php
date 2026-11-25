@@ -52,4 +52,15 @@ enum ProspectGenerationField: string
             self::Name => 'a required Mapped Name field',
         };
     }
+
+    /**
+     * @param list<self> $missingFields
+     */
+    public static function getRequirementMessage(array $missingFields): string
+    {
+        return 'Forms that generate prospects must include ' . implode(' and ', array_map(
+            fn (self $missingField): string => $missingField->getRequirementDescription(),
+            $missingFields,
+        )) . '.';
+    }
 }

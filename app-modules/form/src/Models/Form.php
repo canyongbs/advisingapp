@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Form\Models;
 
+use AdvisingApp\Form\Actions\FindMissingProspectGenerationFields;
+use AdvisingApp\Form\Enums\ProspectGenerationField;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
@@ -181,5 +183,26 @@ class Form extends Submissible
         return Form::query()->where('root_id', $this->root_id)
             ->whereNull('archived_at')
             ->first();
+    }
+
+    /**
+     * The fields a form that generates prospects without authentication must include, but this form's saved content does not.
+     *
+     * @return list<ProspectGenerationField>
+     */
+    public function getMissingRequiredProspectGenerationFields(): array
+    {
+        if ((! $this->generate_prospects) || $this->is_authenticated) {
+            return [];
+        }
+
+        return app(FindMissingProspectGenerationFields::class)(
+            $this->is_wizard ? $this->steps->pluck('content') : [$this->content],
+        );
+    }
+
+    public function isMissingRequiredProspectGenerationFields(): bool
+    {
+        return $this->getMissingRequiredProspectGenerationFields() !== [];
     }
 }

@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 use AdvisingApp\Form\Actions\CreateFormVersion;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
+use AdvisingApp\Form\Enums\ProspectGenerationField;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
@@ -47,11 +48,13 @@ use AdvisingApp\Form\Filament\Resources\Forms\Schemas\FormInfolist;
 use AdvisingApp\Form\Filament\Resources\Forms\Schemas\FormNotificationsForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Schemas\FormOnScreenResponseForm;
 use AdvisingApp\Form\Models\Form;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form as FormComponent;
@@ -123,6 +126,17 @@ class ManageForm extends EditRecord
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return true;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        $schema = parent::content($schema);
+
+        return $schema
+            ->components([
+                $this->getMissingProspectGenerationFieldsCallout(),
+                ...$schema->getComponents(withHidden: true),
+            ]);
     }
 
     public function getRelationManagersContentComponent(): Component
@@ -254,6 +268,17 @@ class ManageForm extends EditRecord
         DB::transaction(fn () => $record->update($this->notificationsForm->getState()));
 
         $this->getSavedNotification()?->send();
+    }
+
+    protected function getMissingProspectGenerationFieldsCallout(): Callout
+    {
+        $record = $this->getRecord();
+        assert($record instanceof Form);
+
+        return Callout::make('This form is incomplete')
+            ->danger()
+            ->description(fn (): string => ProspectGenerationField::getRequirementMessage($record->getMissingRequiredProspectGenerationFields()) . ' This form cannot be viewed or submitted until the missing fields are added.')
+            ->visible(fn (): bool => FormDuplicationAccessSettingsFeature::active() && $record->isMissingRequiredProspectGenerationFields());
     }
 
     protected function authorizeAccess(): void
