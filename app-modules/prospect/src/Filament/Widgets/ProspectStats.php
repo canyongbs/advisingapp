@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -90,6 +91,7 @@ class ProspectStats extends StatsOverviewWidget
                 ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
                 ->count())),
             Stat::make('Open Tasks', Number::format(Task::query()
+                ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,
@@ -116,6 +118,7 @@ class ProspectStats extends StatsOverviewWidget
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Tasks', Number::format(Task::query()
+                ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate instanceof Carbon && $endDate instanceof Carbon,

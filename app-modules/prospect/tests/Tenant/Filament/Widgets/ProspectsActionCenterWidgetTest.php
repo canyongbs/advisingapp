@@ -34,6 +34,14 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use Livewire\Livewire;
+
+use function Tests\asSuperAdmin;
+
 it('returns data', function (): void {})->todo();
 
 it('can filter for messages', function (): void {})->todo();
@@ -41,3 +49,24 @@ it('can filter for messages', function (): void {})->todo();
 it('can filter for concerns', function (): void {})->todo();
 
 it('can filter for tasks', function (): void {})->todo();
+
+it('does not count or filter by archived tasks', function (): void {
+    asSuperAdmin();
+
+    $prospectWithOpenTask = Prospect::factory()->create();
+    $prospectWithArchivedTaskOnly = Prospect::factory()->create();
+
+    Task::factory()->concerningProspect($prospectWithOpenTask)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+    Task::factory()->concerningProspect($prospectWithOpenTask)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+    Task::factory()->concerningProspect($prospectWithArchivedTaskOnly)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+    Task::factory()->concerningProspect($prospectWithArchivedTaskOnly)->create(['status' => TaskStatus::Completed, 'is_confidential' => false, 'archived_at' => now()]);
+
+    Livewire::test(ProspectsActionCenterWidget::class)
+        ->assertTableColumnStateSet('tasks_count', 1, $prospectWithOpenTask)
+        ->assertTableColumnStateSet('tasks_count', 0, $prospectWithArchivedTaskOnly)
+        ->filterTable('tasks', 'open')
+        ->assertCanSeeTableRecords([$prospectWithOpenTask])
+        ->assertCanNotSeeTableRecords([$prospectWithArchivedTaskOnly])
+        ->filterTable('tasks', 'closed')
+        ->assertCanNotSeeTableRecords([$prospectWithOpenTask, $prospectWithArchivedTaskOnly]);
+});

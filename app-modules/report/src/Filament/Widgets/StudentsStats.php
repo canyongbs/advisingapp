@@ -40,6 +40,7 @@ use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -107,6 +108,7 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
+                ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
                 ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId): void {
                     // The morph callback is typed `Builder<Model>` rather than
                     // `Builder<Student>`, and `Builder` is not covariant, so the
@@ -128,7 +130,7 @@ class StudentsStats extends StatsOverviewReportWidget
                 // The morph callback is typed `Builder<Model>` rather than
                 // `Builder<Student>`, and `Builder` is not covariant, so the
                 // constrained model cannot be proven here.
-                fn () => Task::query()->whereHasMorph('concern', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))->count() // @phpstan-ignore argument.type
+                fn () => Task::query()->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereHasMorph('concern', Student::class, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))->count() // @phpstan-ignore argument.type
             );
 
         return [

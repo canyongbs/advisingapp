@@ -259,3 +259,21 @@ it('does not count concerns or tasks of archived students, including those from 
     expect($filteredStats[1]->getValue())->toEqual(1)
         ->and($filteredStats[2]->getValue())->toEqual(1);
 });
+
+it('does not count archived tasks', function (): void {
+    Task::factory()->concerningStudent()->create(['created_at' => now()->subDays(5), 'is_confidential' => false]);
+    Task::factory()->concerningStudent()->create(['created_at' => now()->subDays(5), 'is_confidential' => false, 'archived_at' => now()]);
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+
+    // Unfiltered, so read through the cache.
+    expect($widget->getStats()[2]->getValue())->toEqual(1);
+
+    $widget->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widget->getStats()[2]->getValue())->toEqual(1);
+});

@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,6 +100,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
+                ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
                 ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId): void {
                     $query->when(
                         $groupId,
@@ -113,7 +115,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'prospect-tasks-count',
                 now()->addHours(24),
-                fn (): int => Task::query()->whereHasMorph('concern', Prospect::class)->count()
+                fn (): int => Task::query()->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereHasMorph('concern', Prospect::class)->count()
             );
 
         return [

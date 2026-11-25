@@ -242,3 +242,20 @@ it('returns correct stats for prospects based on group filter', function (): voi
         ->and($stats[5]->getLabel())->toEqual('Closed Tasks')
         ->and($stats[5]->getValue())->toEqual($count);
 });
+
+it('does not count archived tasks as open or closed', function (): void {
+    foreach ([TaskStatus::Pending, TaskStatus::Completed] as $status) {
+        Task::factory()->concerningProspect()->create(['status' => $status, 'is_confidential' => false]);
+        Task::factory()->concerningProspect()->create(['status' => $status, 'is_confidential' => false, 'archived_at' => now()]);
+    }
+
+    $widget = new ProspectStats();
+    $widget->activeTab = ActionCenterTab::All->value;
+
+    $stats = $widget->getStats();
+
+    expect($stats[2]->getLabel())->toEqual('Open Tasks')
+        ->and($stats[2]->getValue())->toEqual(1)
+        ->and($stats[5]->getLabel())->toEqual('Closed Tasks')
+        ->and($stats[5]->getValue())->toEqual(1);
+});
