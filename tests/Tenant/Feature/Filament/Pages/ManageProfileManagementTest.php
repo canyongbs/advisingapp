@@ -61,16 +61,6 @@ $getTabLabels = function (Testable $component): array {
     return $labels;
 };
 
-it('redirects bookmarks to the former pronouns resource to the Personal Pronouns tab', function (): void {
-    $user = User::factory()->create();
-    $user->givePermissionTo('settings.view-any');
-
-    actingAs($user);
-
-    get('/profile-management/pronouns')
-        ->assertRedirect(ManageProfileManagement::getUrl(['tab' => 'personal-pronouns']));
-});
-
 describe('tabs', function () use ($getTabLabels): void {
     it('shows only the Personal Pronouns tab to a user who can view pronouns', function () use ($getTabLabels): void {
         $user = User::factory()->create();

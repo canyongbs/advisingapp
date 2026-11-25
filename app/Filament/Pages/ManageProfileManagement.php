@@ -69,9 +69,6 @@ class ManageProfileManagement extends Page implements HasTable
 
     protected static ?int $navigationSort = 90;
 
-    // Keeps the old `ProfileManagement` cluster's URL working so existing bookmarks/links don't 404.
-    protected static ?string $slug = 'profile-management';
-
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
@@ -108,8 +105,8 @@ class ManageProfileManagement extends Page implements HasTable
     {
         return $table
             ->query(Pronouns::query())
-            ->modelLabel('profile pronoun')
-            ->pluralModelLabel('profile pronouns')
+            ->modelLabel('Profile Pronoun')
+            ->pluralModelLabel('Profile Pronouns')
             ->columns([
                 TextColumn::make('label'),
             ])
