@@ -9,6 +9,6 @@ class DispatchMatchUnaffiliatedProspectsForEachTenant extends DispatchForEachTen
 {
     protected function jobForTenant(Tenant $tenant): ?object
     {
-        return null;
+        return new MatchUnaffiliatedProspects();
     }
 }

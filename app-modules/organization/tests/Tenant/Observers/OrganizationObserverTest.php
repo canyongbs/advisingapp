@@ -17,7 +17,7 @@ it('matches unaffiliated prospects when an organization is created with domains'
 
     Queue::assertPushed(
         MatchUnaffiliatedProspects::class,
-        fn (MatchUnaffiliatedProspects $job): bool => $job->organizationId === $organization->getKey(),
+        fn (MatchUnaffiliatedProspects $job): bool => $job->organization?->getKey() === $organization->getKey(),
     );
 });
 
@@ -34,7 +34,7 @@ it('matches unaffiliated prospects when the domains of an organization change', 
 
     Queue::assertPushed(
         MatchUnaffiliatedProspects::class,
-        fn (MatchUnaffiliatedProspects $job): bool => $job->organizationId === $organization->getKey(),
+        fn (MatchUnaffiliatedProspects $job): bool => $job->organization?->getKey() === $organization->getKey(),
     );
 });
 

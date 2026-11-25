@@ -11,7 +11,7 @@ it('dispatches `MatchUnaffiliatedProspects` for each tenant', function (): void 
 
     Queue::assertPushed(
         MatchUnaffiliatedProspects::class,
-        fn (MatchUnaffiliatedProspects $job): bool => $job->organizationId === null,
+        fn (MatchUnaffiliatedProspects $job): bool => $job->organization === null,
     );
     Queue::assertPushed(MatchUnaffiliatedProspects::class, 1);
 });

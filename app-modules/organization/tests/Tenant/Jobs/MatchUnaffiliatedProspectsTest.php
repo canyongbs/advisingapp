@@ -41,7 +41,7 @@ it('only affiliates prospects matching the given organization', function (): voi
     $otherProspect = Prospect::factory()->create();
     $otherProspect->primaryEmailAddress->update(['address' => 'other@globex.edu']);
 
-    dispatch_sync(new MatchUnaffiliatedProspects($organization->getKey()));
+    dispatch_sync(new MatchUnaffiliatedProspects($organization));
 
     expect($matchingProspect->refresh()->organization_id)->toBe($organization->getKey())
         ->and($otherProspect->refresh()->organization_id)->toBeNull();
@@ -55,7 +55,7 @@ it('affiliates a prospect with the organization matching its primary email addre
     $prospect->primaryEmailAddress->update(['address' => 'person@globex.edu']);
     ProspectEmailAddress::factory()->for($prospect)->create(['address' => 'person@acme.edu', 'order' => 2]);
 
-    dispatch_sync(new MatchUnaffiliatedProspects($organization->getKey()));
+    dispatch_sync(new MatchUnaffiliatedProspects($organization));
 
     expect($prospect->refresh()->organization_id)->toBe($primaryOrganization->getKey());
 });
@@ -67,7 +67,7 @@ it('does not fall back to matching every organization when the given organizatio
     $prospect = Prospect::factory()->create();
     $prospect->primaryEmailAddress->update(['address' => 'person@globex.edu']);
 
-    dispatch_sync(new MatchUnaffiliatedProspects($deletedOrganization->getKey()));
+    dispatch_sync(new MatchUnaffiliatedProspects($deletedOrganization));
 
     expect($prospect->refresh()->organization_id)->toBeNull();
 });

@@ -37,10 +37,10 @@
 namespace AdvisingApp\Organization\Rules;
 
 use AdvisingApp\Organization\Models\Organization;
+use AdvisingApp\Organization\Models\Scopes\HasDomain;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class UniqueOrganizationDomain implements ValidationRule
@@ -61,10 +61,7 @@ class UniqueOrganizationDomain implements ValidationRule
         }
 
         $isDomainInUse = Organization::query()
-            ->whereRaw(
-                "exists (select 1 from jsonb_array_elements(domains) as element where lower(element->>'domain') = ?)",
-                [Str::lower($value)],
-            )
+            ->tap(new HasDomain($value))
             ->when(filled($this->ignoreId), fn (Builder $query) => $query->whereKeyNot($this->ignoreId))
             ->exists();
 

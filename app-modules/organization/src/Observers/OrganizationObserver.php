@@ -36,12 +36,32 @@
 
 namespace AdvisingApp\Organization\Observers;
 
+use AdvisingApp\Organization\Jobs\MatchUnaffiliatedProspects;
 use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\OrganizationFeature;
 use Illuminate\Support\Collection;
 
 class OrganizationObserver
 {
+    public function created(Organization $organization): void
+    {
+        if (! OrganizationFeature::active() || blank($organization->domains)) {
+            return;
+        }
+
+        MatchUnaffiliatedProspects::dispatch($organization)->afterCommit();
+    }
+
+    public function updated(Organization $organization): void
+    {
+        if (! OrganizationFeature::active() || ! $organization->wasChanged('domains') || blank($organization->domains)) {
+            return;
+        }
+
+        MatchUnaffiliatedProspects::dispatch($organization)->afterCommit();
+    }
+
     public function deleted(Organization $organization): void
     {
         $organization->prospects()->withTrashed()->chunkById(100, function (Collection $prospects): void {
