@@ -56,7 +56,6 @@ return new class () extends Migration {
      */
     private array $guards = [
         'web',
-        'api',
     ];
 
     public function up(): void
