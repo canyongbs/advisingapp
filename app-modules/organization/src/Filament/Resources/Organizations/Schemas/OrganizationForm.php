@@ -146,7 +146,7 @@ class OrganizationForm
                                     ->maxLength(255)
                                     ->regex(Organization::DOMAIN_PATTERN)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (?string $state, Set $set) => $set('domain', filled($state) ? Str::lower($state) : $state))
+                                    ->afterStateUpdated(fn (?string $state, Set $set): mixed => $set('domain', filled($state) ? Str::lower($state) : $state))
                                     ->distinct()
                                     ->validationMessages([
                                         'distinct' => 'This :attribute is already in use and may not be used a second time.',
