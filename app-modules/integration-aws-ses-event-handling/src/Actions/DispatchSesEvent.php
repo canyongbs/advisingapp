@@ -49,7 +49,6 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindTenantFromData;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
-use App\Features\SesEventDeduplicationFeature;
 use App\Models\Tenant;
 use Exception;
 use Illuminate\Support\Str;
@@ -74,7 +73,6 @@ class DispatchSesEvent
         $tenant->execute(function () use ($data, $snsMessageId): void {
             if (
                 filled($snsMessageId)
-                && SesEventDeduplicationFeature::active()
                 && EmailMessageEvent::query()->where('sns_message_id', $snsMessageId)->exists()
             ) {
                 return;
