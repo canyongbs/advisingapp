@@ -36,16 +36,20 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas;
 
+use AdvisingApp\Organization\Filament\Tables\SelectableOrganizationsTable;
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\DataTransferObjects\AutocompletedAddress;
+use App\Features\OrganizationFeature;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -311,6 +315,12 @@ class ProspectForm
                                 table: (new ProspectSource())->getTable(),
                                 column: (new ProspectSource())->getKeyName()
                             ),
+                        TableSelect::make('organization_id')
+                            ->label('Organization')
+                            ->relationship('organization')
+                            ->tableConfiguration(SelectableOrganizationsTable::class)
+                            ->visible(fn (): bool => OrganizationFeature::active() && (auth()->user()?->can('viewAny', Organization::class) ?? false))
+                            ->columnSpanFull(),
                         Textarea::make('description')
                             ->label('Description')
                             ->columnSpanFull(),

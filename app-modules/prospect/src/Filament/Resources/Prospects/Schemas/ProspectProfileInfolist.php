@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use App\Features\OrganizationFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
@@ -57,6 +58,10 @@ class ProspectProfileInfolist
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
+                            TextEntry::make('organization.name')
+                                ->label('Organization')
+                                ->placeholder('N/A')
+                                ->visible(fn (): bool => OrganizationFeature::active()),
                             TextEntry::make('tags.name')
                                 ->label('Tags')
                                 ->badge()

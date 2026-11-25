@@ -70,6 +70,9 @@ class OrganizationsTable
 
                         return filled($lines) ? new HtmlString(implode('<br>', array_map(fn (string $line): string => e($line), $lines))) : null;
                     }),
+                TextColumn::make('domains')
+                    ->state(fn (Organization $record): array => collect($record->domains)->pluck('domain')->all())
+                    ->listWithLineBreaks(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -103,6 +103,13 @@ it('shows the address details under the address', function (array $attributes, ?
     ],
 ]);
 
+it('shows the domains', function (): void {
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.com'], ['domain' => 'acme.org']]]);
+
+    Livewire::test(ListOrganizations::class)
+        ->assertTableColumnStateSet('domains', ['acme.com', 'acme.org'], $organization);
+});
+
 it('opens the `New` action in a slide-over', function (): void {
     Livewire::test(ListOrganizations::class)
         ->assertActionExists(CreateAction::class, fn (CreateAction $action): bool => $action->isModalSlideOver());

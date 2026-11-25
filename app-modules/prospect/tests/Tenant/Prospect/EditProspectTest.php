@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
@@ -43,12 +44,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\OrganizationFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
+use function Tests\asSuperAdmin;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});
@@ -273,3 +276,21 @@ test('the convert action does not offer archived students', function (): void {
             return true;
         });
 });
+
+it('can change the organization of a prospect', function (?string $organizationId): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->for(Organization::factory())->create();
+
+    Livewire::test(EditProspect::class, ['record' => $prospect->getRouteKey()])
+        ->fillForm(['organization_id' => $organizationId])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($prospect->refresh()->organization_id)->toBe($organizationId);
+})->with([
+    'to another organization' => fn (): string => Organization::factory()->create()->getKey(),
+    'to no organization' => [null],
+]);

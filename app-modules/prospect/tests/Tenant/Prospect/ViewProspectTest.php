@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Organization\Models\Organization;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
@@ -56,6 +57,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\OrganizationFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Action;
@@ -142,6 +144,17 @@ it('updates primary associations when saving the profile edit slide-over', funct
         ->primary_email_id->toBe($emailAddress->getKey())
         ->primary_phone_id->toBe($phoneNumber->getKey())
         ->primary_address_id->toBe($address->getKey());
+});
+
+it('shows the organization in the profile information', function (): void {
+    OrganizationFeature::activate(); // Feature is not yet activated by a migration
+
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->for(Organization::factory()->state(['name' => 'Acme Industries']))->create();
+
+    Livewire::test(ViewProspect::class, ['record' => $prospect->getRouteKey()])
+        ->assertSchemaComponentStateSet('organization.name', 'Acme Industries', 'profile');
 });
 
 // Permission Tests

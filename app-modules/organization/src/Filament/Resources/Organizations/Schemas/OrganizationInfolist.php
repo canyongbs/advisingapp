@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Organization\Filament\Resources\Organizations\Schemas;
 
+use AdvisingApp\Organization\Models\Organization;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -78,6 +79,15 @@ class OrganizationInfolist
                             ->placeholder('-'),
                     ])
                     ->columns(2)
+                    ->columnSpanFull(),
+                Section::make('Domains')
+                    ->schema([
+                        TextEntry::make('domains')
+                            ->hiddenLabel()
+                            ->state(fn (Organization $record): array => collect($record->domains)->pluck('domain')->all())
+                            ->listWithLineBreaks()
+                            ->placeholder('-'),
+                    ])
                     ->columnSpanFull(),
             ]);
     }

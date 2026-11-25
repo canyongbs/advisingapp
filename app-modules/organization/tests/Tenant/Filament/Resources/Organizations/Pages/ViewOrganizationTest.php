@@ -92,6 +92,13 @@ it('displays the organization data', function (): void {
         ], 'infolist');
 });
 
+it('displays the organization domains', function (): void {
+    $organization = Organization::factory()->create(['domains' => [['domain' => 'acme.com'], ['domain' => 'acme.org']]]);
+
+    Livewire::test(ViewOrganization::class, ['record' => $organization->getRouteKey()])
+        ->assertSchemaComponentStateSet('domains', ['acme.com', 'acme.org'], 'infolist');
+});
+
 it('opens the `Edit` action in a slide-over', function (): void {
     $organization = Organization::factory()->create();
 
