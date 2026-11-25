@@ -167,3 +167,21 @@ it('returns correct total prospect stats of prospects, concerns, and tasks based
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
 });
+
+it('does not count archived tasks', function (): void {
+    Task::factory()->concerningProspect()->create(['created_at' => now()->subDays(5), 'is_confidential' => false]);
+    Task::factory()->concerningProspect()->create(['created_at' => now()->subDays(5), 'is_confidential' => false, 'archived_at' => now()]);
+
+    $widget = new ProspectReportStats();
+    $widget->cacheTag = 'prospect-report-cache';
+
+    // Unfiltered, so read through the cache.
+    expect($widget->getStats()[2]->getValue())->toEqual(1);
+
+    $widget->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widget->getStats()[2]->getValue())->toEqual(1);
+});

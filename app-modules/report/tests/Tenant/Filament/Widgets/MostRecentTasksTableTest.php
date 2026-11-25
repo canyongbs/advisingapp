@@ -231,3 +231,20 @@ it('does not list tasks concerning archived students, including those from befor
         ->assertCanSeeTableRecords(collect([$taskForActive]))
         ->assertCanNotSeeTableRecords(collect([$taskForArchived]));
 });
+
+it('does not display archived tasks', function (string $educatableType): void {
+    $factory = $educatableType === Student::class ? Task::factory()->concerningStudent() : Task::factory()->concerningProspect();
+
+    $task = $factory->create(['is_confidential' => false]);
+    $archivedTask = $factory->create(['is_confidential' => false, 'archived_at' => now()]);
+
+    Livewire::test(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => $educatableType,
+    ])
+        ->assertCanSeeTableRecords([$task])
+        ->assertCanNotSeeTableRecords([$archivedTask]);
+})->with([
+    'students' => [Student::class],
+    'prospects' => [Prospect::class],
+]);

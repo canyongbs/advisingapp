@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -87,6 +88,7 @@ class MostRecentTasksTable extends BaseWidget
         return $table
             ->query(function () use ($startDate, $endDate, $groupId): Builder {
                 return Task::query()
+                    ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
                     ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($groupId): void {
                         $query
                             // The morph callback is typed `Builder<Model>` rather than

@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use App\Enums\Feature;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
@@ -107,7 +108,7 @@ class StudentsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
-                    ->counts(['tasks' => fn (Builder $query): Builder => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
+                    ->counts(['tasks' => fn (Builder $query): Builder => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])]) // @phpstan-ignore method.notFound
                     ->sortable(),
             ])
             ->filters([
@@ -147,6 +148,8 @@ class StudentsActionCenterWidget extends TableWidget
                         }
 
                         return $query->whereHas('tasks', function (Builder $query) use ($data): Builder {
+                            $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived()); // @phpstan-ignore method.notFound
+
                             if ($data['value'] === 'open') {
                                 return $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled]);
                             }

@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
@@ -137,6 +138,25 @@ it('opens the edit or view slide-over on row click depending on whether the user
 
     expect($page->getTable()->getRecordAction($ownTask))->toBe('edit')
         ->and($page->getTable()->getRecordAction($otherTask))->toBe('view');
+});
+
+it('bulk archives tasks', function () use ($createTaskUser): void {
+    $user = $createTaskUser();
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create();
+
+    $tasks = Task::factory()->count(2)->concerningProspect($prospect)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+    expect($tasks->contains(fn (Task $task): bool => $task->isArchived()))->toBeFalse();
+
+    Livewire::test(ManageProspectTasks::class, ['record' => $prospect->getKey()])
+        ->selectTableRecords($tasks)
+        ->callAction(TestAction::make(ArchiveBulkAction::class)->table()->bulk())
+        ->assertCanNotSeeTableRecords($tasks);
+
+    expect($tasks->every(fn (Task $task): bool => $task->refresh()->isArchived()))->toBeTrue();
 });
 
 describe('authorization', function () use ($createTaskUser): void {
