@@ -1,7 +1,7 @@
 ---
 title: Form Duplication Access Settings
 created: 2026-11-25
-ready: false
+ready: true
 ---
 
 ## Feature Flags
@@ -10,7 +10,11 @@ ready: false
 
 ## Temporary Migrations
 
+- app-modules/form/database/migrations/2026_11_25_172404_tmp_activate_form_duplication_access_settings_feature.php
+
 ## Additional Cleanup
+
+- Search for `TODO: Cleanup Task (form-duplication-access-settings)`.
 
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag

@@ -35,6 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
@@ -42,6 +44,7 @@ use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Models\SubmissibleField;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -461,5 +464,178 @@ describe('duplication', function () use ($customBlock): void {
             ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
 
         Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
+    });
+});
+
+describe('duplication access settings', function () use ($customBlock): void {
+    /**
+     * A single page form with a mapped email field, an unmapped field, and a grid whose only content in one column is a mapped name field.
+     */
+    $createFormWithMappedFields = function (array $attributes) use ($customBlock): Form {
+        $form = Form::factory()->create($attributes);
+        $form->fields()->delete();
+
+        $emailField = $form->fields()->create(['label' => 'Email', 'type' => EducatableEmailFormFieldBlock::type(), 'is_required' => true, 'config' => []]);
+        $nameField = $form->fields()->create(['label' => 'Name', 'type' => EducatableNameFormFieldBlock::type(), 'is_required' => true, 'config' => []]);
+        $commentsField = $form->fields()->create(['label' => 'Comments', 'type' => 'text_input', 'is_required' => false, 'config' => []]);
+
+        $form->update(['content' => ['type' => 'doc', 'content' => [
+            $customBlock($emailField),
+            [
+                'type' => 'grid',
+                'attrs' => ['data-cols' => 2],
+                'content' => [
+                    ['type' => 'gridColumn', 'content' => [$customBlock($nameField)]],
+                    ['type' => 'gridColumn', 'content' => [$customBlock($commentsField)]],
+                ],
+            ],
+        ]]]);
+
+        return $form->refresh();
+    };
+
+    $duplicate = function (Form $form, array $data): Form {
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form), data: $data)
+            ->assertHasNoFormErrors();
+
+        return Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+    };
+
+    beforeEach(function (): void {
+        asSuperAdmin();
+    });
+
+    it('fills the access settings from the original form', function (): void {
+        $form = Form::factory()->create(['is_authenticated' => true, 'generate_prospects' => true]);
+
+        Livewire::test(ListForms::class)
+            ->mountAction(TestAction::make('Duplicate')->table($form))
+            ->assertSchemaStateSet([
+                'name' => "Copy - {$form->name}",
+                'is_authenticated' => true,
+                'generate_prospects' => true,
+            ]);
+    });
+
+    it('gives the duplicated form the chosen access settings', function () use ($duplicate): void {
+        $form = Form::factory()->create(['is_authenticated' => true, 'generate_prospects' => false, 'allow_view_past_submissions' => true]);
+
+        $duplicatedForm = $duplicate($form, ['is_authenticated' => false, 'generate_prospects' => true]);
+
+        expect($duplicatedForm->is_authenticated)->toBeFalse()
+            ->and($duplicatedForm->generate_prospects)->toBeTrue()
+            ->and($duplicatedForm->allow_view_past_submissions)->toBeFalse()
+            ->and($form->refresh()->is_authenticated)->toBeTrue()
+            ->and($form->allow_view_past_submissions)->toBeTrue();
+    });
+
+    it('does not let a user without the Recruitment CRM license generate prospects on the duplicated form', function () use ($duplicate): void {
+        $settings = app(LicenseSettings::class);
+        $settings->data->addons->onlineForms = true;
+        $settings->save();
+
+        $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+        $user->givePermissionTo('form.view-any', 'form.create');
+
+        actingAs($user);
+
+        $form = Form::factory()->create(['is_authenticated' => true, 'generate_prospects' => true]);
+
+        Livewire::test(ListForms::class)
+            ->mountAction(TestAction::make('Duplicate')->table($form))
+            ->assertSchemaStateSet(['generate_prospects' => false])
+            ->assertFormFieldDisabled('generate_prospects');
+
+        $duplicatedForm = $duplicate($form, ['generate_prospects' => true]);
+
+        expect($duplicatedForm->generate_prospects)->toBeFalse();
+    });
+
+    it('removes the mapped fields when the duplicated form neither requires authentication nor generates prospects', function () use ($createFormWithMappedFields, $duplicate): void {
+        $form = $createFormWithMappedFields(['is_authenticated' => true, 'generate_prospects' => false]);
+
+        $duplicatedForm = $duplicate($form, ['is_authenticated' => false, 'generate_prospects' => false]);
+
+        $grid = $duplicatedForm->content['content'][0];
+
+        expect($duplicatedForm->fields()->pluck('type')->all())->toBe(['text_input'])
+            ->and($duplicatedForm->content['content'])->toHaveCount(1)
+            ->and($grid['type'])->toBe('grid')
+            ->and($grid['content'][0]['content'])->toBe([['type' => 'paragraph']])
+            ->and(referencedFieldIds($duplicatedForm->content))->toBe($duplicatedForm->fields()->pluck('id')->all())
+            ->and($form->fields()->count())->toBe(3);
+    });
+
+    it('removes the mapped fields from the steps of a duplicated multi-step form', function () use ($customBlock, $duplicate): void {
+        $form = Form::factory()->create(['is_authenticated' => true, 'is_wizard' => true]);
+        $form->fields()->delete();
+        $form->update(['content' => null]);
+
+        $step = $form->steps()->create(['label' => 'Contact', 'sort' => 0]);
+        $emailField = $step->fields()->create(['form_id' => $form->getKey(), 'label' => 'Email', 'type' => EducatableEmailFormFieldBlock::type(), 'is_required' => true, 'config' => []]);
+        $commentsField = $step->fields()->create(['form_id' => $form->getKey(), 'label' => 'Comments', 'type' => 'text_input', 'is_required' => false, 'config' => []]);
+        $step->update(['content' => ['type' => 'doc', 'content' => [$customBlock($emailField), $customBlock($commentsField)]]]);
+
+        $duplicatedForm = $duplicate($form, ['is_authenticated' => false, 'generate_prospects' => false]);
+        $duplicatedStep = $duplicatedForm->steps()->firstOrFail();
+
+        expect($duplicatedForm->fields()->pluck('type')->all())->toBe(['text_input'])
+            ->and(referencedFieldIds($duplicatedStep->content))->toBe($duplicatedStep->fields()->pluck('id')->all());
+    });
+
+    it('keeps the mapped fields when the duplicated form requires authentication or generates prospects', function (array $data) use ($createFormWithMappedFields, $duplicate): void {
+        $form = $createFormWithMappedFields(['is_authenticated' => true, 'generate_prospects' => false]);
+
+        $duplicatedForm = $duplicate($form, $data);
+
+        expect($duplicatedForm->fields()->count())->toBe(3)
+            ->and(referencedFieldIds($duplicatedForm->content))->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all());
+    })->with([
+        'requires authentication' => [['is_authenticated' => true, 'generate_prospects' => false]],
+        'generates prospects' => [['is_authenticated' => false, 'generate_prospects' => true]],
+    ]);
+
+    it('warns that mapped fields will be removed only when the original has them and both settings are off', function () use ($createFormWithMappedFields): void {
+        $formWithMappedFields = $createFormWithMappedFields(['is_authenticated' => true, 'generate_prospects' => false]);
+        $formWithoutMappedFields = Form::factory()->create(['is_authenticated' => true]);
+
+        Livewire::test(ListForms::class)
+            ->mountAction(TestAction::make('Duplicate')->table($formWithMappedFields))
+            ->assertMountedActionModalDontSee('Mapped fields will be removed')
+            ->fillForm(['is_authenticated' => false, 'generate_prospects' => false])
+            ->assertMountedActionModalSee('Mapped fields will be removed');
+
+        Livewire::test(ListForms::class)
+            ->mountAction(TestAction::make('Duplicate')->table($formWithoutMappedFields))
+            ->fillForm(['is_authenticated' => false, 'generate_prospects' => false])
+            ->assertMountedActionModalDontSee('Mapped fields will be removed');
+    });
+
+    it('opens the edit tab of the duplicated form', function (): void {
+        $form = Form::factory()->create();
+
+        $component = Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form));
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        $component->assertRedirect(FormResource::getUrl('view', ['record' => $duplicatedForm, 'tab' => 'edit']));
+    });
+
+    // TODO: Cleanup Task (form-duplication-access-settings): delete this test along with `FormDuplicationAccessSettingsFeature`.
+    it('keeps the original access settings and actions while the feature is inactive', function () use ($duplicate): void {
+        FormDuplicationAccessSettingsFeature::deactivate();
+
+        $form = Form::factory()->create(['is_authenticated' => true, 'generate_prospects' => true]);
+
+        Livewire::test(ListForms::class)
+            ->assertActionVisible(TestAction::make('view')->table($form))
+            ->assertActionVisible(TestAction::make('edit')->table($form));
+
+        $duplicatedForm = $duplicate($form, ['is_authenticated' => false, 'generate_prospects' => false]);
+
+        expect($duplicatedForm->is_authenticated)->toBeTrue()
+            ->and($duplicatedForm->generate_prospects)->toBeTrue();
     });
 });

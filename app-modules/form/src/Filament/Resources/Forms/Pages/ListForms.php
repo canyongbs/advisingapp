@@ -37,10 +37,12 @@
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Actions\DuplicateForm;
+use AdvisingApp\Form\Filament\Resources\Forms\Actions\DuplicateFormAction;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Schemas\FormAccessSettingsForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\Action;
@@ -84,7 +86,9 @@ class ListForms extends ListRecords
                     ->label('Submissions')
                     ->default(0),
             ])
-            ->recordActions([
+            ->recordActions(FormDuplicationAccessSettingsFeature::active() ? [
+                DuplicateFormAction::make(),
+            ] : [
                 ViewAction::make(),
                 EditAction::make()
                     ->url(fn (Form $record): string => FormResource::getUrl('view', ['record' => $record, 'tab' => 'edit'])),
