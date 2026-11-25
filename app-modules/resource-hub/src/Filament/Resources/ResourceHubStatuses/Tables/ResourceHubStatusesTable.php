@@ -34,15 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Tables;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Tables\ResourceHubRecordsTable;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class ResourceHub extends Cluster
+class ResourceHubStatusesTable
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
-
-    protected static ?int $navigationSort = 110;
+    public static function configure(Table $table): Table
+    {
+        return ResourceHubRecordsTable::configure($table, ResourceHubStatusResource::class)
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('resource_hub_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('resourceHubArticles')
+                    ->sortable(),
+            ]);
+    }
 }

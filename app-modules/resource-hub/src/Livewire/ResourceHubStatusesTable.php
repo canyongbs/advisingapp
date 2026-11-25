@@ -34,53 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
+namespace AdvisingApp\ResourceHub\Livewire;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Tables\ResourceHubStatusesTable as ResourceHubStatusesTableConfiguration;
 use Filament\Tables\Table;
 
-class ListResourceHubQualities extends ListRecords
+class ResourceHubStatusesTable extends BaseResourceHubTable
 {
-    protected static string $resource = ResourceHubQualityResource::class;
-
     public function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
-            ]);
+        return ResourceHubStatusesTableConfiguration::configure($table);
     }
 
-    protected function getHeaderActions(): array
+    protected function getResourceClass(): string
     {
-        return [
-            CreateAction::make(),
-        ];
+        return ResourceHubStatusResource::class;
     }
 }
