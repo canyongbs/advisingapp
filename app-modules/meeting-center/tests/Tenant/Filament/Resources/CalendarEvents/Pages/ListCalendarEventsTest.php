@@ -106,10 +106,10 @@ it('uses My Calendar labels for navigation and heading', function () use ($listC
         ->toBe('My Calendar');
 
     Livewire::test(ListCalendarEvents::class)
-      ->set('viewType', 'table')
-      ->assertSet('viewType', 'table')
-      ->set('viewType', 'calendar')
-      ->assertSet('viewType', 'calendar')
-      ->set('viewType', 'table')
-      ->assertSet('viewType', 'table');
+        ->set('viewType', 'table')
+        ->assertSet('viewType', 'table')
+        ->set('viewType', 'calendar')
+        ->assertSet('viewType', 'calendar')
+        ->set('viewType', 'table')
+        ->assertSet('viewType', 'table');
 });
