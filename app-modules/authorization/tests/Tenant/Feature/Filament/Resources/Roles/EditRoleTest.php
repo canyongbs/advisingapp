@@ -100,7 +100,10 @@ describe('deletion', function (): void {
         $userGroup->assignRole($role);
         $userGroup->users()->attach($user);
 
-        expect(Gate::forUser(auth()->user())->inspect('delete', $role)->denied())->toBeTrue();
+        $response = Gate::forUser(auth()->user())->inspect('delete', $role);
+
+        expect($response->denied())->toBeTrue()
+            ->and($response->message())->toBe('You cannot delete a role that is assigned to a group with members.');
     });
 
     it('can delete a role assigned only through empty user groups', function (): void {

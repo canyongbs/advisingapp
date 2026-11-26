@@ -83,7 +83,7 @@ class RolePolicy
 
         // TODO: Cleanup Task (user-groups-feature): once the flag is removed, drop the feature check and keep this deny guard.
         if (UserGroupsFeature::active() && $role->userGroups()->whereHas('users')->exists()) {
-            return Response::deny('You cannot delete a role that has users assigned to it.');
+            return Response::deny('You cannot delete a role that is assigned to a group with members.');
         }
 
         return $authenticatable->canOrElse(
