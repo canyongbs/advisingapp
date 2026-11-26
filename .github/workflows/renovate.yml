@@ -23,7 +23,7 @@ jobs:
 
             - name: Generate GitHub App Token
               id: app-token
-              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+              uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
               with:
                   client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
                   private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
@@ -37,7 +37,7 @@ jobs:
                   permission-administration: read
 
             - name: Run Renovate
-              uses: renovatebot/github-action@266fef21329c44765ad42f9dea1f01f5d2d91084 # v46.3.13
+              uses: renovatebot/github-action@acdd6bda8b035c99ce59d5675816af2aa65a1774 # v46.3.14
               with:
                   configurationFile: renovate-config.json
                   token: ${{ steps.app-token.outputs.token }}
