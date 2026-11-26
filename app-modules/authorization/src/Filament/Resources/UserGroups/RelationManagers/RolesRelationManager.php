@@ -62,11 +62,6 @@ class RolesRelationManager extends RelationManager
             && (auth()->user()?->can('view', $ownerRecord) ?? false);
     }
 
-    public function isReadOnly(): bool
-    {
-        return parent::isReadOnly() || ! (auth()->user()?->can('update', $this->getOwnerRecord()) ?? false);
-    }
-
     public function table(Table $table): Table
     {
         return $table
