@@ -52,10 +52,6 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-beforeEach(function (): void {
-    UserGroupsFeature::activate();
-});
-
 it('can attach roles to a user group', function (): void {
     asSuperAdmin();
 

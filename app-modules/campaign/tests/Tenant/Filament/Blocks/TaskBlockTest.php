@@ -42,7 +42,6 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignA
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Team\Models\Department;
-use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -51,10 +50,6 @@ use Illuminate\Support\Facades\Config;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
-
-beforeEach(function (): void {
-    UserGroupsFeature::activate();
-});
 
 it('can edit a non-confidential task campaign journey step without error', function (): void {
     asSuperAdmin();

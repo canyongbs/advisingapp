@@ -55,10 +55,6 @@ use Illuminate\Support\Facades\Bus;
 
 use function Tests\asSuperAdmin;
 
-beforeEach(function (): void {
-    UserGroupsFeature::activate();
-});
-
 it('will execute appropriately on each educatable in the group', function (Educatable $educatable): void {
     Bus::fake();
 

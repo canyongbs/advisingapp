@@ -48,10 +48,6 @@ use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-beforeEach(function (): void {
-    UserGroupsFeature::activate();
-});
-
 it('can render the edit user group page', function (): void {
     asSuperAdmin();
 

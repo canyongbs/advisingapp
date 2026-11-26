@@ -427,8 +427,6 @@ it('filters users based on roles', function (): void {
 });
 
 it('filters users based on roles inherited through their groups', function (): void {
-    UserGroupsFeature::activate();
-
     asSuperAdmin();
 
     $role = Role::factory()->create();
