@@ -56,14 +56,17 @@ test('`SharedCalendar` page can be rendered', function (): void {
         ->assertSuccessful();
 });
 
-test('`SharedCalendar` uses updated heading and tab labels', function (): void {
+test('`SharedCalendar` switches between bookings, calendar, and configuration tabs', function (): void {
     asSuperAdmin();
 
-    get(SharedCalendar::getUrl())
-        ->assertSuccessful()
-        ->assertSeeText('Bookings')
-        ->assertSeeText('Calendar')
-        ->assertSeeText('Configuration');
+    Livewire::test(SharedCalendar::class)
+        ->assertSet('viewType', 'table')
+        ->call('setViewType', 'calendar')
+        ->assertSet('viewType', 'calendar')
+        ->call('setViewType', 'settings')
+        ->assertSet('viewType', 'settings')
+        ->call('setViewType', 'table')
+        ->assertSet('viewType', 'table');
 });
 
 test('`SharedCalendar` is gated with proper access control', function (): void {
