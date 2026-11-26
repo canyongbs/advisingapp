@@ -93,8 +93,8 @@ it('uses My Calendar labels for navigation and heading', function () use ($listC
     get(CalendarEventResource::getUrl('index'))
         ->assertSuccessful()
         ->assertSeeText('My Calendar')
-      ->assertSeeText('Bookings')
-      ->assertSeeText('Calendar')
-      ->assertSeeText('Configuration')
+        ->assertSeeText('Bookings')
+        ->assertSeeText('Calendar')
+        ->assertSeeText('Configuration')
         ->assertDontSeeText('My Schedule');
 });
