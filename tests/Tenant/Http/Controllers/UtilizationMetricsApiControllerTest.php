@@ -45,6 +45,7 @@ use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Models\Task;
 use App\Http\Controllers\UtilizationMetricsApiController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -77,6 +78,14 @@ it('does not count archived students in the reported student records', function 
 
     expect(Student::query()->count())->toBe(5)
         ->and($utilizationMetrics()['student_records'])->toBe(3);
+});
+
+it('does not count archived tasks', function () use ($utilizationMetrics): void {
+    Task::factory()->count(2)->concerningStudent()->create(['is_confidential' => false]);
+    Task::factory()->concerningStudent()->create(['is_confidential' => false, 'archived_at' => now()]);
+
+    expect(Task::query()->count())->toBe(3)
+        ->and($utilizationMetrics()['tasks'])->toBe(2);
 });
 
 it('does not count alerts belonging to archived students', function () use ($utilizationMetrics) {
