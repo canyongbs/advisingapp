@@ -83,3 +83,18 @@ it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', f
         ->assertSeeLivewire(ManagePersonalBookingPage::class)
         ->assertSeeLivewire(ConnectedAccounts::class);
 });
+
+it('uses My Calendar labels for navigation and heading', function () use ($listCalendarEventsTestUser): void {
+    $user = $listCalendarEventsTestUser();
+    $user->givePermissionTo('calendar_event.view-any');
+
+    actingAs($user);
+
+    get(CalendarEventResource::getUrl('index'))
+        ->assertSuccessful()
+        ->assertSeeText('My Calendar')
+      ->assertSeeText('Bookings')
+      ->assertSeeText('Calendar')
+      ->assertSeeText('Configuration')
+        ->assertDontSeeText('My Schedule');
+});
