@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Policies;
 
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Authorization\Models\UserGroup;
 use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
@@ -82,15 +81,8 @@ class RolePolicy
             return Response::deny('You cannot delete a role that has users assigned to it.');
         }
 
-        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, run this query unconditionally.
-        $hasUsersViaNonDeletedUserGroup = UserGroupsFeature::active() && UserGroup::query()
-            ->whereNull((new UserGroup())->qualifyColumn('deleted_at'))
-            ->whereHas('roles', fn ($query) => $query->whereKey($role->getKey()))
-            ->whereHas('users')
-            ->exists();
-
         // TODO: Cleanup Task (user-groups-feature): once the flag is removed, drop the feature check and keep this deny guard.
-        if (UserGroupsFeature::active() && $hasUsersViaNonDeletedUserGroup) {
+        if (UserGroupsFeature::active() && $role->userGroups()->whereHas('users')->exists()) {
             return Response::deny('You cannot delete a role that has users assigned to it.');
         }
 

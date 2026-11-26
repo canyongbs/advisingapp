@@ -243,30 +243,19 @@ class ListUsers extends ListRecords
                             $isFilteringForNoRoles = in_array('none', $data['values'], true);
                             $roleIds = array_values(array_filter($data['values'], fn ($value): bool => $value !== 'none'));
 
-                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include group-role matching in this filter.
                             $query->where(function (Builder $query) use ($isFilteringForNoRoles, $roleIds): void {
                                 if ($isFilteringForNoRoles) {
                                     $query->orWhere(fn (Builder $query) => $query
                                         ->whereDoesntHave('roles')
-                                        ->when(
-                                            UserGroupsFeature::active(),
-                                            fn (Builder $query) => $query->whereDoesntHave(
-                                                'userGroups.roles',
-                                                fn (Builder $query) => $query->whereNotIn('roles.name', User::ADMIN_ROLES),
-                                            ),
-                                        ));
+                                        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always exclude users with group roles.
+                                        ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->whereDoesntHave('userGroups.roles')));
                                 }
 
                                 if ($roleIds !== []) {
-                                    $query->orWhere(function (Builder $userQuery) use ($roleIds): void {
-                                        $userQuery->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->whereKey($roleIds));
-
-                                        if (UserGroupsFeature::active()) {
-                                            $userQuery->orWhereHas('userGroups.roles', fn (Builder $roleQuery) => $roleQuery
-                                                ->whereKey($roleIds)
-                                                ->whereNotIn('roles.name', User::ADMIN_ROLES));
-                                        }
-                                    });
+                                    $query->orWhere(fn (Builder $query) => $query
+                                        ->whereHas('roles', fn (Builder $query) => $query->whereKey($roleIds))
+                                        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include users with the roles through their groups.
+                                        ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->orWhereHas('userGroups.roles', fn (Builder $query) => $query->whereKey($roleIds))));
                                 }
                             });
                         }

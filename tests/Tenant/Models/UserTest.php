@@ -46,6 +46,8 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 use Spatie\Permission\PermissionRegistrar;
+use Spatie\Permission\Traits\HasPermissions;
+use Spatie\Permission\Traits\HasRoles;
 
 use function Tests\setEnterpriseAiEnabled;
 
@@ -154,7 +156,12 @@ describe('effective roles', function (): void {
         app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
 
         expect($user->can('user_group.view-any'))->toBeTrue()
-            ->and($user->getPermissionsViaRoles()->pluck('name')->all())->toContain('user_group.view-any');
+            ->and($user->hasPermissionTo('user_group.view-any'))->toBeTrue()
+            ->and($user->checkPermissionTo('user_group.view-any'))->toBeTrue()
+            ->and($user->hasAnyPermission(['user_group.create', 'user_group.view-any']))->toBeTrue()
+            ->and($user->hasAllPermissions(['user_group.create', 'user_group.view-any']))->toBeFalse()
+            ->and($user->getPermissionsViaRoles()->pluck('name')->all())->toContain('user_group.view-any')
+            ->and($user->getAllPermissions()->pluck('name')->all())->toContain('user_group.view-any');
     });
 
     it('keeps granting roles through archived groups', function (): void {
@@ -299,6 +306,101 @@ describe('effective roles', function (): void {
             ->toContain($otherUser->getKey())
             ->not->toContain($directUser->getKey())
             ->not->toContain($groupUser->getKey());
+    });
+
+    it('matches users with a permission directly, through their roles, or through their groups in the `permission` and `withoutPermission` scopes', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $directUser = User::factory()->create();
+        $directUser->givePermissionTo('user_group.view-any');
+
+        $roleUser = User::factory()->create();
+        $roleUser->assignRole($role);
+
+        $groupUser = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($groupUser);
+
+        $otherUser = User::factory()->create();
+
+        $userKeys = [$directUser->getKey(), $roleUser->getKey(), $groupUser->getKey(), $otherUser->getKey()];
+
+        expect(User::query()->whereKey($userKeys)->permission('user_group.view-any')->pluck('id')->all())
+            ->toEqualCanonicalizing([$directUser->getKey(), $roleUser->getKey(), $groupUser->getKey()])
+            ->and(User::query()->whereKey($userKeys)->withoutPermission('user_group.view-any')->pluck('id')->all())
+            ->toBe([$otherUser->getKey()]);
+    });
+
+    it('accounts for every method of Spatie\'s `HasRoles` and `HasPermissions` traits', function (): void {
+        $overriddenOnUser = [
+            'hasRole',
+            'hasAllRoles',
+            'hasExactRoles',
+            'getRoleNames',
+            'getPermissionsViaRoles',
+            'scopeRole',
+            'scopePermission',
+        ];
+
+        $accountedFor = [
+            ...$overriddenOnUser,
+            // Reach the effective roles through one of the overrides above.
+            'hasAnyRole',
+            'hasPermissionViaRole',
+            'scopeWithoutRole',
+            'scopeWithoutPermission',
+            'hasPermissionTo',
+            'hasWildcardPermission',
+            'checkPermissionTo',
+            'hasAnyPermission',
+            'hasAllPermissions',
+            'getAllPermissions',
+            // Direct roles and permissions only, by design: the write relations and writes.
+            'bootHasRoles',
+            'roles',
+            'assignRole',
+            'removeRole',
+            'syncRoles',
+            'bootHasPermissions',
+            'permissions',
+            'givePermissionTo',
+            'syncPermissions',
+            'revokePermissionTo',
+            'getDirectPermissions',
+            'hasDirectPermission',
+            'hasAllDirectPermissions',
+            'hasAnyDirectPermission',
+            'getPermissionNames',
+            // Do not read roles.
+            'getRoleClass',
+            'getStoredRole',
+            'convertPipeToArray',
+            'getPermissionClass',
+            'getWildcardClass',
+            'filterPermission',
+            'convertToPermissionModels',
+            'getStoredPermission',
+            'ensureModelSharesGuard',
+            'getGuardNames',
+            'getDefaultGuardName',
+            'forgetCachedPermissions',
+            'forgetWildcardPermissionIndex',
+        ];
+
+        $spatieMethods = collect([HasRoles::class, HasPermissions::class])
+            ->flatMap(fn (string $trait): array => (new ReflectionClass($trait))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED))
+            ->map(fn (ReflectionMethod $method): string => $method->getName())
+            ->unique();
+
+        expect($spatieMethods->diff($accountedFor)->values()->all())
+            ->toBe([], 'Spatie has new role or permission methods. Decide whether each must respect roles inherited through groups, override it on `User` if so, and add it to this list.')
+            ->and(collect($accountedFor)->diff($spatieMethods)->values()->all())
+            ->toBe([], 'These methods no longer exist in Spatie. Remove them from this list, and remove any override of them on `User`.')
+            ->and(collect($overriddenOnUser)->reject(fn (string $method): bool => (new ReflectionMethod(User::class, $method))->class === User::class)->values()->all())
+            ->toBe([], 'These methods must be overridden on `User` so that they respect roles inherited through groups.');
     });
 
     it('ignores group roles while the `UserGroupsFeature` is inactive', function (): void {

@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Models;
 use AdvisingApp\Authorization\Database\Factories\UserGroupFactory;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Observers\UserGroupObserver;
+use App\Models\Authenticatable;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -47,6 +48,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
@@ -58,7 +60,7 @@ class UserGroup extends Model
 {
     use CanBeArchived;
     use HasRolesWithPivot {
-        forgetAuthorizableRelations as protected forgetAuthorizableRelationsForRoles;
+        roles as protected rolesIncludingAdminRoles;
     }
 
     /** @use HasFactory<UserGroupFactory> */
@@ -102,15 +104,17 @@ class UserGroup extends Model
             ->withTimestamps();
     }
 
-    public function forgetAuthorizableRelations(): void
+    /**
+     * Admin roles are never granted through a group, even if one is attached outside the UI.
+     * Every read of a group's roles goes through this relation, including the eager loads and
+     * `whereHas()` queries that make up a user's effective roles.
+     *
+     * @return BelongsToMany<Role, $this, MorphPivot>
+     */
+    public function roles(): BelongsToMany
     {
-        $this->forgetAuthorizableRelationsForRoles();
+        $relation = $this->rolesIncludingAdminRoles();
 
-        User::query()
-            ->whereIn('id', $this->users()->pluck('users.id'))
-            ->get()
-            ->each(function (User $user): void {
-                $user->forgetAuthorizableRelations();
-            });
+        return $relation->whereNotIn($relation->getRelated()->qualifyColumn('name'), Authenticatable::ADMIN_ROLES);
     }
 }

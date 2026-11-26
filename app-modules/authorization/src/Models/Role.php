@@ -41,7 +41,6 @@ use AdvisingApp\Authorization\Database\Factories\RoleFactory;
 use App\Models\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -101,13 +100,5 @@ class Role extends SpatieRole implements Auditable
         $query
             ->where('name', Authenticatable::SUPER_ADMIN_ROLE)
             ->where('guard_name', 'web');
-    }
-
-    /**
-     * @return Factory<Role>
-     */
-    protected static function newFactory(): Factory
-    {
-        return RoleFactory::new();
     }
 }

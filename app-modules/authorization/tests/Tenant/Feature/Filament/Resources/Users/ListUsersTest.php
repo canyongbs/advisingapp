@@ -36,7 +36,9 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\Authenticatable;
@@ -422,6 +424,36 @@ it('filters users based on roles', function (): void {
         ->assertCanNotSeeTableRecords(
             $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
+});
+
+it('filters users based on roles inherited through their groups', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create();
+
+    $userWithRoleThroughGroup = User::factory()->create();
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->assignRole($role);
+    $userGroup->users()->attach($userWithRoleThroughGroup);
+
+    $userInGroupWithAdminRole = User::factory()->create();
+
+    $adminRoleUserGroup = UserGroup::factory()->create();
+    $adminRoleUserGroup->roles()->attach(Role::query()->superAdmin()->firstOrFail());
+    $adminRoleUserGroup->users()->attach($userInGroupWithAdminRole);
+
+    $userWithoutRoles = User::factory()->create();
+
+    Livewire::test(ListUsers::class)
+        ->filterTable('roles', [$role->getKey()])
+        ->assertCanSeeTableRecords([$userWithRoleThroughGroup])
+        ->assertCanNotSeeTableRecords([$userInGroupWithAdminRole, $userWithoutRoles])
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords([$userInGroupWithAdminRole, $userWithoutRoles])
+        ->assertCanNotSeeTableRecords([$userWithRoleThroughGroup]);
 });
 
 it('Filter users based on licenses', function (): void {
