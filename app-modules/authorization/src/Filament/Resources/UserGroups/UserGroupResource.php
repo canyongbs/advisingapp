@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\EditUserGroup;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\ListUserGroups;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\ViewUserGroup;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers\RolesRelationManager;
+use AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers\UsersRelationManager;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Schemas\UserGroupForm;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\NavigationGroup;
@@ -77,6 +78,7 @@ class UserGroupResource extends Resource
     public static function getRelations(): array
     {
         return [
+            UsersRelationManager::class,
             RolesRelationManager::class,
         ];
     }
