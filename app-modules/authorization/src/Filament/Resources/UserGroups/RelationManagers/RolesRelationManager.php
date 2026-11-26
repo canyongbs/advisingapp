@@ -36,24 +36,17 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers;
 
-use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Authorization\Models\UserGroup;
-use AdvisingApp\Authorization\Rules\RoleIsAssignableToUserGroup;
 use App\Features\UserGroupsFeature;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Authenticatable;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
-use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
 
 class RolesRelationManager extends RelationManager
 {
@@ -69,6 +62,11 @@ class RolesRelationManager extends RelationManager
             && (auth()->user()?->can('view', $ownerRecord) ?? false);
     }
 
+    public function isReadOnly(): bool
+    {
+        return parent::isReadOnly() || ! (auth()->user()?->can('update', $this->getOwnerRecord()) ?? false);
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -80,70 +78,19 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->authorize(fn (): bool => $this->canUpdateOwnerGroup())
                     ->label('Associate roles')
-                    ->schema([
-                        Select::make('recordId')
-                            ->label('Roles')
-                            ->hiddenLabel()
-                            ->multiple()
-                            ->searchable()
-                            ->required()
-                            ->preload()
-                            ->nestedRecursiveRules([new RoleIsAssignableToUserGroup()])
-                            ->getSearchResultsUsing(
-                                fn (string $search): array => $this->getAssignableRolesQuery()
-                                    ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->all()
-                            )
-                            ->options(
-                                fn (): array => $this->getAssignableRolesQuery()
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->all()
-                            )
-                            ->getOptionLabelsUsing(
-                                fn (array $values): array => $this->getAssignableRolesQuery()
-                                    ->whereKey($values)
-                                    ->pluck('name', 'id')
-                                    ->all()
-                            ),
-                    ])
                     ->multiple()
-                    ->preloadRecordSelect(),
+                    ->preloadRecordSelect()
+                    // `UserGroup::roles()` already excludes admin roles. Filament also validates the selected roles against this query.
+                    ->recordSelectOptionsQuery(fn (Builder $query): Builder => $query->where('guard_name', 'web')),
             ])
             ->recordActions([
-                DetachAction::make()
-                    ->authorize(fn (): bool => $this->canUpdateOwnerGroup()),
+                DetachAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make()
-                        ->authorize(fn (): bool => $this->canUpdateOwnerGroup()),
+                    DetachBulkAction::make(),
                 ]),
             ]);
-    }
-
-    protected function canUpdateOwnerGroup(): bool
-    {
-        return auth()->user()?->can('update', $this->getOwnerRecord()) ?? false;
-    }
-
-    /**
-     * @return Builder<Role>
-     */
-    protected function getAssignableRolesQuery(): Builder
-    {
-        $userGroup = $this->getOwnerRecord();
-
-        assert($userGroup instanceof UserGroup);
-
-        return Role::query()
-            ->where('guard_name', 'web')
-            ->whereNotIn('name', Authenticatable::ADMIN_ROLES)
-            ->whereKeyNot($userGroup->roles()->pluck('roles.id')->all())
-            ->orderBy('name');
     }
 }

@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\EditUserGroup;
+use AdvisingApp\Authorization\Filament\Resources\UserGroups\Pages\ViewUserGroup;
 use AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers\RolesRelationManager;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
@@ -201,6 +202,32 @@ describe('authorization', function (): void {
         actingAs(User::factory()->create()->givePermissionTo('user_group.view-any', 'user_group.*.view', 'user_group.*.update', 'role.view-any'));
 
         expect(RolesRelationManager::canViewForRecord($userGroup, EditUserGroup::class))->toBeTrue();
+    });
+
+    it('hides the attach and detach actions without the `user_group.*.update` permission', function (): void {
+        $userGroup = UserGroup::factory()->create();
+        $role = Role::factory()->create();
+        $userGroup->assignRole($role);
+
+        actingAs(User::factory()->create()->givePermissionTo('user_group.view-any', 'user_group.*.view', 'role.view-any'));
+
+        Livewire::test(RolesRelationManager::class, ['ownerRecord' => $userGroup, 'pageClass' => ViewUserGroup::class])
+            ->assertActionHidden(TestAction::make(AttachAction::class)->table())
+            ->assertActionHidden(TestAction::make(DetachAction::class)->table($role))
+            ->assertActionHidden(TestAction::make(DetachBulkAction::class)->table()->bulk());
+    });
+
+    it('shows the attach and detach actions with the `user_group.*.update` permission', function (): void {
+        $userGroup = UserGroup::factory()->create();
+        $role = Role::factory()->create();
+        $userGroup->assignRole($role);
+
+        actingAs(User::factory()->create()->givePermissionTo('user_group.view-any', 'user_group.*.view', 'user_group.*.update', 'role.view-any'));
+
+        Livewire::test(RolesRelationManager::class, ['ownerRecord' => $userGroup, 'pageClass' => ViewUserGroup::class])
+            ->assertActionVisible(TestAction::make(AttachAction::class)->table())
+            ->assertActionVisible(TestAction::make(DetachAction::class)->table($role))
+            ->assertActionVisible(TestAction::make(DetachBulkAction::class)->table()->bulk());
     });
 
     it('hides the relation manager when the `UserGroupsFeature` is inactive', function (): void {
