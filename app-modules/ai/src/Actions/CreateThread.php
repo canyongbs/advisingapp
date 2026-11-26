@@ -37,17 +37,18 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
-use App\Models\Tenant;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use App\Settings\DisplaySettings;
 
 class CreateThread
 {
-    public function __invoke(AiAssistantApplication $application, ?AiAssistant $assistant = null): AiThread
+    public function __invoke(?AiAssistant $assistant = null): AiThread
     {
-        $assistant ??= $this->getDefaultAiAssistant($application);
+        $assistant ??= $this->getDefaultAiAssistant();
 
         $existingThread = auth()->user()->aiThreads()
             ->whereBelongsTo($assistant, 'assistant')
@@ -75,10 +76,9 @@ class CreateThread
         return 'New Chat ' . now()->setTimezone(app(DisplaySettings::class)->getTimezone())->format('n/j/y @ g:i A');
     }
 
-    protected function getDefaultAiAssistant(AiAssistantApplication $application): AiAssistant
+    protected function getDefaultAiAssistant(): AiAssistant
     {
         $assistant = AiAssistant::query()
-            ->where('application', $application)
             ->where('is_default', true)
             ->first();
 
@@ -86,21 +86,20 @@ class CreateThread
             return $assistant;
         }
 
-        $tenant = Tenant::current();
         $settings = app(AiSettings::class);
 
         $assistant = new AiAssistant();
 
-        if ($application === AiAssistantApplication::PersonalAssistant) {
-            $assistant->name = 'Institutional Advisor';
-            $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
-        } else {
-            $assistant->name = "{$tenant->name} AI Assistant";
-            $assistant->description = "An AI Assistant for {$tenant->name}";
-        }
+        $assistant->name = 'Institutional Advisor';
+        $assistant->description = 'Using the most powerful models available, the primary Institutional Assistant has robust general intelligence, and is designed to serve your college or university.';
         $assistant->instructions = $settings->prompt_system_context;
-        $assistant->application = $application;
-        $assistant->model = $application->getDefaultModel();
+
+        if (! RemoveAiAssistantApplicationFeature::active()) {
+            // TODO: Cleanup Task (remove-ai-assistant-application): delete this branch after dropping the column.
+            $assistant->application = AiAssistantApplication::PersonalAssistant;
+        }
+
+        $assistant->model = $settings->default_model ?? AiModel::OpenAiGpt4o;
         $assistant->is_default = true;
         $assistant->save();
 

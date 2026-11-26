@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Pages\ManageAiSettings;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
@@ -72,7 +71,6 @@ it('cannot access the page if assistant is default', function (): void {
 
     $aiAssistant = AiAssistant::factory([
         'assistant_id' => fake()->uuid(),
-        'application' => AiAssistantApplication::PersonalAssistant,
         'model' => AiModel::OpenAiGpt4o,
         'is_default' => true,
         'description' => fake()->paragraph(),
@@ -96,7 +94,6 @@ it('can access the page if assistant is not default', function (): void {
 
     $aiAssistant = AiAssistant::factory([
         'assistant_id' => fake()->uuid(),
-        'application' => AiAssistantApplication::PersonalAssistant,
         'model' => AiModel::OpenAiGpt4o,
         'is_default' => false,
         'description' => fake()->paragraph(),

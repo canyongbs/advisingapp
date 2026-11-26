@@ -121,7 +121,7 @@ class AiAssistant extends Model implements HasMedia, Auditable
     {
         $this->addMediaCollection('avatar')
             ->acceptsFile(function (File $file): bool {
-                if ($this->application === AiAssistantApplication::PersonalAssistant && $this->is_default) {
+                if ($this->is_default) {
                     throw new DefaultAssistantLockedPropertyException('avatar');
                 }
 

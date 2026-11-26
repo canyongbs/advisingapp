@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use App\Filament\Pages\Dashboard;
 use Livewire\Attributes\Computed;
 
@@ -76,10 +78,16 @@ trait CanManageConsent
 
         if (! $user->defaultAssistantChatFoldersHaveBeenCreated()) {
             foreach (AiThreadFolder::defaults() as $default) {
-                $user->aiThreadFolders()->create([
-                    'application' => static::APPLICATION,
+                $attributes = [
                     'name' => $default,
-                ]);
+                ];
+
+                if (! RemoveAiAssistantApplicationFeature::active()) {
+                    // TODO: Cleanup Task (remove-ai-assistant-application): delete this branch after dropping the column.
+                    $attributes['application'] = AiAssistantApplication::PersonalAssistant;
+                }
+
+                $user->aiThreadFolders()->create($attributes);
             }
 
             $user->update([

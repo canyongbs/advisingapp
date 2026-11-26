@@ -116,7 +116,6 @@ trait CanManageThreads
     public function customAssistants(): array
     {
         return AiAssistant::query()
-            ->where('application', static::APPLICATION)
             ->whereNull('archived_at')
             ->where('is_default', false)
             ->orderBy('name')
@@ -142,7 +141,6 @@ trait CanManageThreads
                     ->options(fn (): array => $this->customAssistants)
                     ->getSearchResultsUsing(function (string $search): array {
                         return AiAssistant::query()
-                            ->where('application', static::APPLICATION)
                             ->whereNull('archived_at')
                             ->where('is_default', false)
                             ->where('name', 'like', "%{$search}%")
@@ -161,7 +159,6 @@ trait CanManageThreads
                         }
 
                         $assistant = AiAssistant::query()
-                            ->where('application', static::APPLICATION)
                             ->whereNull('archived_at')
                             ->where('is_default', false)
                             ->whereKey($value)
@@ -181,7 +178,6 @@ trait CanManageThreads
 
                         $this->createThread(
                             AiAssistant::query()
-                                ->where('application', static::APPLICATION)
                                 ->whereNull('archived_at')
                                 ->find($state),
                         );
@@ -223,7 +219,7 @@ trait CanManageThreads
             $assistant = null;
         }
 
-        $this->thread = app(CreateThread::class)(static::APPLICATION, $assistant);
+        $this->thread = app(CreateThread::class)($assistant);
         $this->selectedThreadId = $this->thread->getKey();
     }
 
@@ -238,7 +234,6 @@ trait CanManageThreads
         return $user
             ->aiThreads()
             ->withMax('messages', 'created_at')
-            ->whereRelation('assistant', 'application', static::APPLICATION)
             ->where('is_preview', false)
             ->whereNotNull('name')
             ->doesntHave('folder')
@@ -285,7 +280,6 @@ trait CanManageThreads
             ->requiresConfirmation()
             ->action(function (array $arguments): void {
                 $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
 
                 if (! $thread) {
@@ -317,7 +311,6 @@ trait CanManageThreads
             ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments): array => [
                 'name' => auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread'])
                     ?->name,
             ])
@@ -330,7 +323,6 @@ trait CanManageThreads
             ])
             ->action(function (array $arguments, array $data): void {
                 $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
 
                 if (! $thread) {
@@ -399,7 +391,6 @@ trait CanManageThreads
             ])
             ->action(function (array $arguments, array $data): void {
                 $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
 
                 if (! $thread) {
@@ -458,7 +449,6 @@ trait CanManageThreads
             ])
             ->action(function (array $arguments, array $data): void {
                 $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
 
                 if (! $thread) {

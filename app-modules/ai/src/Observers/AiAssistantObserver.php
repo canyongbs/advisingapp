@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -53,13 +52,9 @@ class AiAssistantObserver
 
     public function updating(AiAssistant $assistant): void
     {
-        if ($assistant->application === AiAssistantApplication::PersonalAssistant && $assistant->is_default) {
+        if ($assistant->is_default) {
             if ($assistant->isDirty('name')) {
                 throw new DefaultAssistantLockedPropertyException('name');
-            }
-
-            if ($assistant->isDirty('application')) {
-                throw new DefaultAssistantLockedPropertyException('application');
             }
         }
     }
