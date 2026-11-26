@@ -387,12 +387,16 @@ it('allows a user to access a report through an assigned group', function (): vo
 
     $group->users()->attach($user);
 
+    $userInOtherGroup = User::factory()->create();
+    UserGroup::factory()->create()->users()->attach($userInOtherGroup);
+
     ReportUserGroupAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
         'user_group_id' => $group->getKey(),
     ]);
 
-    expect(ReportAccessKey::UserLoginActivity->userCanAccess($user))->toBeTrue();
+    expect(ReportAccessKey::UserLoginActivity->userCanAccess($user))->toBeTrue()
+        ->and(ReportAccessKey::UserLoginActivity->userCanAccess($userInOtherGroup))->toBeFalse();
 });
 
 it('counts a user with both direct and group access only once', function (): void {
@@ -413,6 +417,7 @@ it('counts a user with both direct and group access only once', function (): voi
 
     $groupOnlyUser = User::factory()->create();
     $group->users()->attach($groupOnlyUser);
+
     expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(2);
 });
 
