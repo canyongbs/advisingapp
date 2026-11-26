@@ -546,7 +546,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
         return $query->where(fn (Builder $query) => $query
             ->where(fn (Builder $query): Builder => parent::scopePermission($query, $permissions))
-            ->orWhereHas('userGroups', fn (Builder $query) => $query->permission($permissions)));
+            ->orWhereHas('userGroups.roles', fn (Builder $query) => $query->permission($permissions)));
     }
 
     /**

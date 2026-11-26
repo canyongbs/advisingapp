@@ -334,6 +334,20 @@ describe('effective roles', function (): void {
             ->toBe([$otherUser->getKey()]);
     });
 
+    it('does not match users through permissions given directly to their groups in the `permission` and `withoutPermission` scopes', function (): void {
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->givePermissionTo('user_group.view-any');
+        $userGroup->users()->attach($user);
+
+        $user = $user->fresh();
+
+        expect($user->can('user_group.view-any'))->toBeFalse()
+            ->and(User::query()->whereKey($user->getKey())->permission('user_group.view-any')->exists())->toBeFalse()
+            ->and(User::query()->whereKey($user->getKey())->withoutPermission('user_group.view-any')->exists())->toBeTrue();
+    });
+
     it('accounts for every method of Spatie\'s `HasRoles` and `HasPermissions` traits', function (): void {
         $overriddenOnUser = [
             'hasRole',
