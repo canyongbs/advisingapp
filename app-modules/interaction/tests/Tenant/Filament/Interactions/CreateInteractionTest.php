@@ -35,10 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -101,6 +103,26 @@ it('interaction_confidential_users UserSelect shows all users when filter_admins
         ->assertSuccessful()
         ->assertFormFieldExists('interaction_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('interaction_confidential_user_groups select does not show archived groups on CreateInteraction', function (): void {
+    UserGroupsFeature::activate();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('interaction.view-any');
+    $user->givePermissionTo('interaction.create');
+
+    actingAs($user);
+
+    $activeUserGroup = UserGroup::factory()->create();
+    $archivedUserGroup = UserGroup::factory()->archived()->create();
+
+    Livewire::test(CreateInteraction::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('interaction_confidential_user_groups', checkFieldUsing: function (Select $field) use ($activeUserGroup, $archivedUserGroup): bool {
+            return ! empty($field->getSearchResults($activeUserGroup->name))
+                && empty($field->getSearchResults($archivedUserGroup->name));
         });
 });
 

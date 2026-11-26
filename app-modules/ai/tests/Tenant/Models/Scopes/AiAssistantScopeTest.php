@@ -37,7 +37,9 @@
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -147,6 +149,44 @@ test('AiAssistant model with fetch data for creator user', function (): void {
 
     expect($aiAssistants->where('is_confidential', true)->pluck('id'))
         ->not->toContain(...$privateAiAssistants->pluck('id'));
+});
+
+test('AiAssistant model with fetch data for users in a confidential access group', function (): void {
+    UserGroupsFeature::activate();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->users()->attach($user);
+
+    $userGroupConfidentialAiAssistants = AiAssistant::factory()
+        ->hasAttached($userGroup, [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
+
+    $privateAiAssistants = AiAssistant::factory()
+        ->hasAttached(UserGroup::factory()->create(), [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
+
+    $publicAiAssistants = AiAssistant::factory()->count(10)->create([
+        'is_confidential' => false,
+    ]);
+
+    actingAs($user);
+
+    $aiAssistants = AiAssistant::query()->get();
+
+    expect($aiAssistants)->toHaveCount(20);
+
+    expect($aiAssistants->pluck('id'))
+        ->toContain(...$publicAiAssistants->pluck('id'))
+        ->toContain(...$userGroupConfidentialAiAssistants->pluck('id'));
+
+    expect($aiAssistants->pluck('id'))->not->toContain(...$privateAiAssistants->pluck('id'));
 });
 
 test('AiAssistant model with fetch data for superadmin user', function (): void {
