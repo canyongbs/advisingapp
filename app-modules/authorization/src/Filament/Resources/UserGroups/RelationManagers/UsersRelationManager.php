@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\UserGroups\RelationManagers;
 
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Features\UserGroupsFeature;
 use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\Scopes\WithoutAnyAdmin;
@@ -59,11 +60,6 @@ class UsersRelationManager extends RelationManager
     {
         // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
         return UserGroupsFeature::active() && parent::canViewForRecord($ownerRecord, $pageClass);
-    }
-
-    public function isReadOnly(): bool
-    {
-        return parent::isReadOnly() || ! auth()->user()->can('user.*.update');
     }
 
     public function table(Table $table): Table
@@ -94,7 +90,13 @@ class UsersRelationManager extends RelationManager
 
                         $query->tap(new WithoutAnyAdmin());
                     })
-                    ->authorize(fn (): bool => ! $this->isReadOnly() && blank($this->getOwnerRecord()->getAttribute('archived_at'))),
+                    ->hidden(function (): bool {
+                        $userGroup = $this->getOwnerRecord();
+
+                        assert($userGroup instanceof UserGroup);
+
+                        return $userGroup->isArchived();
+                    }),
             ])
             ->recordActions([
                 DetachAction::make(),
