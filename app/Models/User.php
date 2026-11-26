@@ -453,6 +453,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             return $this->roles;
         }
 
+        $this->unsetRelation('userGroups');
         $this->loadMissing('userGroups.roles');
 
         return $this->roles->merge($this->userGroups->flatMap(fn (UserGroup $userGroup) => $userGroup->roles));
