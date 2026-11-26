@@ -35,10 +35,13 @@
 */
 
 use AdvisingApp\Authorization\Filament\Pages\Reporting;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -279,6 +282,58 @@ it('assigns departments to a report through the manage action', function (): voi
     )->toBeTrue();
 });
 
+it('assigns groups to a report through the manage action', function (): void {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $group = UserGroup::factory()->create();
+
+    actingAs($user);
+
+    Livewire::test(Reporting::class)
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
+            'users' => [],
+            'departments' => [],
+            'groups' => [$group->getKey()],
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserGroupAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_group_id', $group->getKey())
+            ->exists()
+    )->toBeTrue();
+});
+
+it('does not assign groups through the manage action when the feature is inactive', function (): void {
+    UserGroupsFeature::deactivate();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $group = UserGroup::factory()->create();
+
+    actingAs($user);
+
+    Livewire::test(Reporting::class)
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
+            'users' => [],
+            'departments' => [],
+            'groups' => [$group->getKey()],
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserGroupAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_group_id', $group->getKey())
+            ->exists()
+    )->toBeFalse();
+});
+
 it('removes access that is no longer selected when managing a report', function (): void {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
@@ -324,6 +379,41 @@ it('counts a user with both direct and department access only once', function ()
     ]);
 
     expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(1);
+});
+
+it('allows a user to access a report through an assigned group', function (): void {
+    $group = UserGroup::factory()->create();
+    $user = User::factory()->create();
+
+    $group->users()->attach($user);
+
+    ReportUserGroupAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_group_id' => $group->getKey(),
+    ]);
+
+    expect(ReportAccessKey::UserLoginActivity->userCanAccess($user))->toBeTrue();
+});
+
+it('counts a user with both direct and group access only once', function (): void {
+    $group = UserGroup::factory()->create();
+    $user = User::factory()->create();
+
+    $group->users()->attach($user);
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_id' => $user->getKey(),
+    ]);
+
+    ReportUserGroupAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_group_id' => $group->getKey(),
+    ]);
+
+    $groupOnlyUser = User::factory()->create();
+    $group->users()->attach($groupOnlyUser);
+    expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(2);
 });
 
 // Bulk Manage Assignments tests
@@ -444,4 +534,43 @@ it('bulk manage assignments action replaces all existing assignments when sync i
             ->where('user_id', $newUser->getKey())
             ->exists()
     )->toBeTrue('New user should be assigned');
+});
+
+it('bulk manage assignments action assigns and replaces groups', function (): void {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $existingGroup = UserGroup::factory()->create();
+    $newGroup = UserGroup::factory()->create();
+
+    ReportUserGroupAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_group_id' => $existingGroup->getKey(),
+    ]);
+
+    actingAs($user);
+
+    Livewire::test(Reporting::class)
+        ->callTableBulkAction('manageReportAssignments', [ReportAccessKey::UserLoginActivity->value], [
+            'users' => [],
+            'departments' => [],
+            'groups' => [$newGroup->getKey()],
+            'sync' => true,
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserGroupAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_group_id', $existingGroup->getKey())
+            ->exists()
+    )->toBeFalse('Existing group should be removed in sync mode');
+
+    expect(
+        ReportUserGroupAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_group_id', $newGroup->getKey())
+            ->exists()
+    )->toBeTrue('New group should be assigned');
 });
