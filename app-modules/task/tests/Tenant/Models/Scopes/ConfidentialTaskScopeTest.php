@@ -35,10 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -106,6 +108,36 @@ it('can be accessed when confidential by users on a department with access', fun
     expect($tasks->pluck('id'))->toContain(...$departmentTasks->pluck('id'));
 
     expect($tasks->pluck('id'))->not->toContain(...$otherDepartmentTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by users in a group with access', function (): void {
+    UserGroupsFeature::activate();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->users()->attach($user);
+
+    actingAs($user);
+
+    $userGroupTasks = Task::factory()
+        ->hasAttached($userGroup, [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $otherUserGroupTasks = Task::factory()
+        ->hasAttached(UserGroup::factory()->create(), [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $tasks = Task::query()->get();
+
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$userGroupTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherUserGroupTasks->pluck('id'));
 });
 
 it('can be accessed when confidential by super admins', function (): void {

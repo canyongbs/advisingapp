@@ -40,7 +40,9 @@ use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
 use Livewire\Livewire;
@@ -158,6 +160,8 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions): v
 });
 
 test('only shows confidential prompts to authorized users', function () use ($licenses, $permissions): void {
+    UserGroupsFeature::activate();
+
     $unauthorizedUser = user(
         licenses: $licenses,
         permissions: $permissions
@@ -207,6 +211,15 @@ test('only shows confidential prompts to authorized users', function () use ($li
     $departmentConfidentialPromptUser->team_id = $department->id;
     $departmentConfidentialPromptUser->save();
 
+    $groupConfidentialPromptUser = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->users()->attach($groupConfidentialPromptUser);
+    $confidentialPrompt->confidentialAccessUserGroups()->attach($userGroup);
+
     assertDatabaseCount(Prompt::class, 2);
 
     actingAs($unauthorizedUser);
@@ -244,6 +257,14 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($departmentConfidentialPromptUser);
+    Livewire::test(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($groupConfidentialPromptUser);
     Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([
