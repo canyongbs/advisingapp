@@ -21,7 +21,7 @@ jobs:
         steps:
             - name: Generate GitHub App Token
               id: app-token
-              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+              uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
               with:
                   client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
                   private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
@@ -34,7 +34,7 @@ jobs:
                   persist-credentials: false
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+              uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
 
             - name: Run copyright script
               run: ruby ./copyright.rb
