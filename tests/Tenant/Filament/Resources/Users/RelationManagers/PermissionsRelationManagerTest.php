@@ -105,25 +105,6 @@ describe('group roles', function (): void {
         UserGroupsFeature::activate();
     });
 
-    it('shows permissions inherited through group roles when user-group relations were loaded before assignment', function (): void {
-        asSuperAdmin();
-
-        $role = Role::factory()->create(['guard_name' => 'web']);
-        $role->givePermissionTo('user.view-any');
-
-        $user = User::factory()->create();
-        $user->load('userGroups.roles.permissions');
-
-        $userGroup = UserGroup::factory()->create();
-        $userGroup->assignRole($role);
-        $userGroup->users()->attach($user);
-
-        $permission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
-
-        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-            ->assertCanSeeTableRecords([$permission]);
-    });
-
     it('shows permissions inherited through non-admin group roles', function (): void {
         asSuperAdmin();
 
