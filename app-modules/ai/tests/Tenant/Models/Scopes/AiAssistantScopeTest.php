@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
-use App\Features\UserGroupsFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -152,8 +151,6 @@ test('AiAssistant model with fetch data for creator user', function (): void {
 });
 
 test('AiAssistant model with fetch data for users in a confidential access group', function (): void {
-    UserGroupsFeature::activate();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $userGroup = UserGroup::factory()->create();
     $userGroup->users()->attach($user);

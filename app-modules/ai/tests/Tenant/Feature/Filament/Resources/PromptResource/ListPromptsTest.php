@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
-use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
 use Livewire\Livewire;
@@ -160,8 +159,6 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions): v
 });
 
 test('only shows confidential prompts to authorized users', function () use ($licenses, $permissions): void {
-    UserGroupsFeature::activate();
-
     $unauthorizedUser = user(
         licenses: $licenses,
         permissions: $permissions

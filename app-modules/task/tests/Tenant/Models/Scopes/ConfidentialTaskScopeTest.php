@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
-use App\Features\UserGroupsFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -111,8 +110,6 @@ it('can be accessed when confidential by users on a department with access', fun
 });
 
 it('can be accessed when confidential by users in a group with access', function (): void {
-    UserGroupsFeature::activate();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $userGroup = UserGroup::factory()->create();
     $userGroup->users()->attach($user);

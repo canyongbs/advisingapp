@@ -56,7 +56,9 @@ use AdvisingApp\Report\Filament\Pages\StudentTaskManagement;
 use AdvisingApp\Report\Filament\Pages\UserLoginActivity;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Builder;
@@ -220,12 +222,26 @@ enum ReportAccessKey: string
                     ->where('team_id', $user->team_id)
                     ->selectRaw('1')
             )
+            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include the group-access union.
+            ->when(
+                UserGroupsFeature::active(),
+                fn (Builder $query): Builder => $query->union(
+                    ReportUserGroupAccess::query()
+                        ->where('report_key', $this->value)
+                        ->whereIn(
+                            'user_group_id',
+                            $user->userGroups()
+                                ->select('user_groups.id')
+                        )
+                        ->selectRaw('1')
+                )
+            )
             ->exists();
     }
 
     /**
-     * The number of distinct users that have access to the report, counting both
-     * direct user assignments and members of assigned departments (deduplicated).
+     * The number of distinct users that have access to the report, counting direct
+     * user assignments and members of assigned departments and groups (deduplicated).
      */
     public function accessCount(): int
     {
@@ -243,6 +259,16 @@ enum ReportAccessKey: string
                             ->where('report_key', $this->value)
                             ->select('team_id')
                     );
+
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include the group access-count branch.
+                if (UserGroupsFeature::active()) {
+                    $query->orWhereHas('userGroups', fn (Builder $query): Builder => $query->whereIn(
+                        'user_groups.id',
+                        ReportUserGroupAccess::query()
+                            ->where('report_key', $this->value)
+                            ->select('user_group_id')
+                    ));
+                }
             })
             ->count();
     }

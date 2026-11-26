@@ -45,10 +45,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-beforeEach(function (): void {
-    UserGroupsFeature::activate();
-});
-
 it('can render the view user group page', function (): void {
     asSuperAdmin();
 

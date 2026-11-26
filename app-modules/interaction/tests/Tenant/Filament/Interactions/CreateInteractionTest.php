@@ -40,7 +40,6 @@ use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -107,8 +106,6 @@ it('interaction_confidential_users UserSelect shows all users when filter_admins
 });
 
 it('interaction_confidential_user_groups select does not show archived groups on CreateInteraction', function (): void {
-    UserGroupsFeature::activate();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('interaction.view-any');
     $user->givePermissionTo('interaction.create');
