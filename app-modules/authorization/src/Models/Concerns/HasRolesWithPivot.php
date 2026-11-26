@@ -68,7 +68,9 @@ trait HasRolesWithPivot
             'model',
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
-            $permissionRegistrar->pivotRole
+            $permissionRegistrar->pivotRole,
+            // Named explicitly, because models may alias this method to wrap it, as `UserGroup` does.
+            relation: 'roles',
         );
 
         if (! $permissionRegistrar->teams) {
