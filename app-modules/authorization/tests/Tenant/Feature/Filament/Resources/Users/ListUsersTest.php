@@ -445,6 +445,13 @@ it('filters users based on roles inherited through their groups', function (): v
     $adminRoleUserGroup->roles()->attach(Role::query()->superAdmin()->firstOrFail());
     $adminRoleUserGroup->users()->attach($userInGroupWithAdminRole);
 
+    $userInDeletedGroup = User::factory()->create();
+
+    $deletedUserGroup = UserGroup::factory()->create();
+    $deletedUserGroup->assignRole($role);
+    $deletedUserGroup->users()->attach($userInDeletedGroup);
+    $deletedUserGroup->delete();
+
     $userWithoutRoles = User::factory()->create();
 
     $userWithOtherRole = User::factory()->create();
@@ -453,12 +460,12 @@ it('filters users based on roles inherited through their groups', function (): v
     Livewire::test(ListUsers::class)
         ->filterTable('roles', [$role->getKey()])
         ->assertCanSeeTableRecords([$userWithRoleThroughGroup])
-        ->assertCanNotSeeTableRecords([$userInGroupWithAdminRole, $userWithoutRoles, $userWithOtherRole])
+        ->assertCanNotSeeTableRecords([$userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles, $userWithOtherRole])
         ->filterTable('roles', ['none'])
-        ->assertCanSeeTableRecords([$userInGroupWithAdminRole, $userWithoutRoles])
+        ->assertCanSeeTableRecords([$userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles])
         ->assertCanNotSeeTableRecords([$userWithRoleThroughGroup, $userWithOtherRole])
         ->filterTable('roles', ['none', $role->getKey()])
-        ->assertCanSeeTableRecords([$userWithRoleThroughGroup, $userInGroupWithAdminRole, $userWithoutRoles])
+        ->assertCanSeeTableRecords([$userWithRoleThroughGroup, $userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles])
         ->assertCanNotSeeTableRecords([$userWithOtherRole]);
 });
 
