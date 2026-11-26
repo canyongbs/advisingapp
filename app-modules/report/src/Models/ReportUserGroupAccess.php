@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Report\Database\Factories\ReportUserGroupAccessFactory;
 use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,9 +46,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
+/**
+ * @mixin IdeHelperReportUserGroupAccess
+ */
 class ReportUserGroupAccess extends Model implements Auditable
 {
-    /** @use HasFactory<\AdvisingApp\Report\Database\Factories\ReportUserGroupAccessFactory> */
+    /** @use HasFactory<ReportUserGroupAccessFactory> */
     use HasFactory;
 
     use HasUuids;
