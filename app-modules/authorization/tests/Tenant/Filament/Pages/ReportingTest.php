@@ -45,6 +45,7 @@ use App\Features\UserGroupsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -397,6 +398,44 @@ it('allows a user to access a report through an assigned group', function (): vo
 
     expect(ReportAccessKey::UserLoginActivity->userCanAccess($user))->toBeTrue()
         ->and(ReportAccessKey::UserLoginActivity->userCanAccess($userInOtherGroup))->toBeFalse();
+});
+
+it('ignores group access without querying it while the `UserGroupsFeature` is inactive', function (): void {
+    $directUser = User::factory()->create();
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_id' => $directUser->getKey(),
+    ]);
+
+    $department = Department::factory()->create();
+    $departmentUser = User::factory()->create(['team_id' => $department->getKey()]);
+
+    ReportDepartmentAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'team_id' => $department->getKey(),
+    ]);
+
+    $group = UserGroup::factory()->create();
+    $groupUser = User::factory()->create();
+    $group->users()->attach($groupUser);
+
+    ReportUserGroupAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_group_id' => $group->getKey(),
+    ]);
+
+    expect(ReportAccessKey::UserLoginActivity->userCanAccess($groupUser))->toBeTrue();
+
+    UserGroupsFeature::deactivate();
+
+    // Before the migration runs, the flag is inactive and the table does not exist yet.
+    Schema::drop((new ReportUserGroupAccess())->getTable());
+
+    expect(ReportAccessKey::UserLoginActivity->userCanAccess($directUser))->toBeTrue()
+        ->and(ReportAccessKey::UserLoginActivity->userCanAccess($departmentUser))->toBeTrue()
+        ->and(ReportAccessKey::UserLoginActivity->userCanAccess($groupUser))->toBeFalse()
+        ->and(ReportAccessKey::UserLoginActivity->accessCount())->toBe(2);
 });
 
 it('counts a user with both direct and group access only once', function (): void {
