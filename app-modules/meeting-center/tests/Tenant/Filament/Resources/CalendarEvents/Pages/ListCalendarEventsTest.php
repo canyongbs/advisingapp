@@ -90,27 +90,27 @@ it('uses My Calendar labels for navigation and heading', function () use ($listC
 
     actingAs($user);
 
-  get(CalendarEventResource::getUrl('index'))
-    ->assertSuccessful();
+    get(CalendarEventResource::getUrl('index'))
+        ->assertSuccessful();
 
-  $calendarEventResourceReflection = new ReflectionClass(CalendarEventResource::class);
+    $calendarEventResourceReflection = new ReflectionClass(CalendarEventResource::class);
 
-  expect($calendarEventResourceReflection->getStaticPropertyValue('navigationLabel'))
-    ->toBe('My Calendar')
-    ->and($calendarEventResourceReflection->getStaticPropertyValue('breadcrumb'))
-    ->toBe('My Calendar');
+    expect($calendarEventResourceReflection->getStaticPropertyValue('navigationLabel'))
+        ->toBe('My Calendar')
+        ->and($calendarEventResourceReflection->getStaticPropertyValue('breadcrumb'))
+        ->toBe('My Calendar');
 
-  $listCalendarEventsReflection = new ReflectionClass(ListCalendarEvents::class);
+    $listCalendarEventsReflection = new ReflectionClass(ListCalendarEvents::class);
 
-  expect($listCalendarEventsReflection->getDefaultProperties()['heading'])
-    ->toBe('My Calendar');
+    expect($listCalendarEventsReflection->getDefaultProperties()['heading'])
+        ->toBe('My Calendar');
 
-  Livewire::test(ListCalendarEvents::class)
-    ->assertSet('viewType', 'table')
-    ->call('setViewType', 'calendar')
-    ->assertSet('viewType', 'calendar')
-    ->call('setViewType', 'settings')
-    ->assertSet('viewType', 'settings')
-    ->call('setViewType', 'table')
-    ->assertSet('viewType', 'table');
+    Livewire::test(ListCalendarEvents::class)
+        ->assertSet('viewType', 'table')
+        ->call('setViewType', 'calendar')
+        ->assertSet('viewType', 'calendar')
+        ->call('setViewType', 'settings')
+        ->assertSet('viewType', 'settings')
+        ->call('setViewType', 'table')
+        ->assertSet('viewType', 'table');
 });
