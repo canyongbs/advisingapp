@@ -165,9 +165,12 @@ test('AiAssistant model with fetch data for users in a confidential access group
             'is_confidential' => true,
         ]);
 
-    $privateAiAssistants = AiAssistant::factory()->count(10)->create([
-        'is_confidential' => true,
-    ]);
+    $privateAiAssistants = AiAssistant::factory()
+        ->hasAttached(UserGroup::factory()->create(), [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
 
     $publicAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => false,

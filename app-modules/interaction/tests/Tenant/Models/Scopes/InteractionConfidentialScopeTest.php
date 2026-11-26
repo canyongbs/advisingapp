@@ -167,9 +167,12 @@ test('Interactions model with fetch data for users in a confidential access grou
             'is_confidential' => true,
         ]);
 
-    $privateInteractions = Interaction::factory()->count(10)->create([
-        'is_confidential' => true,
-    ]);
+    $privateInteractions = Interaction::factory()
+        ->hasAttached(UserGroup::factory()->create(), [], 'confidentialAccessUserGroups')
+        ->count(10)
+        ->create([
+            'is_confidential' => true,
+        ]);
 
     $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
