@@ -44,8 +44,8 @@ return new class () extends Migration {
         Schema::create('confidential_prompt_user_groups', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('prompt_id')->constrained('prompts')->cascadeOnDelete();
-            $table->foreignUuid('user_group_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('prompt_id')->index()->constrained('prompts')->cascadeOnDelete();
+            $table->foreignUuid('user_group_id')->index()->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });

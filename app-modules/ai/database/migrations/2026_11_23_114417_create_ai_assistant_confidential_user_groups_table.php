@@ -44,8 +44,8 @@ return new class () extends Migration {
         Schema::create('ai_assistant_confidential_user_groups', function (Blueprint $table): void {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('ai_assistant_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_group_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('ai_assistant_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_group_id')->index()->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });
