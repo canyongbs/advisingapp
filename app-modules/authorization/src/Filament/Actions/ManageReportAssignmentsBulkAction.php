@@ -155,10 +155,7 @@ class ManageReportAssignmentsBulkAction
             ->action(function (array $data, Collection $records, AssignReportUserGroups $assignReportUserGroups): void {
                 $userIds = $data['users'] ?? [];
                 $departmentIds = $data['departments'] ?? [];
-                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always read group IDs from action data.
-                $groupIds = UserGroupsFeature::active()
-                    ? ($data['groups'] ?? [])
-                    : [];
+                $groupIds = $data['groups'] ?? [];
                 $sync = $data['sync'];
 
                 try {
@@ -202,10 +199,7 @@ class ManageReportAssignmentsBulkAction
                                 ]);
                             }
 
-                            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync group report assignments.
-                            if (UserGroupsFeature::active()) {
-                                $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
-                            }
+                            $assignReportUserGroups($reportKey, $groupIds, removeUnlisted: $sync);
                         });
                     });
 

@@ -285,10 +285,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
                     $this->syncDepartmentAccess($record['report_key'], $data['departments'] ?? []);
 
-                    // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync group report access.
-                    if (UserGroupsFeature::active()) {
-                        $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
-                    }
+                    $assignReportUserGroups($record['report_key'], $data['groups'] ?? [], removeUnlisted: true);
 
                     $this->resetTable();
                     DB::commit();
