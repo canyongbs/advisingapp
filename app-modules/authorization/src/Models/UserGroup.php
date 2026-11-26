@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Authorization\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Database\Factories\UserGroupFactory;
+use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
 use AdvisingApp\Authorization\Observers\UserGroupObserver;
+use App\Models\Authenticatable;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -46,16 +49,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperUserGroup
  */
 #[ObservedBy([UserGroupObserver::class])]
-class UserGroup extends Model
+class UserGroup extends Model implements Auditable
 {
+    use AuditableTrait;
     use CanBeArchived;
+    use HasRolesWithPivot {
+        roles as protected rolesIncludingAdminRoles;
+    }
 
     /** @use HasFactory<UserGroupFactory> */
     use HasFactory;
@@ -96,5 +105,19 @@ class UserGroup extends Model
             ->using(UserGroupUser::class)
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    /**
+     * Admin roles are never granted through a group, even if one is attached outside the UI.
+     * Every read of a group's roles goes through this relation, including the eager loads and
+     * `whereHas()` queries that make up a user's effective roles.
+     *
+     * @return BelongsToMany<Role, $this, MorphPivot>
+     */
+    public function roles(): BelongsToMany
+    {
+        $relation = $this->rolesIncludingAdminRoles();
+
+        return $relation->whereNotIn($relation->getRelated()->qualifyColumn('name'), Authenticatable::ADMIN_ROLES);
     }
 }

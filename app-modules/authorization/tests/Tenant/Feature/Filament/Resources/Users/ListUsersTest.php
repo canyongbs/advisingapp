@@ -36,7 +36,9 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\Authenticatable;
@@ -422,6 +424,69 @@ it('filters users based on roles', function (): void {
         ->assertCanNotSeeTableRecords(
             $usersInRoleA->merge($usersInRoleB)->merge($usersInRoleC)
         );
+});
+
+it('filters users based on roles inherited through their groups', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create();
+
+    $userWithRoleThroughGroup = User::factory()->create();
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->assignRole($role);
+    $userGroup->users()->attach($userWithRoleThroughGroup);
+
+    $userInGroupWithAdminRole = User::factory()->create();
+
+    $adminRoleUserGroup = UserGroup::factory()->create();
+    $adminRoleUserGroup->roles()->attach(Role::query()->superAdmin()->firstOrFail());
+    $adminRoleUserGroup->users()->attach($userInGroupWithAdminRole);
+
+    $userInDeletedGroup = User::factory()->create();
+
+    $deletedUserGroup = UserGroup::factory()->create();
+    $deletedUserGroup->assignRole($role);
+    $deletedUserGroup->users()->attach($userInDeletedGroup);
+    $deletedUserGroup->delete();
+
+    $userWithoutRoles = User::factory()->create();
+
+    $userWithOtherRole = User::factory()->create();
+    $userWithOtherRole->assignRole(Role::factory()->create());
+
+    Livewire::test(ListUsers::class)
+        ->filterTable('roles', [$role->getKey()])
+        ->assertCanSeeTableRecords([$userWithRoleThroughGroup])
+        ->assertCanNotSeeTableRecords([$userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles, $userWithOtherRole])
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords([$userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles])
+        ->assertCanNotSeeTableRecords([$userWithRoleThroughGroup, $userWithOtherRole])
+        ->filterTable('roles', ['none', $role->getKey()])
+        ->assertCanSeeTableRecords([$userWithRoleThroughGroup, $userInGroupWithAdminRole, $userInDeletedGroup, $userWithoutRoles])
+        ->assertCanNotSeeTableRecords([$userWithOtherRole]);
+});
+
+it('ignores roles inherited through groups in the roles filter while the `UserGroupsFeature` is inactive', function (): void {
+    UserGroupsFeature::deactivate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create();
+
+    $userWithRoleThroughGroup = User::factory()->create();
+
+    $userGroup = UserGroup::factory()->create();
+    $userGroup->assignRole($role);
+    $userGroup->users()->attach($userWithRoleThroughGroup);
+
+    Livewire::test(ListUsers::class)
+        ->filterTable('roles', [$role->getKey()])
+        ->assertCanNotSeeTableRecords([$userWithRoleThroughGroup])
+        ->filterTable('roles', ['none'])
+        ->assertCanSeeTableRecords([$userWithRoleThroughGroup]);
 });
 
 it('Filter users based on licenses', function (): void {

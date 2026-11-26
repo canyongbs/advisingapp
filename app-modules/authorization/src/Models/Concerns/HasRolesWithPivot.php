@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Authorization\Models\Concerns;
 
+use AdvisingApp\Authorization\Models\Role;
 use App\Actions\Finders\ApplicationModules;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -47,18 +50,27 @@ trait HasRolesWithPivot
         HasRoles::assignRole as protected originalAssignRole;
     }
 
+    /**
+     * @return BelongsToMany<Role, $this, MorphPivot>
+     */
     public function roles(): BelongsToMany
     {
         $permissionRegistrar = app(PermissionRegistrar::class);
 
+        // TODO make a slightly better helper similar to the config helper that still allows
+        // Us to pass an exact path to the key within the config, not just the path of the file
+        $roleModel = resolve(ApplicationModules::class)->moduleConfig('authorization', 'permission')['models']['role'];
+
+        assert(is_a($roleModel, Role::class, allow_string: true));
+
         $relation = $this->morphToMany(
-            // TODO make a slightly better helper similar to the config helper that still allows
-            // Us to pass an exact path to the key within the config, not just the path of the file
-            resolve(ApplicationModules::class)->moduleConfig('authorization', 'permission')['models']['role'],
+            $roleModel,
             'model',
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
-            $permissionRegistrar->pivotRole
+            $permissionRegistrar->pivotRole,
+            // Named explicitly, because models may alias this method to wrap it, as `UserGroup` does.
+            relation: 'roles',
         );
 
         if (! $permissionRegistrar->teams) {
@@ -66,9 +78,9 @@ trait HasRolesWithPivot
         }
 
         return $relation->wherePivot($permissionRegistrar->teamsKey, getPermissionsTeamId())
-            ->where(function ($q) use ($permissionRegistrar): void {
+            ->where(function (Builder $query) use ($permissionRegistrar): void {
                 $teamField = config('permission.table_names.roles') . '.' . $permissionRegistrar->teamsKey;
-                $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
+                $query->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
             });
     }
 }

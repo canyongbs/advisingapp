@@ -10,3 +10,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | {app,app-modules,config,routes,docker}/**  | .ai/rules/redis.md                        |
 | app-modules/student-data-model/**          | .ai/rules/student-data-model.md           |
 | app-modules/alert/**                       | .ai/rules/student-data-model.md           |
+| {app,app-modules}/**                       | .ai/rules/authorization.md                |

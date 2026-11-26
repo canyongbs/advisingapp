@@ -42,7 +42,10 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Authorization\Models\UserGroupUser;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
@@ -70,15 +73,19 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Enums\RetentionCrmRestriction;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
+use BackedEnum;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -91,6 +98,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -415,6 +423,133 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
+     * @return BelongsToMany<UserGroup, $this, UserGroupUser>
+     */
+    public function userGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'user_group_user')
+            ->using(UserGroupUser::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    /**
+     * A user's roles are their direct roles plus the roles of their groups. Admin roles are never
+     * inherited, because `UserGroup::roles()` excludes them.
+     *
+     * Every Spatie method that reads roles is overridden below to use these effective roles, and
+     * `UserTest` fails if a Spatie update adds a method that has not been accounted for. Read
+     * roles through these methods, never through the `roles` relation directly: `roles()` only
+     * holds direct roles, because it is the write relation used by `assignRole()` and `syncRoles()`.
+     *
+     * @return EloquentCollection<int, Role>
+     */
+    public function getEffectiveRoles(): EloquentCollection
+    {
+        $this->loadMissing('roles');
+
+        // TODO: Cleanup Task (user-groups-feature): remove the feature-flag fallback and keep the effective role merge path.
+        if (! UserGroupsFeature::active()) {
+            return $this->roles;
+        }
+
+        $this->loadMissing('userGroups.roles');
+
+        return $this->roles->merge($this->userGroups->flatMap(fn (UserGroup $userGroup) => $userGroup->roles));
+    }
+
+    /**
+     * @param string|int|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasRole($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasRole($roles, $guard);
+    }
+
+    /**
+     * @param string|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasAllRoles($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasAllRoles($roles, $guard);
+    }
+
+    /**
+     * @param string|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     */
+    public function hasExactRoles($roles, ?string $guard = null): bool
+    {
+        return $this->effectiveRoleHolder()->hasExactRoles($roles, $guard);
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function getRoleNames(): Collection
+    {
+        return $this->effectiveRoleHolder()->getRoleNames();
+    }
+
+    /**
+     * @return Collection<int, Permission>
+     */
+    public function getPermissionsViaRoles(): Collection
+    {
+        return $this->effectiveRoleHolder()->getPermissionsViaRoles();
+    }
+
+    /**
+     * Matches users who have the role directly, or through one of their groups.
+     *
+     * @param Builder<User> $query
+     * @param string|int|array<mixed>|Role|Collection<array-key, mixed>|BackedEnum $roles
+     * @param string|null $guard
+     * @param bool $without
+     *
+     * @return Builder<User>
+     */
+    public function scopeRole(Builder $query, $roles, $guard = null, $without = false): Builder // @phpstan-ignore Common.noLocalModelScope
+    {
+        // TODO: Cleanup Task (user-groups-feature): remove the parent scope fallback and keep role matching through groups.
+        if (! UserGroupsFeature::active()) {
+            return parent::scopeRole($query, $roles, $guard, $without);
+        }
+
+        if ($without) {
+            return $query->whereNot(fn (Builder $query): Builder => $this->scopeRole($query, $roles, $guard));
+        }
+
+        return $query->where(fn (Builder $query) => $query
+            ->where(fn (Builder $query): Builder => parent::scopeRole($query, $roles, $guard))
+            ->orWhereHas('userGroups', fn (Builder $query) => $query->role($roles, $guard)));
+    }
+
+    /**
+     * Matches users who have the permission directly, through their roles, or through the roles of one of their groups.
+     *
+     * @param Builder<User> $query
+     * @param string|int|array<mixed>|Permission|Collection<array-key, mixed>|BackedEnum $permissions
+     * @param bool $without
+     *
+     * @return Builder<User>
+     */
+    public function scopePermission(Builder $query, $permissions, $without = false): Builder // @phpstan-ignore Common.noLocalModelScope
+    {
+        // TODO: Cleanup Task (user-groups-feature): remove the parent scope fallback and keep permission matching through groups.
+        if (! UserGroupsFeature::active()) {
+            return parent::scopePermission($query, $permissions, $without);
+        }
+
+        if ($without) {
+            return $query->whereNot(fn (Builder $query): Builder => $this->scopePermission($query, $permissions));
+        }
+
+        return $query->where(fn (Builder $query) => $query
+            ->where(fn (Builder $query): Builder => parent::scopePermission($query, $permissions))
+            ->orWhereHas('userGroups.roles', fn (Builder $query) => $query->permission($permissions)));
+    }
+
+    /**
      * @return HasOne<Calendar, $this>
      */
     public function calendar(): HasOne
@@ -627,5 +762,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
             ->using(ManagerResourceHubArticle::class)
             ->withTimestamps();
+    }
+
+    /**
+     * Evaluates Spatie's role reads against the effective roles, so that its input parsing
+     * (names, IDs, models, enums, arrays, collections, and "a|b") and logic are reused as-is.
+     */
+    private function effectiveRoleHolder(): UserGroup
+    {
+        return (new UserGroup())->setRelation('roles', $this->getEffectiveRoles());
     }
 }
