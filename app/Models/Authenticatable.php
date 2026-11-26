@@ -38,6 +38,7 @@ namespace App\Models;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
+use AdvisingApp\Authorization\Models\Role;
 use App\Models\Concerns\CanOrElse;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -85,26 +86,39 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public function isAdmin(): bool
     {
-        return $this->isAdmin ??= $this->hasAnyRole(static::ADMIN_ROLES);
+        return $this->isAdmin ??= $this->hasAnyDirectRole(static::ADMIN_ROLES);
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this->isSuperAdmin ??= $this->hasRole(static::SUPER_ADMIN_ROLE);
+        return $this->isSuperAdmin ??= $this->hasAnyDirectRole([static::SUPER_ADMIN_ROLE]);
     }
 
     public function isPartnerAdmin(): bool
     {
-        return $this->isPartnerAdmin ??= $this->hasRole(static::PARTNER_ADMIN_ROLE);
+        return $this->isPartnerAdmin ??= $this->hasAnyDirectRole([static::PARTNER_ADMIN_ROLE]);
     }
 
     public function isAiAdmin(): bool
     {
-        return $this->isAiAdmin ??= $this->hasRole(static::AI_ADMIN_ROLE);
+        return $this->isAiAdmin ??= $this->hasAnyDirectRole([static::AI_ADMIN_ROLE]);
     }
 
     public function canAccessAiSettings(): bool
     {
         return $this->isSuperAdmin() || $this->isAiAdmin();
+    }
+
+    /**
+     * Admin roles are only ever assigned directly, never inherited through a group, so admin
+     * checks read the direct roles instead of loading the groups that make up the effective roles.
+     *
+     * @param list<string> $roles
+     */
+    protected function hasAnyDirectRole(array $roles): bool
+    {
+        $this->loadMissing('roles');
+
+        return $this->roles->contains(fn (Role $role): bool => in_array($role->name, $roles, true));
     }
 }

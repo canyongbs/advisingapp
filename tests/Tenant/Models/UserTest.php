@@ -348,6 +348,19 @@ describe('effective roles', function (): void {
             ->and(User::query()->whereKey($user->getKey())->withoutPermission('user_group.view-any')->exists())->toBeTrue();
     });
 
+    it('checks admin roles without loading the groups of the user', function (): void {
+        $user = User::factory()->create();
+        $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+        $user = $user->fresh();
+
+        expect($user->isAdmin())->toBeTrue()
+            ->and($user->isSuperAdmin())->toBeTrue()
+            ->and($user->isPartnerAdmin())->toBeFalse()
+            ->and($user->isAiAdmin())->toBeFalse()
+            ->and($user->relationLoaded('userGroups'))->toBeFalse();
+    });
+
     it('accounts for every method of Spatie\'s `HasRoles` and `HasPermissions` traits', function (): void {
         $overriddenOnUser = [
             'hasRole',
