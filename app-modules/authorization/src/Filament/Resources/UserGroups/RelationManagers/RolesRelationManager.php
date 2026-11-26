@@ -57,9 +57,7 @@ class RolesRelationManager extends RelationManager
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
-        return UserGroupsFeature::active()
-            && parent::canViewForRecord($ownerRecord, $pageClass)
-            && (auth()->user()?->can('view', $ownerRecord) ?? false);
+        return UserGroupsFeature::active() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function table(Table $table): Table
