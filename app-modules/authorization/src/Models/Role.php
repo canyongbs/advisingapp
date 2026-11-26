@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -72,17 +73,17 @@ class Role extends SpatieRole implements Auditable
     }
 
     /**
-     * @return BelongsToMany<UserGroup, $this>
+     * @return MorphToMany<UserGroup, $this>
      */
-    public function userGroups(): BelongsToMany
+    public function userGroups(): MorphToMany
     {
-        return $this->belongsToMany(
+        return $this->morphedByMany(
             UserGroup::class,
+            'model',
             config('permission.table_names.model_has_roles'),
             app(PermissionRegistrar::class)->pivotRole,
             config('permission.column_names.model_morph_key')
-        )
-            ->wherePivot('model_type', app(UserGroup::class)->getMorphClass());
+        );
     }
 
     public function scopeApi(Builder $query): void
