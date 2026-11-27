@@ -35,18 +35,24 @@
 */
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
+use App\Models\Authenticatable;
+use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -67,6 +73,234 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->fillForm(['name' => 'SECOND role'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+describe('membership', function (): void {
+    it('can add and remove users and groups', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+
+        $keptUser = User::factory()->create();
+        $removedUser = User::factory()->create();
+        $addedUser = User::factory()->create();
+
+        $keptGroup = UserGroup::factory()->create();
+        $removedGroup = UserGroup::factory()->create();
+        $addedGroup = UserGroup::factory()->create();
+
+        $role->users()->attach([$keptUser->getKey(), $removedUser->getKey()]);
+        $role->userGroups()->attach([$keptGroup->getKey(), $removedGroup->getKey()]);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet([
+                'users' => [$keptUser->getKey(), $removedUser->getKey()],
+                'userGroups' => [$keptGroup->getKey(), $removedGroup->getKey()],
+            ])
+            ->fillForm([
+                'users' => [$keptUser->getKey(), $addedUser->getKey()],
+                'userGroups' => [$keptGroup->getKey(), $addedGroup->getKey()],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $role->refresh();
+
+        expect($role->users->modelKeys())->toEqualCanonicalizing([$keptUser->getKey(), $addedUser->getKey()])
+            ->and($role->userGroups->modelKeys())->toEqualCanonicalizing([$keptGroup->getKey(), $addedGroup->getKey()]);
+    });
+
+    it('keeps the system users of an `api` role', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $systemUser = SystemUser::factory()->create();
+
+        $role->users()->attach($systemUser->getKey());
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$systemUser->getKey()]])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->users->modelKeys())->toBe([$systemUser->getKey()]);
+    });
+
+    it('does not add users of another access control', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $user = User::factory()->create();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['users' => [$user->getKey()]])
+            ->call('save')
+            ->assertHasFormErrors(['users.0' => 'in']);
+
+        expect($role->refresh()->users)->toBeEmpty();
+    });
+
+    it('hides the groups for `api` roles', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+    });
+
+    it('hides the groups for admin roles', function (): void {
+        asSuperAdmin();
+
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+    });
+
+    it('keeps an archived group listed while it holds the role', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+
+        $assignedArchivedGroup = UserGroup::factory()->create();
+        $unassignedArchivedGroup = UserGroup::factory()->create();
+
+        $role->userGroups()->attach($assignedArchivedGroup);
+
+        $assignedArchivedGroup->archive();
+        $unassignedArchivedGroup->archive();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['userGroups' => [$assignedArchivedGroup->getKey()]])
+            ->assertFormFieldExists('userGroups', function (Select $field) use ($assignedArchivedGroup, $unassignedArchivedGroup): bool {
+                expect($field->getOptions())->toHaveKey($assignedArchivedGroup->getKey())
+                    ->not->toHaveKey($unassignedArchivedGroup->getKey());
+
+                return true;
+            })
+            ->fillForm(['userGroups' => []])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups)->toBeEmpty();
+    });
+    it('hides the users without the `user.view-any` permission and keeps them on save', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $member = User::factory()->create();
+
+        $role->users()->attach($member);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('users')
+            ->assertSchemaStateSet(['users' => []])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->users->modelKeys())->toBe([$member->getKey()]);
+    });
+
+    it('does not offer or remove the admins a user can not see', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $member = User::factory()->create();
+        $superAdmin = User::factory()->create();
+
+        $superAdmin->assignRole(Role::superAdmin()->get());
+        $role->users()->attach([$member->getKey(), $superAdmin->getKey()]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update', 'user.view-any']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$member->getKey()]])
+            ->assertFormFieldExists('users', function (Select $field) use ($member, $superAdmin): bool {
+                expect($field->getOptions())->toHaveKey($member->getKey())
+                    ->not->toHaveKey($superAdmin->getKey())
+                    ->and($field->getSearchResults($superAdmin->name))->not->toHaveKey($superAdmin->getKey());
+
+                return true;
+            })
+            ->fillForm(['users' => []])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->users->modelKeys())->toBe([$superAdmin->getKey()]);
+    });
+
+    it('hides the groups without the `user_group.view-any` permission and keeps them on save', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $group = UserGroup::factory()->create();
+
+        $role->userGroups()->attach($group);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups->modelKeys())->toBe([$group->getKey()]);
+    });
+
+    it('keeps the groups on save when the `UserGroupsFeature` is inactive', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $group = UserGroup::factory()->create();
+
+        $role->userGroups()->attach($group);
+
+        UserGroupsFeature::deactivate();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups->modelKeys())->toBe([$group->getKey()]);
+    });
+});
+
+describe('admin roles', function (): void {
+    it('does not allow renaming a role to an admin role name', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['name' => 'saas global admin'])
+            ->call('save')
+            ->assertHasFormErrors(['name']);
+
+        expect($role->refresh()->name)->not->toBe('saas global admin');
+    });
+
+    it('allows saving an admin role under its own name', function (): void {
+        asSuperAdmin();
+
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->description)->toBe('Updated description');
+    });
 });
 
 describe('deletion', function (): void {
@@ -200,5 +434,28 @@ describe('enterprise ai', function (): void {
         expect($role->name)->toBe('Renamed Advisors')
             ->and($role->hasPermissionTo('prompt.view-any'))->toBeTrue()
             ->and($role->hasPermissionTo('user.view-any'))->toBeTrue();
+    });
+});
+
+describe('authorization', function (): void {
+    it('does not let a non-super-admin edit an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        get(RoleResource::getUrl('edit', ['record' => $role]))
+            ->assertNotFound();
+    });
+
+    it('lets a non-super-admin edit a role with the `role.*.update` permission', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        get(RoleResource::getUrl('edit', ['record' => $role]))
+            ->assertSuccessful();
     });
 });

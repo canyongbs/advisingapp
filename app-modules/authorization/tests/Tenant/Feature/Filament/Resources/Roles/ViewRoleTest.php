@@ -35,13 +35,66 @@
 */
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Models\Authenticatable;
+use App\Models\SystemUser;
+use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
+
+describe('membership', function (): void {
+    it('displays the users and groups of a role', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $user = User::factory()->create();
+        $group = UserGroup::factory()->create();
+
+        $role->users()->attach($user);
+        $role->userGroups()->attach($group);
+
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet([
+                'users' => [$user->getKey()],
+                'userGroups' => [$group->getKey()],
+            ]);
+    });
+
+    it('displays the system users of an `api` role', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $systemUser = SystemUser::factory()->create();
+
+        $role->users()->attach($systemUser);
+
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$systemUser->getKey()]])
+            ->assertFormFieldHidden('userGroups');
+    });
+
+    it('does not load the groups when the `UserGroupsFeature` is inactive', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $role->userGroups()->attach(UserGroup::factory()->create());
+
+        UserGroupsFeature::deactivate();
+
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []]);
+    });
+});
 
 describe('enterprise ai', function (): void {
     it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {
@@ -71,5 +124,31 @@ describe('enterprise ai', function (): void {
 
         expect(array_intersect($availablePermissionGroupNames, Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty()
             ->and($availablePermissionGroupNames)->toContain('User', 'Role');
+    });
+});
+
+describe('authorization', function (): void {
+    it('does not let a non-super-admin view an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::SUPER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view']));
+
+        get(RoleResource::getUrl('view', ['record' => $role]))
+            ->assertNotFound();
+    });
+
+    it('lets a super admin view an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::SUPER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        asSuperAdmin();
+
+        get(RoleResource::getUrl('view', ['record' => $role]))
+            ->assertSuccessful();
     });
 });

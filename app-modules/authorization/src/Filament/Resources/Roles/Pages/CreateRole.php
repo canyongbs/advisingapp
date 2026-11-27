@@ -38,17 +38,19 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\AccessControlToggleButtons;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleNameInput;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUserGroupsSelect;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUsersSelect;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
 
 class CreateRole extends CreateRecord
 {
@@ -58,33 +60,33 @@ class CreateRole extends CreateRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        modifyRuleUsing: function (Unique $rule, Get $get): void {
-                            $rule->where('guard_name', $get('guard_name'));
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
+                Section::make('Properties')
+                    ->schema([
+                        RoleNameInput::make(),
+                        AccessControlToggleButtons::make()
+                            ->default('web')
+                            ->live()
+                            ->afterStateUpdated(function (Set $set): void {
+                                $set('permissions', []);
+                                $set('users', []);
+                                $set('userGroups', []);
+                            }),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
                     ])
-                    ->default('web')
-                    ->live()
-                    ->afterStateUpdated(fn (Set $set): mixed => $set('permissions', [])),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columns(2),
+                Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
+                    ->schema([
+                        RoleUsersSelect::make(),
+                        RoleUserGroupsSelect::make(),
+                    ])
+                    ->columns(2),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
-                    ->visible(fn (Get $get): bool => filled($get('guard_name')))
                     ->descriptions(PermissionDescription::cases())
                     ->permissionGroupModel(PermissionGroup::class)
                     ->hiddenPermissionGroups(fn (): array => Feature::getDisabledPermissionGroupNames()),

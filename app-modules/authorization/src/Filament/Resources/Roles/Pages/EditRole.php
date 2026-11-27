@@ -38,19 +38,20 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\AccessControlToggleButtons;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleNameInput;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUserGroupsSelect;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUsersSelect;
 use AdvisingApp\Authorization\Models\PermissionGroup;
-use AdvisingApp\Authorization\Models\Role;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {
@@ -60,31 +61,24 @@ class EditRole extends EditRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule): void {
-                            /** @var Role $role */
-                            $role = $this->record;
-
-                            $rule->where('guard_name', $role->guard_name);
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
+                Section::make('Properties')
+                    ->schema([
+                        RoleNameInput::make(),
+                        AccessControlToggleButtons::make()
+                            ->disabled(),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
                     ])
-                    ->disabled()
-                    ->dehydrated(),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columns(2),
+                Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
+                    ->schema([
+                        RoleUsersSelect::make(),
+                        RoleUserGroupsSelect::make(),
+                    ])
+                    ->columns(2),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))

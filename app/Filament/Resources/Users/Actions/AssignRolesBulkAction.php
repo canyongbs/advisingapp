@@ -37,12 +37,14 @@
 namespace App\Filament\Resources\Users\Actions;
 
 use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Width;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignRolesBulkAction extends BulkAction
@@ -61,16 +63,24 @@ class AssignRolesBulkAction extends BulkAction
                     ->label('Replace existing roles?'),
                 Select::make('roles')
                     ->label('Roles')
-                    ->options(Role::where('guard_name', 'web')->pluck('name', 'name'))
+                    ->options(fn (): array => static::getAssignableRolesQuery()->pluck('name', 'name')->all())
                     ->multiple(),
             ])
             ->action(function (array $data, Collection $records): void {
+                $assignableRoles = static::getAssignableRolesQuery()->get();
+                $roles = $assignableRoles->whereIn('name', $data['roles'] ?? []);
+
                 /** @var Collection <int, User> $records */
-                $records->each(function (User $record) use ($data): void {
+                if ($data['replace']) {
+                    $records->loadMissing('roles');
+                }
+
+                $records->each(function (User $record) use ($assignableRoles, $data, $roles): void {
                     if ($data['replace']) {
-                        $record->syncRoles($data['roles']);
+                        // Roles the current user can't assign are kept, as they couldn't be selected.
+                        $record->syncRoles($record->roles->diff($assignableRoles)->merge($roles));
                     } else {
-                        $record->assignRole($data['roles']);
+                        $record->assignRole($roles);
                     }
                 });
 
@@ -85,5 +95,20 @@ class AssignRolesBulkAction extends BulkAction
     public static function getDefaultName(): ?string
     {
         return 'assign_roles';
+    }
+
+    /**
+     * Only `web` roles apply to users, and admin roles may only be assigned by super admins, as on the user form.
+     *
+     * @return Builder<Role>
+     */
+    protected static function getAssignableRolesQuery(): Builder
+    {
+        return Role::query()
+            ->where('guard_name', 'web')
+            ->unless(
+                auth()->user()?->isSuperAdmin() ?? false,
+                fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
+            );
     }
 }

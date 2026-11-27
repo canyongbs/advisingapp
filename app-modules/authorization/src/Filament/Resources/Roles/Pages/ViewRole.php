@@ -38,14 +38,17 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\AccessControlToggleButtons;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleNameInput;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUserGroupsSelect;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components\RoleUsersSelect;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -57,20 +60,21 @@ class ViewRole extends ViewRecord
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(125)
-                    ->unique('roles', 'name'),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
-                    ]),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                Section::make('Properties')
+                    ->schema([
+                        RoleNameInput::make(),
+                        AccessControlToggleButtons::make(),
+                        Textarea::make('description')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
+                    ->schema([
+                        RoleUsersSelect::make(),
+                        RoleUserGroupsSelect::make(),
+                    ])
+                    ->columns(2),
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))

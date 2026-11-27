@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Rules\NotAdminRoleName;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
 use Filament\Actions\Action;
@@ -61,9 +62,9 @@ class ListRoles extends ListRecords
     public function getTabs(): array
     {
         return [
-            'web' => Tab::make('Web')
+            'web' => Tab::make('Console')
                 ->modifyQueryUsing(fn (Builder $query) => $query->web()),
-            'api' => Tab::make('Api')
+            'api' => Tab::make('API')
                 ->modifyQueryUsing(fn (Builder $query) => $query->api()),
         ];
     }
@@ -71,21 +72,17 @@ class ListRoles extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): void {
-                $user = auth()->user();
-
-                assert($user instanceof Authenticatable);
-
-                if (! $user->isSuperAdmin()) {
-                    $query->whereNotIn('name', Authenticatable::ADMIN_ROLES);
-                }
-            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('guard_name')
-                    ->searchable(),
+                    ->label('Access Control')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'web' => 'Console',
+                        'api' => 'API',
+                        default => $state,
+                    }),
                 TextColumn::make('users_count')
                     ->label('Users')
                     ->counts('users')
@@ -120,7 +117,8 @@ class ListRoles extends ListRecords
                                 modifyRuleUsing: function (Unique $rule, Role $record): void {
                                     $rule->where('guard_name', $record->guard_name);
                                 }
-                            ),
+                            )
+                            ->rule(new NotAdminRoleName()),
                     ])
                     ->action(function (Role $record, array $data) {
                         try {

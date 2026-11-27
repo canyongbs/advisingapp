@@ -42,6 +42,7 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
 use App\Enums\NavigationGroup;
+use App\Models\Authenticatable;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
@@ -67,6 +68,10 @@ class RoleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([]);
+            ->withoutGlobalScopes([])
+            ->unless(
+                auth()->user()?->isSuperAdmin() ?? false,
+                fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
+            );
     }
 }

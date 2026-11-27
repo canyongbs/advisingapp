@@ -57,3 +57,28 @@ test('duplicateRole action does not allow duplicate role names case insensitivel
 
     expect(Role::query()->where('guard_name', 'web')->where('name', 'Fresh Role')->exists())->toBeTrue();
 });
+
+test('duplicateRole action does not allow an admin role name', function (): void {
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'api']);
+
+    Livewire::test(ListRoles::class)
+        ->set('activeTab', 'api')
+        ->callAction(TestAction::make('duplicateRole')->table($role), data: ['name' => 'partner admin'])
+        ->assertHasActionErrors(['name']);
+
+    expect(Role::query()->where('guard_name', 'api')->where('name', 'partner admin')->exists())->toBeFalse();
+});
+
+test('the access control column labels the guard as Console or API', function (): void {
+    asSuperAdmin();
+
+    $webRole = Role::factory()->create(['guard_name' => 'web']);
+    $apiRole = Role::factory()->create(['guard_name' => 'api']);
+
+    Livewire::test(ListRoles::class)
+        ->assertTableColumnFormattedStateSet('guard_name', 'Console', record: $webRole)
+        ->set('activeTab', 'api')
+        ->assertTableColumnFormattedStateSet('guard_name', 'API', record: $apiRole);
+});
