@@ -65,6 +65,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Carbon\CarbonImmutable;
@@ -172,7 +173,7 @@ class UtilizationMetricsApiController extends Controller
                     'prospect_records' => Prospect::count(),
                     'campaigns' => Campaign::count(),
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
-                    'tasks' => Task::count(),
+                    'tasks' => Task::query()->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->count(), // @phpstan-ignore method.notFound
                     'concerns' => Concern::count(),
                     'interactions' => Interaction::count(),
                     'groups' => Group::count(),

@@ -36,6 +36,8 @@
 
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
@@ -61,4 +63,25 @@ it('does not list archived students', function (): void {
         ->assertOk()
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords([$archived]);
+});
+
+it('does not count or filter by archived tasks', function (): void {
+    asSuperAdmin();
+
+    $studentWithOpenTask = Student::factory()->create();
+    $studentWithArchivedTaskOnly = Student::factory()->create();
+
+    Task::factory()->concerningStudent($studentWithOpenTask)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+    Task::factory()->concerningStudent($studentWithOpenTask)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+    Task::factory()->concerningStudent($studentWithArchivedTaskOnly)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+    Task::factory()->concerningStudent($studentWithArchivedTaskOnly)->create(['status' => TaskStatus::Completed, 'is_confidential' => false, 'archived_at' => now()]);
+
+    Livewire::test(StudentsActionCenterWidget::class)
+        ->assertTableColumnStateSet('tasks_count', 1, $studentWithOpenTask)
+        ->assertTableColumnStateSet('tasks_count', 0, $studentWithArchivedTaskOnly)
+        ->filterTable('tasks', 'open')
+        ->assertCanSeeTableRecords([$studentWithOpenTask])
+        ->assertCanNotSeeTableRecords([$studentWithArchivedTaskOnly])
+        ->filterTable('tasks', 'closed')
+        ->assertCanNotSeeTableRecords([$studentWithOpenTask, $studentWithArchivedTaskOnly]);
 });

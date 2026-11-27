@@ -41,6 +41,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use App\Features\TaskArchivingFeature;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
@@ -100,12 +101,12 @@ class StudentExporter extends Exporter
                 ]))),
             static::notDefault($type::make('tasks_count')
                 ->label('Count of Tasks')
-                ->counts('tasks')),
+                ->counts(['tasks' => fn (Builder $query): Builder => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())])), // @phpstan-ignore method.notFound
             ...array_map(
                 fn (TaskStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("tasks_{$status->value}_count")
                     ->label("Count of {$status->getLabel()} Tasks")
                     ->counts([
-                        "tasks as tasks_{$status->value}_count" => fn (Builder $query) => $query->where('status', $status),
+                        "tasks as tasks_{$status->value}_count" => fn (Builder $query): Builder => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->where('status', $status), // @phpstan-ignore method.notFound
                     ])),
                 TaskStatus::cases(),
             ),

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Timeline\Livewire\Concerns;
 
 use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Support\Collection;
 
@@ -66,13 +67,15 @@ trait CanLoadTimelineRecords
             $this->initialLoad = true;
         }
 
-        $records = Timeline::query()
-            ->forEntity($this->recordModel)
-            ->whereHas('timelineable')
-            ->whereIn(
-                'timelineable_type',
-                collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
-            )
+        $records = $this->modifyTimelineRecordsQuery(
+            Timeline::query()
+                ->forEntity($this->recordModel)
+                ->whereHas('timelineable')
+                ->whereIn(
+                    'timelineable_type',
+                    collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+                )
+        )
             ->orderBy('record_sortable_date', 'desc')
             ->cursorPaginate(
                 $this->recordsPerPage,
@@ -88,5 +91,15 @@ trait CanLoadTimelineRecords
         if ($this->hasMorePages === true) {
             $this->nextCursor = $records->nextCursor()->encode();
         }
+    }
+
+    /**
+     * @param Builder<Timeline> $query
+     *
+     * @return Builder<Timeline>
+     */
+    protected function modifyTimelineRecordsQuery(Builder $query): Builder
+    {
+        return $query;
     }
 }

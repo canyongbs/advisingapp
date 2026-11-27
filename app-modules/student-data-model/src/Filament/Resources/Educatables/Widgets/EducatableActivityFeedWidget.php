@@ -45,8 +45,11 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Task\Models\Scopes\WithoutArchivedTaskTimelines;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\TaskArchivingFeature;
 use App\Models\User;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -55,6 +58,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 
@@ -145,6 +149,16 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         }
 
         return false;
+    }
+
+    /**
+     * @param Builder<Timeline> $query
+     *
+     * @return Builder<Timeline>
+     */
+    protected function modifyTimelineRecordsQuery(Builder $query): Builder
+    {
+        return $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->tap(new WithoutArchivedTaskTimelines()));
     }
 
     /**

@@ -41,9 +41,13 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Task\Models\Scopes\WithoutArchivedTaskTimelines;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\TaskArchivingFeature;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasEducatableActivityFeed
 {
@@ -65,5 +69,15 @@ trait HasEducatableActivityFeed
             Interaction::class,
         ];
         // @endtodo
+    }
+
+    /**
+     * @param Builder<Timeline> $query
+     *
+     * @return Builder<Timeline>
+     */
+    protected function modifyTimelineRecordsQuery(Builder $query): Builder
+    {
+        return $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->tap(new WithoutArchivedTaskTimelines()));
     }
 }

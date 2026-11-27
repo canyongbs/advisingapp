@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
+use App\Features\TaskArchivingFeature;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
@@ -99,7 +100,7 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
-                    ->counts(['tasks' => fn (Builder $query) => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
+                    ->counts(['tasks' => fn (Builder $query): Builder => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])]) // @phpstan-ignore method.notFound
                     ->sortable(),
             ])
             ->filters([
@@ -139,6 +140,8 @@ class ProspectsActionCenterWidget extends TableWidget
                         }
 
                         return $query->whereHas('tasks', function (Builder $query) use ($data): Builder {
+                            $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived()); // @phpstan-ignore method.notFound
+
                             if ($data['value'] === 'open') {
                                 return $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled]);
                             }

@@ -39,7 +39,9 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 
@@ -63,7 +65,8 @@ class EducatableTasksWidget extends Widget
      */
     protected function getStatusCounts(): array
     {
-        $counts = $this->educatable->tasks()
+        $counts = $this->educatable->tasks()->getQuery()
+            ->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())
             ->toBase()
             ->selectRaw('count(*) as task_count, status')
             ->groupBy('status')

@@ -42,11 +42,17 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
+use App\Features\TaskArchivingFeature;
 use App\Models\Authenticatable;
 use App\Models\User;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
+use CanyonGBS\Common\Filament\Actions\UnarchiveAction;
+use CanyonGBS\Common\Filament\Actions\UnarchiveBulkAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
@@ -460,6 +466,144 @@ describe('row click', function () use ($createTaskUser): void {
 
         $component->mountAction(TestAction::make('view')->table($task))
             ->assertActionMounted(TestAction::make('view')->table($task));
+    });
+});
+
+describe('archiving', function () use ($createTaskUser): void {
+    it('can archive a task from the edit slide-over', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        expect($task->isArchived())->toBeFalse();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction([
+                TestAction::make(EditAction::class)->table($task),
+                TestAction::make(ArchiveAction::class),
+            ]);
+
+        expect($task->refresh()->isArchived())->toBeTrue();
+    });
+
+    it('can unarchive a task from the edit slide-over', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+
+        expect($task->isArchived())->toBeTrue();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->removeTableFilter('withoutArchived')
+            ->callAction([
+                TestAction::make(EditAction::class)->table($task),
+                TestAction::make(UnarchiveAction::class),
+            ])
+            ->assertActionNotMounted(TestAction::make(EditAction::class)->table($task));
+
+        expect($task->refresh()->isArchived())->toBeFalse();
+    });
+
+    it('bulk archives tasks, skipping those the user cannot delete', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $tasks = Task::factory()->count(2)->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+        $deniedTask = Task::factory()->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        Gate::before(fn (User $user, string $ability, array $arguments): ?bool => (($ability === 'delete') && ($arguments[0] ?? null)?->is($deniedTask)) ? false : null);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->selectTableRecords([...$tasks, $deniedTask])
+            ->callAction(TestAction::make(ArchiveBulkAction::class)->table()->bulk());
+
+        expect($tasks->every(fn (Task $task): bool => $task->refresh()->isArchived()))->toBeTrue()
+            ->and($deniedTask->refresh()->isArchived())->toBeFalse();
+    });
+
+    it('bulk unarchives tasks, skipping those the user cannot delete', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $tasks = Task::factory()->count(2)->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+        $deniedTask = Task::factory()->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+
+        Gate::before(fn (User $user, string $ability, array $arguments): ?bool => (($ability === 'delete') && ($arguments[0] ?? null)?->is($deniedTask)) ? false : null);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->removeTableFilter('withoutArchived')
+            ->selectTableRecords([...$tasks, $deniedTask])
+            ->callAction(TestAction::make(UnarchiveBulkAction::class)->table()->bulk());
+
+        expect($tasks->every(fn (Task $task): bool => ! $task->refresh()->isArchived()))->toBeTrue()
+            ->and($deniedTask->refresh()->isArchived())->toBeTrue();
+    });
+
+    it('hides the archive bulk actions when task archiving is inactive', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        TaskArchivingFeature::deactivate();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->assertActionHidden(TestAction::make(ArchiveBulkAction::class)->table()->bulk())
+            ->assertActionHidden(TestAction::make(UnarchiveBulkAction::class)->table()->bulk());
+    });
+});
+
+describe('filters', function () use ($createTaskUser): void {
+    it('hides archived tasks by default and shows them when the filter is removed', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+        $archivedTask = Task::factory()->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->assertCanSeeTableRecords([$task])
+            ->assertCanNotSeeTableRecords([$archivedTask])
+            ->assertTableColumnHidden('archived')
+            ->removeTableFilter('withoutArchived')
+            ->assertCanSeeTableRecords([$task, $archivedTask])
+            ->assertTableColumnVisible('archived')
+            ->assertTableColumnStateSet('archived', true, $archivedTask)
+            ->assertTableColumnStateSet('archived', false, $task);
+    });
+
+    it('shows archived tasks without an archived column when task archiving is inactive', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $archivedTask = Task::factory()->concerningStudent($student)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'archived_at' => now()]);
+
+        TaskArchivingFeature::deactivate();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->assertCanSeeTableRecords([$archivedTask])
+            ->assertTableColumnHidden('archived');
     });
 });
 

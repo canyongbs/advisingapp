@@ -43,11 +43,18 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\Tasks\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
+use App\Features\TaskArchivingFeature;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
+use CanyonGBS\Common\Filament\Actions\UnarchiveAction;
+use CanyonGBS\Common\Filament\Actions\UnarchiveBulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -94,6 +101,21 @@ class TaskTable
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
                     }),
+                IconColumn::make('archived')
+                    ->label('Archived')
+                    ->boolean()
+                    ->state(fn (Task $record): bool => $record->isArchived())
+                    ->hidden(function (Table $table): bool {
+                        $filter = $table->getFilter('withoutArchived');
+
+                        if ((! TaskArchivingFeature::active()) || (! $filter)) {
+                            return true;
+                        }
+
+                        // The column manager is initialized before the filter defaults are filled and query string values
+                        // are normalized on the first request, so resolve the visibility from the raw or default state.
+                        return filter_var($filter->getState()['isActive'] ?? $filter->getDefaultState(), FILTER_VALIDATE_BOOLEAN);
+                    }),
             ])
             ->filters([
                 Filter::make('my_tasks')
@@ -120,6 +142,12 @@ class TaskTable
                             TaskStatus::InProgress->value,
                         ]
                     ),
+                ...(TaskArchivingFeature::active() ? [
+                    Filter::make('withoutArchived')
+                        ->label('Without archived')
+                        ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                        ->default(),
+                ] : []),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -159,10 +187,28 @@ class TaskTable
 
                         return $record;
                     })
+                    ->extraModalFooterActions([
+                        ArchiveAction::make()
+                            ->visible(fn (): bool => TaskArchivingFeature::active())
+                            ->cancelParentActions(),
+                        UnarchiveAction::make()
+                            ->visible(fn (): bool => TaskArchivingFeature::active())
+                            ->cancelParentActions(),
+                    ])
                     ->extraAttributes(['class' => 'hidden']),
             ])
             ->recordAction(fn (Task $record): string => auth()->user()->can('update', $record) ? 'edit' : 'view')
-            ->recordUrl(null);
+            ->recordUrl(null)
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    ArchiveBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
+                        ->visible(fn (): bool => TaskArchivingFeature::active()),
+                    UnarchiveBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
+                        ->visible(fn (): bool => TaskArchivingFeature::active()),
+                ]),
+            ]);
     }
 
     protected static function resolveStatus(TaskStatus | string | null $status): ?TaskStatus
