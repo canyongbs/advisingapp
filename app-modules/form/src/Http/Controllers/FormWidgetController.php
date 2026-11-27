@@ -54,6 +54,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormDuplicationAccessSettingsFeature;
 use App\Http\Controllers\Controller;
 use App\Rules\ValidAuthenticationCode;
 use App\Support\AuthenticationCodeRateLimiter;
@@ -123,6 +124,10 @@ class FormWidgetController extends Controller
     {
         $form = $this->resolveToLatestVersion($form);
 
+        if ($this->isUnavailableBecauseIncomplete($form)) {
+            return $this->incompleteFormResponse();
+        }
+
         return response()->json([
             'name' => $form->title,
             'description' => $form->description,
@@ -159,6 +164,10 @@ class FormWidgetController extends Controller
 
     public function preview(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
     {
+        if ($this->isUnavailableBecauseIncomplete($form)) {
+            return $this->incompleteFormResponse();
+        }
+
         return response()->json(
             [
                 'name' => $form->title,
@@ -302,6 +311,12 @@ class FormWidgetController extends Controller
         CreateProspectFromSubmission $createProspectFromSubmission,
         Form $form,
     ): JsonResponse {
+        if ($this->isUnavailableBecauseIncomplete($form)) {
+            return response()->json([
+                'errors' => ['This form is not available.'],
+            ], Response::HTTP_FORBIDDEN);
+        }
+
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -602,5 +617,17 @@ class FormWidgetController extends Controller
         return Form::query()->where('root_id', $form->root_id)
             ->whereNull('archived_at')
             ->first() ?? $form;
+    }
+
+    private function isUnavailableBecauseIncomplete(Form $form): bool
+    {
+        return FormDuplicationAccessSettingsFeature::active() && $form->isMissingRequiredProspectGenerationFields();
+    }
+
+    private function incompleteFormResponse(): JsonResponse
+    {
+        return response()->json([
+            'error' => 'This form is not available.',
+        ], Response::HTTP_FORBIDDEN);
     }
 }

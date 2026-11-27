@@ -110,11 +110,6 @@ trait ValidatesProspectGenerationFields
             return;
         }
 
-        $missingFieldDescriptions = array_map(
-            fn (ProspectGenerationField $missingField): string => $missingField->getRequirementDescription(),
-            $missingFields,
-        );
-
-        $fail('Forms that generate prospects must include ' . implode(' and ', $missingFieldDescriptions) . '.');
+        $fail(ProspectGenerationField::getRequirementMessage($missingFields));
     }
 }
