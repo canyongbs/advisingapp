@@ -276,11 +276,11 @@ describe('admin roles', function (): void {
         $role = Role::factory()->create(['guard_name' => 'api']);
 
         Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
-            ->fillForm(['name' => Authenticatable::SUPER_ADMIN_ROLE])
+            ->fillForm(['name' => 'saas global admin'])
             ->call('save')
-            ->assertHasFormErrors(['name' => 'not_in']);
+            ->assertHasFormErrors(['name']);
 
-        expect($role->refresh()->name)->not->toBe(Authenticatable::SUPER_ADMIN_ROLE);
+        expect($role->refresh()->name)->not->toBe('saas global admin');
     });
 
     it('allows saving an admin role under its own name', function (): void {

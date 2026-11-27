@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Rules\NotAdminRoleName;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
 use Filament\Actions\Action;
@@ -111,7 +112,8 @@ class ListRoles extends ListRecords
                                 modifyRuleUsing: function (Unique $rule, Role $record): void {
                                     $rule->where('guard_name', $record->guard_name);
                                 }
-                            ),
+                            )
+                            ->rule(new NotAdminRoleName()),
                     ])
                     ->action(function (Role $record, array $data) {
                         try {

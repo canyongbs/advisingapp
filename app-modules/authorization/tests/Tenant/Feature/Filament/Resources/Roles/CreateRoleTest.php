@@ -209,21 +209,25 @@ describe('membership', function (): void {
 });
 
 describe('admin roles', function (): void {
-    it('does not allow an admin role name on any access control', function (string $guardName): void {
+    it('does not allow an admin role name on any access control', function (string $name, string $guardName): void {
         asSuperAdmin();
 
         $roleCount = Role::query()->count();
 
         Livewire::test(CreateRole::class)
             ->fillForm([
-                'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+                'name' => $name,
                 'guard_name' => $guardName,
             ])
             ->call('create')
-            ->assertHasFormErrors(['name' => 'not_in']);
+            ->assertHasFormErrors(['name']);
 
         expect(Role::query()->count())->toBe($roleCount);
-    })->with(['web', 'api']);
+    })->with([
+        'console' => [Authenticatable::PARTNER_ADMIN_ROLE, 'web'],
+        'api' => [Authenticatable::PARTNER_ADMIN_ROLE, 'api'],
+        'api case variant' => ['partner ADMIN', 'api'],
+    ]);
 });
 
 describe('enterprise ai', function (): void {
