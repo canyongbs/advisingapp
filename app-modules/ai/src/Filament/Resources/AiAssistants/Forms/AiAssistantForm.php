@@ -81,6 +81,7 @@ class AiAssistantForm
                         AiAssistantApplication::PersonalAssistant->value => 'Employee Advisor',
                     ])
                     ->dehydrated(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
+                    ->dehydratedWhenHidden(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
                     ->default(AiAssistantApplication::getDefault())
                     ->required(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
                     ->enum(AiAssistantApplication::class)
