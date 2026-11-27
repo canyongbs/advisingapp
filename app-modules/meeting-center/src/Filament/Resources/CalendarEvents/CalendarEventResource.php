@@ -53,9 +53,9 @@ class CalendarEventResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'My Schedule';
+    protected static ?string $navigationLabel = 'My Calendar';
 
-    protected static ?string $breadcrumb = 'My Schedule';
+    protected static ?string $breadcrumb = 'My Calendar';
 
     protected static ?string $modelLabel = 'appointment';
 

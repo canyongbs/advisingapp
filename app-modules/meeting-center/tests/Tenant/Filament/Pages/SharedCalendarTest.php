@@ -56,6 +56,19 @@ test('`SharedCalendar` page can be rendered', function (): void {
         ->assertSuccessful();
 });
 
+test('`SharedCalendar` switches between bookings, calendar, and configuration tabs', function (): void {
+    asSuperAdmin();
+
+    Livewire::test(SharedCalendar::class)
+        ->assertSet('viewType', 'table')
+        ->call('setViewType', 'calendar')
+        ->assertSet('viewType', 'calendar')
+        ->call('setViewType', 'settings')
+        ->assertSet('viewType', 'settings')
+        ->call('setViewType', 'table')
+        ->assertSet('viewType', 'table');
+});
+
 test('`SharedCalendar` is gated with proper access control', function (): void {
     $user = User::factory()->create();
 
@@ -299,6 +312,41 @@ test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows al
             'hidePast' => false,
         ])
         ->assertCountTableRecords(1);
+});
+
+test("`SharedCalendar` 'All Groups' control selects every group", function (): void {
+    $user = User::factory()->create();
+    $user->givePermissionTo('group_appointment.view-any');
+    actingAs($user);
+
+    $groupA = BookingGroup::factory()->create(['name' => 'A Group']);
+    $groupB = BookingGroup::factory()->create(['name' => 'B Group']);
+
+    $appointmentA = BookingGroupAppointment::factory()
+        ->for($groupA, 'bookingGroup')
+        ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
+
+    $appointmentB = BookingGroupAppointment::factory()
+        ->for($groupB, 'bookingGroup')
+        ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
+
+    $selectedGroupIds = BookingGroup::query()
+        ->orderBy('name')
+        ->pluck('id')
+        ->all();
+
+    Livewire::test(SharedCalendar::class)
+        ->set('data', [
+            'groupFilter' => 'selected',
+            'selectedGroupIds' => [],
+            'hidePast' => false,
+        ])
+        ->assertSee('All Groups')
+        ->call('addAllGroupsToSelection')
+        ->assertSet('data.groupFilter', 'selected')
+        ->assertSet('data.selectedGroupIds', $selectedGroupIds)
+        ->assertCountTableRecords(2)
+        ->assertCanSeeTableRecords([$appointmentA, $appointmentB]);
 });
 
 test('Settings view renders ListBookingGroups', function (): void {

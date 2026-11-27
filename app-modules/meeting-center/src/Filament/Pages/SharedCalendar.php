@@ -60,6 +60,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Url;
 use UnitEnum;
 
@@ -75,7 +76,9 @@ class SharedCalendar extends Page implements HasForms, HasTable
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Scheduling;
 
-    protected static ?string $navigationLabel = 'Group Appointments';
+    protected static ?string $navigationLabel = 'Bookings';
+
+    protected ?string $heading = 'Bookings';
 
     #[Url(as: 'view')]
     public string $viewType = 'table';
@@ -115,6 +118,17 @@ class SharedCalendar extends Page implements HasForms, HasTable
         $this->viewType = $viewType;
     }
 
+    public function addAllGroupsToSelection(): void
+    {
+        $this->data['groupFilter'] = 'selected';
+        $this->data['selectedGroupIds'] = BookingGroup::query()
+            ->orderBy('name')
+            ->pluck('id')
+            ->all();
+
+        $this->dispatchCalendarRefresh();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -135,6 +149,7 @@ class SharedCalendar extends Page implements HasForms, HasTable
                             ->label('Select Groups')
                             ->multiple()
                             ->options(fn (): array => BookingGroup::orderBy('name')->pluck('name', 'id')->toArray())
+                            ->helperText(fn (): HtmlString => new HtmlString('<a href="#" wire:click.prevent="addAllGroupsToSelection">All Groups</a>'))
                             ->visible(fn (): bool => ($this->data['groupFilter'] ?? 'my_groups') === 'selected')
                             ->live()
                             ->afterStateUpdated(fn () => $this->dispatchCalendarRefresh()),

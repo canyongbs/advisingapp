@@ -83,3 +83,33 @@ it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', f
         ->assertSeeLivewire(ManagePersonalBookingPage::class)
         ->assertSeeLivewire(ConnectedAccounts::class);
 });
+
+it('uses My Calendar labels for navigation and heading', function () use ($listCalendarEventsTestUser): void {
+    $user = $listCalendarEventsTestUser();
+    $user->givePermissionTo('calendar_event.view-any');
+
+    actingAs($user);
+
+    get(CalendarEventResource::getUrl('index'))
+        ->assertSuccessful();
+
+    $calendarEventResourceReflection = new ReflectionClass(CalendarEventResource::class);
+
+    expect($calendarEventResourceReflection->getStaticPropertyValue('navigationLabel'))
+        ->toBe('My Calendar')
+        ->and($calendarEventResourceReflection->getStaticPropertyValue('breadcrumb'))
+        ->toBe('My Calendar');
+
+    $listCalendarEventsReflection = new ReflectionClass(ListCalendarEvents::class);
+
+    expect($listCalendarEventsReflection->getDefaultProperties()['heading'])
+        ->toBe('My Calendar');
+
+    Livewire::test(ListCalendarEvents::class)
+        ->set('viewType', 'table')
+        ->assertSet('viewType', 'table')
+        ->set('viewType', 'calendar')
+        ->assertSet('viewType', 'calendar')
+        ->set('viewType', 'table')
+        ->assertSet('viewType', 'table');
+});
