@@ -86,3 +86,14 @@ it('includes admins when admins are not filtered from selection', function () us
 
     expect($userIds)->toContain($admin->getKey());
 });
+
+it('still requires the license when admins are not filtered from selection', function (): void {
+    config(['app.filter_admins_from_selection' => false]);
+
+    $unlicensedAdmin = User::factory()->create();
+    $unlicensedAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $userIds = AssignableTaskUsersTable::scope(User::query(), LicenseType::RetentionCrm)->pluck('id');
+
+    expect($userIds)->not->toContain($unlicensedAdmin->getKey());
+});

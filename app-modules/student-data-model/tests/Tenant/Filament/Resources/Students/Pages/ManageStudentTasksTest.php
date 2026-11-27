@@ -41,11 +41,13 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -270,6 +272,56 @@ describe('assignment', function () use ($createTaskUser): void {
             ->assertHasNoFormErrors();
 
         expect(Task::query()->sole()->assigned_to)->toBe($admin->getKey());
+    });
+
+    it('reassigns a task while changing its status and notifies only the new assignee', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $newAssignee = User::factory()->licensed(LicenseType::cases())->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        Notification::fake();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(EditAction::class)->table($task), [
+                'assigned_to' => $newAssignee->getKey(),
+                'status' => TaskStatus::InProgress->value,
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($task->refresh())
+            ->assigned_to->toBe($newAssignee->getKey())
+            ->status->toBe(TaskStatus::InProgress);
+
+        Notification::assertSentTo($newAssignee, TaskAssignedToUserNotification::class);
+        Notification::assertNotSentTo($user, TaskAssignedToUserNotification::class);
+    });
+
+    it('can clear the assignee of a task', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        Notification::fake();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(EditAction::class)->table($task), [
+                'assigned_to' => null,
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($task->refresh()->assigned_to)->toBeNull();
+
+        Notification::assertNothingSent();
     });
 });
 
