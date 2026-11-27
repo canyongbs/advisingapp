@@ -39,9 +39,12 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\RetentionCrmRestriction;
+use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\Pages\EditUser;
+use App\Models\Authenticatable;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
@@ -156,60 +159,223 @@ describe('enterprise ai', function (): void {
     });
 });
 
-it('saves affiliation access control and deferred license changes when saving the form', function (): void {
-    asSuperAdmin();
+describe('affiliation', function (): void {
+    it('saves the department and groups', function (): void {
+        asSuperAdmin();
 
-    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
-    $department = Department::factory()->create();
-    $userGroup = UserGroup::factory()->create();
-    $role = Role::factory()->create(['guard_name' => 'web']);
+        $user = User::factory()->create();
+        $department = Department::factory()->create();
+        $userGroup = UserGroup::factory()->create();
 
-    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeTrue();
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'team_id' => $department->getKey(),
+                'userGroups' => [$userGroup->getKey()],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-    $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
-        ->fillForm([
-            'team_id' => $department->getKey(),
-            'userGroups' => [$userGroup->getKey()],
-            'roles' => [$role->getKey()],
-            'retention_crm_restriction' => RetentionCrmRestriction::FacultyMember->value,
-            'retention_crm_enabled' => false,
-        ]);
+        $user->refresh();
 
-    $user->refresh();
+        expect($user->team_id)->toBe($department->getKey())
+            ->and($user->userGroups->modelKeys())->toBe([$userGroup->getKey()]);
+    });
 
-    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeTrue();
+    it('does not offer archived groups', function (): void {
+        asSuperAdmin();
 
-    $component
-        ->call('save')
-        ->assertHasNoFormErrors();
+        $user = User::factory()->create();
+        $userGroup = UserGroup::factory()->create();
+        $archivedUserGroup = UserGroup::factory()->archived()->create();
 
-    $user->refresh();
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldExists('userGroups', fn (Select $field): bool => array_key_exists($userGroup->getKey(), $field->getOptions())
+                && ! array_key_exists($archivedUserGroup->getKey(), $field->getOptions()));
+    });
 
-    expect($user->team_id)->toBe($department->getKey())
-        ->and($user->userGroups->modelKeys())->toEqualCanonicalizing([$userGroup->getKey()])
-        ->and($user->roles->modelKeys())->toEqualCanonicalizing([$role->getKey()])
-        ->and($user->retention_crm_restriction)->toBe(RetentionCrmRestriction::FacultyMember)
-        ->and($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+    it('hides the groups without the `user_group.view-any` permission', function (): void {
+        $user = User::factory()->create();
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update', 'user_group.view-any'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldVisible('userGroups');
+    });
+
+    it('hides the groups while the `UserGroupsFeature` is inactive', function (): void {
+        UserGroupsFeature::deactivate();
+
+        asSuperAdmin();
+
+        $user = User::factory()->create();
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+    });
 });
 
-it('shows a validation error when assigning a license with no seats available', function (): void {
-    asSuperAdmin();
+describe('access control', function (): void {
+    it('saves the roles', function (): void {
+        asSuperAdmin();
 
-    $licenseSettings = app(LicenseSettings::class);
-    $licenseSettings->data->limits->retentionCrmSeats = 1;
-    $licenseSettings->save();
+        $user = User::factory()->create();
+        $existingRole = Role::factory()->create(['guard_name' => 'web']);
+        $user->assignRole($existingRole);
+        $role = Role::factory()->create(['guard_name' => 'web']);
 
-    User::factory()->licensed([LicenseType::RetentionCrm])->create();
-    $user = User::factory()->create();
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertSchemaStateSet(['roles' => [$existingRole->getKey()]])
+            ->fillForm(['roles' => [$role->getKey()]])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-    Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
-        ->fillForm([
-            'retention_crm_enabled' => true,
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['retention_crm_enabled']);
+        expect($user->roles()->pluck('roles.id')->all())->toBe([$role->getKey()]);
+    });
 
-    $user->refresh();
+    it('only offers `web` roles', function (): void {
+        asSuperAdmin();
 
-    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+        $user = User::factory()->create();
+        $webRole = Role::factory()->create(['guard_name' => 'web']);
+        $apiRole = Role::factory()->create(['guard_name' => 'api']);
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldExists('roles', fn (Select $field): bool => array_key_exists($webRole->getKey(), $field->getOptions())
+                && ! array_key_exists($apiRole->getKey(), $field->getOptions()))
+            ->fillForm(['roles' => [$apiRole->getKey()]])
+            ->call('save')
+            ->assertHasFormErrors(['roles.0']);
+
+        expect($user->roles()->count())->toBe(0);
+    });
+
+    it('does not let a user who is not a super admin assign admin roles', function (string $adminRoleName): void {
+        $user = User::factory()->create();
+        $adminRole = Role::query()->where('name', $adminRoleName)->where('guard_name', 'web')->firstOrFail();
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update', 'role.view-any'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldExists('roles', fn (Select $field): bool => ! array_key_exists($adminRole->getKey(), $field->getOptions()))
+            ->fillForm(['roles' => [$adminRole->getKey()]])
+            ->call('save')
+            ->assertHasFormErrors(['roles.0']);
+
+        expect($user->roles()->count())->toBe(0);
+    })->with(Authenticatable::ADMIN_ROLES);
+
+    it('lets a super admin assign admin roles', function (): void {
+        asSuperAdmin();
+
+        $user = User::factory()->create();
+        $adminRole = Role::query()->superAdmin()->firstOrFail();
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm(['roles' => [$adminRole->getKey()]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->roles()->pluck('roles.id')->all())->toBe([$adminRole->getKey()]);
+    });
+
+    it('keeps the admin roles that a user who is not a super admin cannot see', function (): void {
+        $user = User::factory()->create();
+        $adminRole = Role::query()->where('name', Authenticatable::PARTNER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail();
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $user->assignRole($adminRole);
+
+        // Partner admins can edit each other, but cannot see admin roles.
+        actingAs(User::factory()->create()->assignRole(Authenticatable::PARTNER_ADMIN_ROLE));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertSchemaStateSet(['roles' => []])
+            ->fillForm(['roles' => [$role->getKey()]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->roles()->pluck('roles.id')->all())->toEqualCanonicalizing([$adminRole->getKey(), $role->getKey()]);
+    });
+
+    it('hides the roles without the `role.view-any` permission', function (): void {
+        $user = User::factory()->create();
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldHidden('roles');
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update', 'role.view-any'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldVisible('roles');
+    });
+});
+
+describe('licenses', function (): void {
+    it('changes licenses and the Retention CRM restriction only when the form is saved', function (): void {
+        asSuperAdmin();
+
+        $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+        $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'retention_crm_enabled' => false,
+                'conversational_ai_enabled' => true,
+                'retention_crm_restriction' => RetentionCrmRestriction::FacultyMember->value,
+            ]);
+
+        expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeTrue()
+            ->and($user->hasLicense(LicenseType::ConversationalAi))->toBeFalse();
+
+        $component
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $user->refresh();
+
+        expect($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse()
+            ->and($user->hasLicense(LicenseType::ConversationalAi))->toBeTrue()
+            ->and($user->retention_crm_restriction)->toBe(RetentionCrmRestriction::FacultyMember);
+    });
+
+    it('shows a validation error when assigning a license with no seats available', function (): void {
+        asSuperAdmin();
+
+        $licenseSettings = app(LicenseSettings::class);
+        $licenseSettings->data->limits->retentionCrmSeats = 1;
+        $licenseSettings->save();
+
+        User::factory()->licensed([LicenseType::RetentionCrm])->create();
+        $user = User::factory()->create();
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'retention_crm_enabled' => true,
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['retention_crm_enabled']);
+
+        expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+    });
+
+    it('does not change licenses without the `license.create` permission', function (): void {
+        $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+        actingAs(User::factory()->create()->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update'));
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldDisabled('retention_crm_enabled')
+            ->fillForm([
+                'retention_crm_enabled' => false,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeTrue();
+    });
 });
