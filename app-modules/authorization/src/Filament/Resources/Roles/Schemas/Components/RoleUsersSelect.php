@@ -81,7 +81,12 @@ class RoleUsersSelect
                 ->whereKey($values)
                 ->pluck('name', 'id')
                 ->all())
-            ->visible(fn (Get $get, ?Role $record): bool => auth()->user()?->can('viewAny', static::getUsersModel($get, $record)) ?? false);
+            ->visible(fn (Get $get, ?Role $record): bool => auth()->user()?->can('viewAny', static::getUsersModel($get, $record)) ?? false)
+            ->loadStateFromRelationshipsUsing(function (Select $component): void {
+                if ($component->isVisible()) {
+                    $component->fillStateFromRelationship();
+                }
+            });
     }
 
     /**

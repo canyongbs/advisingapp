@@ -199,6 +199,7 @@ describe('membership', function (): void {
 
         Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
             ->assertFormFieldHidden('users')
+            ->assertSchemaStateSet(['users' => []])
             ->fillForm(['description' => 'Updated description'])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -242,6 +243,7 @@ describe('membership', function (): void {
 
         Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
             ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []])
             ->fillForm(['description' => 'Updated description'])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -261,6 +263,7 @@ describe('membership', function (): void {
 
         Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
             ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []])
             ->fillForm(['description' => 'Updated description'])
             ->call('save')
             ->assertHasNoFormErrors();

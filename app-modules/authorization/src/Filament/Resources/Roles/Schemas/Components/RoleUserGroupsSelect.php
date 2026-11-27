@@ -67,13 +67,13 @@ class RoleUserGroupsSelect
             ->searchable()
             ->multiple()
             ->preload()
-            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, drop the flag checks from the visibility and always hydrate the groups.
+            // TODO: Cleanup Task (user-groups-feature): once the flag is removed, drop the flag check from the visibility.
             ->visible(fn (Get $get, ?Role $record): bool => UserGroupsFeature::active()
                 && (auth()->user()?->can('viewAny', UserGroup::class) ?? false)
                 && (($record->guard_name ?? $get('guard_name')) === 'web')
                 && (! in_array($record?->name, Authenticatable::ADMIN_ROLES, true)))
             ->loadStateFromRelationshipsUsing(function (Select $component): void {
-                if (UserGroupsFeature::active()) {
+                if ($component->isVisible()) {
                     $component->fillStateFromRelationship();
                 }
             });
