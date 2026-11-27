@@ -78,6 +78,7 @@ class CreateRole extends CreateRecord
                     ])
                     ->columns(2),
                 Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
                     ->schema([
                         RoleUsersSelect::make(),
                         RoleUserGroupsSelect::make(),

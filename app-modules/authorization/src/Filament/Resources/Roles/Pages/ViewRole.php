@@ -69,6 +69,7 @@ class ViewRole extends ViewRecord
                     ])
                     ->columns(2),
                 Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
                     ->schema([
                         RoleUsersSelect::make(),
                         RoleUserGroupsSelect::make(),

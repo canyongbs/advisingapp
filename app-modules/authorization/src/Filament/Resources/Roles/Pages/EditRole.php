@@ -73,6 +73,7 @@ class EditRole extends EditRecord
                     ])
                     ->columns(2),
                 Section::make('Membership')
+                    ->hiddenWhenAllChildComponentsHidden()
                     ->schema([
                         RoleUsersSelect::make(),
                         RoleUserGroupsSelect::make(),
