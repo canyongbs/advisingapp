@@ -152,13 +152,13 @@ class TaskForm
                                 fn (Builder $query, ?Task $record): Builder => AssignableTaskUsersTable::scope(
                                     $query,
                                     $owner->getLicenseType(),
-                                    [$record?->assigned_to, auth()->id()],
+                                    AssignableTaskUsersTable::alwaysIncludedUserIds($record),
                                 ),
                             )
                             ->tableConfiguration(AssignableTaskUsersTable::class)
                             ->tableArguments(fn (?Task $record): array => [
                                 'licenseType' => $owner->getLicenseType()->value,
-                                'alwaysIncludedUserIds' => [$record?->assigned_to, auth()->id()],
+                                'alwaysIncludedUserIds' => AssignableTaskUsersTable::alwaysIncludedUserIds($record),
                             ])
                             ->rules([
                                 fn (?Task $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($owner, $record): void {
@@ -169,7 +169,7 @@ class TaskForm
                                     $isAssignable = AssignableTaskUsersTable::scope(
                                         User::query()->whereKey($value),
                                         $owner->getLicenseType(),
-                                        [$record?->assigned_to, auth()->id()],
+                                        AssignableTaskUsersTable::alwaysIncludedUserIds($record),
                                     )->exists();
 
                                     if (! $isAssignable) {

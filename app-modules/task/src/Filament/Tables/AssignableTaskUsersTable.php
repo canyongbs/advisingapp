@@ -37,6 +37,7 @@
 namespace AdvisingApp\Task\Filament\Tables;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Task\Models\Task;
 use App\Models\Scopes\HasLicense;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
@@ -75,6 +76,16 @@ class AssignableTaskUsersTable
                 $query->orWhereKey($alwaysIncludedUserIds);
             }
         });
+    }
+
+    /**
+     * The users that are not filtered out as admins: the task's current assignee and the current user.
+     *
+     * @return array<int, string|null>
+     */
+    public static function alwaysIncludedUserIds(?Task $task): array
+    {
+        return [$task?->assigned_to, auth()->id()];
     }
 
     public static function configure(Table $table): Table

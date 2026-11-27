@@ -172,6 +172,42 @@ it('can update a task and change its status with the related to field disabled',
         ->and($task->histories()->where('event', 'status_changed')->count())->toBe(1);
 });
 
+it('allows assigning a user with the prospect license only', function () use ($createTaskUser): void {
+    actingAs($createTaskUser());
+
+    $prospect = Prospect::factory()->create();
+
+    $recruitmentUser = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
+
+    Livewire::test(ManageProspectTasks::class, ['record' => $prospect->getKey()])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'title' => 'Follow up',
+            'description' => 'Call the prospect.',
+            'assigned_to' => $recruitmentUser->getKey(),
+        ])
+        ->assertHasNoFormErrors();
+
+    expect(Task::query()->sole()->assigned_to)->toBe($recruitmentUser->getKey());
+});
+
+it('does not allow assigning a user without the prospect license', function () use ($createTaskUser): void {
+    actingAs($createTaskUser());
+
+    $prospect = Prospect::factory()->create();
+
+    $retentionUser = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+    Livewire::test(ManageProspectTasks::class, ['record' => $prospect->getKey()])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'title' => 'Follow up',
+            'description' => 'Call the prospect.',
+            'assigned_to' => $retentionUser->getKey(),
+        ])
+        ->assertHasFormErrors(['assigned_to']);
+
+    expect(Task::query()->count())->toBe(0);
+});
+
 describe('authorization', function () use ($createTaskUser): void {
     it('denies access to the manage prospect tasks page without the `task.view-any` permission', function (): void {
         $prospect = Prospect::factory()->create();
