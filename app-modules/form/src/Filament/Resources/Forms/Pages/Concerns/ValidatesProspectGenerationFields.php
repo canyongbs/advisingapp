@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
+use AdvisingApp\Form\Actions\FindMissingProspectGenerationFields;
+use AdvisingApp\Form\Enums\ProspectGenerationField;
 use Closure;
 use Filament\Forms\Components\RichEditor;
 
@@ -53,34 +53,7 @@ trait ValidatesProspectGenerationFields
             return;
         }
 
-        $content = $contentComponent->getState();
-
-        if (is_string($content)) {
-            $content = json_decode($content, true);
-        }
-
-        if (! is_array($content) || ! isset($content['content'])) {
-            $fail('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.');
-
-            return;
-        }
-
-        $result = $this->checkContentForRequiredFields($content['content']);
-
-        if (! $result['email'] || ! $result['name']) {
-            $missingFields = [];
-
-            if (! $result['email']) {
-                $missingFields[] = 'a required Mapped Primary Email Address field';
-            }
-
-            if (! $result['name']) {
-                $missingFields[] = 'a required Mapped Name field';
-            }
-
-            $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
-            $fail($message);
-        }
+        $this->failForMissingProspectGenerationFields([$contentComponent->getState()], $fail);
     }
 
     public function validateWizardStepsFromRules(mixed $steps, Closure $fail): void
@@ -91,9 +64,6 @@ trait ValidatesProspectGenerationFields
             return;
         }
 
-        $hasRequiredEmail = false;
-        $hasRequiredName = false;
-
         $stepsComponent = $this->form->getComponent('steps');
 
         if (! $stepsComponent) {
@@ -101,6 +71,8 @@ trait ValidatesProspectGenerationFields
 
             return;
         }
+
+        $stepContents = [];
 
         foreach ($steps as $stepIndex => $step) {
             $childContainer = $stepsComponent->getChildComponentContainer($stepIndex);
@@ -121,85 +93,28 @@ trait ValidatesProspectGenerationFields
                 continue;
             }
 
-            if (is_string($stepContent)) {
-                $stepContent = json_decode($stepContent, true);
-            }
-
-            if (! is_array($stepContent) || ! isset($stepContent['content'])) {
-                continue;
-            }
-
-            $result = $this->checkContentForRequiredFields($stepContent['content']);
-
-            if ($result['email']) {
-                $hasRequiredEmail = true;
-            }
-
-            if ($result['name']) {
-                $hasRequiredName = true;
-            }
+            $stepContents[] = $stepContent;
         }
 
-        if (! $hasRequiredEmail || ! $hasRequiredName) {
-            $missingFields = [];
-
-            if (! $hasRequiredEmail) {
-                $missingFields[] = 'a required Mapped Primary Email Address field';
-            }
-
-            if (! $hasRequiredName) {
-                $missingFields[] = 'a required Mapped Name field';
-            }
-
-            $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
-            $fail($message);
-        }
+        $this->failForMissingProspectGenerationFields($stepContents, $fail);
     }
 
     /**
-     * @param array<int, mixed> $content
-     *
-     * @return array{email: bool, name: bool}
+     * @param array<int, mixed> $documents
      */
-    protected function checkContentForRequiredFields(array $content): array
+    protected function failForMissingProspectGenerationFields(array $documents, Closure $fail): void
     {
-        $hasRequiredEmail = false;
-        $hasRequiredName = false;
+        $missingFields = app(FindMissingProspectGenerationFields::class)($documents);
 
-        foreach ($content as $component) {
-            if (isset($component['type']) && $component['type'] === 'customBlock') {
-                $blockType = $component['attrs']['id'] ?? null;
-                $blockConfig = $component['attrs']['config'] ?? [];
-
-                if ($blockType === EducatableEmailFormFieldBlock::type()) {
-                    $isRequired = $blockConfig['isRequired'] ?? $blockConfig['is_required'] ?? false;
-
-                    if ($isRequired) {
-                        $hasRequiredEmail = true;
-                    }
-                }
-
-                if ($blockType === EducatableNameFormFieldBlock::type()) {
-                    $hasRequiredName = true;
-                }
-            }
-
-            if (isset($component['content']) && is_array($component['content'])) {
-                $nestedResult = $this->checkContentForRequiredFields($component['content']);
-
-                if ($nestedResult['email']) {
-                    $hasRequiredEmail = true;
-                }
-
-                if ($nestedResult['name']) {
-                    $hasRequiredName = true;
-                }
-            }
+        if ($missingFields === []) {
+            return;
         }
 
-        return [
-            'email' => $hasRequiredEmail,
-            'name' => $hasRequiredName,
-        ];
+        $missingFieldDescriptions = array_map(
+            fn (ProspectGenerationField $missingField): string => $missingField->getRequirementDescription(),
+            $missingFields,
+        );
+
+        $fail('Forms that generate prospects must include ' . implode(' and ', $missingFieldDescriptions) . '.');
     }
 }
