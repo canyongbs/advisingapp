@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Actions\DuplicateForm;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Schemas\FormAccessSettingsForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Filament\Tables\Columns\IdColumn;
@@ -49,7 +49,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -136,16 +135,7 @@ class ListForms extends ListRecords
                 ->modalHeading('Create New Form')
                 ->modalDescription('Before creating your form, choose how people will access and submit it. These settings are permanent and cannot be changed later.')
                 ->modalSubmitActionLabel('Continue')
-                ->schema([
-                    Toggle::make('is_authenticated')
-                        ->label('Requires authentication')
-                        ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form. When someone verifies their email, the form will automatically link their submission to their existing student or prospect record.'),
-                    Toggle::make('generate_prospects')
-                        ->label('Generate prospects')
-                        ->helperText("If enabled, the system will check the email address submitted on the form. If it matches an existing student's institutional email address or prospect's primary email address, the form submission will be linked to that record. If no match is found, a new prospect will be created automatically. Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.")
-                        ->disabled(fn (): bool => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                        ->hintIcon(fn (): ?string => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
-                ])
+                ->schema(fn (Schema $schema): Schema => FormAccessSettingsForm::configure($schema))
                 ->action(function (array $data): void {
                     $this->redirect(FormResource::getUrl('create', [
                         'is_authenticated' => $data['is_authenticated'] ?? false,
