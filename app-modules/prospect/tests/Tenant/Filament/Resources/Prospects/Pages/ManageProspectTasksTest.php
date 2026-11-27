@@ -43,6 +43,7 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
@@ -137,6 +138,38 @@ it('opens the edit or view slide-over on row click depending on whether the user
 
     expect($page->getTable()->getRecordAction($ownTask))->toBe('edit')
         ->and($page->getTable()->getRecordAction($otherTask))->toBe('view');
+});
+
+it('can update a task and change its status with the related to field disabled', function () use ($createTaskUser): void {
+    $user = $createTaskUser();
+
+    actingAs($user);
+
+    $prospect = Prospect::factory()->create();
+
+    $task = Task::factory()->concerningProspect($prospect)->assigned($user)->create(['status' => TaskStatus::Completed, 'is_confidential' => false]);
+
+    Livewire::test(ManageProspectTasks::class, ['record' => $prospect->getKey()])
+        ->removeTableFilter('status')
+        ->mountAction(TestAction::make(EditAction::class)->table($task))
+        ->assertSchemaStateSet([
+            'related_to' => $prospect->getKey(),
+            'status' => TaskStatus::Completed,
+        ])
+        ->assertFormFieldDisabled('related_to')
+        ->fillForm([
+            'title' => 'Updated title',
+            'status' => TaskStatus::Pending->value,
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $task->refresh();
+
+    expect($task->title)->toBe('Updated title')
+        ->and($task->status)->toBe(TaskStatus::Pending)
+        ->and($task->concern->is($prospect))->toBeTrue()
+        ->and($task->histories()->where('event', 'status_changed')->count())->toBe(1);
 });
 
 describe('authorization', function () use ($createTaskUser): void {

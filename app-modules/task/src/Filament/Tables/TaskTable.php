@@ -99,14 +99,14 @@ class TaskTable
                 Filter::make('my_tasks')
                     ->label('My Tasks')
                     ->query(
-                        fn (Builder $query) => $query->where('assigned_to', auth()->id())
+                        fn (Builder $query): Builder => $query->where('assigned_to', auth()->id())
                     ),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->tap(new HasLicense($owner->getLicenseType())),
+                        fn (Builder $query): Builder => $query->tap(new HasLicense($owner->getLicenseType())),
                     )
                     ->searchable()
                     ->multiple(),

@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\HasLicense;
@@ -83,9 +84,17 @@ class TaskForm
                             ->relationship(
                                 'confidentialAccessUserGroups',
                                 'name',
-                                fn (Builder $query) => $query
-                                // @phpstan-ignore method.notFound
-                                    ->withoutArchived()
+                                fn (Builder $query, ?Task $record): Builder => $query->where(
+                                    fn (Builder $query): Builder => $query
+                                        ->whereNull($query->qualifyColumn('archived_at'))
+                                        ->when(
+                                            $record,
+                                            fn (Builder $query, Task $record): Builder => $query->orWhereIn(
+                                                $query->qualifyColumn('id'),
+                                                $record->confidentialAccessUserGroups()->select('user_groups.id'),
+                                            ),
+                                        ),
+                                ),
                             )
                             ->preload()
                             ->label('Groups')

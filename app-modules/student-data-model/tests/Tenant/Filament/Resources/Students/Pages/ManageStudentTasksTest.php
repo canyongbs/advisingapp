@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -48,6 +49,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
 $createTaskUser = function (): User {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -238,6 +240,27 @@ describe('editing', function () use ($createTaskUser): void {
         'pending to completed' => [TaskStatus::Pending, TaskStatus::Completed],
         'canceled to completed' => [TaskStatus::Canceled, TaskStatus::Completed],
     ]);
+    it('keeps an archived group that is already assigned visible and removable', function () use ($createTaskUser): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $archivedGroup = UserGroup::factory()->archived()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => true, 'created_by' => $user->getKey()]);
+        $task->confidentialAccessUserGroups()->attach($archivedGroup);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->mountAction(TestAction::make(EditAction::class)->table($task))
+            ->assertSchemaStateSet(['confidential_task_user_groups' => [$archivedGroup->getKey()]])
+            ->fillForm(['confidential_task_user_groups' => []])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect($task->confidentialAccessUserGroups()->exists())->toBeFalse();
+    });
 });
 
 describe('row click', function () use ($createTaskUser): void {
@@ -324,5 +347,38 @@ describe('authorization', function () use ($createTaskUser): void {
 
         Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
             ->assertActionHidden(TestAction::make(CreateAction::class)->table());
+    });
+
+    it('allows a super admin to access the manage student tasks page', function (): void {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        get(StudentResource::getUrl('tasks', ['record' => $student]))
+            ->assertSuccessful();
+    });
+
+    it('does not allow access to the manage student tasks page without the student license', function (): void {
+        $user = User::factory()->create();
+        $user->givePermissionTo(['student.view-any', 'student.*.view', 'task.view-any']);
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        get(StudentResource::getUrl('tasks', ['record' => $student]))
+            ->assertNotFound();
+    });
+
+    it('hides the edit action for a task the user cannot update', function () use ($createTaskUser): void {
+        actingAs($createTaskUser());
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned()->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->assertActionHidden(TestAction::make('edit')->table($task))
+            ->assertActionVisible(TestAction::make('view')->table($task));
     });
 });
