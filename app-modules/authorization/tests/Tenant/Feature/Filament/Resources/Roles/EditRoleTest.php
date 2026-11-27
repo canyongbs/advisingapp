@@ -191,6 +191,37 @@ describe('membership', function (): void {
     });
 });
 
+describe('admin roles', function (): void {
+    it('does not allow renaming a role to an admin role name', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'api']);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['name' => Authenticatable::SUPER_ADMIN_ROLE])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'not_in']);
+
+        expect($role->refresh()->name)->not->toBe(Authenticatable::SUPER_ADMIN_ROLE);
+    });
+
+    it('allows saving an admin role under its own name', function (): void {
+        asSuperAdmin();
+
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->description)->toBe('Updated description');
+    });
+});
+
 describe('deletion', function (): void {
     it('hides the `DeleteAction` when a role is assigned through a populated user group', function (): void {
         asSuperAdmin();

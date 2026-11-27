@@ -37,12 +37,16 @@
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components;
 
 use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Validation\Rules\Unique;
 
 class RoleNameInput
 {
+    /**
+     * Admin role names are reserved on every guard, as admin checks match a role by its name alone.
+     */
     public static function make(): TextInput
     {
         return TextInput::make('name')
@@ -51,6 +55,10 @@ class RoleNameInput
             ->unique(
                 ignoreRecord: true,
                 modifyRuleUsing: fn (Unique $rule, Get $get, ?Role $record): Unique => $rule->where('guard_name', $record->guard_name ?? $get('guard_name')),
-            );
+            )
+            ->notIn(fn (?Role $record): array => array_values(array_diff(Authenticatable::ADMIN_ROLES, [$record?->name])))
+            ->validationMessages([
+                'not_in' => 'This name is reserved for an admin role.',
+            ]);
     }
 }

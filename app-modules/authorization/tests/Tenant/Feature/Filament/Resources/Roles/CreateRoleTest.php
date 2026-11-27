@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
@@ -205,6 +206,24 @@ describe('membership', function (): void {
                 return true;
             });
     });
+});
+
+describe('admin roles', function (): void {
+    it('does not allow an admin role name on any access control', function (string $guardName): void {
+        asSuperAdmin();
+
+        $roleCount = Role::query()->count();
+
+        Livewire::test(CreateRole::class)
+            ->fillForm([
+                'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+                'guard_name' => $guardName,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['name' => 'not_in']);
+
+        expect(Role::query()->count())->toBe($roleCount);
+    })->with(['web', 'api']);
 });
 
 describe('enterprise ai', function (): void {
