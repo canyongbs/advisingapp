@@ -59,7 +59,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
@@ -149,11 +150,6 @@ class EditUser extends EditRecord
             ->modalCancelAction();
     }
 
-    protected function afterSave(): void
-    {
-        $this->syncLicenses();
-    }
-
     protected function getHeaderActions(): array
     {
         /** @var User $user */
@@ -182,32 +178,53 @@ class EditUser extends EditRecord
         ];
     }
 
-    private function syncLicenses(): void
+    /**
+     * Licenses are granted and revoked when the form is saved, not when a toggle changes. A
+     * disabled toggle is not dehydrated, so its license is left as it is.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $user = Auth::user();
-
-        if (! $user instanceof User || $user->cannot('create', License::class)) {
-            return;
-        }
-
-        $record = $this->getRecord();
         assert($record instanceof User);
+
+        $canManageLicenses = auth()->user()?->can('create', License::class) ?? false;
+        $licenseStates = [];
 
         foreach (LicenseType::enabledCases() as $licenseType) {
             $field = "{$licenseType->value}_enabled";
-            $isEnabled = (bool) data_get($this->data, $field, false);
 
-            if ($isEnabled) {
-                if (! $record->hasLicense($licenseType) && ! $record->grantLicense($licenseType)) {
-                    throw ValidationException::withMessages([
-                        "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
-                    ]);
-                }
+            if (! array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $isEnabled = (bool) Arr::pull($data, $field);
+
+            if ($canManageLicenses) {
+                $licenseStates[$field] = [$licenseType, $isEnabled];
+            }
+        }
+
+        $record = parent::handleRecordUpdate($record, $data);
+
+        assert($record instanceof User);
+
+        foreach ($licenseStates as $field => [$licenseType, $isEnabled]) {
+            if (! $isEnabled) {
+                $record->revokeLicense($licenseType);
 
                 continue;
             }
 
-            $record->revokeLicense($licenseType);
+            if ($record->hasLicense($licenseType) || $record->grantLicense($licenseType)) {
+                continue;
+            }
+
+            throw ValidationException::withMessages([
+                "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
+            ]);
         }
+
+        return $record;
     }
 }
