@@ -43,7 +43,8 @@ use Illuminate\Database\Eloquent\Builder;
 class RolesSelect
 {
     /**
-     * Lists the direct roles of the user. Admin roles are only listed for super admins, as on the roles list.
+     * Lists the direct roles of the user. Only `web` roles apply to users, and admin roles are
+     * only listed for super admins, as on the roles list.
      */
     public static function make(): Select
     {
@@ -53,6 +54,7 @@ class RolesSelect
                 'roles',
                 'name',
                 fn (Builder $query): Builder => $query
+                    ->where('guard_name', 'web')
                     ->unless(
                         auth()->user()?->isSuperAdmin() ?? false,
                         fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
