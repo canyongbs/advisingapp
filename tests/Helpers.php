@@ -85,3 +85,17 @@ function replaceKeyInFixture(mixed $fixture, string $key, mixed $value): mixed
 
     return $fixture;
 }
+
+/**
+ * The field IDs referenced by the custom blocks in rich content.
+ *
+ * @param array<string, mixed>|null $content
+ *
+ * @return list<string>
+ */
+function referencedFieldIds(?array $content): array
+{
+    preg_match_all('/"fieldId":"([^"]+)"/', json_encode($content ?? []), $matches);
+
+    return $matches[1];
+}

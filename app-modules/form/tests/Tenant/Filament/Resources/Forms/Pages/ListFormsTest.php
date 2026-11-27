@@ -39,7 +39,9 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormEmailAutoReply;
+use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\SubmissibleField;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -49,6 +51,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listFormsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -57,6 +60,19 @@ $listFormsTestUser = function (): User {
 
     return User::factory()->licensed(LicenseType::cases())->create();
 };
+
+$customBlock = fn (SubmissibleField $field): array => [
+    'type' => 'customBlock',
+    'attrs' => [
+        'id' => $field->type,
+        'config' => [
+            'fieldId' => $field->getKey(),
+            'label' => $field->label,
+            'isRequired' => $field->is_required,
+            ...$field->config,
+        ],
+    ],
+];
 
 it('the create action is gated by the create permission', function () use ($listFormsTestUser): void {
     $user = $listFormsTestUser();
@@ -274,7 +290,7 @@ it('archive bulk action archives all selected forms', function (): void {
     expect($formWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });
 
-describe('duplication', function (): void {
+describe('duplication', function () use ($customBlock): void {
     beforeEach(function (): void {
         asSuperAdmin();
     });
@@ -290,6 +306,63 @@ describe('duplication', function (): void {
 
         expect($duplicatedForm->root_id)->toBe($duplicatedForm->getKey())
             ->and($duplicatedForm->root_id)->not->toBe($form->root_id);
+    });
+
+    it('points the duplicated form content at its own fields', function () use ($customBlock): void {
+        $form = Form::factory()->create();
+
+        [$firstField, $secondField, $thirdField] = $form->fields->all();
+
+        $form->update(['content' => [
+            'type' => 'doc',
+            'content' => [
+                $customBlock($firstField),
+                [
+                    'type' => 'grid',
+                    'attrs' => ['data-cols' => 2],
+                    'content' => [
+                        ['type' => 'gridColumn', 'content' => [$customBlock($secondField)]],
+                        ['type' => 'gridColumn', 'content' => [$customBlock($thirdField)]],
+                    ],
+                ],
+            ],
+        ]]);
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        expect(referencedFieldIds($duplicatedForm->content))->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all())
+            ->and(referencedFieldIds($form->refresh()->content))->toEqualCanonicalizing($form->fields()->pluck('id')->all());
+    });
+
+    it('points the duplicated form step content at its own fields', function () use ($customBlock): void {
+        $form = Form::factory()->create(['is_wizard' => true]);
+        $form->fields()->delete();
+        $form->update(['content' => null]);
+
+        foreach (['First step', 'Second step'] as $sort => $label) {
+            $step = $form->steps()->create(['label' => $label, 'sort' => $sort]);
+
+            $field = $step->fields()->create([...FormField::factory()->make()->toArray(), 'form_id' => $form->getKey()]);
+
+            $step->update(['content' => ['type' => 'doc', 'content' => [$customBlock($field)]]]);
+        }
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+        $duplicatedSteps = $duplicatedForm->steps()->get();
+
+        expect($duplicatedSteps)->toHaveCount(2);
+
+        foreach ($duplicatedSteps as $duplicatedStep) {
+            expect(referencedFieldIds($duplicatedStep->content))->toEqualCanonicalizing($duplicatedStep->fields()->pluck('id')->all());
+        }
     });
 
     it('does not show the original form submissions count on the duplicated form', function (): void {

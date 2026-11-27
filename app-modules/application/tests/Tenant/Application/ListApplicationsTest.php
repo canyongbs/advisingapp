@@ -50,6 +50,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listApplicationsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -243,6 +244,20 @@ describe('duplication', function (): void {
             ->and($duplicatedApplication->name)->toBe("Copy - {$application->name}")
             ->and($duplicatedApplication->fields()->count())->toBe($application->fields()->count())
             ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
+    });
+
+    it('points the duplicated application content at its own fields', function (): void {
+        $application = Application::factory()->create();
+
+        Livewire::test(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect(referencedFieldIds($duplicatedApplication->content))
+            ->not->toBeEmpty()
+            ->toEqualCanonicalizing($duplicatedApplication->fields()->pluck('id')->all());
     });
 
     it('does not allow duplicating an application with a name that matches another application case-insensitively', function (): void {

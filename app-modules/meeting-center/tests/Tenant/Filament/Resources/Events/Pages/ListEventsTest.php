@@ -50,6 +50,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
+use function Tests\referencedFieldIds;
 
 $listEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -228,6 +229,25 @@ describe('duplication', function (): void {
             ->and($duplicatedForm->steps()->count())->toBe(count($originalStepIds))
             ->and($duplicatedForm->submissions()->count())->toBe(0)
             ->and($duplicatedEvent->attendees()->count())->toBe(0);
+    });
+
+    it('points the duplicated registration form content at its own fields', function (): void {
+        $event = Event::factory()->create();
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Event::query()->whereKeyNot($event->getKey())->firstOrFail()->eventRegistrationForm;
+
+        $duplicatedFieldIds = collect([$duplicatedForm->content, ...$duplicatedForm->steps()->pluck('content')])
+            ->flatMap(referencedFieldIds(...))
+            ->all();
+
+        expect($duplicatedFieldIds)
+            ->not->toBeEmpty()
+            ->toEqualCanonicalizing($duplicatedForm->fields()->pluck('id')->all());
     });
 
     it('copies the description images and hero image to the duplicated event', function (): void {
