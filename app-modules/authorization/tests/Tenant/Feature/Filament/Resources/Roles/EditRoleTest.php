@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
@@ -51,6 +52,7 @@ use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -314,5 +316,28 @@ describe('enterprise ai', function (): void {
         expect($role->name)->toBe('Renamed Advisors')
             ->and($role->hasPermissionTo('prompt.view-any'))->toBeTrue()
             ->and($role->hasPermissionTo('user.view-any'))->toBeTrue();
+    });
+});
+
+describe('authorization', function (): void {
+    it('does not let a non-super-admin edit an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        get(RoleResource::getUrl('edit', ['record' => $role]))
+            ->assertNotFound();
+    });
+
+    it('lets a non-super-admin edit a role with the `role.*.update` permission', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        get(RoleResource::getUrl('edit', ['record' => $role]))
+            ->assertSuccessful();
     });
 });

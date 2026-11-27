@@ -35,16 +35,20 @@
 */
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
 use App\Features\UserGroupsFeature;
+use App\Models\Authenticatable;
 use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\ToggleButtons;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -120,5 +124,31 @@ describe('enterprise ai', function (): void {
 
         expect(array_intersect($availablePermissionGroupNames, Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty()
             ->and($availablePermissionGroupNames)->toContain('User', 'Role');
+    });
+});
+
+describe('authorization', function (): void {
+    it('does not let a non-super-admin view an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::SUPER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view']));
+
+        get(RoleResource::getUrl('view', ['record' => $role]))
+            ->assertNotFound();
+    });
+
+    it('lets a super admin view an admin role', function (): void {
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::SUPER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
+
+        asSuperAdmin();
+
+        get(RoleResource::getUrl('view', ['record' => $role]))
+            ->assertSuccessful();
     });
 });

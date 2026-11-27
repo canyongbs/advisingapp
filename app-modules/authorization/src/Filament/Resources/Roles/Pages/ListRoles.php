@@ -71,15 +71,6 @@ class ListRoles extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): void {
-                $user = auth()->user();
-
-                assert($user instanceof Authenticatable);
-
-                if (! $user->isSuperAdmin()) {
-                    $query->whereNotIn('name', Authenticatable::ADMIN_ROLES);
-                }
-            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
