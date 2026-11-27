@@ -75,6 +75,18 @@ class Inbox extends Page
             ->contains(fn (InboxTab $tab): bool => $tab->canView());
     }
 
+    public function mount(): void
+    {
+        if (! InboxTab::tryFrom($this->activeTab)?->canView()) {
+            $fallbackTab = collect(InboxTab::cases())
+                ->first(fn (InboxTab $tab): bool => $tab->canView());
+
+            if ($fallbackTab instanceof InboxTab) {
+                $this->activeTab = $fallbackTab->value;
+            }
+        }
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema

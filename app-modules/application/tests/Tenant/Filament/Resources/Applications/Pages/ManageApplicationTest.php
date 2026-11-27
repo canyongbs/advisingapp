@@ -233,6 +233,42 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
 
         expect($getRenderedFormIds($component))->toBe([]);
     })->with(['edit', 'notifications', 'email-auto-reply']);
+
+    it('keeps an authorized requested tab selected', function () use ($actingAsUserWithPermissions): void {
+        $actingAsUserWithPermissions('application.*.view');
+
+        $application = Application::factory()->create();
+
+        Livewire::withQueryParams(['tab' => 'submissions'])
+            ->test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->assertSet('activeRelationManager', 'submissions')
+            ->assertSeeLivewire(SubmissionsRelationManager::class)
+            ->assertDontSeeLivewire(WorkflowsRelationManager::class);
+    });
+
+    it('falls back to the first visible tab for an unknown tab', function () use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
+        $actingAsUserWithPermissions('application.*.view');
+
+        $application = Application::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => 'not-a-real-tab'])
+            ->test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->assertSet('activeRelationManager', null);
+
+        expect($getRenderedFormIds($component))->toBe([]);
+    });
+
+    it('falls back to the first visible tab for a valid but unauthorized tab', function () use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
+        $actingAsUserWithPermissions('application.*.view');
+
+        $application = Application::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => 'edit'])
+            ->test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->assertSet('activeRelationManager', null);
+
+        expect($getRenderedFormIds($component))->toBe([]);
+    });
 });
 
 describe('edit tab', function () use ($archiveAction): void {

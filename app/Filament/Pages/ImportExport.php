@@ -68,6 +68,18 @@ class ImportExport extends Page
             ->contains(fn (ImportExportTab $tab): bool => $tab->canView());
     }
 
+    public function mount(): void
+    {
+        if (! ImportExportTab::tryFrom($this->activeTab)?->canView()) {
+            $fallbackTab = collect(ImportExportTab::cases())
+                ->first(fn (ImportExportTab $tab): bool => $tab->canView());
+
+            if ($fallbackTab instanceof ImportExportTab) {
+                $this->activeTab = $fallbackTab->value;
+            }
+        }
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema

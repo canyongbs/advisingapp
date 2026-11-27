@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Livewire\InboxTable;
+use AdvisingApp\Engagement\Livewire\SentItemsTable;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -87,14 +88,42 @@ it('syncs the active tab into the component state when switching tabs', function
         ->assertSet('activeTab', 'sent-items');
 });
 
-it('does not render a tab the user cannot access', function (): void {
+it('keeps an authorized requested tab selected', function (): void {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
 
     actingAs($user);
 
-    get(Inbox::getUrl(['tab' => 'inbox']))
-        ->assertOk()
+    Livewire::withQueryParams(['tab' => 'sent-items'])
+        ->test(Inbox::class)
+        ->assertSet('activeTab', 'sent-items')
+        ->assertSeeLivewire(SentItemsTable::class)
+        ->assertDontSeeLivewire(InboxTable::class);
+});
+
+it('falls back to the first visible tab for an unknown tab', function (): void {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'not-a-real-tab'])
+        ->test(Inbox::class)
+        ->assertSet('activeTab', 'sent-items')
+        ->assertSeeLivewire(SentItemsTable::class)
+        ->assertDontSeeLivewire(InboxTable::class);
+});
+
+it('falls back to the first visible tab for a valid but unauthorized tab', function (): void {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'inbox'])
+        ->test(Inbox::class)
+        ->assertSet('activeTab', 'sent-items')
+        ->assertSeeLivewire(SentItemsTable::class)
         ->assertDontSeeLivewire(InboxTable::class);
 });
 

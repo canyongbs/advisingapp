@@ -201,6 +201,42 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
 
         expect($getRenderedFormIds($component))->toBe([]);
     })->with(['details', 'landing-page', 'registration-form', 'email-auto-reply']);
+
+    it('keeps an authorized requested tab selected', function () use ($actingAsUserWithPermissions): void {
+        $actingAsUserWithPermissions('event_attendee.view-any');
+
+        $event = Event::factory()->create();
+
+        Livewire::withQueryParams(['tab' => 'attendees'])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->assertSet('activeRelationManager', 'attendees')
+            ->assertSeeLivewire(EventAttendeesRelationManager::class);
+    });
+
+    it('falls back to the first visible tab for an unknown tab', function () use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
+        $actingAsUserWithPermissions('event.*.update');
+
+        $event = Event::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => 'not-a-real-tab'])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->assertSet('activeRelationManager', 'details');
+
+        expect($getRenderedFormIds($component))->toBe(['form']);
+    });
+
+    it('falls back to the first visible tab for a valid but unauthorized tab', function () use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
+        $actingAsUserWithPermissions('event.*.update');
+
+        $event = Event::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => 'attendees'])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
+            ->assertSet('activeRelationManager', 'details')
+            ->assertDontSeeLivewire(EventAttendeesRelationManager::class);
+
+        expect($getRenderedFormIds($component))->toBe(['form']);
+    });
 });
 
 describe('details tab', function () use ($archiveAction): void {
