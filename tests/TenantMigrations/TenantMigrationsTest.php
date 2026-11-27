@@ -74,6 +74,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
 use App\Features\MatchedEnrolledTermsFeature;
 use App\Features\MatchedTermFunctionFeature;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Connection;
 use Illuminate\Database\QueryException;
@@ -86,6 +87,30 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 // Add tests for migration files here
+
+test('2026_11_26_113141_make_ai_assistant_application_columns_nullable_and_activate_flag makes application columns nullable and activates the feature', function () {
+    isolatedMigration(
+        '2026_11_26_113141_make_ai_assistant_application_columns_nullable_and_activate_flag',
+        function () {
+            expect(RemoveAiAssistantApplicationFeature::active())->toBeFalse();
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_11_26_113141_make_ai_assistant_application_columns_nullable_and_activate_flag.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and(RemoveAiAssistantApplicationFeature::active())->toBeTrue()
+                ->and(DB::table('information_schema.columns')
+                    ->where('table_name', 'ai_assistants')
+                    ->where('column_name', 'application')
+                    ->value('is_nullable'))
+                ->toBe('YES')
+                ->and(DB::table('information_schema.columns')
+                    ->where('table_name', 'ai_thread_folders')
+                    ->where('column_name', 'application')
+                    ->value('is_nullable'))
+                ->toBe('YES');
+        }
+    );
+});
 
 // Example migration test, leave commented out for future use as a template/example
 //describe('2025_01_01_165527_tmp_data_do_a_thing', function () {

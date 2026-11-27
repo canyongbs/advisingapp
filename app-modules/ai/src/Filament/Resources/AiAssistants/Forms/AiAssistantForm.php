@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
 use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
@@ -54,7 +55,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
@@ -80,14 +80,13 @@ class AiAssistantForm
                     ->options([
                         AiAssistantApplication::PersonalAssistant->value => 'Employee Advisor',
                     ])
-                    ->dehydratedWhenHidden()
+                    ->dehydrated(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
+                    ->dehydratedWhenHidden(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
                     ->default(AiAssistantApplication::getDefault())
-                    ->live()
-                    ->afterStateUpdated(fn (Set $set, $state): mixed => filled(AiAssistantApplication::parse($state)) ? $set('model', AiAssistantApplication::parse($state)->getDefaultModel()->value) : null)
-                    ->required()
+                    ->required(fn (): bool => ! RemoveAiAssistantApplicationFeature::active())
                     ->enum(AiAssistantApplication::class)
                     ->columnStart(1)
-                    ->visible(auth()->user()->isSuperAdmin())
+                    ->visible(fn (): bool => auth()->user()->isSuperAdmin() && ! RemoveAiAssistantApplicationFeature::active())
                     ->disabledOn('edit'),
                 Select::make('model')
                     ->reactive()
@@ -102,7 +101,7 @@ class AiAssistantForm
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::EmployeeAdvisors->getModels()))
                     ->searchable()
                     ->required()
-                    ->visible(fn (Get $get): bool => filled($get('application')) && auth()->user()->isSuperAdmin())
+                    ->visible(fn (): bool => auth()->user()->isSuperAdmin())
                     ->disabled(fn (): bool => ! app(AiEmployeeAdvisorSettings::class)->allow_selection_of_model)
                     ->default(function () {
                         $settings = app(AiEmployeeAdvisorSettings::class);

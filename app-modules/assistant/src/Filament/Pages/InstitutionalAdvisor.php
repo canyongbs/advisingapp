@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
@@ -55,8 +54,6 @@ class InstitutionalAdvisor extends Page
     use CanManagePromptLibrary;
     use CanManageThreads;
     use CanUploadFiles;
-
-    public const APPLICATION = AiAssistantApplication::PersonalAssistant;
 
     public mixed $isSmartPromptsTypePreselected = null;
 

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
@@ -52,7 +51,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -88,7 +86,6 @@ class ManageAiSettings extends SettingsPage
     public function defaultAssistant(): ?AiAssistant
     {
         return AiAssistant::query()
-            ->where('application', AiAssistantApplication::PersonalAssistant)
             ->where('is_default', true)
             ->first();
     }
@@ -115,8 +112,7 @@ class ManageAiSettings extends SettingsPage
                             ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::InstitutionalAdvisor->getModels()))
                             ->searchable()
                             ->required()
-                            ->columnSpanFull()
-                            ->visible(fn (Get $get): bool => filled($get('application'))),
+                            ->columnSpanFull(),
                         Textarea::make('description')
                             ->columnSpanFull()
                             ->required(),

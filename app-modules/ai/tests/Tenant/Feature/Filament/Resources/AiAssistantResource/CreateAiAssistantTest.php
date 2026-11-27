@@ -205,14 +205,6 @@ it('validates the inputs', function (CreateAiAssistantRequestFactory $data, arra
             CreateAiAssistantRequestFactory::new()->state(['name' => str()->random(256)]),
             ['name' => 'max'],
         ],
-        'application required' => [
-            CreateAiAssistantRequestFactory::new()->state(['application' => null]),
-            ['application' => 'required'],
-        ],
-        'application must be correct enum' => [
-            CreateAiAssistantRequestFactory::new()->state(['application' => 'blah']),
-            ['application'],
-        ],
         'model required' => [
             CreateAiAssistantRequestFactory::new()->state(['model' => null]),
             ['model' => 'required'],

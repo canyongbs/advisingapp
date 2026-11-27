@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -70,7 +72,6 @@ trait CanManageFolders
 
         return $user
             ->aiThreadFolders()
-            ->where('application', static::APPLICATION)
             ->with([ // @phpstan-ignore argument.type
                 'threads' => fn (HasMany $query) => $query
                     ->where('is_preview', false)
@@ -94,14 +95,18 @@ trait CanManageFolders
                     ->required()
                     ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
                         return $rule
-                            ->where('user_id', auth()->id())
-                            ->where('application', static::APPLICATION);
+                            ->where('user_id', auth()->id());
                     }),
             ])
             ->action(function (array $arguments, array $data): void {
                 $folder = new AiThreadFolder();
                 $folder->name = $data['name'];
-                $folder->application = static::APPLICATION;
+
+                if (! RemoveAiAssistantApplicationFeature::active()) {
+                    // TODO: Cleanup Task (remove-ai-assistant-application): delete this branch after dropping the column.
+                    $folder->application = AiAssistantApplication::PersonalAssistant;
+                }
+
                 $folder->user()->associate(auth()->user());
                 $folder->save();
 
@@ -120,7 +125,6 @@ trait CanManageFolders
             ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments): array => [
                 'name' => auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
                     ?->name,
             ])
@@ -132,13 +136,11 @@ trait CanManageFolders
                     ->required()
                     ->unique(AiThreadFolder::class, modifyRuleUsing: function (Unique $rule) {
                         return $rule
-                            ->where('user_id', auth()->id())
-                            ->where('application', static::APPLICATION);
+                            ->where('user_id', auth()->id());
                     }),
             ])
             ->action(function (array $arguments, array $data): void {
                 auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
                     ?->update(['name' => $data['name']]);
 
@@ -161,7 +163,6 @@ trait CanManageFolders
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
             ->action(function (array $arguments): void {
                 auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
                     ?->delete();
 
@@ -187,7 +188,6 @@ trait CanManageFolders
             ])
             ->action(function (array $arguments, array $data): void {
                 $thread = auth()->user()->aiThreads()
-                    ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread']);
 
                 if (! $thread) {
@@ -195,7 +195,6 @@ trait CanManageFolders
                 }
 
                 $folder = auth()->user()->aiThreadFolders()
-                    ->where('application', static::APPLICATION)
                     ->find($data['folder']);
 
                 $this->moveThread($thread, $folder);
@@ -216,7 +215,6 @@ trait CanManageFolders
         }
 
         $thread = auth()->user()->aiThreads()
-            ->whereRelation('assistant', 'application', static::APPLICATION)
             ->find($threadId);
 
         if (! $thread) {
@@ -228,7 +226,6 @@ trait CanManageFolders
 
         $folder = filled($folderId) ?
             auth()->user()->aiThreadFolders()
-                ->where('application', static::APPLICATION)
                 ->find($folderId) :
             null;
 
@@ -254,7 +251,6 @@ trait CanManageFolders
         return Select::make('folder')
             ->options(fn (): array => auth()->user()
                 ->aiThreadFolders()
-                ->where('application', static::APPLICATION)
                 ->orderBy('name')
                 ->pluck('name', 'id')
                 ->all())

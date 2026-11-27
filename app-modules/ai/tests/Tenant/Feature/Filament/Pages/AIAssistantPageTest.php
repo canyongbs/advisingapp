@@ -53,6 +53,7 @@ use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Team\Models\Department;
 use App\Features\LlamaParseFileParsingFeature;
+use App\Features\RemoveAiAssistantApplicationFeature;
 use App\Filament\Pages\Dashboard;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -202,6 +203,23 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
     expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
 });
 
+it('creates default folders after consent without relying on application when the feature flag is active', function () use ($setUp): void {
+    ['user' => $user] = $setUp(
+        hasUserConsented: false,
+    );
+
+    expect($user->defaultAssistantChatFoldersHaveBeenCreated())->toBeFalse();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->call('confirmConsent');
+
+    $folderNames = $user->aiThreadFolders()->pluck('name')->all();
+
+    expect($folderNames)
+        ->toEqualCanonicalizing(AiThreadFolder::defaults())
+        ->and($user->fresh()->defaultAssistantChatFoldersHaveBeenCreated())->toBeTrue();
+});
+
 it('can select a thread', function () use ($setUp): void {
     ['user' => $user, 'assistant' => $assistant, 'thread' => $thread] = $setUp();
 
@@ -318,6 +336,25 @@ it('can create a folder', function () use ($setUp): void {
     assertDatabaseHas(AiThreadFolder::class, [
         'user_id' => $user->getKey(),
         'name' => $name,
+        'application' => null,
+    ]);
+});
+
+it('writes folder application when the feature flag is inactive', function () use ($setUp): void {
+    ['user' => $user] = $setUp();
+
+    RemoveAiAssistantApplicationFeature::deactivate();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->callAction('newFolder', [
+            'name' => $name = AiThreadFolder::factory()->make()->name,
+        ])
+        ->assertHasNoActionErrors();
+
+    assertDatabaseHas(AiThreadFolder::class, [
+        'user_id' => $user->getKey(),
+        'name' => $name,
+        'application' => AiAssistantApplication::PersonalAssistant,
     ]);
 });
 
