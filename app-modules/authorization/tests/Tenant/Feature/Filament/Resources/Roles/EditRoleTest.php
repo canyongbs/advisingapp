@@ -45,7 +45,7 @@ use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
-use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
@@ -75,114 +75,120 @@ test('EditRole does not allow duplicate role names case insensitively within a g
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-test('can search add and remove users and groups from role membership', function (): void {
-    UserGroupsFeature::activate();
+describe('membership', function (): void {
+    it('can add and remove users and groups', function (): void {
+        asSuperAdmin();
 
-    asSuperAdmin();
+        $role = Role::factory()->create(['guard_name' => 'web']);
 
-    $role = Role::factory()->create(['guard_name' => 'web']);
+        $keptUser = User::factory()->create();
+        $removedUser = User::factory()->create();
+        $addedUser = User::factory()->create();
 
-    $existingUser = User::factory()->create();
-    $removedUser = User::factory()->create();
-    $newUser = User::factory()->create();
+        $keptGroup = UserGroup::factory()->create();
+        $removedGroup = UserGroup::factory()->create();
+        $addedGroup = UserGroup::factory()->create();
 
-    $existingGroup = UserGroup::factory()->create();
-    $removedGroup = UserGroup::factory()->create();
-    $newGroup = UserGroup::factory()->create();
+        $role->users()->attach([$keptUser->getKey(), $removedUser->getKey()]);
+        $role->userGroups()->attach([$keptGroup->getKey(), $removedGroup->getKey()]);
 
-    $role->users()->attach([$existingUser->getKey(), $removedUser->getKey()]);
-    $role->userGroups()->attach([$existingGroup->getKey(), $removedGroup->getKey()]);
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet([
+                'users' => [$keptUser->getKey(), $removedUser->getKey()],
+                'userGroups' => [$keptGroup->getKey(), $removedGroup->getKey()],
+            ])
+            ->fillForm([
+                'users' => [$keptUser->getKey(), $addedUser->getKey()],
+                'userGroups' => [$keptGroup->getKey(), $addedGroup->getKey()],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
-        ->fillForm([
-            'users' => [$existingUser->getKey(), $newUser->getKey()],
-            'userGroups' => [$existingGroup->getKey(), $newGroup->getKey()],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        $role->refresh();
 
-    expect($role->refresh()->users->pluck('id')->all())
-        ->toEqualCanonicalizing([$existingUser->getKey(), $newUser->getKey()])
-        ->and($role->refresh()->userGroups->pluck('id')->all())
-        ->toEqualCanonicalizing([$existingGroup->getKey(), $newGroup->getKey()]);
-});
+        expect($role->users->modelKeys())->toEqualCanonicalizing([$keptUser->getKey(), $addedUser->getKey()])
+            ->and($role->userGroups->modelKeys())->toEqualCanonicalizing([$keptGroup->getKey(), $addedGroup->getKey()]);
+    });
 
-test('EditRole can save API roles with existing API users when changing unrelated properties', function (): void {
-    asSuperAdmin();
+    it('keeps the system users of an `api` role', function (): void {
+        asSuperAdmin();
 
-    $role = Role::factory()->create(['guard_name' => 'api']);
-    $apiUser = SystemUser::factory()->create();
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $systemUser = SystemUser::factory()->create();
 
-    $role->users()->attach($apiUser->getKey());
+        $role->users()->attach($systemUser->getKey());
 
-    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
-        ->fillForm(['description' => 'Updated description'])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$systemUser->getKey()]])
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-    expect($role->refresh()->users->pluck('id'))->toContain($apiUser->getKey());
-});
+        expect($role->refresh()->users->modelKeys())->toBe([$systemUser->getKey()]);
+    });
 
-test('EditRole blocks assigning groups to API roles', function (): void {
-    UserGroupsFeature::activate();
+    it('does not add users of another access control', function (): void {
+        asSuperAdmin();
 
-    asSuperAdmin();
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $user = User::factory()->create();
 
-    $role = Role::factory()->create(['guard_name' => 'api']);
-    $group = UserGroup::factory()->create();
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['users' => [$user->getKey()]])
+            ->call('save')
+            ->assertHasFormErrors(['users.0' => 'in']);
 
-    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
-        ->fillForm([
-            'userGroups' => [$group->getKey()],
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['userGroups']);
-});
+        expect($role->refresh()->users)->toBeEmpty();
+    });
 
-test('non-super-admins cannot add users to admin roles from EditRole membership', function (): void {
-    $adminRole = Role::query()->firstOrCreate([
-        'name' => Authenticatable::SUPER_ADMIN_ROLE,
-        'guard_name' => 'web',
-    ]);
+    it('hides the groups for `api` roles', function (): void {
+        asSuperAdmin();
 
-    $user = User::factory()->create();
-    $user->givePermissionTo('role.view-any', 'role.*.view', 'role.*.update');
+        $role = Role::factory()->create(['guard_name' => 'api']);
 
-    actingAs($user);
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+    });
 
-    Livewire::test(EditRole::class, ['record' => $adminRole->getRouteKey()])
-        ->fillForm([
-            'users' => [$user->getKey()],
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['users']);
+    it('hides the groups for admin roles', function (): void {
+        asSuperAdmin();
 
-    expect($adminRole->refresh()->users->pluck('id'))->not()->toContain($user->getKey());
-});
+        $role = Role::query()->firstOrCreate([
+            'name' => Authenticatable::PARTNER_ADMIN_ROLE,
+            'guard_name' => 'web',
+        ]);
 
-test('non-super-admins cannot add groups to admin roles from EditRole membership', function (): void {
-    UserGroupsFeature::activate();
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups');
+    });
 
-    $adminRole = Role::query()->firstOrCreate([
-        'name' => Authenticatable::SUPER_ADMIN_ROLE,
-        'guard_name' => 'web',
-    ]);
+    it('keeps an archived group listed while it holds the role', function (): void {
+        asSuperAdmin();
 
-    $user = User::factory()->create();
-    $user->givePermissionTo('role.view-any', 'role.*.view', 'role.*.update');
+        $role = Role::factory()->create(['guard_name' => 'web']);
 
-    $group = UserGroup::factory()->create();
+        $assignedArchivedGroup = UserGroup::factory()->create();
+        $unassignedArchivedGroup = UserGroup::factory()->create();
 
-    actingAs($user);
+        $role->userGroups()->attach($assignedArchivedGroup);
 
-    Livewire::test(EditRole::class, ['record' => $adminRole->getRouteKey()])
-        ->fillForm([
-            'userGroups' => [$group->getKey()],
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['userGroups']);
+        $assignedArchivedGroup->archive();
+        $unassignedArchivedGroup->archive();
 
-    expect($adminRole->refresh()->userGroups->pluck('id'))->not()->toContain($group->getKey());
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['userGroups' => [$assignedArchivedGroup->getKey()]])
+            ->assertFormFieldExists('userGroups', function (Select $field) use ($assignedArchivedGroup, $unassignedArchivedGroup): bool {
+                expect($field->getOptions())->toHaveKey($assignedArchivedGroup->getKey())
+                    ->not->toHaveKey($unassignedArchivedGroup->getKey());
+
+                return true;
+            })
+            ->fillForm(['userGroups' => []])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups)->toBeEmpty();
+    });
 });
 
 describe('deletion', function (): void {

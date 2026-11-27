@@ -38,9 +38,10 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
-use App\Features\UserGroupsFeature;
+use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Filament\Forms\Components\Select;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
@@ -64,43 +65,146 @@ test('CreateRole does not allow duplicate role names case insensitively within a
         ->assertHasFormErrors(['name' => 'unique']);
 });
 
-test('CreateRole clears incompatible membership selections when access control guard changes', function (): void {
-    UserGroupsFeature::activate();
+describe('membership', function (): void {
+    it('can create a role with users and groups', function (): void {
+        asSuperAdmin();
 
-    asSuperAdmin();
+        $user = User::factory()->create();
+        $group = UserGroup::factory()->create();
 
-    $user = User::factory()->create();
-    $group = UserGroup::factory()->create();
+        Livewire::test(CreateRole::class)
+            ->fillForm([
+                'name' => 'Advisors',
+                'guard_name' => 'web',
+                'users' => [$user->getKey()],
+                'userGroups' => [$group->getKey()],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
 
-    Livewire::test(CreateRole::class)
-        ->fillForm([
-            'users' => [$user->getKey()],
-            'userGroups' => [$group->getKey()],
-        ])
-        ->fillForm([
-            'guard_name' => 'api',
-        ])
-        ->assertSchemaStateSet([
-            'users' => [],
-            'userGroups' => [],
-        ]);
-});
+        $role = Role::query()->where('name', 'Advisors')->firstOrFail();
 
-test('CreateRole blocks assigning groups to API roles', function (): void {
-    UserGroupsFeature::activate();
+        expect($role->users->modelKeys())->toBe([$user->getKey()])
+            ->and($role->userGroups->modelKeys())->toBe([$group->getKey()]);
+    });
 
-    asSuperAdmin();
+    it('can create an `api` role with system users', function (): void {
+        asSuperAdmin();
 
-    $group = UserGroup::factory()->create();
+        $systemUser = SystemUser::factory()->create();
 
-    Livewire::test(CreateRole::class)
-        ->fillForm([
-            'name' => 'API Scoped Role',
-            'guard_name' => 'api',
-            'userGroups' => [$group->getKey()],
-        ])
-        ->call('create')
-        ->assertHasErrors(['userGroups']);
+        Livewire::test(CreateRole::class)
+            ->fillForm([
+                'name' => 'Integrations',
+                'guard_name' => 'api',
+            ])
+            ->fillForm([
+                'users' => [$systemUser->getKey()],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $role = Role::query()->where('name', 'Integrations')->firstOrFail();
+
+        expect($role->users->modelKeys())->toBe([$systemUser->getKey()])
+            ->and($role->users->first())->toBeInstanceOf(SystemUser::class);
+    });
+
+    it('only offers the users of the selected access control', function (): void {
+        asSuperAdmin();
+
+        $nameMatch = User::factory()->create(['name' => 'Jordan Rivers']);
+        $emailMatch = User::factory()->create(['name' => 'Casey Brooks', 'email' => 'jordan.brooks@example.com']);
+        $nonMatch = User::factory()->create(['name' => 'Taylor Stone']);
+        $systemUser = SystemUser::factory()->create(['name' => 'Jordan Integration']);
+
+        Livewire::test(CreateRole::class)
+            ->fillForm(['guard_name' => 'web'])
+            ->assertFormFieldExists('users', function (Select $field) use ($nameMatch, $emailMatch, $nonMatch, $systemUser): bool {
+                $results = $field->getSearchResults('JORDAN');
+
+                expect($results)->toHaveKeys([$nameMatch->getKey(), $emailMatch->getKey()])
+                    ->not->toHaveKey($nonMatch->getKey())
+                    ->not->toHaveKey($systemUser->getKey());
+
+                return true;
+            })
+            ->fillForm(['guard_name' => 'api'])
+            ->assertFormFieldExists('users', function (Select $field) use ($nameMatch, $emailMatch, $systemUser): bool {
+                expect($field->getSearchResults('jordan'))->toBe([$systemUser->getKey() => $systemUser->name])
+                    ->and($field->getOptions())->toHaveKey($systemUser->getKey())
+                    ->not->toHaveKey($nameMatch->getKey())
+                    ->not->toHaveKey($emailMatch->getKey());
+
+                return true;
+            });
+    });
+
+    it('does not create a role with users of another access control', function (): void {
+        asSuperAdmin();
+
+        $user = User::factory()->create();
+
+        Livewire::test(CreateRole::class)
+            ->fillForm([
+                'name' => 'Integrations',
+                'guard_name' => 'api',
+            ])
+            ->fillForm([
+                'users' => [$user->getKey()],
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['users.0' => 'in']);
+
+        expect(Role::query()->where('name', 'Integrations')->exists())->toBeFalse();
+    });
+
+    it('clears the membership when the access control changes', function (): void {
+        asSuperAdmin();
+
+        $user = User::factory()->create();
+        $group = UserGroup::factory()->create();
+
+        Livewire::test(CreateRole::class)
+            ->fillForm([
+                'guard_name' => 'web',
+                'users' => [$user->getKey()],
+                'userGroups' => [$group->getKey()],
+            ])
+            ->fillForm([
+                'guard_name' => 'api',
+            ])
+            ->assertSchemaStateSet([
+                'users' => [],
+                'userGroups' => [],
+            ]);
+    });
+
+    it('hides the groups for `api` roles', function (): void {
+        asSuperAdmin();
+
+        Livewire::test(CreateRole::class)
+            ->fillForm(['guard_name' => 'web'])
+            ->assertFormFieldVisible('userGroups')
+            ->fillForm(['guard_name' => 'api'])
+            ->assertFormFieldHidden('userGroups');
+    });
+
+    it('does not offer archived groups', function (): void {
+        asSuperAdmin();
+
+        $group = UserGroup::factory()->create();
+        $archivedGroup = UserGroup::factory()->create();
+        $archivedGroup->archive();
+
+        Livewire::test(CreateRole::class)
+            ->assertFormFieldExists('userGroups', function (Select $field) use ($group, $archivedGroup): bool {
+                expect($field->getOptions())->toHaveKey($group->getKey())
+                    ->not->toHaveKey($archivedGroup->getKey());
+
+                return true;
+            });
+    });
 });
 
 describe('enterprise ai', function (): void {

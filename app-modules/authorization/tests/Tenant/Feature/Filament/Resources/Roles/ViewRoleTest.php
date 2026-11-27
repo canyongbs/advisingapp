@@ -44,7 +44,6 @@ use App\Models\Authenticatable;
 use App\Models\SystemUser;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
-use Filament\Forms\Components\ToggleButtons;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -52,48 +51,49 @@ use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
-test('shows access control and membership details on the view page', function (): void {
-    UserGroupsFeature::activate();
+describe('membership', function (): void {
+    it('displays the users and groups of a role', function (): void {
+        asSuperAdmin();
 
-    asSuperAdmin();
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $user = User::factory()->create();
+        $group = UserGroup::factory()->create();
 
-    $role = Role::factory()->create(['guard_name' => 'web']);
-    $user = User::factory()->create();
-    $group = UserGroup::factory()->create();
+        $role->users()->attach($user);
+        $role->userGroups()->attach($group);
 
-    $role->users()->attach($user->getKey());
-    $role->userGroups()->attach($group->getKey());
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet([
+                'users' => [$user->getKey()],
+                'userGroups' => [$group->getKey()],
+            ]);
+    });
 
-    Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
-        ->assertSee('Properties')
-        ->assertSee('Membership')
-        ->assertFormFieldExists('guard_name', function (ToggleButtons $field): bool {
-            $options = $field->getOptions();
+    it('displays the system users of an `api` role', function (): void {
+        asSuperAdmin();
 
-            expect($field->getLabel())->toBe('Access Control')
-                ->and($options['web'])->toBe('Console')
-                ->and($options['api'])->toBe('API');
+        $role = Role::factory()->create(['guard_name' => 'api']);
+        $systemUser = SystemUser::factory()->create();
 
-            return true;
-        })
-        ->assertSchemaStateSet([
-            'users' => [$user->getKey()],
-            'userGroups' => [$group->getKey()],
-        ]);
-});
+        $role->users()->attach($systemUser);
 
-test('ViewRole displays API users for API roles', function (): void {
-    asSuperAdmin();
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$systemUser->getKey()]])
+            ->assertFormFieldHidden('userGroups');
+    });
 
-    $role = Role::factory()->create(['guard_name' => 'api']);
-    $apiUser = SystemUser::factory()->create();
+    it('does not load the groups when the `UserGroupsFeature` is inactive', function (): void {
+        asSuperAdmin();
 
-    $role->users()->attach($apiUser->getKey());
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $role->userGroups()->attach(UserGroup::factory()->create());
 
-    Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
-        ->assertSchemaStateSet([
-            'users' => [$apiUser->getKey()],
-        ]);
+        UserGroupsFeature::deactivate();
+
+        Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->assertSchemaStateSet(['userGroups' => []]);
+    });
 });
 
 describe('enterprise ai', function (): void {
