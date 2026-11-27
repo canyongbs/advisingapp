@@ -40,10 +40,10 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Filament\Schemas\Components\TaskAssignedToSelect;
 use AdvisingApp\Task\Models\Task;
 use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
-use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -141,15 +141,7 @@ class TaskForm
                     ]),
                 Section::make('Assignment')
                     ->schema([
-                        UserSelect::make('assigned_to')
-                            ->label('Assigned To')
-                            ->relationship(
-                                'assignedTo',
-                                'name',
-                                fn (Builder $query): Builder => $query->tap(new HasLicense($owner->getLicenseType())),
-                            )
-                            ->nullable()
-                            ->default(auth()->id()),
+                        TaskAssignedToSelect::make($owner),
                     ]),
             ]);
     }
