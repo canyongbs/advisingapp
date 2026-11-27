@@ -42,6 +42,8 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder;
 use AdvisingApp\Report\Filament\Tables\ReportGroupsTable;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Scopes\JoinMatchedTerm;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\TextInput;
@@ -52,6 +54,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Attributes\Url;
@@ -97,7 +100,11 @@ trait HasPopulationFilter
             return;
         }
 
-        $liveFilters = $this->getSelectedLiveFilters();
+        $liveFilters = $this->migrateLegacyLiveFilters($this->getSelectedLiveFilters());
+
+        if (! $this->hasLiveFilters($liveFilters)) {
+            return;
+        }
 
         $availableTypes = array_map(
             fn (Constraint $constraint): string => $constraint->getName(),
@@ -148,6 +155,109 @@ trait HasPopulationFilter
                 ]),
             ])
             ->columns(1);
+    }
+
+    /**
+     * Converts legacy live-filter rule types and values to the current equivalent format.
+     *
+     * @param array<string, mixed>|null $liveFilters
+     *
+     * @return array<string, mixed>|null
+     */
+    protected function migrateLegacyLiveFilters(?array $liveFilters): ?array
+    {
+        if (! is_array($liveFilters) || ! is_array($liveFilters['queryBuilder']['rules'] ?? null)) {
+            return $liveFilters;
+        }
+
+        $liveFilters['queryBuilder']['rules'] = $this->migrateLegacyRules($liveFilters['queryBuilder']['rules']);
+
+        return $liveFilters;
+    }
+
+    /**
+     * @param array<array-key, mixed> $rules
+     *
+     * @return array<array-key, mixed>
+     */
+    protected function migrateLegacyRules(array $rules): array
+    {
+        foreach ($rules as $key => $rule) {
+            if (! is_array($rule)) {
+                continue;
+            }
+
+            if (($rule['type'] ?? null) === 'or') {
+                foreach (($rule['data']['groups'] ?? []) as $groupKey => $group) {
+                    if (! is_array($group) || ! is_array($group['rules'] ?? null)) {
+                        continue;
+                    }
+
+                    $rules[$key]['data']['groups'][$groupKey]['rules'] = $this->migrateLegacyRules($group['rules']);
+                }
+
+                continue;
+            }
+
+            $legacyType = $rule['type'] ?? null;
+
+            $newType = match ($legacyType) {
+                'firstEnrollmentTerm.semester_name' => 'firstEnrolledTerm',
+                'mostRecentEnrollmentTerm.semester_name' => 'mostRecentEnrolledTerm',
+                default => null,
+            };
+
+            if (! is_string($newType)) {
+                continue;
+            }
+
+            $values = $rule['data']['settings']['values'] ?? null;
+            $rules[$key]['type'] = $newType;
+            $rules[$key]['data']['settings']['values'] = is_array($values)
+                ? $this->legacyEnrolledTermValuesToMatchedTermNames($values)
+                : $values;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @param array<array-key, mixed> $values
+     *
+     * @return array<array-key, mixed>
+     */
+    protected function legacyEnrolledTermValuesToMatchedTermNames(array $values): array
+    {
+        $semesterNames = collect($values)
+            ->filter(fn (mixed $value): bool => is_string($value))
+            ->map(fn (string $value): string => mb_strtolower($value))
+            ->unique()
+            ->values();
+
+        if ($semesterNames->isEmpty()) {
+            return $values;
+        }
+
+        $mappedTermNames = Enrollment::query()
+            ->tap(new JoinMatchedTerm())
+            ->whereNotNull('enrollments.semester_name')
+            ->whereIn(DB::raw('enrollments.semester_name::citext'), $semesterNames->all())
+            ->selectRaw('lower(enrollments.semester_name) as legacy_semester_name, lower(terms.name) as matched_term_name')
+            ->distinct()
+            ->pluck('matched_term_name', 'legacy_semester_name')
+            ->all();
+
+        return collect($values)
+            ->map(function (mixed $value) use ($mappedTermNames): mixed {
+                if (! is_string($value)) {
+                    return $value;
+                }
+
+                $legacyName = mb_strtolower($value);
+
+                return $mappedTermNames[$legacyName] ?? $value;
+            })
+            ->all();
     }
 
     protected function getPopulationGroupModel(): GroupModel
