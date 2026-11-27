@@ -76,6 +76,7 @@ use App\Enums\RetentionCrmRestriction;
 use App\Features\UserGroupsFeature;
 use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
+use App\Settings\LicenseSettings;
 use App\Support\HasAdvancedFilter;
 use BackedEnum;
 use Database\Factories\UserFactory;
@@ -99,6 +100,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -698,9 +700,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             return false;
         }
 
-        return cache()
-            ->lock('licenses', 5)
-            ->get(function () use ($type): bool {
+        return DB::connection($this->getConnectionName())
+            ->transaction(function () use ($type): bool {
+                $this->lockLicenseCapacityRows();
+
+                if ($this->licenses()->where('type', $type)->exists()) {
+                    return false;
+                }
+
                 if (! $type->hasAvailableLicenses()) {
                     return false;
                 }
@@ -762,6 +769,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
             ->using(ManagerResourceHubArticle::class)
             ->withTimestamps();
+    }
+
+    protected function lockLicenseCapacityRows(): void
+    {
+        SettingsProperty::query()
+            ->where('group', LicenseSettings::group())
+            ->lockForUpdate()
+            ->get();
     }
 
     /**

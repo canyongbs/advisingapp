@@ -34,8 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
+use AdvisingApp\Team\Models\Department;
+use App\Enums\RetentionCrmRestriction;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Models\User;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -109,7 +116,7 @@ it('allows super admin user to impersonate', function (): void {
         ->callAction(Impersonate::class);
 
     expect(Impersonation::isImpersonating())->toBeTrue();
-    expect(auth()->id())->toBe($user->id);
+    expect(Auth::id())->toBe($user->id);
 });
 
 it('allows user with permission to impersonate', function (): void {
@@ -128,7 +135,7 @@ it('allows user with permission to impersonate', function (): void {
         ->callAction(Impersonate::class);
 
     expect(Impersonation::isImpersonating())->toBeTrue();
-    expect(auth()->id())->toBe($second->id);
+    expect(Auth::id())->toBe($second->id);
 });
 
 describe('enterprise ai', function (): void {
@@ -147,4 +154,62 @@ describe('enterprise ai', function (): void {
             ->assertFormFieldDoesNotExist('conversational_ai_enabled')
             ->assertFormFieldExists('retention_crm_enabled');
     });
+});
+
+it('saves affiliation access control and deferred license changes when saving the form', function (): void {
+    asSuperAdmin();
+
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+    $department = Department::factory()->create();
+    $userGroup = UserGroup::factory()->create();
+    $role = Role::factory()->create(['guard_name' => 'web']);
+
+    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeTrue();
+
+    $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+        ->fillForm([
+            'team_id' => $department->getKey(),
+            'userGroups' => [$userGroup->getKey()],
+            'roles' => [$role->getKey()],
+            'retention_crm_restriction' => RetentionCrmRestriction::FacultyMember->value,
+            'retention_crm_enabled' => false,
+        ]);
+
+    $user->refresh();
+
+    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeTrue();
+
+    $component
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $user->refresh();
+
+    expect($user->team_id)->toBe($department->getKey())
+        ->and($user->userGroups->modelKeys())->toEqualCanonicalizing([$userGroup->getKey()])
+        ->and($user->roles->modelKeys())->toEqualCanonicalizing([$role->getKey()])
+        ->and($user->retention_crm_restriction)->toBe(RetentionCrmRestriction::FacultyMember)
+        ->and($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+});
+
+it('shows a validation error when assigning a license with no seats available', function (): void {
+    asSuperAdmin();
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->limits->retentionCrmSeats = 1;
+    $licenseSettings->save();
+
+    User::factory()->licensed([LicenseType::RetentionCrm])->create();
+    $user = User::factory()->create();
+
+    Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+        ->fillForm([
+            'retention_crm_enabled' => true,
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['retention_crm_enabled']);
+
+    $user->refresh();
+
+    expect($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
 });

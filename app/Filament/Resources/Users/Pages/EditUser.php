@@ -36,13 +36,16 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use AdvisingApp\Team\Models\Department;
-use App\Enums\RetentionCrmRestriction;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
+use App\Models\Authenticatable;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
@@ -57,6 +60,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
@@ -119,27 +125,53 @@ class EditUser extends EditRecord
                             ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format('Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
-                Section::make('Department')
+                Section::make('Affiliation')
+                    ->columns(2)
                     ->schema([
                         Select::make('team_id')
-                            ->label('Department')
-                            ->hiddenLabel()
-                            ->options(Department::all()->pluck('name', 'id'))
-                            ->relationship('department', 'name'),
+                            ->label('Departments')
+                            ->relationship('department', 'name')
+                            ->searchable()
+                            ->preload(),
+                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
+                        ...(UserGroupsFeature::active() && (Auth::user()?->can('viewAny', UserGroup::class) ?? false) ? [
+                            Select::make('userGroups')
+                                ->label('Groups')
+                                ->relationship(
+                                    name: 'userGroups',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: function (Builder $query): Builder {
+                                        // @phpstan-ignore method.notFound
+                                        return $query->withoutArchived();
+                                    },
+                                )
+                                ->searchable()
+                                ->multiple()
+                                ->preload(),
+                        ] : []),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                Licenses::make()
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
-                Select::make('retention_crm_restriction')
-                    ->label('Retention CRM Restriction')
-                    ->options(RetentionCrmRestriction::class)
-                    ->placeholder('No Restrictions')
-                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
+                    Section::make('Access Control')
+                        ->schema([
+                            Select::make('roles')
+                                ->label('Role(s)')
+                                ->relationship(
+                                    name: 'roles',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: fn (Builder $query): Builder => $query
+                                        ->when(
+                                            ! Auth::user()?->isSuperAdmin(),
+                                            fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
+                                        )
+                                        ->orderBy('name'),
+                                )
+                                ->searchable()
+                                ->multiple()
+                                ->preload(),
+                        ]),
+                ] : []),
+                Licenses::make(),
             ]);
     }
 
@@ -151,6 +183,11 @@ class EditUser extends EditRecord
             ->modalDescription('Are you sure you would like to create this user as a local account instead of using one of the configured SSO options?')
             ->modalSubmitActionLabel('Continue')
             ->modalCancelAction();
+    }
+
+    protected function afterSave(): void
+    {
+        $this->syncLicenses();
     }
 
     protected function getHeaderActions(): array
@@ -179,5 +216,34 @@ class EditUser extends EditRecord
                 }),
             DeleteAction::make(),
         ];
+    }
+
+    private function syncLicenses(): void
+    {
+        $user = Auth::user();
+
+        if (! $user instanceof User || $user->cannot('create', License::class)) {
+            return;
+        }
+
+        $record = $this->getRecord();
+        assert($record instanceof User);
+
+        foreach (LicenseType::enabledCases() as $licenseType) {
+            $field = "{$licenseType->value}_enabled";
+            $isEnabled = (bool) data_get($this->data, $field, false);
+
+            if ($isEnabled) {
+                if (! $record->hasLicense($licenseType) && ! $record->grantLicense($licenseType)) {
+                    throw ValidationException::withMessages([
+                        "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
+                    ]);
+                }
+
+                continue;
+            }
+
+            $record->revokeLicense($licenseType);
+        }
     }
 }
