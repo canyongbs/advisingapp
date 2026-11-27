@@ -36,16 +36,17 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
-use AdvisingApp\Authorization\Models\License;
-use App\Enums\RetentionCrmRestriction;
+use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\Users\Schemas\Components\DepartmentSelect;
+use App\Filament\Resources\Users\Schemas\Components\RolesSelect;
+use App\Filament\Resources\Users\Schemas\Components\UserGroupsSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ViewRecord;
@@ -89,29 +90,24 @@ class ViewUser extends ViewRecord
                             ->disabled(),
                     ])
                     ->disabled(),
-                Section::make('Department')
+                Section::make('Affiliation')
+                    ->columns(2)
                     ->schema([
-                        Select::make('team_id')
-                            ->label('Department')
-                            ->hiddenLabel()
-                            ->relationship('department', 'name')
+                        DepartmentSelect::make()
+                            ->disabled(),
+                        UserGroupsSelect::make()
                             ->disabled(),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                Section::make('Access Control')
+                    ->schema([
+                        RolesSelect::make()
+                            ->disabled(),
+                    ])
+                    ->visible(fn (): bool => auth()->user()?->can('viewAny', Role::class) ?? false),
                 Licenses::make()
                     ->hidden(fn (?User $record): bool => is_null($record))
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
-                Select::make('retention_crm_restriction')
-                    ->label('Retention CRM Restriction')
-                    ->options(RetentionCrmRestriction::class)
-                    ->placeholder('No Restrictions')
-                    ->disabled()
-                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                    ->disabled(),
             ]);
     }
 

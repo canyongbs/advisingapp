@@ -36,12 +36,15 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use AdvisingApp\Team\Models\Department;
-use App\Enums\RetentionCrmRestriction;
 use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\Users\Schemas\Components\DepartmentSelect;
+use App\Filament\Resources\Users\Schemas\Components\RolesSelect;
+use App\Filament\Resources\Users\Schemas\Components\UserGroupsSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
@@ -50,13 +53,15 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
@@ -119,27 +124,19 @@ class EditUser extends EditRecord
                             ->formatStateUsing(fn (DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $state): string => Carbon::parse($state)->format('Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
-                Section::make('Department')
+                Section::make('Affiliation')
+                    ->columns(2)
                     ->schema([
-                        Select::make('team_id')
-                            ->label('Department')
-                            ->hiddenLabel()
-                            ->options(Department::all()->pluck('name', 'id'))
-                            ->relationship('department', 'name'),
+                        DepartmentSelect::make(),
+                        UserGroupsSelect::make(),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                Licenses::make()
-                    ->disabled(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->cannot('create', License::class);
-                    }),
-                Select::make('retention_crm_restriction')
-                    ->label('Retention CRM Restriction')
-                    ->options(RetentionCrmRestriction::class)
-                    ->placeholder('No Restrictions')
-                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
+                Section::make('Access Control')
+                    ->schema([
+                        RolesSelect::make(),
+                    ])
+                    ->visible(fn (): bool => auth()->user()?->can('viewAny', Role::class) ?? false),
+                Licenses::make(),
             ]);
     }
 
@@ -179,5 +176,60 @@ class EditUser extends EditRecord
                 }),
             DeleteAction::make(),
         ];
+    }
+
+    /**
+     * Licenses are granted and revoked when the form is saved, not when a toggle changes. A
+     * disabled toggle is not dehydrated, so its license is left as it is.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        assert($record instanceof User);
+
+        $canManageLicenses = auth()->user()?->can('create', License::class) ?? false;
+        $licenseStates = [];
+
+        foreach (LicenseType::enabledCases() as $licenseType) {
+            $field = "{$licenseType->value}_enabled";
+
+            if (! array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $isEnabled = (bool) Arr::pull($data, $field);
+
+            if ($canManageLicenses) {
+                $licenseStates[$field] = [$licenseType, $isEnabled];
+            }
+        }
+
+        $record = parent::handleRecordUpdate($record, $data);
+
+        assert($record instanceof User);
+
+        foreach ($licenseStates as $field => [$licenseType, $isEnabled]) {
+            if (! $isEnabled) {
+                $record->revokeLicense($licenseType);
+
+                continue;
+            }
+
+            if ($record->hasLicense($licenseType) || $record->grantLicense($licenseType)) {
+                continue;
+            }
+
+            // Another request may have granted the same license in the meantime.
+            if ($record->licenses()->where('type', $licenseType)->exists()) {
+                continue;
+            }
+
+            throw ValidationException::withMessages([
+                "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
+            ]);
+        }
+
+        return $record;
     }
 }

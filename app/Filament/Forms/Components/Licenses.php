@@ -38,12 +38,14 @@ namespace App\Filament\Forms\Components;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
+use App\Enums\RetentionCrmRestriction;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
+use Illuminate\Support\Facades\Auth;
 
 class Licenses extends Section
 {
@@ -57,12 +59,18 @@ class Licenses extends Section
                 'md' => 3,
             ])
             ->collapsible()
-            ->schema(
-                array_map(
+            ->schema([
+                ...array_map(
                     fn (LicenseType $licenseType): Fieldset => $this->generateBlockForLicenseType($licenseType),
                     LicenseType::enabledCases(),
-                )
-            );
+                ),
+                Select::make('retention_crm_restriction')
+                    ->label('Retention CRM Restriction')
+                    ->options(RetentionCrmRestriction::class)
+                    ->placeholder('No Restrictions')
+                    ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false)
+                    ->columnSpanFull(),
+            ]);
     }
 
     private function generateBlockForLicenseType(LicenseType $licenseType): Fieldset
@@ -79,36 +87,39 @@ class Licenses extends Section
                     ->formatStateUsing(function (?User $record) use ($licenseType): ?bool {
                         return $record?->hasLicense($licenseType);
                     })
-                    ->afterStateUpdated(function (bool $state, User $record) use ($licenseType): void {
-                        $notification = Notification::make();
-
-                        if ($state) {
-                            $record->grantLicense($licenseType);
-                            $notification->title("Granted license for {$licenseType->getLabel()}")
-                                ->success();
-                        } else {
-                            $record->revokeLicense($licenseType);
-                            $notification->title("Revoked license for {$licenseType->getLabel()}")
-                                ->danger();
-                        }
-
-                        $notification->send();
-                    })
-                    ->disabled(fn (?bool $state): bool => ! $state && ! $licenseType->hasAvailableLicenses())
-                    ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                    ->disabled(fn (?bool $state, ?User $record): bool => $this->isLicenseLocked($licenseType, $state, $record))
+                    // Only explains why this license is locked, not a page that disables every license.
+                    ->hintIcon(fn (?bool $state, ?User $record): ?string => $this->isLicenseLocked($licenseType, $state, $record) ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip(function () use ($licenseType): string {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        if ($user->cannot('create', License::class)) {
+                        if (! $this->canManageLicenses()) {
                             return 'You do not have permission to change licenses.';
                         }
 
                         return "You are out of available {$licenseType->getLabel()} licenses.";
-                    })
-                    ->dehydrated(false)
-                    ->live(),
+                    }),
             ])
             ->columnSpan(1);
+    }
+
+    /**
+     * A license that the user holds can always be revoked, even when every seat is taken.
+     */
+    private function isLicenseLocked(LicenseType $licenseType, ?bool $state, ?User $record): bool
+    {
+        if (! $this->canManageLicenses()) {
+            return true;
+        }
+
+        return (! $state)
+            && (! $record?->hasLicense($licenseType))
+            && (! $licenseType->hasAvailableLicenses());
+    }
+
+    private function canManageLicenses(): bool
+    {
+        $user = Auth::user();
+
+        return $user instanceof User
+            && $user->can('create', License::class);
     }
 }

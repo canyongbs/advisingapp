@@ -34,9 +34,11 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\Users\Pages\EditUser;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -103,7 +105,7 @@ it('allows super admin user to impersonate', function (): void {
         ->callAction(Impersonate::class);
 
     expect(Impersonation::isImpersonating())->toBeTrue();
-    expect(auth()->id())->toBe($user->id);
+    expect(Auth::id())->toBe($user->id);
 });
 
 it('does not display the mfa_status for an external User', function (): void {
@@ -252,4 +254,30 @@ it('resets the users MFA when the mfa_reset Action is triggered', function (): v
     expect($user->multifactor_confirmed_at)->toBeNull()
         ->and($user->multifactor_secret)->toBeNull()
         ->and($user->multifactor_recovery_codes)->toBeNull();
+});
+
+it('renders affiliation access control and license fields as read-only', function (): void {
+    asSuperAdmin();
+
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+    Livewire::test(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertFormFieldDisabled('team_id')
+        ->assertFormFieldDisabled('userGroups')
+        ->assertFormFieldDisabled('roles')
+        ->assertFormFieldDisabled('retention_crm_enabled')
+        ->assertFormFieldDisabled('retention_crm_restriction');
+});
+
+it('does not show a license as locked when it can be changed on the edit page', function (): void {
+    asSuperAdmin();
+
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+    Livewire::test(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertFormFieldExists('retention_crm_enabled', fn (Toggle $field): bool => $field->isDisabled() && blank($field->getHintIcon()));
 });
