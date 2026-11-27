@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormStep;
@@ -84,6 +85,10 @@ class DuplicateForm
         $fieldMap = [];
 
         $this->original->fields()->each(function (FormField $field) use (&$fieldMap, $stepMap): void {
+            if ((! $this->allowsMappedBlocks()) && in_array($field->type, FormFieldBlockRegistry::getMappedBlockTypes(), strict: true)) {
+                return;
+            }
+
             $newField = $field->replicate();
             $newField->form_id = $this->replica->id;
             $newField->step_id = $stepMap[$field->step_id] ?? null;
@@ -100,14 +105,64 @@ class DuplicateForm
      */
     private function remapContentFieldIds(array $fieldMap): void
     {
-        $this->replica->content = ($this->remapContentFieldIds)($this->replica->content, $fieldMap);
+        $this->replica->content = ($this->remapContentFieldIds)($this->removeDisallowedMappedBlocks($this->replica->content), $fieldMap);
         $this->replica->save();
 
         $this->replica->steps()->each(function (FormStep $step) use ($fieldMap): void {
             $step->update([
-                'content' => ($this->remapContentFieldIds)($step->content, $fieldMap),
+                'content' => ($this->remapContentFieldIds)($this->removeDisallowedMappedBlocks($step->content), $fieldMap),
             ]);
         });
+    }
+
+    /**
+     * Mapped blocks are only available on forms that require authentication or generate prospects.
+     */
+    private function allowsMappedBlocks(): bool
+    {
+        return $this->replica->is_authenticated || $this->replica->generate_prospects;
+    }
+
+    /**
+     * @param array<string, mixed>|null $content
+     *
+     * @return array<string, mixed>|null
+     */
+    private function removeDisallowedMappedBlocks(?array $content): ?array
+    {
+        if (blank($content) || $this->allowsMappedBlocks()) {
+            return $content;
+        }
+
+        return $this->removeMappedBlocksFromNode($content, FormFieldBlockRegistry::getMappedBlockTypes());
+    }
+
+    /**
+     * @param array<string, mixed> $node
+     * @param array<int, string> $mappedBlockTypes
+     *
+     * @return array<string, mixed>
+     */
+    private function removeMappedBlocksFromNode(array $node, array $mappedBlockTypes): array
+    {
+        if (! is_array($node['content'] ?? null)) {
+            return $node;
+        }
+
+        $node['content'] = collect($node['content'])
+            ->reject(fn (mixed $child): bool => is_array($child)
+                && (($child['type'] ?? null) === 'customBlock')
+                && in_array($child['attrs']['id'] ?? null, $mappedBlockTypes, strict: true))
+            ->map(fn (mixed $child): mixed => is_array($child) ? $this->removeMappedBlocksFromNode($child, $mappedBlockTypes) : $child)
+            ->values()
+            ->all();
+
+        // A grid column must contain at least one block for the editor to load it.
+        if ((($node['type'] ?? null) === 'gridColumn') && ($node['content'] === [])) {
+            $node['content'] = [['type' => 'paragraph']];
+        }
+
+        return $node;
     }
 
     private function replicateEmailAutoReply(): void
