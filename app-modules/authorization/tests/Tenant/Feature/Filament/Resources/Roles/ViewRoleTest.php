@@ -36,12 +36,61 @@
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Models\SystemUser;
+use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Filament\Forms\Components\ToggleButtons;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
+
+test('shows access control and membership details on the view page', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'web']);
+    $user = User::factory()->create();
+    $group = UserGroup::factory()->create();
+
+    $role->users()->attach($user->getKey());
+    $role->userGroups()->attach($group->getKey());
+
+    Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+        ->assertSee('Properties')
+        ->assertSee('Membership')
+        ->assertFormFieldExists('guard_name', function (ToggleButtons $field): bool {
+            $options = $field->getOptions();
+
+            expect($field->getLabel())->toBe('Access Control')
+                ->and($options['web'])->toBe('Console')
+                ->and($options['api'])->toBe('API');
+
+            return true;
+        })
+        ->assertSchemaStateSet([
+            'users' => [$user->getKey()],
+            'userGroups' => [$group->getKey()],
+        ]);
+});
+
+test('ViewRole displays API users for API roles', function (): void {
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['guard_name' => 'api']);
+    $apiUser = SystemUser::factory()->create();
+
+    $role->users()->attach($apiUser->getKey());
+
+    Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
+        ->assertSchemaStateSet([
+            'users' => [$apiUser->getKey()],
+        ]);
+});
 
 describe('enterprise ai', function (): void {
     it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function (): void {

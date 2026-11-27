@@ -36,7 +36,10 @@
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use App\Enums\Feature;
+use App\Features\UserGroupsFeature;
+use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Livewire\Livewire;
 
@@ -59,6 +62,45 @@ test('CreateRole does not allow duplicate role names case insensitively within a
         ->fillForm(['name' => 'SUPPORT team', 'guard_name' => 'web'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateRole clears incompatible membership selections when access control guard changes', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $user = User::factory()->create();
+    $group = UserGroup::factory()->create();
+
+    Livewire::test(CreateRole::class)
+        ->fillForm([
+            'users' => [$user->getKey()],
+            'userGroups' => [$group->getKey()],
+        ])
+        ->fillForm([
+            'guard_name' => 'api',
+        ])
+        ->assertSchemaStateSet([
+            'users' => [],
+            'userGroups' => [],
+        ]);
+});
+
+test('CreateRole blocks assigning groups to API roles', function (): void {
+    UserGroupsFeature::activate();
+
+    asSuperAdmin();
+
+    $group = UserGroup::factory()->create();
+
+    Livewire::test(CreateRole::class)
+        ->fillForm([
+            'name' => 'API Scoped Role',
+            'guard_name' => 'api',
+            'userGroups' => [$group->getKey()],
+        ])
+        ->call('create')
+        ->assertHasErrors(['userGroups']);
 });
 
 describe('enterprise ai', function (): void {
