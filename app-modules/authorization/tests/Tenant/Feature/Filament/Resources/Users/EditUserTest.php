@@ -363,6 +363,27 @@ describe('licenses', function (): void {
         expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
     });
 
+    it('revokes a license when every seat is taken', function (): void {
+        asSuperAdmin();
+
+        $licenseSettings = app(LicenseSettings::class);
+        $licenseSettings->data->limits->retentionCrmSeats = 1;
+        $licenseSettings->save();
+
+        $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+        expect(LicenseType::RetentionCrm->hasAvailableLicenses())->toBeFalse();
+
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'retention_crm_enabled' => false,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+    });
+
     it('does not change licenses without the `license.create` permission', function (): void {
         $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
 

@@ -87,9 +87,9 @@ class Licenses extends Section
                     ->formatStateUsing(function (?User $record) use ($licenseType): ?bool {
                         return $record?->hasLicense($licenseType);
                     })
-                    ->disabled(fn (?bool $state): bool => $this->isLicenseLocked($licenseType, $state))
+                    ->disabled(fn (?bool $state, ?User $record): bool => $this->isLicenseLocked($licenseType, $state, $record))
                     // Only explains why this license is locked, not a page that disables every license.
-                    ->hintIcon(fn (?bool $state): ?string => $this->isLicenseLocked($licenseType, $state) ? 'heroicon-m-lock-closed' : null)
+                    ->hintIcon(fn (?bool $state, ?User $record): ?string => $this->isLicenseLocked($licenseType, $state, $record) ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip(function () use ($licenseType): string {
                         if (! $this->canManageLicenses()) {
                             return 'You do not have permission to change licenses.';
@@ -101,9 +101,18 @@ class Licenses extends Section
             ->columnSpan(1);
     }
 
-    private function isLicenseLocked(LicenseType $licenseType, ?bool $state): bool
+    /**
+     * A license that the user holds can always be revoked, even when every seat is taken.
+     */
+    private function isLicenseLocked(LicenseType $licenseType, ?bool $state, ?User $record): bool
     {
-        return ! $this->canManageLicenses() || (! $state && ! $licenseType->hasAvailableLicenses());
+        if (! $this->canManageLicenses()) {
+            return true;
+        }
+
+        return (! $state)
+            && (! $record?->hasLicense($licenseType))
+            && (! $licenseType->hasAvailableLicenses());
     }
 
     private function canManageLicenses(): bool
