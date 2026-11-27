@@ -343,24 +343,35 @@ describe('licenses', function (): void {
             ->and($user->retention_crm_restriction)->toBe(RetentionCrmRestriction::FacultyMember);
     });
 
-    it('shows a validation error when assigning a license with no seats available', function (): void {
+    it('saves nothing when assigning a license with no seats available', function (): void {
         asSuperAdmin();
 
         $licenseSettings = app(LicenseSettings::class);
-        $licenseSettings->data->limits->retentionCrmSeats = 1;
+        $licenseSettings->data->limits->retentionCrmSeats = 2;
         $licenseSettings->save();
 
         User::factory()->licensed([LicenseType::RetentionCrm])->create();
-        $user = User::factory()->create();
+        $user = User::factory()->create(['job_title' => 'Advisor']);
 
-        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+        $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
             ->fillForm([
+                'job_title' => 'Senior Advisor',
+                'conversational_ai_enabled' => true,
                 'retention_crm_enabled' => true,
-            ])
+            ]);
+
+        // Another user takes the last seat after the toggle was turned on.
+        User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+        $component
             ->call('save')
             ->assertHasFormErrors(['retention_crm_enabled']);
 
-        expect($user->refresh()->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
+        $user->refresh();
+
+        expect($user->job_title)->toBe('Advisor')
+            ->and($user->hasLicense(LicenseType::ConversationalAi))->toBeFalse()
+            ->and($user->hasLicense(LicenseType::RetentionCrm))->toBeFalse();
     });
 
     it('revokes a license when every seat is taken', function (): void {
