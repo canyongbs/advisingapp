@@ -48,9 +48,6 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\GroupType;
-use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -72,7 +69,6 @@ use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\CareTeamRoleType;
-use App\Features\MatchedEnrolledTermsFeature;
 use App\Features\MatchedTermFunctionFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Connection;
@@ -169,89 +165,6 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
-        }
-    );
-});
-
-test('2026_11_16_162156_tmp_data_base_enrolled_term_filters_on_matched_terms renames the enrolled term filters and replaces their semester names with matched term names', function () {
-    isolatedMigration(
-        '2026_11_16_162156_tmp_data_base_enrolled_term_filters_on_matched_terms',
-        function () {
-            $fallTerm = Term::factory()->create(['name' => 'FA-20']);
-            Term::factory()->create(['name' => 'SP-21']);
-
-            Enrollment::factory()->create(['sis_term_id' => $fallTerm->sis_term_id, 'semester_name' => 'Fall 2020']);
-            Enrollment::factory()->create(['sis_term_id' => null, 'semester_name' => 'sp-21']);
-            Enrollment::factory()->create(['sis_term_id' => null, 'semester_name' => 'Unmatched Semester']);
-
-            $rule = fn (string $type, string $operator, array $values): array => [
-                'type' => $type,
-                'data' => ['operator' => $operator, 'settings' => ['values' => $values]],
-            ];
-            $orBlock = fn (array ...$groups): array => [
-                'type' => 'or',
-                'data' => ['groups' => array_map(fn (array $rules): array => ['rules' => $rules], $groups)],
-            ];
-            $holdsRule = ['type' => 'holds', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'X']]];
-            $createGroup = fn (array $rules, GroupType $type = GroupType::Dynamic): Group => Group::factory()->create([
-                'model' => GroupModel::Student,
-                'type' => $type,
-                'filters' => ['queryBuilder' => ['rules' => $rules]],
-            ]);
-
-            $legacyRules = [
-                'a' => $rule('firstEnrollmentTerm.semester_name', 'is', ['fall 2020', 'unmatched semester', 'never enrolled']),
-                'b' => $orBlock(
-                    ['c' => $rule('mostRecentEnrollmentTerm.semester_name', 'is.inverse', ['SP-21', 'fall 2020']), 'd' => $holdsRule],
-                ),
-            ];
-            $dynamic = $createGroup($legacyRules);
-            $deleted = $createGroup($legacyRules);
-            $deleted->delete();
-            $static = $createGroup($legacyRules, GroupType::Static);
-
-            $newStudentAlertConfiguration = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
-            AlertConfiguration::factory()
-                ->state([
-                    'preset' => AlertPreset::NewStudent,
-                    'configuration_id' => $newStudentAlertConfiguration->getKey(),
-                    'configuration_type' => $newStudentAlertConfiguration->getMorphClass(),
-                ])
-                ->enabled()
-                ->create();
-
-            app(GenerateStudentAlertsView::class)->execute();
-
-            expect(MatchedEnrolledTermsFeature::active())->toBeFalse()
-                ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->not->toContain('enrollment_terms');
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_11_16_162156_tmp_data_base_enrolled_term_filters_on_matched_terms.php']);
-
-            $migratedRules = [
-                'a' => $rule('firstEnrolledTerm', 'is', ['fa-20', 'unmatched semester', 'never enrolled']),
-                'b' => $orBlock(
-                    ['c' => $rule('mostRecentEnrolledTerm', 'is.inverse', ['sp-21', 'fa-20']), 'd' => $holdsRule],
-                ),
-            ];
-
-            expect($migrate)->toBe(Command::SUCCESS)
-                ->and($dynamic->refresh()->filters['queryBuilder']['rules'])->toBe($migratedRules)
-                ->and(Group::withTrashed()->findOrFail($deleted->getKey())->filters['queryBuilder']['rules'])->toBe($migratedRules)
-                ->and($static->refresh()->filters['queryBuilder']['rules'])->toBe($legacyRules)
-                ->and(MatchedEnrolledTermsFeature::active())->toBeTrue()
-                ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->toContain('enrollment_terms');
-
-            $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/group/database/migrations/2026_11_16_162156_tmp_data_base_enrolled_term_filters_on_matched_terms.php']);
-
-            expect($rollback)->toBe(Command::SUCCESS)
-                ->and($dynamic->refresh()->filters['queryBuilder']['rules'])->toBe([
-                    'a' => $rule('firstEnrollmentTerm.semester_name', 'is', ['fa-20', 'unmatched semester', 'never enrolled']),
-                    'b' => $orBlock(
-                        ['c' => $rule('mostRecentEnrollmentTerm.semester_name', 'is.inverse', ['sp-21', 'fa-20']), 'd' => $holdsRule],
-                    ),
-                ])
-                ->and(MatchedEnrolledTermsFeature::active())->toBeFalse()
-                ->and(DB::scalar("select pg_get_viewdef('student_alerts')"))->not->toContain('enrollment_terms');
         }
     );
 });

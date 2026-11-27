@@ -59,7 +59,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\MatchedEnrolledTermsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
@@ -678,19 +677,6 @@ describe('profile terms', function (): void {
             'semester_name' => 'Spring Semester 2021',
             'start_date' => '2021-01-15',
         ]);
-
-        Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
-            ->assertOk()
-            ->assertSchemaComponentStateSet('firstTermEnrollment.semester_name', 'Fall Semester 2020', 'profile')
-            ->assertSchemaComponentStateSet('mostRecentTermEnrollment.semester_name', 'Spring Semester 2021', 'profile');
-    });
-
-    it('shows the semester names of the first and most recent enrollments when the feature is inactive', function () use ($createStudentWithEnrollments): void {
-        MatchedEnrolledTermsFeature::deactivate();
-
-        asSuperAdmin();
-
-        $student = $createStudentWithEnrollments();
 
         Livewire::test(ViewStudent::class, ['record' => $student->getKey()])
             ->assertOk()

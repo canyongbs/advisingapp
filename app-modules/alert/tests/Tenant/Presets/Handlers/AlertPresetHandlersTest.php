@@ -52,7 +52,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\MatchedEnrolledTermsFeature;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -775,38 +774,6 @@ it('counts the matched terms of new students, otherwise their semester codes', f
             $studentWithOneTermOfCodes->sisid,
             $studentWithOnlySisTermId->sisid,
         ]);
-});
-
-it('counts the semester codes of new students when the feature is inactive', function (): void {
-    MatchedEnrolledTermsFeature::deactivate();
-
-    $config = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
-
-    $alertConfig = AlertConfiguration::factory()
-        ->state([
-            'preset' => AlertPreset::NewStudent,
-            'configuration_id' => $config->id,
-            'configuration_type' => $config->getMorphClass(),
-        ])
-        ->enabled()
-        ->create();
-
-    $term = Term::factory()->create();
-
-    $studentWithOneTermOfCodes = Student::factory()->create();
-    Enrollment::factory()->for($studentWithOneTermOfCodes, 'student')->create(['sis_term_id' => $term->sis_term_id, 'semester_code' => '4201']);
-    Enrollment::factory()->for($studentWithOneTermOfCodes, 'student')->create(['sis_term_id' => $term->sis_term_id, 'semester_code' => '4202']);
-
-    $studentWithOnlySisTermId = Student::factory()->create();
-    Enrollment::factory()->for($studentWithOnlySisTermId, 'student')->create(['sis_term_id' => $term->sis_term_id, 'semester_code' => null]);
-
-    $studentWithOneSemesterCode = Student::factory()->create();
-    Enrollment::factory()->for($studentWithOneSemesterCode, 'student')->create(['semester_code' => '4201']);
-
-    app(GenerateStudentAlertsView::class)->execute();
-
-    expect(StudentAlert::query()->where('alert_configuration_id', $alertConfig->getKey())->pluck('sisid')->all())
-        ->toBe([$studentWithOneSemesterCode->sisid]);
 });
 
 it('regenerates view correctly when execute is called multiple times', function (): void {

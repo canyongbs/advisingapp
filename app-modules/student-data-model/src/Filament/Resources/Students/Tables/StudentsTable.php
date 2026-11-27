@@ -44,7 +44,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\OrderByFirstTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\OrderByMostRecentTerm;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\MatchedEnrolledTermsFeature;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\AttributeTextOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\PhoneNumberPartOperator;
@@ -73,7 +72,6 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\Eq
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 
 class StudentsTable
@@ -359,67 +357,14 @@ class StudentsTable
 
     private static function makeFirstEnrolledTermConstraint(): SelectConstraint
     {
-        if (! MatchedEnrolledTermsFeature::active()) {
-            return self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'firstTermEnrollment', 'First Enrolled Term');
-        }
-
         return EnrolledTermConstraint::make('firstEnrolledTerm', new OrderByFirstTerm())
             ->label('First Enrolled Term');
     }
 
     private static function makeMostRecentEnrolledTermConstraint(): SelectConstraint
     {
-        if (! MatchedEnrolledTermsFeature::active()) {
-            return self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'mostRecentTermEnrollment', 'Most Recent Enrolled Term');
-        }
-
         return EnrolledTermConstraint::make('mostRecentEnrolledTerm', new OrderByMostRecentTerm())
             ->label('Most Recent Enrolled Term');
-    }
-
-    /**
-     * The name is stored in saved groups' filters, so it is kept even though it no longer names the relationship.
-     */
-    private static function createEnrollmentTermConstraint(string $name, string $relationship, string $label): ExistingValuesSelectConstraint
-    {
-        return ExistingValuesSelectConstraint::make($name)
-            ->label($label)
-            ->relationship($relationship, 'semester_name')
-            ->multiple()
-            ->options(function () use ($relationship) {
-                return Student::query()
-                    ->tap(new WithoutArchivedStudents())
-                    ->join('enrollments', function (JoinClause $join) use ($relationship): void {
-                        $join->on('students.sisid', '=', 'enrollments.sisid');
-
-                        if ($relationship === 'firstTermEnrollment') {
-                            $join->whereRaw('enrollments.start_date = (
-                                SELECT MIN(e2.start_date)
-                                FROM enrollments e2
-                                WHERE e2.sisid = students.sisid
-                                AND e2.semester_name IS NOT NULL
-                                AND e2.start_date IS NOT NULL
-                            )');
-                        } elseif ($relationship === 'mostRecentTermEnrollment') {
-                            $join->whereRaw('enrollments.start_date = (
-                                SELECT MAX(e2.start_date)
-                                FROM enrollments e2
-                                WHERE e2.sisid = students.sisid
-                                AND e2.semester_name IS NOT NULL
-                                AND e2.start_date IS NOT NULL
-                            )');
-                        }
-                    })
-                    ->whereNotNull('enrollments.semester_name')
-                    ->distinct()
-                    ->orderBy('enrollments.semester_name')
-                    ->pluck('enrollments.semester_name')
-                    ->filter()
-                    ->unique()
-                    ->sort()
-                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : [])
-                    ->all();
-            });
     }
 
     /**

@@ -42,7 +42,6 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder;
 use AdvisingApp\Report\Filament\Tables\ReportGroupsTable;
-use AdvisingApp\StudentDataModel\Actions\ConvertLegacyEnrolledTermRules;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\TextInput;
@@ -99,11 +98,6 @@ trait HasPopulationFilter
         }
 
         $liveFilters = $this->getSelectedLiveFilters();
-
-        if ($this->getPopulationGroupModel() === GroupModel::Student) {
-            // TODO: Cleanup Task (matched-enrolled-terms): Remove this conversion and `ConvertLegacyEnrolledTermRules`, leaving the unavailable filter check below to handle any remaining legacy rules.
-            $liveFilters['queryBuilder']['rules'] = app(ConvertLegacyEnrolledTermRules::class)($liveFilters['queryBuilder']['rules']);
-        }
 
         $availableTypes = array_map(
             fn (Constraint $constraint): string => $constraint->getName(),
