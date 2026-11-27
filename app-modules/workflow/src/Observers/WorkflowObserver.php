@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Observers;
 
 use AdvisingApp\Workflow\Models\Workflow;
-use App\Features\WorkflowNameCitextFeature;
 
 class WorkflowObserver
 {
@@ -49,14 +48,6 @@ class WorkflowObserver
      */
     public function creating(Workflow $workflow): void
     {
-        // The related_type/related_id columns only exist once the citext migration has
-        // run, and that migration activates the flag. Gating on it keeps pre-migration
-        // inserts (which run before the columns exist) from writing to absent columns.
-        // TODO: Cleanup Task (workflow-name-citext) - remove the `WorkflowNameCitextFeature::active()` guard and always sync the owner columns.
-        if (! WorkflowNameCitextFeature::active()) {
-            return;
-        }
-
         $trigger = $workflow->workflowTrigger;
 
         $workflow->setAttribute('related_type', $trigger->related_type);

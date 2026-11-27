@@ -39,7 +39,6 @@ namespace AdvisingApp\Workflow\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Database\Factories\WorkflowFactory;
 use AdvisingApp\Workflow\Observers\WorkflowObserver;
-use App\Features\WorkflowNameCitextFeature;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -77,10 +76,6 @@ class Workflow extends Model implements Auditable
 
     public static function generateUniqueName(string $baseName, Model $related): string
     {
-        if (! WorkflowNameCitextFeature::active()) {
-            return $baseName;
-        }
-
         $name = $baseName;
         $counter = 2;
 
