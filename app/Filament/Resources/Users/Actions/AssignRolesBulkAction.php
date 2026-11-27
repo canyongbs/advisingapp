@@ -71,6 +71,10 @@ class AssignRolesBulkAction extends BulkAction
                 $roles = $assignableRoles->whereIn('name', $data['roles'] ?? []);
 
                 /** @var Collection <int, User> $records */
+                if ($data['replace']) {
+                    $records->loadMissing('roles');
+                }
+
                 $records->each(function (User $record) use ($assignableRoles, $data, $roles): void {
                     if ($data['replace']) {
                         // Roles the current user can't assign are kept, as they couldn't be selected.
