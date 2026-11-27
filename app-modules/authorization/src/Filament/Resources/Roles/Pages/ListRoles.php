@@ -62,9 +62,9 @@ class ListRoles extends ListRecords
     public function getTabs(): array
     {
         return [
-            'web' => Tab::make('Web')
+            'web' => Tab::make('Console')
                 ->modifyQueryUsing(fn (Builder $query) => $query->web()),
-            'api' => Tab::make('Api')
+            'api' => Tab::make('API')
                 ->modifyQueryUsing(fn (Builder $query) => $query->api()),
         ];
     }
@@ -77,7 +77,12 @@ class ListRoles extends ListRecords
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('guard_name')
-                    ->searchable(),
+                    ->label('Access Control')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'web' => 'Console',
+                        'api' => 'API',
+                        default => $state,
+                    }),
                 TextColumn::make('users_count')
                     ->label('Users')
                     ->counts('users')
