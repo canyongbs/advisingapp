@@ -40,10 +40,12 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\Users\Actions\AssignDepartmentBulkAction;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Actions\AssignRolesBulkAction;
+use App\Filament\Resources\Users\Actions\AssignUserGroupsBulkAction;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
@@ -145,6 +147,10 @@ class ListUsers extends ListRecords
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                     AssignDepartmentBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
+                    AssignUserGroupsBulkAction::make()
+                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
+                        ->visible(fn (): bool => UserGroupsFeature::active())
+                        ->authorize(fn (): bool => auth()->user()->can('user.*.update')),
                 ]),
             ])
             ->filters([
@@ -239,12 +245,24 @@ class ListUsers extends ListRecords
                                 return;
                             }
 
-                            $query->when(in_array('none', $data['values']), function (Builder $query): void {
-                                $query->whereDoesntHave('roles');
-                            })
-                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function (Builder $query) use ($data): void {
-                                    $query->whereIn('id', array_filter($data['values'], fn ($value): bool => $value !== 'none'));
-                                });
+                            $isFilteringForNoRoles = in_array('none', $data['values'], true);
+                            $roleIds = array_values(array_filter($data['values'], fn ($value): bool => $value !== 'none'));
+
+                            $query->where(function (Builder $query) use ($isFilteringForNoRoles, $roleIds): void {
+                                if ($isFilteringForNoRoles) {
+                                    $query->orWhere(fn (Builder $query) => $query
+                                        ->whereDoesntHave('roles')
+                                        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always exclude users with group roles.
+                                        ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->whereDoesntHave('userGroups.roles')));
+                                }
+
+                                if ($roleIds !== []) {
+                                    $query->orWhere(fn (Builder $query) => $query
+                                        ->whereHas('roles', fn (Builder $query) => $query->whereKey($roleIds))
+                                        // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always include users with the roles through their groups.
+                                        ->when(UserGroupsFeature::active(), fn (Builder $query) => $query->orWhereHas('userGroups.roles', fn (Builder $query) => $query->whereKey($roleIds))));
+                                }
+                            });
                         }
                     )
                     ->multiple()

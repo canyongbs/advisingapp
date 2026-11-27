@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
+use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
@@ -55,6 +57,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TaskBlock extends CampaignActionBlock
 {
@@ -150,6 +153,33 @@ class TaskBlock extends CampaignActionBlock
                                 ->dehydrated(true)
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get): mixed => $get('is_confidential')),
+                            Select::make('user_group_confidential_task')
+                                ->options(fn () => UserGroup::query()
+                                    ->withoutArchived()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search): array => UserGroup::query()
+                                    ->withoutArchived()
+                                    ->orderBy('name')
+                                    ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelsUsing(
+                                    fn (array $values): array => UserGroup::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
+                                ->label('Groups')
+                                ->multiple()
+                                ->dehydrated(true)
+                                ->exists((new UserGroup())->getTable(), 'id')
+                                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always show group confidentiality selection when confidential.
+                                ->visible(fn (Get $get): mixed => UserGroupsFeature::active() && $get('is_confidential')),
                         ]),
                     TextInput::make('title')
                         ->required()

@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Providers;
 use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder\LiveFilterBuilderComponent;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Report\Models\ReportUserGroupAccess;
 use AdvisingApp\Report\ReportPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -65,6 +66,7 @@ class ReportServiceProvider extends ServiceProvider
         Relation::morphMap([
             'report_user_access' => ReportUserAccess::class,
             'report_team_access' => ReportDepartmentAccess::class,
+            'report_user_group_access' => ReportUserGroupAccess::class,
         ]);
     }
 }

@@ -42,6 +42,7 @@ use AdvisingApp\Authorization\Listeners\RememberLastLoginEmail;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
 use Filament\Panel;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -76,6 +77,7 @@ class AuthorizationServiceProvider extends ServiceProvider
             'role' => Role::class,
             'permission' => Permission::class,
             'license' => License::class,
+            'user_group' => UserGroup::class,
         ]);
 
         Event::listen(

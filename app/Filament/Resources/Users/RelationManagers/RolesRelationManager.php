@@ -94,7 +94,7 @@ class RolesRelationManager extends RelationManager
                                 fn (string $search): array => Role::query()
                                     ->when(
                                         ! auth()->user()->isSuperAdmin(),
-                                        fn (Builder $query) => $query->whereNotIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])
+                                        fn (Builder $query) => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES)
                                     )
                                     ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
@@ -109,7 +109,7 @@ class RolesRelationManager extends RelationManager
                                 return Role::query()
                                     ->when(
                                         ! auth()->user()->isSuperAdmin(),
-                                        fn (Builder $query) => $query->whereNotIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])
+                                        fn (Builder $query) => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES)
                                     )
                                     ->when(
                                         $user->has('roles'),
@@ -123,7 +123,7 @@ class RolesRelationManager extends RelationManager
                                 ? Role::query()
                                     ->when(
                                         ! auth()->user()->isSuperAdmin(),
-                                        fn (Builder $query) => $query->whereNotIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])
+                                        fn (Builder $query) => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES)
                                     )
                                     ->whereKey($value)
                                     ->value('name')

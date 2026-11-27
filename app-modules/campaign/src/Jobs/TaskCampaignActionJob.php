@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Features\UserGroupsFeature;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +86,11 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             if ($isConfidential) {
                 $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
                 $this->syncConfidentialAccess($task, 'confidentialAccessDepartments', $action->data['department_confidential_task'] ?? []);
+
+                // TODO: Cleanup Task (user-groups-feature): once the flag is removed, always sync confidential access for user groups.
+                if (UserGroupsFeature::active()) {
+                    $this->syncConfidentialAccess($task, 'confidentialAccessUserGroups', $action->data['user_group_confidential_task'] ?? []);
+                }
             }
 
             $this->actionEducatable->succeeded_at = now();

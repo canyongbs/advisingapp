@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Team\Models\Department;
@@ -221,6 +222,16 @@ class AiAssistant extends Model implements HasMedia, Auditable
     {
         return $this->belongsToMany(Department::class, 'ai_assistant_confidential_teams', 'ai_assistant_id', 'team_id')
             ->using(AiAssistantConfidentialDepartment::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<UserGroup, $this, covariant AiAssistantConfidentialUserGroup>
+     */
+    public function confidentialAccessUserGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'ai_assistant_confidential_user_groups')
+            ->using(AiAssistantConfidentialUserGroup::class)
             ->withTimestamps();
     }
 

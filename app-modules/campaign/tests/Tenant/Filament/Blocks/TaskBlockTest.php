@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
@@ -113,6 +114,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
     $assignedTo = User::factory()->create();
     $users = User::factory()->count(2)->create();
     $departments = Department::factory()->count(2)->create();
+    $userGroups = UserGroup::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -146,6 +148,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
                 'is_confidential' => true,
                 'confidential_task_users' => $users->pluck('id')->toArray(),
                 'department_confidential_task' => $departments->pluck('id')->toArray(),
+                'user_group_confidential_task' => $userGroups->pluck('id')->toArray(),
             ],
         ])
         ->assertHasNoTableActionErrors();
@@ -155,7 +158,8 @@ it('can edit a confidential task campaign journey step and persist confidential 
     expect($action->data['title'])->toEqual($updatedTitle)
         ->and($action->data['is_confidential'])->toBeTrue()
         ->and($action->data['confidential_task_users'])->toEqual($users->pluck('id')->toArray())
-        ->and($action->data['department_confidential_task'])->toEqual($departments->pluck('id')->toArray());
+        ->and($action->data['department_confidential_task'])->toEqual($departments->pluck('id')->toArray())
+        ->and($action->data['user_group_confidential_task'])->toEqual($userGroups->pluck('id')->toArray());
 });
 
 it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false', function (): void {

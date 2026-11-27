@@ -43,6 +43,15 @@ use Illuminate\Database\Eloquent\Model;
 
 trait AuditableManyToMany
 {
+    /**
+     * @param Builder<Model> $query
+     * @param mixed $table
+     * @param mixed $foreignPivotKey
+     * @param mixed $relatedPivotKey
+     * @param mixed $parentKey
+     * @param mixed $relatedKey
+     * @param null|mixed $relationName
+     */
     protected function newBelongsToMany(
         Builder $query,
         Model $parent,

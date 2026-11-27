@@ -35,15 +35,24 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\UserGroup;
+use App\Features\UserGroupsFeature;
 use App\Models\Authenticatable;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
+
+use Spatie\Permission\PermissionRegistrar;
+use Spatie\Permission\Traits\HasPermissions;
+use Spatie\Permission\Traits\HasRoles;
+
 use function Tests\setEnterpriseAiEnabled;
 
-describe('enterprise ai', function () {
-    it('does not report a `ConversationalAi` license while Enterprise AI is disabled, and restores it once re-enabled', function () {
+describe('enterprise ai', function (): void {
+    it('does not report a `ConversationalAi` license while Enterprise AI is disabled, and restores it once re-enabled', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         expect($user->hasLicense(LicenseType::ConversationalAi))->toBeTrue();
@@ -63,7 +72,7 @@ describe('enterprise ai', function () {
         expect($user->hasLicense(LicenseType::ConversationalAi))->toBeTrue();
     });
 
-    it('does not report a `ConversationalAi` license for a super admin while Enterprise AI is disabled', function () {
+    it('does not report a `ConversationalAi` license for a super admin while Enterprise AI is disabled', function (): void {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
@@ -74,7 +83,7 @@ describe('enterprise ai', function () {
         expect($user->hasLicense(LicenseType::ConversationalAi))->toBeFalse();
     });
 
-    it('still reports other licenses while Enterprise AI is disabled', function () {
+    it('still reports other licenses while Enterprise AI is disabled', function (): void {
         $user = User::factory()->licensed([LicenseType::ConversationalAi, LicenseType::RetentionCrm])->create();
 
         setEnterpriseAiEnabled(false);
@@ -85,7 +94,7 @@ describe('enterprise ai', function () {
             ->and($user->hasAnyLicense(LicenseType::ConversationalAi))->toBeFalse();
     });
 
-    it('does not grant a `ConversationalAi` license while Enterprise AI is disabled', function () {
+    it('does not grant a `ConversationalAi` license while Enterprise AI is disabled', function (): void {
         $user = User::factory()->create();
 
         setEnterpriseAiEnabled(false);
@@ -96,5 +105,346 @@ describe('enterprise ai', function () {
             'user_id' => $user->getKey(),
             'type' => LicenseType::ConversationalAi,
         ]);
+    });
+});
+
+describe('effective roles', function (): void {
+    it('inherits roles from its groups', function (): void {
+        $directRole = Role::factory()->create();
+        $groupRole = Role::factory()->create();
+        $otherRole = Role::factory()->create();
+
+        $user = User::factory()->create();
+        $user->assignRole($directRole);
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($groupRole);
+        $userGroup->users()->attach($user);
+
+        $user = $user->fresh();
+
+        expect($user->getEffectiveRoles()->modelKeys())->toEqualCanonicalizing([$directRole->getKey(), $groupRole->getKey()])
+            ->and($user->getRoleNames()->all())->toEqualCanonicalizing([$directRole->name, $groupRole->name])
+            ->and($user->hasRole($groupRole))->toBeTrue()
+            ->and($user->hasRole($groupRole->name))->toBeTrue()
+            ->and($user->hasRole($groupRole->getKey()))->toBeTrue()
+            ->and($user->hasRole($otherRole))->toBeFalse()
+            ->and($user->hasAnyRole([$otherRole->name, $groupRole->name]))->toBeTrue()
+            ->and($user->hasAllRoles([$directRole->name, $groupRole->name]))->toBeTrue()
+            ->and($user->hasAllRoles([$groupRole->name, $otherRole->name]))->toBeFalse()
+            ->and($user->hasExactRoles([$directRole->name, $groupRole->name]))->toBeTrue()
+            ->and($user->roles()->pluck('roles.id')->all())->toBe([$directRole->getKey()]);
+    });
+
+    it('inherits permissions through the roles of its groups', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        expect($user->can('user_group.view-any'))->toBeFalse();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->can('user_group.view-any'))->toBeTrue()
+            ->and($user->hasPermissionTo('user_group.view-any'))->toBeTrue()
+            ->and($user->checkPermissionTo('user_group.view-any'))->toBeTrue()
+            ->and($user->hasAnyPermission(['user_group.create', 'user_group.view-any']))->toBeTrue()
+            ->and($user->hasAllPermissions(['user_group.create', 'user_group.view-any']))->toBeFalse()
+            ->and($user->getPermissionsViaRoles()->pluck('name')->all())->toContain('user_group.view-any')
+            ->and($user->getAllPermissions()->pluck('name')->all())->toContain('user_group.view-any');
+    });
+
+    it('keeps granting roles through archived groups', function (): void {
+        $role = Role::factory()->create();
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->archived()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+    });
+
+    it('stops granting roles through deleted groups', function (): void {
+        $role = Role::factory()->create();
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        $userGroup->delete();
+
+        expect($user->fresh()->hasRole($role))->toBeFalse()
+            ->and(User::query()->role($role)->whereKey($user->getKey())->exists())->toBeFalse();
+    });
+
+    it('stops granting roles when the user is removed from the group', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        $userGroup->users()->detach($user);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($role))->toBeFalse()
+            ->and($user->can('user_group.view-any'))->toBeFalse();
+    });
+
+    it('stops granting roles when the role is detached from the group', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        $userGroup->roles()->detach($role);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($role))->toBeFalse()
+            ->and($user->can('user_group.view-any'))->toBeFalse();
+    });
+
+    it('never inherits an admin role attached to a group outside of the UI', function (string $adminRole): void {
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach(Role::query()->where('name', $adminRole)->where('guard_name', 'web')->firstOrFail());
+        $userGroup->users()->attach($user);
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($adminRole))->toBeFalse()
+            ->and($user->isAdmin())->toBeFalse()
+            ->and($user->isSuperAdmin())->toBeFalse()
+            ->and($user->isPartnerAdmin())->toBeFalse()
+            ->and($user->isAiAdmin())->toBeFalse()
+            ->and($user->getEffectiveRoles())->toBeEmpty()
+            ->and($user->can('user_group.view-any'))->toBeFalse()
+            ->and(User::query()->role($adminRole)->whereKey($user->getKey())->exists())->toBeFalse()
+            ->and(User::query()->withoutRole($adminRole)->whereKey($user->getKey())->exists())->toBeTrue();
+    })->with(Authenticatable::ADMIN_ROLES);
+
+    it('still recognises an admin role assigned directly', function (): void {
+        $user = User::factory()->create();
+        $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+        expect($user->fresh()->isSuperAdmin())->toBeTrue()
+            ->and(User::query()->role(Authenticatable::SUPER_ADMIN_ROLE)->whereKey($user->getKey())->exists())->toBeTrue();
+    });
+
+    it('does not exclude users from `WithoutAnyAdmin` when admin role is attached only through a group', function (): void {
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail());
+        $userGroup->users()->attach($user);
+
+        expect(User::query()->tap(new WithoutAnyAdmin())->whereKey($user->getKey())->exists())->toBeTrue();
+    });
+
+    it('keeps counting license seats when admin role is attached only through a group', function (): void {
+        $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->roles()->attach(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->where('guard_name', 'web')->firstOrFail());
+        $userGroup->users()->attach($user);
+
+        expect(LicenseType::RetentionCrm->getSeatsInUse())->toBe(1);
+    });
+
+    it('matches users with a role directly or through their groups in the `role` and `withoutRole` scopes', function (): void {
+        $role = Role::factory()->create();
+
+        $directUser = User::factory()->create();
+        $directUser->assignRole($role);
+
+        $groupUser = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($groupUser);
+
+        $otherUser = User::factory()->create();
+
+        expect(User::query()->role($role)->pluck('id')->all())
+            ->toEqualCanonicalizing([$directUser->getKey(), $groupUser->getKey()])
+            ->and(User::query()->role($role->name)->pluck('id')->all())
+            ->toEqualCanonicalizing([$directUser->getKey(), $groupUser->getKey()])
+            ->and(User::query()->withoutRole($role)->pluck('id')->all())
+            ->toContain($otherUser->getKey())
+            ->not->toContain($directUser->getKey())
+            ->not->toContain($groupUser->getKey());
+    });
+
+    it('matches users with a permission directly, through their roles, or through their groups in the `permission` and `withoutPermission` scopes', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $directUser = User::factory()->create();
+        $directUser->givePermissionTo('user_group.view-any');
+
+        $roleUser = User::factory()->create();
+        $roleUser->assignRole($role);
+
+        $groupUser = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($groupUser);
+
+        $otherUser = User::factory()->create();
+
+        $userKeys = [$directUser->getKey(), $roleUser->getKey(), $groupUser->getKey(), $otherUser->getKey()];
+
+        expect(User::query()->whereKey($userKeys)->permission('user_group.view-any')->pluck('id')->all())
+            ->toEqualCanonicalizing([$directUser->getKey(), $roleUser->getKey(), $groupUser->getKey()])
+            ->and(User::query()->whereKey($userKeys)->withoutPermission('user_group.view-any')->pluck('id')->all())
+            ->toBe([$otherUser->getKey()]);
+    });
+
+    it('does not match users through permissions given directly to their groups in the `permission` and `withoutPermission` scopes', function (): void {
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->givePermissionTo('user_group.view-any');
+        $userGroup->users()->attach($user);
+
+        $user = $user->fresh();
+
+        expect($user->can('user_group.view-any'))->toBeFalse()
+            ->and(User::query()->whereKey($user->getKey())->permission('user_group.view-any')->exists())->toBeFalse()
+            ->and(User::query()->whereKey($user->getKey())->withoutPermission('user_group.view-any')->exists())->toBeTrue();
+    });
+
+    it('checks admin roles without loading the groups of the user', function (): void {
+        $user = User::factory()->create();
+        $user->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+        $user = $user->fresh();
+
+        expect($user->isAdmin())->toBeTrue()
+            ->and($user->isSuperAdmin())->toBeTrue()
+            ->and($user->isPartnerAdmin())->toBeFalse()
+            ->and($user->isAiAdmin())->toBeFalse()
+            ->and($user->relationLoaded('userGroups'))->toBeFalse();
+    });
+
+    it('accounts for every method of Spatie\'s `HasRoles` and `HasPermissions` traits', function (): void {
+        $overriddenOnUser = [
+            'hasRole',
+            'hasAllRoles',
+            'hasExactRoles',
+            'getRoleNames',
+            'getPermissionsViaRoles',
+            'scopeRole',
+            'scopePermission',
+        ];
+
+        $accountedFor = [
+            ...$overriddenOnUser,
+            // Reach the effective roles through one of the overrides above.
+            'hasAnyRole',
+            'hasPermissionViaRole',
+            'scopeWithoutRole',
+            'scopeWithoutPermission',
+            'hasPermissionTo',
+            'hasWildcardPermission',
+            'checkPermissionTo',
+            'hasAnyPermission',
+            'hasAllPermissions',
+            'getAllPermissions',
+            // Direct roles and permissions only, by design: the write relations and writes.
+            'bootHasRoles',
+            'roles',
+            'assignRole',
+            'removeRole',
+            'syncRoles',
+            'bootHasPermissions',
+            'permissions',
+            'givePermissionTo',
+            'syncPermissions',
+            'revokePermissionTo',
+            'getDirectPermissions',
+            'hasDirectPermission',
+            'hasAllDirectPermissions',
+            'hasAnyDirectPermission',
+            'getPermissionNames',
+            // Do not read roles.
+            'getRoleClass',
+            'getStoredRole',
+            'convertPipeToArray',
+            'getPermissionClass',
+            'getWildcardClass',
+            'filterPermission',
+            'convertToPermissionModels',
+            'getStoredPermission',
+            'ensureModelSharesGuard',
+            'getGuardNames',
+            'getDefaultGuardName',
+            'forgetCachedPermissions',
+            'forgetWildcardPermissionIndex',
+        ];
+
+        $spatieMethods = collect([HasRoles::class, HasPermissions::class])
+            ->flatMap(fn (string $trait): array => (new ReflectionClass($trait))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED))
+            ->map(fn (ReflectionMethod $method): string => $method->getName())
+            ->unique();
+
+        expect($spatieMethods->diff($accountedFor)->values()->all())
+            ->toBe([], 'Spatie has new role or permission methods. Decide whether each must respect roles inherited through groups, override it on `User` if so, and add it to this list.')
+            ->and(collect($accountedFor)->diff($spatieMethods)->values()->all())
+            ->toBe([], 'These methods no longer exist in Spatie. Remove them from this list, and remove any override of them on `User`.')
+            ->and(collect($overriddenOnUser)->reject(fn (string $method): bool => (new ReflectionMethod(User::class, $method))->class === User::class)->values()->all())
+            ->toBe([], 'These methods must be overridden on `User` so that they respect roles inherited through groups.');
+    });
+
+    it('ignores group roles while the `UserGroupsFeature` is inactive', function (): void {
+        $role = Role::factory()->create();
+        $role->givePermissionTo('user_group.view-any');
+
+        $user = User::factory()->create();
+
+        $userGroup = UserGroup::factory()->create();
+        $userGroup->assignRole($role);
+        $userGroup->users()->attach($user);
+
+        expect($user->fresh()->hasRole($role))->toBeTrue();
+
+        UserGroupsFeature::deactivate();
+
+        $user = $user->fresh();
+        app(PermissionRegistrar::class)->forgetWildcardPermissionIndex($user);
+
+        expect($user->hasRole($role))->toBeFalse()
+            ->and($user->can('user_group.view-any'))->toBeFalse()
+            ->and(User::query()->role($role)->whereKey($user->getKey())->exists())->toBeFalse();
     });
 });
