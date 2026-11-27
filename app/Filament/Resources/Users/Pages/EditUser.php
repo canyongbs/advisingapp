@@ -220,6 +220,11 @@ class EditUser extends EditRecord
                 continue;
             }
 
+            // Another request may have granted the same license in the meantime.
+            if ($record->licenses()->where('type', $licenseType)->exists()) {
+                continue;
+            }
+
             throw ValidationException::withMessages([
                 "data.{$field}" => "Unable to assign the {$licenseType->getLabel()} license. Please check available seats and try again.",
             ]);
