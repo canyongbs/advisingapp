@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -167,6 +168,109 @@ it('does not allow assigning a user without the student license', function () us
         ->assertHasFormErrors(['assigned_to']);
 
     expect(Task::query()->count())->toBe(0);
+});
+
+describe('assignment', function () use ($createTaskUser): void {
+    $createLicensedAdmin = function (): User {
+        $admin = User::factory()->licensed(LicenseType::cases())->create();
+
+        $admin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+        return $admin;
+    };
+
+    it('does not allow assigning an admin on create', function () use ($createTaskUser, $createLicensedAdmin): void {
+        actingAs($createTaskUser());
+
+        $student = Student::factory()->create();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(CreateAction::class)->table(), [
+                'title' => 'Follow up',
+                'description' => 'Call the student.',
+                'assigned_to' => $createLicensedAdmin()->getKey(),
+            ])
+            ->assertHasFormErrors(['assigned_to']);
+
+        expect(Task::query()->count())->toBe(0);
+    });
+
+    it('does not allow reassigning a task to an admin on edit', function () use ($createTaskUser, $createLicensedAdmin): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($user)->create(['status' => TaskStatus::Pending, 'is_confidential' => false]);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(EditAction::class)->table($task), [
+                'assigned_to' => $createLicensedAdmin()->getKey(),
+            ])
+            ->assertHasFormErrors(['assigned_to']);
+
+        expect($task->refresh()->assigned_to)->toBe($user->getKey());
+    });
+
+    it('keeps an admin who is already the assignee when editing', function () use ($createTaskUser, $createLicensedAdmin): void {
+        $user = $createTaskUser();
+
+        actingAs($user);
+
+        $student = Student::factory()->create();
+
+        $admin = $createLicensedAdmin();
+
+        $task = Task::factory()->concerningStudent($student)->assigned($admin)->create(['status' => TaskStatus::Pending, 'is_confidential' => false, 'created_by' => $user->getKey()]);
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(EditAction::class)->table($task), [
+                'title' => 'Updated title',
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($task->refresh())
+            ->title->toBe('Updated title')
+            ->assigned_to->toBe($admin->getKey());
+    });
+
+    it('allows an admin to assign a task to themselves', function () use ($createLicensedAdmin): void {
+        $admin = $createLicensedAdmin();
+
+        actingAs($admin);
+
+        $student = Student::factory()->create();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(CreateAction::class)->table(), [
+                'title' => 'Follow up',
+                'description' => 'Call the student.',
+            ])
+            ->assertHasNoFormErrors();
+
+        expect(Task::query()->sole()->assigned_to)->toBe($admin->getKey());
+    });
+
+    it('allows assigning an admin when admins are not filtered from selection', function () use ($createTaskUser, $createLicensedAdmin): void {
+        config(['app.filter_admins_from_selection' => false]);
+
+        actingAs($createTaskUser());
+
+        $student = Student::factory()->create();
+
+        $admin = $createLicensedAdmin();
+
+        Livewire::test(ManageStudentTasks::class, ['record' => $student->getKey()])
+            ->callAction(TestAction::make(CreateAction::class)->table(), [
+                'title' => 'Follow up',
+                'description' => 'Call the student.',
+                'assigned_to' => $admin->getKey(),
+            ])
+            ->assertHasNoFormErrors();
+
+        expect(Task::query()->sole()->assigned_to)->toBe($admin->getKey());
+    });
 });
 
 describe('editing', function () use ($createTaskUser): void {

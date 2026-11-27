@@ -40,12 +40,15 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Filament\Tables\AssignableTaskUsersTable;
 use AdvisingApp\Task\Models\Task;
 use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
-use App\Models\Scopes\HasLicense;
+use App\Models\User;
+use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\ModalTableSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -141,13 +144,39 @@ class TaskForm
                     ]),
                 Section::make('Assignment')
                     ->schema([
-                        UserSelect::make('assigned_to')
+                        ModalTableSelect::make('assigned_to')
                             ->label('Assigned To')
                             ->relationship(
                                 'assignedTo',
                                 'name',
-                                fn (Builder $query): Builder => $query->tap(new HasLicense($owner->getLicenseType())),
+                                fn (Builder $query, ?Task $record): Builder => AssignableTaskUsersTable::scope(
+                                    $query,
+                                    $owner->getLicenseType(),
+                                    [$record?->assigned_to, auth()->id()],
+                                ),
                             )
+                            ->tableConfiguration(AssignableTaskUsersTable::class)
+                            ->tableArguments(fn (?Task $record): array => [
+                                'licenseType' => $owner->getLicenseType()->value,
+                                'alwaysIncludedUserIds' => [$record?->assigned_to, auth()->id()],
+                            ])
+                            ->rules([
+                                fn (?Task $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($owner, $record): void {
+                                    if (blank($value)) {
+                                        return;
+                                    }
+
+                                    $isAssignable = AssignableTaskUsersTable::scope(
+                                        User::query()->whereKey($value),
+                                        $owner->getLicenseType(),
+                                        [$record?->assigned_to, auth()->id()],
+                                    )->exists();
+
+                                    if (! $isAssignable) {
+                                        $fail('The selected user cannot be assigned this task.');
+                                    }
+                                },
+                            ])
                             ->nullable()
                             ->default(auth()->id()),
                     ]),
