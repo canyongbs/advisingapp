@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
 use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
+use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Pages\ImportExport;
@@ -362,6 +363,60 @@ it('defaults the active tab to import when the user has export hub access', func
 
     Livewire::test(ImportExport::class)
         ->assertSet('activeTab', 'import');
+});
+
+it('keeps an authorized requested tab selected', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'student-sync'])
+        ->test(ImportExport::class)
+        ->assertSet('activeTab', 'student-sync')
+        ->assertSeeLivewire(StudentDataImportsTable::class)
+        ->assertDontSeeLivewire(ImportsTable::class)
+        ->assertDontSeeLivewire(ExportsTable::class);
+});
+
+it('falls back to the first visible tab for an unknown tab', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'not-a-real-tab'])
+        ->test(ImportExport::class)
+        ->assertSet('activeTab', 'student-sync')
+        ->assertSeeLivewire(StudentDataImportsTable::class)
+        ->assertDontSeeLivewire(ImportsTable::class)
+        ->assertDontSeeLivewire(ExportsTable::class);
+});
+
+it('falls back to the first visible tab for a valid but unauthorized tab', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'import'])
+        ->test(ImportExport::class)
+        ->assertSet('activeTab', 'student-sync')
+        ->assertSeeLivewire(StudentDataImportsTable::class)
+        ->assertDontSeeLivewire(ImportsTable::class)
+        ->assertDontSeeLivewire(ExportsTable::class);
 });
 
 it('does not render a tab the user cannot access', function (string $tab, string $table) {
