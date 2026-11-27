@@ -358,14 +358,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return HasManyDeep<Model, $this>
-     */
-    public function permissionsFromRoles(): HasManyDeep
-    {
-        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
-    }
-
-    /**
      * @return BelongsTo<Pronouns, $this>
      */
     public function pronouns(): BelongsTo
