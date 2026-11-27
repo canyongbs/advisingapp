@@ -40,15 +40,12 @@ use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Filament\Tables\AssignableTaskUsersTable;
+use AdvisingApp\Task\Filament\Schemas\Components\TaskAssignedToSelect;
 use AdvisingApp\Task\Models\Task;
 use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\UserSelect;
-use App\Models\User;
-use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\ModalTableSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -144,41 +141,7 @@ class TaskForm
                     ]),
                 Section::make('Assignment')
                     ->schema([
-                        ModalTableSelect::make('assigned_to')
-                            ->label('Assigned To')
-                            ->relationship(
-                                'assignedTo',
-                                'name',
-                                fn (Builder $query, ?Task $record): Builder => AssignableTaskUsersTable::scope(
-                                    $query,
-                                    $owner->getLicenseType(),
-                                    AssignableTaskUsersTable::alwaysIncludedUserIds($record),
-                                ),
-                            )
-                            ->tableConfiguration(AssignableTaskUsersTable::class)
-                            ->tableArguments(fn (?Task $record): array => [
-                                'licenseType' => $owner->getLicenseType()->value,
-                                'alwaysIncludedUserIds' => AssignableTaskUsersTable::alwaysIncludedUserIds($record),
-                            ])
-                            ->rules([
-                                fn (?Task $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($owner, $record): void {
-                                    if (blank($value)) {
-                                        return;
-                                    }
-
-                                    $isAssignable = AssignableTaskUsersTable::scope(
-                                        User::query()->whereKey($value),
-                                        $owner->getLicenseType(),
-                                        AssignableTaskUsersTable::alwaysIncludedUserIds($record),
-                                    )->exists();
-
-                                    if (! $isAssignable) {
-                                        $fail('The selected user cannot be assigned this task.');
-                                    }
-                                },
-                            ])
-                            ->nullable()
-                            ->default(auth()->id()),
+                        TaskAssignedToSelect::make($owner),
                     ]),
             ]);
     }
