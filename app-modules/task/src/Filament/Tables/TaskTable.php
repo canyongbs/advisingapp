@@ -105,7 +105,17 @@ class TaskTable
                     ->label('Archived')
                     ->boolean()
                     ->state(fn (Task $record): bool => $record->isArchived())
-                    ->hidden(fn (Table $table): bool => (! TaskArchivingFeature::active()) || ($table->getFilter('withoutArchived')?->getState()['isActive'] ?? false)),
+                    ->hidden(function (Table $table): bool {
+                        $filter = $table->getFilter('withoutArchived');
+
+                        if ((! TaskArchivingFeature::active()) || (! $filter)) {
+                            return true;
+                        }
+
+                        // The column manager is initialized before the filter defaults are filled and query string values
+                        // are normalized on the first request, so resolve the visibility from the raw or default state.
+                        return filter_var($filter->getState()['isActive'] ?? $filter->getDefaultState(), FILTER_VALIDATE_BOOLEAN);
+                    }),
             ])
             ->filters([
                 Filter::make('my_tasks')

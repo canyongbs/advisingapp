@@ -100,7 +100,7 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
-                    ->counts(['tasks' => fn (Builder $query) => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])]) // @phpstan-ignore method.notFound
+                    ->counts(['tasks' => fn (Builder $query): Builder => $query->when(TaskArchivingFeature::active(), fn (Builder $query): Builder => $query->withoutArchived())->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])]) // @phpstan-ignore method.notFound
                     ->sortable(),
             ])
             ->filters([
