@@ -39,13 +39,13 @@ namespace App\Filament\Resources\Users\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Authorization\Models\UserGroup;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\Users\Schemas\Components\DepartmentSelect;
+use App\Filament\Resources\Users\Schemas\Components\RolesSelect;
+use App\Filament\Resources\Users\Schemas\Components\UserGroupsSelect;
 use App\Filament\Resources\Users\UserResource;
-use App\Models\Authenticatable;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
@@ -53,14 +53,12 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use STS\FilamentImpersonate\Actions\Impersonate;
@@ -128,49 +126,15 @@ class EditUser extends EditRecord
                 Section::make('Affiliation')
                     ->columns(2)
                     ->schema([
-                        Select::make('team_id')
-                            ->label('Departments')
-                            ->relationship('department', 'name')
-                            ->searchable()
-                            ->preload(),
-                        // TODO: Cleanup Task (user-groups-feature): remove feature-flag gating once User Groups is permanent.
-                        ...(UserGroupsFeature::active() && (Auth::user()?->can('viewAny', UserGroup::class) ?? false) ? [
-                            Select::make('userGroups')
-                                ->label('Groups')
-                                ->relationship(
-                                    name: 'userGroups',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: function (Builder $query): Builder {
-                                        // @phpstan-ignore method.notFound
-                                        return $query->withoutArchived();
-                                    },
-                                )
-                                ->searchable()
-                                ->multiple()
-                                ->preload(),
-                        ] : []),
+                        DepartmentSelect::make(),
+                        UserGroupsSelect::make(),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
-                    Section::make('Access Control')
-                        ->schema([
-                            Select::make('roles')
-                                ->label('Role(s)')
-                                ->relationship(
-                                    name: 'roles',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: fn (Builder $query): Builder => $query
-                                        ->when(
-                                            ! Auth::user()?->isSuperAdmin(),
-                                            fn (Builder $query): Builder => $query->whereNotIn('name', Authenticatable::ADMIN_ROLES),
-                                        )
-                                        ->orderBy('name'),
-                                )
-                                ->searchable()
-                                ->multiple()
-                                ->preload(),
-                        ]),
-                ] : []),
+                Section::make('Access Control')
+                    ->schema([
+                        RolesSelect::make(),
+                    ])
+                    ->visible(fn (): bool => auth()->user()?->can('viewAny', Role::class) ?? false),
                 Licenses::make(),
             ]);
     }

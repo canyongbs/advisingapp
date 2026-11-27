@@ -37,16 +37,16 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Authorization\Models\UserGroup;
-use App\Features\UserGroupsFeature;
 use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\Users\Schemas\Components\DepartmentSelect;
+use App\Filament\Resources\Users\Schemas\Components\RolesSelect;
+use App\Filament\Resources\Users\Schemas\Components\UserGroupsSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ViewRecord;
@@ -55,8 +55,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -95,46 +93,18 @@ class ViewUser extends ViewRecord
                 Section::make('Affiliation')
                     ->columns(2)
                     ->schema([
-                        Select::make('team_id')
-                            ->label('Departments')
-                            ->relationship('department', 'name')
-                            ->searchable()
-                            ->preload()
+                        DepartmentSelect::make()
                             ->disabled(),
-                        ...((UserGroupsFeature::active() && (Auth::user()?->can('viewAny', UserGroup::class) ?? false)) ? [
-                            Select::make('userGroups')
-                                ->label('Groups')
-                                ->relationship(
-                                    name: 'userGroups',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: function (Builder $query): Builder {
-                                        // @phpstan-ignore method.notFound
-                                        return $query->withoutArchived();
-                                    },
-                                )
-                                ->searchable()
-                                ->multiple()
-                                ->preload()
-                                ->disabled(),
-                        ] : []),
+                        UserGroupsSelect::make()
+                            ->disabled(),
                     ])
                     ->hidden(fn (?User $record): bool => $record?->isAdmin() ?? false),
-                ...((Auth::user()?->can('viewAny', Role::class) ?? false) ? [
-                    Section::make('Access Control')
-                        ->schema([
-                            Select::make('roles')
-                                ->label('Role(s)')
-                                ->relationship(
-                                    name: 'roles',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: fn (Builder $query): Builder => $query->orderBy('name'),
-                                )
-                                ->searchable()
-                                ->multiple()
-                                ->preload()
-                                ->disabled(),
-                        ]),
-                ] : []),
+                Section::make('Access Control')
+                    ->schema([
+                        RolesSelect::make()
+                            ->disabled(),
+                    ])
+                    ->visible(fn (): bool => auth()->user()?->can('viewAny', Role::class) ?? false),
                 Licenses::make()
                     ->hidden(fn (?User $record): bool => is_null($record))
                     ->disabled(),
@@ -160,7 +130,7 @@ class ViewUser extends ViewRecord
                 ->visible(
                     fn (User $record): bool => ! $record->is_external
                         && $record->hasConfirmedMultifactor() || $record->hasEnabledMultifactor()
-                                && Auth::user()?->can('resetMultifactorAuthentication', $record),
+                        && auth()->user()->can('resetMultifactorAuthentication', $record),
                 )
                 ->label('Reset MFA')
                 ->icon('heroicon-s-lock-open')
