@@ -54,6 +54,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Unique;
@@ -170,17 +171,22 @@ trait HasPopulationFilter
             return $liveFilters;
         }
 
-        $liveFilters['queryBuilder']['rules'] = $this->migrateLegacyRules($liveFilters['queryBuilder']['rules']);
+        $rules = $liveFilters['queryBuilder']['rules'];
+        $legacySemesterNames = $this->collectLegacySemesterNames($rules);
+        $mappedTermNames = $this->getMappedTermNamesByLegacySemesterName($legacySemesterNames);
+
+        $liveFilters['queryBuilder']['rules'] = $this->migrateLegacyRules($rules, $mappedTermNames);
 
         return $liveFilters;
     }
 
     /**
      * @param array<array-key, mixed> $rules
+     * @param array<string, array<int, string>> $mappedTermNamesByLegacySemesterName
      *
      * @return array<array-key, mixed>
      */
-    protected function migrateLegacyRules(array $rules): array
+    protected function migrateLegacyRules(array $rules, array $mappedTermNamesByLegacySemesterName): array
     {
         foreach ($rules as $key => $rule) {
             if (! is_array($rule)) {
@@ -193,7 +199,10 @@ trait HasPopulationFilter
                         continue;
                     }
 
-                    $rules[$key]['data']['groups'][$groupKey]['rules'] = $this->migrateLegacyRules($group['rules']);
+                    $rules[$key]['data']['groups'][$groupKey]['rules'] = $this->migrateLegacyRules(
+                        $group['rules'],
+                        $mappedTermNamesByLegacySemesterName,
+                    );
                 }
 
                 continue;
@@ -214,7 +223,7 @@ trait HasPopulationFilter
             $values = $rule['data']['settings']['values'] ?? null;
             $rules[$key]['type'] = $newType;
             $rules[$key]['data']['settings']['values'] = is_array($values)
-                ? $this->legacyEnrolledTermValuesToMatchedTermNames($values)
+                ? $this->legacyEnrolledTermValuesToMatchedTermNames($values, $mappedTermNamesByLegacySemesterName)
                 : $values;
         }
 
@@ -222,41 +231,97 @@ trait HasPopulationFilter
     }
 
     /**
+     * @param array<array-key, mixed> $rules
+     *
+     * @return array<int, string>
+     */
+    protected function collectLegacySemesterNames(array $rules): array
+    {
+        $legacySemesterNames = [];
+
+        foreach ($rules as $rule) {
+            if (! is_array($rule)) {
+                continue;
+            }
+
+            if (($rule['type'] ?? null) === 'or') {
+                foreach (($rule['data']['groups'] ?? []) as $group) {
+                    if (! is_array($group) || ! is_array($group['rules'] ?? null)) {
+                        continue;
+                    }
+
+                    $legacySemesterNames = [
+                        ...$legacySemesterNames,
+                        ...$this->collectLegacySemesterNames($group['rules']),
+                    ];
+                }
+
+                continue;
+            }
+
+            $legacyType = $rule['type'] ?? null;
+
+            if (($legacyType !== 'firstEnrollmentTerm.semester_name') && ($legacyType !== 'mostRecentEnrollmentTerm.semester_name')) {
+                continue;
+            }
+
+            $values = $rule['data']['settings']['values'] ?? null;
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as $value) {
+                if (! is_string($value)) {
+                    continue;
+                }
+
+                $legacySemesterNames[] = mb_strtolower($value);
+            }
+        }
+
+        return array_values(array_unique($legacySemesterNames));
+    }
+
+    /**
+     * @param array<int, string> $legacySemesterNames
+     *
+     * @return array<string, array<int, string>>
+     */
+    protected function getMappedTermNamesByLegacySemesterName(array $legacySemesterNames): array
+    {
+        if ($legacySemesterNames === []) {
+            return [];
+        }
+
+        return Enrollment::query()
+            ->tap(new JoinMatchedTerm())
+            ->whereNotNull('enrollments.semester_name')
+            ->whereIn(DB::raw('enrollments.semester_name::citext'), $legacySemesterNames)
+            ->selectRaw('lower(enrollments.semester_name) as legacy_semester_name, lower(terms.name) as matched_term_name')
+            ->distinct()
+            ->orderBy('matched_term_name')
+            ->toBase()
+            ->get()
+            ->groupBy('legacy_semester_name')
+            ->map(fn (Collection $rows): array => $rows->pluck('matched_term_name')->all())
+            ->all();
+    }
+
+    /**
      * @param array<array-key, mixed> $values
+     * @param array<string, array<int, string>> $mappedTermNamesByLegacySemesterName
      *
      * @return array<array-key, mixed>
      */
-    protected function legacyEnrolledTermValuesToMatchedTermNames(array $values): array
+    protected function legacyEnrolledTermValuesToMatchedTermNames(array $values, array $mappedTermNamesByLegacySemesterName): array
     {
-        $semesterNames = collect($values)
-            ->filter(fn (mixed $value): bool => is_string($value))
-            ->map(fn (string $value): string => mb_strtolower($value))
-            ->unique()
-            ->values();
-
-        if ($semesterNames->isEmpty()) {
-            return $values;
-        }
-
-        $mappedTermNames = Enrollment::query()
-            ->tap(new JoinMatchedTerm())
-            ->whereNotNull('enrollments.semester_name')
-            ->whereIn(DB::raw('enrollments.semester_name::citext'), $semesterNames->all())
-            ->selectRaw('lower(enrollments.semester_name) as legacy_semester_name, lower(terms.name) as matched_term_name')
-            ->distinct()
-            ->pluck('matched_term_name', 'legacy_semester_name')
-            ->all();
-
         return collect($values)
-            ->map(function (mixed $value) use ($mappedTermNames): mixed {
-                if (! is_string($value)) {
-                    return $value;
-                }
-
-                $legacyName = mb_strtolower($value);
-
-                return $mappedTermNames[$legacyName] ?? $value;
-            })
+            ->flatMap(fn (mixed $value): array => is_string($value)
+                ? ($mappedTermNamesByLegacySemesterName[mb_strtolower($value)] ?? [$value])
+                : [$value])
+            ->unique()
+            ->values()
             ->all();
     }
 
