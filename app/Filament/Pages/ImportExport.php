@@ -70,9 +70,13 @@ class ImportExport extends Page
 
     public function mount(): void
     {
-        if (! ImportExportTab::tryFrom($this->activeTab ?? '')?->canView()) {
-            $this->activeTab = collect(ImportExportTab::cases())
-                ->first(fn (ImportExportTab $tab): bool => $tab->canView())?->value ?? ImportExportTab::Import->value;
+        if (! ImportExportTab::tryFrom($this->activeTab)?->canView()) {
+            $fallbackTab = collect(ImportExportTab::cases())
+                ->first(fn (ImportExportTab $tab): bool => $tab->canView());
+
+            if ($fallbackTab instanceof ImportExportTab) {
+                $this->activeTab = $fallbackTab->value;
+            }
         }
     }
 

@@ -77,9 +77,13 @@ class Inbox extends Page
 
     public function mount(): void
     {
-        if (! InboxTab::tryFrom($this->activeTab ?? '')?->canView()) {
-            $this->activeTab = collect(InboxTab::cases())
-                ->first(fn (InboxTab $tab): bool => $tab->canView())?->value ?? InboxTab::Inbox->value;
+        if (! InboxTab::tryFrom($this->activeTab)?->canView()) {
+            $fallbackTab = collect(InboxTab::cases())
+                ->first(fn (InboxTab $tab): bool => $tab->canView());
+
+            if ($fallbackTab instanceof InboxTab) {
+                $this->activeTab = $fallbackTab->value;
+            }
         }
     }
 
