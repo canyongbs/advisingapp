@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
+use Filament\Forms\Components\Toggle;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
@@ -268,4 +269,15 @@ it('renders affiliation access control and license fields as read-only', functio
         ->assertFormFieldDisabled('roles')
         ->assertFormFieldDisabled('retention_crm_enabled')
         ->assertFormFieldDisabled('retention_crm_restriction');
+});
+
+it('does not show a license as locked when it can be changed on the edit page', function (): void {
+    asSuperAdmin();
+
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+
+    Livewire::test(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ])
+        ->assertFormFieldExists('retention_crm_enabled', fn (Toggle $field): bool => $field->isDisabled() && blank($field->getHintIcon()));
 });

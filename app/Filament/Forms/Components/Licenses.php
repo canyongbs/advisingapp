@@ -87,8 +87,9 @@ class Licenses extends Section
                     ->formatStateUsing(function (?User $record) use ($licenseType): ?bool {
                         return $record?->hasLicense($licenseType);
                     })
-                    ->disabled(fn (?bool $state): bool => ! $this->canManageLicenses() || (! $state && ! $licenseType->hasAvailableLicenses()))
-                    ->hintIcon(fn (Toggle $component): ?string => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                    ->disabled(fn (?bool $state): bool => $this->isLicenseLocked($licenseType, $state))
+                    // Only explains why this license is locked, not a page that disables every license.
+                    ->hintIcon(fn (?bool $state): ?string => $this->isLicenseLocked($licenseType, $state) ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip(function () use ($licenseType): string {
                         if (! $this->canManageLicenses()) {
                             return 'You do not have permission to change licenses.';
@@ -98,6 +99,11 @@ class Licenses extends Section
                     }),
             ])
             ->columnSpan(1);
+    }
+
+    private function isLicenseLocked(LicenseType $licenseType, ?bool $state): bool
+    {
+        return ! $this->canManageLicenses() || (! $state && ! $licenseType->hasAvailableLicenses());
     }
 
     private function canManageLicenses(): bool
