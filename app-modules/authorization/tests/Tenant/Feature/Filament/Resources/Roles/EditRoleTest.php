@@ -189,6 +189,84 @@ describe('membership', function (): void {
 
         expect($role->refresh()->userGroups)->toBeEmpty();
     });
+    it('hides the users without the `user.view-any` permission and keeps them on save', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $member = User::factory()->create();
+
+        $role->users()->attach($member);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('users')
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->users->modelKeys())->toBe([$member->getKey()]);
+    });
+
+    it('does not offer or remove the admins a user can not see', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $member = User::factory()->create();
+        $superAdmin = User::factory()->create();
+
+        $superAdmin->assignRole(Role::superAdmin()->get());
+        $role->users()->attach([$member->getKey(), $superAdmin->getKey()]);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update', 'user.view-any']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertSchemaStateSet(['users' => [$member->getKey()]])
+            ->assertFormFieldExists('users', function (Select $field) use ($member, $superAdmin): bool {
+                expect($field->getOptions())->toHaveKey($member->getKey())
+                    ->not->toHaveKey($superAdmin->getKey())
+                    ->and($field->getSearchResults($superAdmin->name))->not->toHaveKey($superAdmin->getKey());
+
+                return true;
+            })
+            ->fillForm(['users' => []])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->users->modelKeys())->toBe([$superAdmin->getKey()]);
+    });
+
+    it('hides the groups without the `user_group.view-any` permission and keeps them on save', function (): void {
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $group = UserGroup::factory()->create();
+
+        $role->userGroups()->attach($group);
+
+        actingAs(user(permissions: ['role.view-any', 'role.*.view', 'role.*.update']));
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups->modelKeys())->toBe([$group->getKey()]);
+    });
+
+    it('keeps the groups on save when the `UserGroupsFeature` is inactive', function (): void {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+        $group = UserGroup::factory()->create();
+
+        $role->userGroups()->attach($group);
+
+        UserGroupsFeature::deactivate();
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->assertFormFieldHidden('userGroups')
+            ->fillForm(['description' => 'Updated description'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($role->refresh()->userGroups->modelKeys())->toBe([$group->getKey()]);
+    });
 });
 
 describe('admin roles', function (): void {

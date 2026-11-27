@@ -37,7 +37,9 @@
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Schemas\Components;
 
 use AdvisingApp\Authorization\Models\Role;
+use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\User;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
@@ -53,7 +55,11 @@ class RoleUsersSelect
     {
         return Select::make('users')
             ->label('Users')
-            ->relationship('users', 'name')
+            ->relationship(
+                'users',
+                'name',
+                static::hideAdminsTheUserCanNotSee(),
+            )
             ->multiple()
             ->searchable()
             ->options(fn (Select $component, Get $get, ?Role $record): array => static::getUsersQuery($get, $record)
@@ -74,7 +80,20 @@ class RoleUsersSelect
             ->getOptionLabelsUsing(fn (array $values, Get $get, ?Role $record): array => static::getUsersQuery($get, $record)
                 ->whereKey($values)
                 ->pluck('name', 'id')
-                ->all());
+                ->all())
+            ->visible(fn (Get $get, ?Role $record): bool => auth()->user()?->can('viewAny', static::getUsersModel($get, $record)) ?? false);
+    }
+
+    /**
+     * @return class-string<Model>
+     */
+    protected static function getUsersModel(Get $get, ?Role $record): string
+    {
+        $model = getModelForGuard($record->guard_name ?? $get('guard_name'));
+
+        assert(is_string($model) && is_a($model, Model::class, true));
+
+        return $model;
     }
 
     /**
@@ -82,10 +101,20 @@ class RoleUsersSelect
      */
     protected static function getUsersQuery(Get $get, ?Role $record): Builder
     {
-        $model = getModelForGuard($record->guard_name ?? $get('guard_name'));
+        return static::getUsersModel($get, $record)::query()
+            ->tap(static::hideAdminsTheUserCanNotSee())
+            ->orderBy('name');
+    }
 
-        assert(is_string($model) && is_a($model, Model::class, true));
-
-        return $model::query()->orderBy('name');
+    /**
+     * Admins are hidden from the users who can't see them, as on the users list. Leaving them out of the state too
+     * keeps them on the role when it is saved.
+     */
+    protected static function hideAdminsTheUserCanNotSee(): Closure
+    {
+        return fn (Builder $query): Builder => $query->when(
+            $query->getModel() instanceof User,
+            fn (Builder $query): Builder => $query->tap(new ConditionalAdminScope()),
+        );
     }
 }
