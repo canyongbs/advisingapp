@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\WorkflowNameCitextFeature;
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -43,26 +41,9 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task (workflow-name-citext) - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
     protected string $table = 'workflows';
 
     protected string $column = 'name';
-
-    /**
-     * Workflow names are unique per owning record (the trigger's related object), so a Form
-     * workflow and an Application workflow may share a name. The owner lives on
-     * workflow_triggers, so it is denormalized onto workflows to allow a scoped unique index.
-     *
-     * @var array<int, string>
-     */
-    protected array $groupByColumns = ['related_type', 'related_id'];
-
-    // TODO: Cleanup Task (workflow-name-citext) - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
 
     private string $uniqueConstraint = 'workflows_name_unique';
 
@@ -86,25 +67,18 @@ return new class () extends Migration {
                 WHERE w.workflow_trigger_id = t.id
                 SQL);
 
-            // TODO: Cleanup Task (workflow-name-citext) - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
-
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->uniqueIndex(['related_type', 'related_id', $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
-
-            WorkflowNameCitextFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function (): void {
-            WorkflowNameCitextFeature::deactivate();
-
             Schema::table($this->table, function (Blueprint $table): void {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });

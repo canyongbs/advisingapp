@@ -47,7 +47,6 @@ use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
-use App\Features\WorkflowNameCitextFeature;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
@@ -598,26 +597,5 @@ describe('workflow name uniqueness', function (): void {
             ->assertHasNoFormErrors(['name']);
 
         expect($workflow->refresh()->name)->toBe('Shared Outreach');
-    });
-
-    it('allows editing a workflow to a duplicate name before the citext migration activates', function () use ($makeWorkflow): void {
-        // TODO: Cleanup Task (workflow-name-citext) - Delete this test; it only covers the pre-migration inactive-flag branch
-        WorkflowNameCitextFeature::deactivate();
-
-        asSuperAdmin();
-
-        $application = Application::factory()->create();
-        $makeWorkflow($application, 'Fall Outreach');
-        $workflow = $makeWorkflow($application, 'Spring Outreach');
-
-        Livewire::test(ApplicationNestedEditWorkflow::class, [
-            'parentRecord' => $application,
-            'record' => $workflow->getRouteKey(),
-        ])
-            ->fillForm(['name' => 'Fall Outreach'])
-            ->call('save')
-            ->assertHasNoFormErrors(['name']);
-
-        expect($workflow->refresh()->name)->toBe('Fall Outreach');
     });
 });
