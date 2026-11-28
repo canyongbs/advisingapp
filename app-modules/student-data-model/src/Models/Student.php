@@ -73,7 +73,6 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
-use App\Features\MatchedEnrolledTermsFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -231,17 +230,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
      */
     public function firstTermEnrollment(): HasOne
     {
-        if (! MatchedEnrolledTermsFeature::active()) {
-            return $this->enrollments()
-                ->one()
-                ->ofMany([
-                    'start_date' => 'min',
-                ], function (Builder $query): void {
-                    $query->whereNotNull('semester_code')
-                        ->whereNotNull('start_date');
-                });
-        }
-
         return $this->termEnrollment(new OrderByFirstTerm(), startDateDirection: 'asc');
     }
 
@@ -252,17 +240,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
      */
     public function mostRecentTermEnrollment(): HasOne
     {
-        if (! MatchedEnrolledTermsFeature::active()) {
-            return $this->enrollments()
-                ->one()
-                ->ofMany([
-                    'start_date' => 'max',
-                ], function (Builder $query): void {
-                    $query->whereNotNull('semester_code')
-                        ->whereNotNull('start_date');
-                });
-        }
-
         return $this->termEnrollment(new OrderByMostRecentTerm(), startDateDirection: 'desc');
     }
 

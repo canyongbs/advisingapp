@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\MatchedEnrolledTermsFeature;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
@@ -93,34 +92,6 @@ $enrolledTermConstraintOptions = function (string $name): array {
 
     return $constraint->getOptions();
 };
-
-it('does not offer enrolled terms that only archived students have when the feature is inactive', function () use ($enrolledTermConstraintOptions): void {
-    MatchedEnrolledTermsFeature::deactivate();
-
-    asSuperAdmin();
-
-    $active = Student::factory()->create();
-    Enrollment::factory()->for($active, 'student')->create([
-        'semester_name' => 'Active Term',
-        'start_date' => now()->subYear(),
-    ]);
-
-    $archived = Student::factory()->create();
-    Enrollment::factory()->for($archived, 'student')->create([
-        'semester_name' => 'Archived Only Term',
-        'start_date' => now()->subYear(),
-    ]);
-
-    expect($enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
-        ->toContain('Active Term')
-        ->toContain('Archived Only Term');
-
-    $archived->archive();
-
-    expect($enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
-        ->toContain('Active Term')
-        ->not->toContain('Archived Only Term');
-});
 
 describe('enrolled term constraints', function () use ($enrolledTermConstraintOptions): void {
     /**
@@ -272,23 +243,6 @@ describe('enrolled term constraints', function () use ($enrolledTermConstraintOp
 
         expect(app(TranslateGroupFilters::class)->execute($group)->pluck('sisid')->all())
             ->toBe([$firstFallSecondSpring->getKey()]);
-    });
-
-    it('filters by the semester name of the first and most recent enrollments when the feature is inactive', function () use ($studentsMatchingEnrolledTerms): void {
-        MatchedEnrolledTermsFeature::deactivate();
-
-        $student = Student::factory()->create();
-        Enrollment::factory()->for($student, 'student')->create(['semester_code' => '4201', 'semester_name' => 'Fall 2020', 'start_date' => '2020-09-01']);
-        Enrollment::factory()->for($student, 'student')->create(['semester_code' => '4202', 'semester_name' => 'Spring 2021', 'start_date' => '2021-01-15']);
-
-        Student::factory()->create();
-
-        expect($studentsMatchingEnrolledTerms('firstEnrollmentTerm.semester_name', ['fall 2020']))
-            ->toBe([$student->getKey()])
-            ->and($studentsMatchingEnrolledTerms('mostRecentEnrollmentTerm.semester_name', ['spring 2021']))
-            ->toBe([$student->getKey()])
-            ->and($studentsMatchingEnrolledTerms('firstEnrollmentTerm.semester_name', ['spring 2021']))
-            ->toBe([]);
     });
 });
 

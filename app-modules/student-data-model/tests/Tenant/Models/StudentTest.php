@@ -38,7 +38,6 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
-use App\Features\MatchedEnrolledTermsFeature;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -217,22 +216,5 @@ describe('term enrollments', function (): void {
             ->and($students[$otherStudent->sisid]->mostRecentTermEnrollment->getKey())->toBe($otherStudentEnrollment->getKey())
             ->and($students[$studentWithoutEnrollments->sisid]->firstTermEnrollment)->toBeNull()
             ->and($students[$studentWithoutEnrollments->sisid]->mostRecentTermEnrollment)->toBeNull();
-    });
-
-    it('picks the enrollments with the earliest and latest start dates and a semester code when the feature is inactive', function () use ($createEnrollment): void {
-        MatchedEnrolledTermsFeature::deactivate();
-
-        $student = Student::factory()->create();
-
-        $firstTerm = Term::factory()->create(['start_date' => '2020-09-01']);
-        $mostRecentTerm = Term::factory()->create(['start_date' => '2021-09-01']);
-
-        $createEnrollment($student, ['sis_term_id' => $firstTerm->sis_term_id, 'start_date' => '2022-01-01']);
-        $createEnrollment($student, ['sis_term_id' => $mostRecentTerm->sis_term_id, 'start_date' => '2018-01-01']);
-        $earliestEnrollment = $createEnrollment($student, ['semester_code' => '4201', 'start_date' => '2019-01-01']);
-        $latestEnrollment = $createEnrollment($student, ['semester_code' => '4203', 'start_date' => '2023-01-01']);
-
-        expect($student->firstTermEnrollment->getKey())->toBe($earliestEnrollment->getKey())
-            ->and($student->mostRecentTermEnrollment->getKey())->toBe($latestEnrollment->getKey());
     });
 });

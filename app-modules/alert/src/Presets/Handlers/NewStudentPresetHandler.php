@@ -41,11 +41,9 @@ use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Scopes\JoinMatchedTerm;
-use App\Features\MatchedEnrolledTermsFeature;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 class NewStudentPresetHandler implements AlertPresetHandler
 {
@@ -79,15 +77,6 @@ class NewStudentPresetHandler implements AlertPresetHandler
     public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
     {
         $numberOfSemesters = $configuration->number_of_semesters ?? 1;
-
-        if (! MatchedEnrolledTermsFeature::active()) {
-            return DB::table('enrollments')
-                ->select('sisid')
-                ->whereNotNull('semester_code')
-                ->whereNull('deleted_at')
-                ->groupBy('sisid')
-                ->havingRaw('COUNT(DISTINCT semester_code) <= ?', [$numberOfSemesters]);
-        }
 
         // Enrollments are counted by their matched term, so the count agrees with the terms shown elsewhere, otherwise by their semester code.
         // Terms are matched only by the `enrollment_terms` view's rule, which does not compare a term's `code` with `semester_code`.
